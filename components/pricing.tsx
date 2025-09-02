@@ -27,10 +27,12 @@ const plans = [
   {
     name: "JS Interview Preparation Kit",
     description: "Company-wise PDFs and topic-wise question sets for JS rounds.",
-    priceINR: 99,
+    priceINR: 49,
+    originalPriceINR: 99,
+    discountPercentage: 50,
     popular: false,
-    previewUrl: "https://drive.google.com/file/d/11t2PZoGjKk7dcOchtIEYizLV51DDbuDH/view?usp=sharing", // TODO: replace with your public Drive URL
-    paymentUrl: "https://rzp.io/rzp/yaPSvlmX",
+    previewUrl: "https://drive.google.com/file/d/11t2PZoGjKk7dcOchtIEYizLV51DDbuDH/view?usp=sharing",
+    paymentUrl: "https://rzp.io/rzp/IbkHIh2u",
     features: [
       "Topic-wise breakdown: closures, async, prototypes, etc.",
       "Curated coding prompts for JS-only rounds",
@@ -41,10 +43,12 @@ const plans = [
   {
     name: "Complete Frontend Interview Preparation Kit",
     description: "End-to-end frontend prep: JS, React, HTML/CSS, Performance, DSA (JS), Machine Coding.",
-    priceINR: 299,
+    priceINR: 149,
+    originalPriceINR: 299,
+    discountPercentage: 50,
     popular: true,
-    previewUrl: "https://docs.google.com/document/d/1PaZqenxA8LFhBiHVIm84A3pZBCdEDxZxzSC6bauPCLc/edit?usp=sharing", // TODO: replace with your public Drive URL
-    paymentUrl: "https://rzp.io/rzp/OazwmQ8Q",
+    previewUrl: "https://docs.google.com/document/d/1PaZqenxA8LFhBiHVIm84A3pZBCdEDxZxzSC6bauPCLc/edit?usp=sharing",
+    paymentUrl: "https://rzp.io/rzp/fmvRcM3",
     features: [
       "Resources to learn Frontend (Gold Mine)",
       "JS Interview Preparation Kit included",
@@ -59,9 +63,11 @@ const plans = [
   {
     name: "Frontend Interview Experiences Kit",
     description: "Real-world interview experiences, formats, and debriefs across companies.",
-    priceINR: 399, // custom price (don’t invent)
+    priceINR: 399,
+    originalPriceINR: null,
+    discountPercentage: null,
     popular: false,
-    previewUrl: "https://drive.google.com/file/d/1Lrkv2ZewJ02YTp4meqcEXFZ92z2DTgE-/view?usp=sharing", // TODO: replace with your public Drive URL
+    previewUrl: "https://drive.google.com/file/d/1Lrkv2ZewJ02YTp4meqcEXFZ92z2DTgE-/view?usp=sharing",
     paymentUrl: "",
     features: [
       "30+ curated interview experiences (SDE/Frontend)",
@@ -89,8 +95,18 @@ export function Pricing() {
       <div className="grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
         {plans.map((p) => {
           const isCustom = p.priceINR === null
+          const hasDiscount = p.originalPriceINR !== null && p.discountPercentage !== null
+          
           return (
-            <Card key={p.name} className="flex h-full flex-col">
+            <Card key={p.name} className="flex h-full flex-col relative">
+              {hasDiscount && (
+                <div className="absolute -top-3 -right-2 z-10">
+                  <span className="inline-flex items-center rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold text-white shadow-md">
+                    {p.discountPercentage}% OFF
+                  </span>
+                </div>
+              )}
+              
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-lg">{p.name}</CardTitle>
@@ -100,7 +116,16 @@ export function Pricing() {
                     </span>
                   )}
                 </div>
-                <div className="mt-1 text-2xl font-semibold">{isCustom ? "Custom" : `₹${p.priceINR}`}</div>
+                <div className="mt-1 flex items-baseline gap-2">
+                  <span className="text-2xl font-semibold">
+                    {isCustom ? "Custom" : `₹${p.priceINR}`}
+                  </span>
+                  {hasDiscount && (
+                    <span className="text-lg text-muted-foreground line-through">
+                      ₹{p.originalPriceINR}
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground">{p.description}</p>
               </CardHeader>
 
@@ -176,4 +201,3 @@ export function Pricing() {
     </section>
   )
 }
-
