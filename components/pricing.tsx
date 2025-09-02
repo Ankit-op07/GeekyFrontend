@@ -39,7 +39,7 @@ const plans = [
     ],
   },
   {
-    name: "Complete Frontend Preparation Kit",
+    name: "Complete Frontend Interview Preparation Kit",
     description: "End-to-end frontend prep: JS, React, HTML/CSS, Performance, DSA (JS), Machine Coding.",
     priceINR: 299,
     popular: true,
