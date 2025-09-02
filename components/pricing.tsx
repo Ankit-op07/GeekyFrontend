@@ -147,9 +147,9 @@ export function Pricing() {
                       type="button"
                       className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                       aria-label={`Purchase ${p.name}`}
-                      disabled={p.name === "Frontend Interview Experiences Kit"}
+                      disabled= {true}
                     >
-                      {p.name === "Frontend Interview Experiences Kit" ? "Coming Soon" : "Buy Now"}
+                      {p.name === "Frontend Interview Experiences Kit" ? "Coming Soon" : "Purchase Hold"}
                     </button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-lg">
