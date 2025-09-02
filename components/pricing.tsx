@@ -46,13 +46,14 @@ const plans = [
     previewUrl: "https://docs.google.com/document/d/1PaZqenxA8LFhBiHVIm84A3pZBCdEDxZxzSC6bauPCLc/edit?usp=sharing", // TODO: replace with your public Drive URL
     paymentUrl: "https://rzp.io/rzp/OazwmQ8Q",
     features: [
-      "Modern JavaScript deep-dive + patterns",
+      "Resources to learn Frontend (Gold Mine)",
+      "JS Interview Preparation Kit included",
       "React fundamentals to advanced (hooks, state, patterns)",
       "HTML & CSS mastery for interviews",
       "Web performance essentials & profiling tips",
       "DSA in JavaScript: must-know problems",
       "Machine coding practice: components & mini-apps",
-      "Resources to learn Frontend (Gold Mine)"
+      "Cold Email Template for job applications",
     ],
   },
   {
@@ -61,7 +62,7 @@ const plans = [
     priceINR: 399, // custom price (don’t invent)
     popular: false,
     previewUrl: "https://drive.google.com/file/d/1Lrkv2ZewJ02YTp4meqcEXFZ92z2DTgE-/view?usp=sharing", // TODO: replace with your public Drive URL
-    paymentUrl: "https://rzp.io/rzp/F14S3la",
+    paymentUrl: "",
     features: [
       "30+ curated interview experiences (SDE/Frontend)",
       "Company-wise patterns and rounds breakdown",
@@ -121,8 +122,9 @@ export function Pricing() {
                       type="button"
                       className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                       aria-label={`Purchase ${p.name}`}
+                      disabled={p.name === "Frontend Interview Experiences Kit"}
                     >
-                      Buy Now
+                      {p.name === "Frontend Interview Experiences Kit" ? "Coming Soon" : "Buy Now"}
                     </button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-lg">
