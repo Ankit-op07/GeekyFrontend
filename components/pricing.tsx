@@ -1,32 +1,11 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter as UIDialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog"
+import { PaymentButton } from '@/components/payment-button';
 
-const AfterPaymentInstructions = () => (
-  <div className="payment-instructions space-y-3">
-    <h3 className="text-base font-semibold text-foreground">After Payment:</h3>
-    <ol className="list-decimal pl-5 space-y-1 text-sm text-muted-foreground">
-      <li>Take screenshot of payment confirmation</li>
-      <li>Send to WhatsApp: +91-9166011247 or</li>
-      <li>Send Email to: dhakedbhai786@gmail.com</li>
-      <li>Include: Your email + Course name</li>
-      <li>Receive access within  10 minutes</li>
-    </ol>
-  </div>
-)
 
 const plans = [
   {
     name: "JS Interview Preparation Kit",
-    description: "Company-wise PDFs and topic-wise question sets for JS rounds.",
+    description: "Topic-wise curated questions, patterns, and tricks to ace JavaScript interviews.",
     priceINR: 49,
     originalPriceINR: 99,
     discountPercentage: 50,
@@ -34,15 +13,18 @@ const plans = [
     previewUrl: "https://drive.google.com/file/d/11t2PZoGjKk7dcOchtIEYizLV51DDbuDH/view?usp=sharing",
     paymentUrl: "https://rzp.io/rzp/IbkHIh2u",
     features: [
+      "JS Interview preparation questions",
+      "Tricky JS questions asked in interviews",
+      "Polyfill and modern JS questions",
+      "JS and React patterns and Solid principles",
       "Topic-wise breakdown: closures, async, prototypes, etc.",
-      "Curated coding prompts for JS-only rounds",
       "Lightweight cheat-sheets and notes",
-      "Quarterly updates included",
+      "Regular updates included",
     ],
   },
   {
     name: "Complete Frontend Interview Preparation Kit",
-    description: "End-to-end frontend prep: JS, React, HTML/CSS, Performance, DSA (JS), Machine Coding.",
+    description: "End-to-end frontend prep: JS, React, HTML/CSS, Performance, DSA (JS), Machine Coding, Cold Emailing.",
     priceINR: 149,
     originalPriceINR: 299,
     discountPercentage: 50,
@@ -50,14 +32,15 @@ const plans = [
     previewUrl: "https://docs.google.com/document/d/1PaZqenxA8LFhBiHVIm84A3pZBCdEDxZxzSC6bauPCLc/edit?usp=sharing",
     paymentUrl: "https://rzp.io/rzp/fmvRcM3",
     features: [
-      "Resources to learn Frontend (Gold Mine)",
       "JS Interview Preparation Kit included",
-      "React fundamentals to advanced (hooks, state, patterns)",
-      "HTML & CSS mastery for interviews",
-      "Web performance essentials & profiling tips",
-      "DSA in JavaScript: must-know problems",
+      "Resources to learn Frontend (Gold Mine)",
+      "React interview questions & patterns",
+      "HTML & CSS mastery for interview questions",
+      "Web performance and security",
+      "DSA for Frontend: Must know problems",
       "Machine coding practice: components & mini-apps",
-      "Cold Email Template for job applications",
+      "Cold Email Templates and How to Cold email guide (Bonus)",
+      "Regular updates included",
     ],
   },
   {
@@ -141,49 +124,13 @@ export function Pricing() {
               </CardContent>
 
               <CardFooter className="mt-auto flex gap-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button
-                      type="button"
-                      className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-                      aria-label={`Purchase ${p.name}`}
-                      disabled= {true}
-                    >
-                      {p.name === "Frontend Interview Experiences Kit" ? "Coming Soon" : "Purchase Hold"}
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-lg">
-                    <DialogHeader>
-                      <DialogTitle>Complete purchase — {p.name}</DialogTitle>
-                      <DialogDescription>
-                        Pay securely using the button below. Then follow the instructions to get access.
-                      </DialogDescription>
-                    </DialogHeader>
-
-                    <AfterPaymentInstructions />
-
-                    <UIDialogFooter className="mt-4 flex gap-2">
-                      <a
-                        href={p.paymentUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-                        aria-label={`Proceed to payment for ${p.name}`}
-                      >
-                        Proceed to Payment
-                      </a>
-                      <DialogClose asChild>
-                        <button
-                          type="button"
-                          className="inline-flex h-10 items-center justify-center rounded-md border border-border bg-background px-4 text-sm font-medium text-foreground hover:bg-accent/50"
-                        >
-                          Close
-                        </button>
-                      </DialogClose>
-                    </UIDialogFooter>
-                  </DialogContent>
-                </Dialog>
-
+                <PaymentButton
+  amount={p.priceINR}
+  planName={p.name}
+  buttonText="Buy Now"
+  className="w-1/2"
+  disabled={p.name === "Frontend Interview Experiences Kit"}
+/>
                 <a
                   href={p.previewUrl}
                   target="_blank"
