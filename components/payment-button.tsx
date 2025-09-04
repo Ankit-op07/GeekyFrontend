@@ -65,13 +65,15 @@ export function PaymentButton({
       setEmailError('Email is required');
       return;
     }
-    
     if (!validateEmail(userDetails.email)) {
       setEmailError('Please enter a valid email');
       return;
     }
 
     setIsProcessing(true);
+    setTimeout(()=>{
+          setIsOpen(false);
+    },1000)
     
     await initiatePayment({
       amount,
@@ -80,7 +82,6 @@ export function PaymentButton({
       userName: userDetails.name,
       onSuccess: (response) => {
         console.log('Payment successful:', response);
-        setIsOpen(false);
         setUserDetails({ email: '', name: '' });
         setIsProcessing(false);
         
