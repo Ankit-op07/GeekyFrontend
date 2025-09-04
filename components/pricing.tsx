@@ -20,6 +20,7 @@ const plans = [
       "Topic-wise breakdown: closures, async, prototypes, etc.",
       "Lightweight cheat-sheets and notes",
       "Regular updates included",
+      "Lifetime access",
     ],
   },
   {
@@ -32,7 +33,7 @@ const plans = [
     previewUrl: "https://docs.google.com/document/d/1PaZqenxA8LFhBiHVIm84A3pZBCdEDxZxzSC6bauPCLc/edit?usp=sharing",
     paymentUrl: "https://rzp.io/rzp/fmvRcM3",
     features: [
-      "JS Interview Preparation Kit included",
+      "JS Interview Preparation Kit content included",
       "Resources to learn Frontend (Gold Mine)",
       "React interview questions & patterns",
       "HTML & CSS mastery for interview questions",
@@ -41,6 +42,7 @@ const plans = [
       "Machine coding practice: components & mini-apps",
       "Cold Email Templates and How to Cold email guide (Bonus)",
       "Regular updates included",
+      "Lifetime access",
     ],
   },
   {
@@ -58,6 +60,8 @@ const plans = [
       "Role/seniority expectations & common pitfalls",
       "Questions that actually appeared",
       "Post-offer insights: timelines & negotiation pointers",
+      "Regular updates included",
+      "Lifetime access",
     ],
   },
 ] as const
