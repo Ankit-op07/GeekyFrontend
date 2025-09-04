@@ -81,7 +81,6 @@ export function PaymentButton({
       userEmail: userDetails.email,
       userName: userDetails.name,
       onSuccess: (response) => {
-        console.log('Payment successful:', response);
         setUserDetails({ email: '', name: '' });
         setIsProcessing(false);
         

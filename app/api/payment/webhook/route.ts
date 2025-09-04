@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
     }
     
     const event = JSON.parse(body);
-    console.log('Webhook event:', event.event);
     
     return NextResponse.json({ received: true });
   } catch (error) {

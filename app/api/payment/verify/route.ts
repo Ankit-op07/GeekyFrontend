@@ -49,7 +49,6 @@ async function grantFolderAccess(folderId: string, userEmail: string) {
       });
     } catch (e) {
       // User-specific sharing might fail for non-Gmail accounts, but that's OK
-      console.log('User-specific sharing skipped:', e.message);
     }
 
     // Get the shareable link
@@ -239,8 +238,7 @@ export async function POST(request: NextRequest) {
               'Importance': 'high',
             },
           });
-          
-          console.log(`Email sent successfully to ${userEmail}`);
+
         } catch (emailError) {
           console.error('Email sending failed:', emailError);
           // Don't fail the payment verification if email fails
