@@ -1,48 +1,115 @@
 export function Features() {
+  const features = [
+    {
+      icon: "📚",
+      title: "JS Interview Kit",
+      description: "Master JavaScript with real interview questions",
+      highlights: [
+        "500+ curated questions",
+        "Company patterns",
+        "Quick revision sheets"
+      ],
+      color: "bg-yellow-500"
+    },
+    {
+      icon: "🚀",
+      title: "Complete Frontend",
+      description: "Everything for frontend engineering roles",
+      highlights: [
+        "JS + React + DSA",
+        "Machine coding",
+        "System design"
+      ],
+      color: "bg-blue-500",
+      popular: true
+    },
+    {
+      icon: "💼",
+      title: "Interview Experiences",
+      description: "Learn from real interview experiences",
+      highlights: [
+        "30+ experiences",
+        "Round breakdown",
+        "Negotiation tips"
+      ],
+      color: "bg-green-500"
+    }
+  ]
+
   return (
-    <section id="features" className="mx-auto max-w-6xl px-4 py-14 md:py-16">
-      <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1 text-xs font-medium text-secondary">
-        What’s inside
+    <section id="features" className="mx-auto max-w-7xl px-4 py-12 md:py-20">
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1 text-xs font-medium text-secondary mb-3">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+          </span>
+          What's Inside
+        </div>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-2">
+          Choose Your Path
+        </h2>
+        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+          Comprehensive materials designed by successful engineers
+        </p>
       </div>
-      <h2 className="mt-3 text-2xl md:text-3xl font-semibold text-balance">Designed for real frontend interviews</h2>
-      <p className="mt-2 text-muted-foreground">
-        Practical, current material aligned with common interview formats: theory checks, hands-on rounds, and
-        discussions.
-      </p>
 
-      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-        <article className="rounded-lg border bg-card p-5">
-          <h3 className="font-semibold">JS Interview Preparation Kit</h3>
-          <ul className="mt-3 text-sm text-foreground/80 space-y-2">
-            <li>- Topic-wise JS questions with concise answers (PDFs)</li>
-            <li>- Company-wise patterns: product, startup, enterprise</li>
-            <li>- ES6+, closures, async/await, prototypes, event loop</li>
-            <li>- Short references to skim before rounds</li>
-          </ul>
-        </article>
+      {/* Mobile-first horizontal scroll on small screens, grid on larger */}
+      <div className="relative">
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-visible md:pb-0 scrollbar-hide">
+          {features.map((feature, index) => (
+            <article 
+              key={index}
+              className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-auto snap-center"
+            >
+              <div className={`relative h-full rounded-2xl ${feature.color} p-[2px]`}>
+                <div className="relative h-full bg-background rounded-2xl p-4 sm:p-6">
+                  {feature.popular && (
+                    <div className="absolute -top-3 left-4">
+                      <span className="inline-flex z-40 items-center rounded-full bg-blue-500 px-3 py-0.5 text-xs font-bold text-white">
+                        POPULAR
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Icon and title in same row for mobile */}
+                  <div className="flex items-start gap-3 mb-3">
+                    <span className="text-3xl">{feature.icon}</span>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-base sm:text-lg">{feature.title}</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
 
-        <article className="rounded-lg border bg-card p-5">
-          <h3 className="font-semibold">Complete Frontend Preparation Kit</h3>
-          <ul className="mt-3 text-sm text-foreground/80 space-y-2">
-            <li>- Everything in JS Kit</li>
-            <li>- React: hooks, state, effects, rendering, patterns</li>
-            <li>- HTML/CSS: semantics, forms, layout, a11y</li>
-            <li>- Web performance: CWV checklists</li>
-            <li>- Machine coding: small widgets and UI flows</li>
-            <li>- DSA essentials for FE interviews</li>
-          </ul>
-        </article>
+                  <ul className="space-y-2">
+                    {feature.highlights.map((highlight, idx) => (
+                      <li key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
+                        <div className={`w-1.5 h-1.5 rounded-full ${feature.color}`} />
+                        <span className="text-foreground/80">{highlight}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-        <article className="rounded-lg border bg-card p-5">
-          <h3 className="font-semibold">Frontend Interview Experiences Kit</h3>
-          <ul className="mt-3 text-sm text-foreground/80 space-y-2">
-            <li>- Round-wise walkthroughs and expectations</li>
-            <li>- Tips to communicate trade-offs and constraints</li>
-            <li>- Role-focused prep (FE dev / FE engineer)</li>
-            <li>- Framework-agnostic checklists</li>
-          </ul>
-          {/* <p className="mt-2 text-xs text-muted-foreground">Contact us for access details.</p> */}
-        </article>
+                  <a 
+                    href="#pricing" 
+                    className="mt-4 inline-flex items-center text-xs sm:text-sm font-medium text-primary hover:underline"
+                  >
+                    View pricing →
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+        
+        {/* Scroll indicator for mobile */}
+        <div className="flex justify-center gap-1 mt-4 md:hidden">
+          {features.map((_, idx) => (
+            <div key={idx} className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+          ))}
+        </div>
       </div>
     </section>
   )
