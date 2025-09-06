@@ -1,5 +1,6 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { PaymentButton } from '@/components/payment-button';
+import Link from "next/link"
 
 const plans = [
   {
@@ -9,7 +10,6 @@ const plans = [
     originalPriceINR: 99,
     discountPercentage: 50,
     popular: false,
-    previewUrl: "https://drive.google.com/file/d/11t2PZoGjKk7dcOchtIEYizLV51DDbuDH/view?usp=sharing",
     features: [
       "JS Interview preparation questions",
       "Tricky JS questions asked in interviews",
@@ -28,7 +28,6 @@ const plans = [
     originalPriceINR: 299,
     discountPercentage: 50,
     popular: true,
-    previewUrl: "https://docs.google.com/document/d/1PaZqenxA8LFhBiHVIm84A3pZBCdEDxZxzSC6bauPCLc/edit?usp=sharing",
     features: [
       "JS Interview Preparation Kit content included",
       "Resources to learn Frontend (Gold Mine)",
@@ -49,7 +48,6 @@ const plans = [
     originalPriceINR: null,
     discountPercentage: null,
     popular: false,
-    previewUrl: "https://drive.google.com/file/d/1Lrkv2ZewJ02YTp4meqcEXFZ92z2DTgE-/view?usp=sharing",
     features: [
       "30+ curated interview experiences (SDE/Frontend)",
       "Company-wise patterns and rounds breakdown",
@@ -161,7 +159,7 @@ export function Pricing() {
 
               <CardContent className="flex-1 py-3">
                 <ul className="space-y-1.5">
-                  {p.features.map((f) => (
+                  {p.features.slice(0, 5).map((f) => (
                     <li key={f} className="flex gap-2 text-xs sm:text-sm">
                       <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -169,11 +167,11 @@ export function Pricing() {
                       <span className="text-foreground/80">{f}</span>
                     </li>
                   ))}
-                  {/* {p.features.length > 5 && (
+                  {p.features.length > 5 && (
                     <li className="text-xs text-muted-foreground pl-6">
                       +{p.features.length - 5} more features
                     </li>
-                  )} */}
+                  )}
                 </ul>
               </CardContent>
 
@@ -181,7 +179,7 @@ export function Pricing() {
                 <PaymentButton
                   amount={p.priceINR}
                   planName={p.name}
-                  buttonText={p.name === "Interview Experiences" ? "Coming Soon" : "Get Access"}
+                  buttonText={p.name === "Frontend Interview Experiences Kit" ? "Coming Soon" : "Get Access"}
                   className={`w-full h-10 text-sm font-semibold ${
                     p.popular 
                       ? 'bg-blue-500 text-white hover:bg-blue-600' 
@@ -190,14 +188,15 @@ export function Pricing() {
                   disabled={p.name === "Frontend Interview Experiences Kit"}
                 />
                 
-                <a
-                  href={p.previewUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex h-9 items-center justify-center rounded-md border text-xs font-medium hover:bg-accent/50 transition-colors"
-                >
-                  Preview Content
-                </a>
+                <Link href="/preview" className="w-full">
+                  <button className="w-full h-9 inline-flex items-center justify-center rounded-md border text-xs font-medium hover:bg-accent/50 transition-colors">
+                    <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Preview Content
+                  </button>
+                </Link>
               </CardFooter>
             </Card>
           )
