@@ -116,14 +116,14 @@ export function Hero() {
                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                 <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
               </svg>
-              <span className="font-medium">12,847 Students</span>
+              <span className="font-medium">12,847 Developers</span>
             </div>
           </div>
 
           {/* Scarcity Element */}
           <div className="mt-4 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-md border border-yellow-200 dark:border-yellow-800">
             <p className="text-xs text-yellow-700 dark:text-yellow-400 font-medium">
-              ⚡ Only 47 spots left at this price • Price increases to ₹99 after that
+              ⚡ Only 20 spots left at this price • Price increases to ₹99 after that
             </p>
           </div>
         </div>
