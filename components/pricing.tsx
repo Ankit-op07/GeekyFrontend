@@ -24,8 +24,8 @@ const plans = [
   {
     name: "Complete Frontend Interview Preparation Kit",
     description: "End-to-end interview preparation",
-    priceINR: 149,
-    originalPriceINR: 299,
+    priceINR: 99,
+    originalPriceINR: 199,
     discountPercentage: 50,
     popular: true,
     features: [
@@ -36,6 +36,7 @@ const plans = [
       "Web performance and security",
       "DSA for Frontend: Must know problems",
       "Machine coding practice: components & mini-apps",
+      "Frontend System Design Guide",
       "Cold Email Templates and How to Cold email guide (Bonus)",
       "Regular updates included",
       "Lifetime access",
@@ -44,7 +45,7 @@ const plans = [
   {
     name: "Frontend Interview Experiences Kit",
     description: "Real interview insights",
-    priceINR: 399,
+    priceINR: 299,
     originalPriceINR: null,
     discountPercentage: null,
     popular: false,

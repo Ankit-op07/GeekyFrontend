@@ -34,7 +34,7 @@ export function Hero() {
 
           {/* Clear Value Proposition */}
           <p className="mt-4 text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-            Complete interview prep kits with <span className="font-semibold text-foreground">500+ real questions</span> from 
+            Complete interview prep kits with <span className="font-semibold text-foreground">500+ real questions</span> from Top tech companies like
             <span className="font-semibold text-foreground"> Google, Amazon, Microsoft</span> and more. Everything you need to crack frontend interviews.
           </p>
 

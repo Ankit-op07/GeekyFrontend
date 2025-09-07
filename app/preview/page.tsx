@@ -63,8 +63,8 @@ export default function ContentPreviewPage() {
     },
     complete: {
       name: "Complete Frontend Kit",
-      price: "₹149",
-      originalPrice: "₹299",
+      price: "₹99",
+      originalPrice: "₹199",
       icon: "🚀",
       tagline: "Everything you need to crack any frontend interview",
       highlights: [
