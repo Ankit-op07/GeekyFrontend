@@ -159,7 +159,7 @@ export function Pricing() {
 
               <CardContent className="flex-1 py-3">
                 <ul className="space-y-1.5">
-                  {p.features.slice(0, 5).map((f) => (
+                  {p.features.map((f) => (
                     <li key={f} className="flex gap-2 text-xs sm:text-sm">
                       <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -167,11 +167,11 @@ export function Pricing() {
                       <span className="text-foreground/80">{f}</span>
                     </li>
                   ))}
-                  {p.features.length > 5 && (
+                  {/* {p.features.length > 5 && (
                     <li className="text-xs text-muted-foreground pl-6">
                       +{p.features.length - 5} more features
                     </li>
-                  )}
+                  )} */}
                 </ul>
               </CardContent>
 
