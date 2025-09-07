@@ -18,7 +18,7 @@ export function Hero() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
             </span>
-            🔥 Limited Time: 50% OFF • Ends in 48 Hours
+            🔥 Limited Time: 50% OFF • Ends in 24 Hours
           </div>
 
           {/* Main Headline - More Direct */}
