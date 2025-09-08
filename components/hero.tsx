@@ -123,7 +123,7 @@ export function Hero() {
           {/* Scarcity Element */}
           <div className="mt-4 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-md border border-yellow-200 dark:border-yellow-800">
             <p className="text-xs text-yellow-700 dark:text-yellow-400 font-medium">
-              ⚡ Only 20 spots left at this price • Price increases to ₹99 after that
+              ⚡ Only 17 spots left at this price • Price increases to ₹99 after that
             </p>
           </div>
         </div>

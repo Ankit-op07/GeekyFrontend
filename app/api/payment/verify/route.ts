@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
     <tr>
       <td style="padding: 40px 30px; background-color: white;">
         <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-          Dear Student,
+          Dear Developer,
         </p>
         
         <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">

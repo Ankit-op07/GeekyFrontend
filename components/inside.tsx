@@ -5,7 +5,7 @@ export function Inside() {
       title: "Company-wise PDFs",
       description: "Fresh question banks organized per company so you prepare for real trends, not random lists.",
       gradient: "from-blue-500 to-cyan-500",
-      stats: "50+ Companies"
+      stats: "30+ Companies"
     },
     {
       icon: "🗺️",
@@ -95,7 +95,7 @@ export function Inside() {
         </div>
         <div className="text-center">
           <p className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">4.9★</p>
-          <p className="text-sm text-muted-foreground mt-1">Student Rating</p>
+          <p className="text-sm text-muted-foreground mt-1">Developer Rating</p>
         </div>
       </div>
     </section>
