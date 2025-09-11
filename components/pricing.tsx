@@ -1,67 +1,78 @@
+"use client"
+// components/pricing.tsx
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { PaymentButton } from '@/components/payment-button';
+import { useDevicePricing } from '@/hooks/use-device-detection';
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link"
 
-const plans = [
-  {
-    name: "JS Interview Preparation Kit",
-    description: "JavaScript focused preparation",
-    priceINR: 49,
-    originalPriceINR: 99,
-    discountPercentage: 50,
-    popular: false,
-    features: [
-      "JS Interview preparation questions",
-      "Tricky JS questions asked in interviews",
-      "Polyfill and modern JS questions",
-      "JS and React patterns and Solid principles",
-      "Topic-wise breakdown: closures, async, prototypes, etc.",
-      "Lightweight cheat-sheets and notes",
-      "Regular updates included",
-      "Lifetime access",
-    ],
-  },
-  {
-    name: "Complete Frontend Interview Preparation Kit",
-    description: "End-to-end interview preparation",
-    priceINR: 99,
-    originalPriceINR: 199,
-    discountPercentage: 50,
-    popular: true,
-    features: [
-      "JS Interview Preparation Kit content included",
-      "Resources to learn Frontend (Gold Mine)",
-      "React interview questions & patterns",
-      "HTML & CSS mastery for interview questions",
-      "Web performance and security",
-      "DSA for Frontend: Must know problems",
-      "Machine coding practice: components & mini-apps",
-      "Frontend System Design Guide",
-      "Cold Email Templates and How to Cold email guide (Bonus)",
-      "Regular updates included",
-      "Lifetime access",
-    ],
-  },
-  {
-    name: "Frontend Interview Experiences Kit",
-    description: "Real interview insights",
-    priceINR: 299,
-    originalPriceINR: null,
-    discountPercentage: null,
-    popular: false,
-    features: [
-      "30+ curated interview experiences (SDE/Frontend)",
-      "Company-wise patterns and rounds breakdown",
-      "Role/seniority expectations & common pitfalls",
-      "Questions that actually appeared",
-      "Post-offer insights: timelines & negotiation pointers",
-      "Regular updates included",
-      "Lifetime access",
-    ],
-  },
-] as const
-
 export function Pricing() {
+  const { js, complete, experiences, isLoading } = useDevicePricing();
+  
+  // Show loading state while detecting device
+  if (isLoading) {
+    return <PricingSkeletonLoader />;
+  }
+  
+  const plans = [
+    {
+      name: "JS Interview Preparation Kit",
+      description: "JavaScript focused preparation",
+      priceINR: js.current,
+      originalPriceINR: js.original,
+      discountPercentage: Math.round(((js.original - js.current) / js.original) * 100),
+      popular: false,
+      previewUrl: "https://drive.google.com/file/d/11t2PZoGjKk7dcOchtIEYizLV51DDbuDH/view?usp=sharing",
+      features: [
+        "JS Interview preparation questions",
+        "Tricky JS questions asked in interviews",
+        "Polyfill and modern JS questions",
+        "JS and React patterns and Solid principles",
+        "Topic-wise breakdown: closures, async, prototypes, etc.",
+        "Lightweight cheat-sheets and notes",
+        "Regular updates included",
+        "Lifetime access",
+      ],
+    },
+    {
+      name: "Complete Frontend Interview Preparation Kit",
+      description: "End-to-end interview preparation",
+      priceINR: complete.current,
+      originalPriceINR: complete.original,
+      discountPercentage: Math.round(((complete.original - complete.current) / complete.original) * 100),
+      popular: true,
+      features: [
+        "JS Interview Preparation Kit content included",
+        "Resources to learn Frontend (Gold Mine)",
+        "React interview questions & patterns",
+        "HTML & CSS mastery for interview questions",
+        "Web performance and security",
+        "DSA for Frontend: Must know problems",
+        "Machine coding practice: components & mini-apps",
+        "Cold Email Templates and How to Cold email guide (Bonus)",
+        "Regular updates included",
+        "Lifetime access",
+      ],
+    },
+    {
+      name: "Frontend Interview Experiences Kit",
+      description: "Real interview insights",
+      priceINR: experiences.current,
+      originalPriceINR: experiences.original,
+      discountPercentage: experiences.original ? Math.round(((experiences.original - experiences.current) / experiences.original) * 100) : null,
+      popular: false,
+      features: [
+        "30+ curated interview experiences (SDE/Frontend)",
+        "Company-wise patterns and rounds breakdown",
+        "Role/seniority expectations & common pitfalls",
+        "Questions that actually appeared",
+        "Post-offer insights: timelines & negotiation pointers",
+        "Regular updates included",
+        "Lifetime access",
+      ],
+    },
+  ] as const;
+
   return (
     <section id="pricing" className="mx-auto max-w-7xl px-4 py-12 md:py-20">
       <header className="text-center mb-8">
@@ -71,7 +82,7 @@ export function Pricing() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
           </span>
-          LIMITED TIME: 50% OFF
+          LIMITED TIME: {plans[0].discountPercentage}% OFF
         </div>
         
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-2">
@@ -81,7 +92,7 @@ export function Pricing() {
           One-time payment, lifetime access
         </p>
 
-        {/* Trust indicators - mobile optimized */}
+        {/* Trust indicators */}
         <div className="mt-6 flex justify-center items-center gap-3 sm:gap-6 flex-wrap text-xs sm:text-sm">
           <div className="flex items-center gap-1">
             <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -115,7 +126,7 @@ export function Pricing() {
               key={p.name} 
               className={`relative flex flex-col ${
                 p.popular 
-                  ? `border-2 ${p.accent} shadow-lg md:scale-105` 
+                  ? `border-2 border-blue-500 shadow-lg md:scale-105` 
                   : 'border hover:shadow-md transition-shadow'
               }`}
             >
@@ -132,15 +143,14 @@ export function Pricing() {
               {hasDiscount && (
                 <div className="absolute -top-2 -right-2 z-10">
                   <span className="inline-flex items-center rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white">
-                    -50%
+                    -{p.discountPercentage}%
                   </span>
                 </div>
               )}
               
               <CardHeader className="pb-3">
-                {/* Icon and title */}
+                {/* Title */}
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-2xl">{p.icon}</span>
                   <CardTitle className="text-base sm:text-lg">{p.name}</CardTitle>
                 </div>
                 
@@ -179,14 +189,15 @@ export function Pricing() {
               <CardFooter className="flex flex-col gap-2 pt-3">
                 <PaymentButton
                   amount={p.priceINR}
+                  originalAmount={p.originalPriceINR || undefined}
                   planName={p.name}
-                  buttonText={p.name === "Frontend Interview Experiences Kit" ? "Coming Soon" : "Get Access"}
+                  buttonText={index === 2 ? "Coming Soon" : "Get Access"}
                   className={`w-full h-10 text-sm font-semibold ${
                     p.popular 
                       ? 'bg-blue-500 text-white hover:bg-blue-600' 
                       : 'bg-primary text-primary-foreground hover:bg-primary/90'
                   }`}
-                  disabled={p.name === "Frontend Interview Experiences Kit"}
+                  disabled={index === 2}
                 />
                 
                 <Link href="/preview" className="w-full">
@@ -195,7 +206,7 @@ export function Pricing() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    Preview Content
+                  Preview Content
                   </button>
                 </Link>
               </CardFooter>
@@ -210,4 +221,38 @@ export function Pricing() {
       </p>
     </section>
   )
+}
+
+// Skeleton loader for pricing section
+function PricingSkeletonLoader() {
+  return (
+    <section id="pricing" className="mx-auto max-w-7xl px-4 py-12 md:py-20">
+      <div className="text-center mb-8">
+        <Skeleton className="h-8 w-48 mx-auto mb-4" />
+        <Skeleton className="h-10 w-64 mx-auto mb-2" />
+        <Skeleton className="h-6 w-48 mx-auto" />
+      </div>
+      
+      <div className="grid gap-4 md:gap-6 md:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="relative flex flex-col">
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4 mb-2" />
+              <Skeleton className="h-10 w-24" />
+            </CardHeader>
+            <CardContent className="flex-1">
+              <div className="space-y-2">
+                {[1, 2, 3, 4, 5].map((j) => (
+                  <Skeleton key={j} className="h-4 w-full" />
+                ))}
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Skeleton className="h-10 w-full" />
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
 }

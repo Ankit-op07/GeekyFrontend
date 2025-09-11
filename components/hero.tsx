@@ -1,6 +1,9 @@
+"use client"
 import Image from "next/image"
+import { useDevicePricing } from '@/hooks/use-device-detection';
 
 export function Hero() {
+    const { js, complete, isLoading } = useDevicePricing();
   return (
     <section className="relative mx-auto max-w-7xl px-4 pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
       {/* Animated gradient background - adjusted for mobile */}
@@ -60,22 +63,31 @@ export function Hero() {
           </div> */}
 
           {/* Pricing Preview */}
-          <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Starting at just</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">₹49</span>
-                  <span className="text-sm text-muted-foreground line-through">₹99</span>
-                  <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded">SAVE 50%</span>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xs font-semibold">✓ Instant Access</p>
-                <p className="text-xs text-muted-foreground">✓ Lifetime Updates</p>
-              </div>
-            </div>
-          </div>
+  <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs text-muted-foreground">Starting at just</p>
+        <div className="flex items-baseline gap-2">
+          {isLoading ? (
+            // <Skeleton className="h-8 w-20" />
+            <></>
+          ) : (
+            <>
+              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">₹{js.current}</span>
+              <span className="text-sm text-muted-foreground line-through">₹{js.original}</span>
+              <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded">
+                SAVE {Math.round(((js.original - js.current) / js.original) * 100)}%
+              </span>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="text-right">
+        <p className="text-xs font-semibold">✓ Instant Access</p>
+        <p className="text-xs text-muted-foreground">✓ Lifetime Updates</p>
+      </div>
+    </div>
+  </div>
 
           {/* CTA Buttons with Urgency */}
           <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
