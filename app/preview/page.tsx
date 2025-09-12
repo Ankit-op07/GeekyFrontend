@@ -1,16 +1,18 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
+import { useDevicePricing } from '@/hooks/use-device-detection';
 
 // This would go in app/preview/page.tsx
 export default function ContentPreviewPage() {
   const [activeKit, setActiveKit] = useState("complete")
+    const { js, complete, experiences, isLoading } = useDevicePricing();
 
   const kits = {
     js: {
       name: "JS Interview Kit",
-      price: "₹49",
-      originalPrice: "₹99",
+      price: "₹"+js.current,
+      originalPrice: "₹"+js.original,
       icon: "⚡",
       tagline: "Master JavaScript in 2 weeks",
       highlights: [
@@ -63,8 +65,8 @@ export default function ContentPreviewPage() {
     },
     complete: {
       name: "Complete Frontend Kit",
-      price: "₹99",
-      originalPrice: "₹199",
+      price: "₹"+complete.current,
+      originalPrice: "₹"+complete.original,
       icon: "🚀",
       tagline: "Everything you need to crack any frontend interview",
       highlights: [
