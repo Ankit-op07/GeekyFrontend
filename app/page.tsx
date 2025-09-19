@@ -9,6 +9,8 @@ import { FAQ } from "@/components/faq"
 import { Pricing } from "@/components/pricing"
 import { ContentPreview } from "@/components/content-preview"
 import { AIChatbot } from "@/components/ai-chatbot";
+import { ProductsShowcase } from "@/components/product-showcase"
+import { ImageProductsShowcase } from "@/components/image-product-showcase"
 
 export default function Page() {
   return (
@@ -16,7 +18,9 @@ export default function Page() {
       <SiteHeader />
       {/* <NotificationBanner /> */}
       <Hero />
-      <Inside />
+      {/* <ProductsShowcase /> */}
+      
+      {/* <Inside /> */}
       <Features />
       <Curriculum />
       {/* <ContentPreview /> */}
