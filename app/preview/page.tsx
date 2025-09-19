@@ -2,17 +2,18 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useDevicePricing } from '@/hooks/use-device-detection';
-
+import { appConstants } from "@/lib/appConstants";
 // This would go in app/preview/page.tsx
 export default function ContentPreviewPage() {
   const [activeKit, setActiveKit] = useState("complete")
     const { js, complete, experiences, isLoading } = useDevicePricing();
+          const { js_kit_price, js_kit_original_price, discount_percentage, complete_kit_price, complete_kit_original_price  } = appConstants();
 
   const kits = {
     js: {
       name: "JS Interview Kit",
-      price: "₹"+js.current,
-      originalPrice: "₹"+js.original,
+      price: "₹"+ js_kit_price,
+      originalPrice: "₹"+js_kit_original_price,
       icon: "⚡",
       tagline: "Master JavaScript in 2 weeks",
       highlights: [
@@ -65,8 +66,8 @@ export default function ContentPreviewPage() {
     },
     complete: {
       name: "Complete Frontend Kit",
-      price: "₹"+complete.current,
-      originalPrice: "₹"+complete.original,
+      price: "₹"+complete_kit_price,
+      originalPrice: "₹"+complete_kit_original_price,
       icon: "🚀",
       tagline: "Everything you need to crack any frontend interview",
       highlights: [

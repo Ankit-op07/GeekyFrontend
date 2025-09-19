@@ -5,9 +5,11 @@ import { PaymentButton } from '@/components/payment-button';
 import { useDevicePricing } from '@/hooks/use-device-detection';
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link"
+import { appConstants } from "@/lib/appConstants";
 
 export function Pricing() {
   const { js, complete, experiences, isLoading } = useDevicePricing();
+      const { js_kit_price, js_kit_original_price, discount_percentage, complete_kit_price, complete_kit_original_price  } = appConstants();
   
   // Show loading state while detecting device
   if (isLoading) {
@@ -18,9 +20,9 @@ export function Pricing() {
     {
       name: "JS Interview Preparation Kit",
       description: "JavaScript focused preparation",
-      priceINR: js.current,
-      originalPriceINR: js.original,
-      discountPercentage: Math.round(((js.original - js.current) / js.original) * 100),
+      priceINR: js_kit_price,
+      originalPriceINR: js_kit_original_price,
+      discountPercentage: discount_percentage,
       popular: false,
       previewUrl: "https://drive.google.com/file/d/11t2PZoGjKk7dcOchtIEYizLV51DDbuDH/view?usp=sharing",
       features: [
@@ -37,9 +39,9 @@ export function Pricing() {
     {
       name: "Complete Frontend Interview Preparation Kit",
       description: "End-to-end interview preparation",
-      priceINR: complete.current,
-      originalPriceINR: complete.original,
-      discountPercentage: Math.round(((complete.original - complete.current) / complete.original) * 100),
+      priceINR: complete_kit_price,
+      originalPriceINR: complete_kit_original_price,
+      discountPercentage: discount_percentage,
       popular: true,
       features: [
         "JS Interview Preparation Kit content included",
@@ -57,9 +59,9 @@ export function Pricing() {
     {
       name: "Frontend Interview Experiences Kit",
       description: "Real interview insights",
-      priceINR: experiences.current,
-      originalPriceINR: experiences.original,
-      discountPercentage: experiences.original ? Math.round(((experiences.original - experiences.current) / experiences.original) * 100) : null,
+      priceINR: 299,
+      originalPriceINR: 2999,
+      discountPercentage: 90,
       popular: false,
       features: [
         "30+ curated interview experiences (SDE/Frontend)",
