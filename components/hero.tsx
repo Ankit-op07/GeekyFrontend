@@ -1,3 +1,4 @@
+// components/hero.tsx
 "use client"
 import Image from "next/image"
 import { useDevicePricing } from '@/hooks/use-device-detection';
@@ -16,7 +17,7 @@ export function Hero() {
       </div>
 
       <div className="grid gap-8 md:gap-12 md:grid-cols-2 md:items-center">
-        <div className="relative z-10 order-2 md:order-1">
+        <div className="relative z-10">
           {/* Urgency Banner */}
           <div className="inline-flex items-center gap-2 rounded-full bg-red-100 dark:bg-red-900/30 px-3 py-1.5 text-xs font-bold text-red-600 dark:text-red-400 mb-4 animate-pulse">
             <span className="relative flex h-2 w-2">
@@ -28,10 +29,10 @@ export function Hero() {
 
           {/* Main Headline - More Direct */}
           <h1 className="text-pretty font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-            <span className="text-foreground">Crack frontend rounds with</span>
+            <span className="text-foreground">Crack Frontend Interviews With</span>
             <br />
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              company‑patterned questions
+            Real Interview Questions
             </span>
             <br />
             <span className="text-foreground">in 30 days</span>
@@ -39,30 +40,28 @@ export function Hero() {
 
           {/* Clear Value Proposition */}
           <p className="mt-4 text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-            {/* Complete interview prep kits with <span className="font-semibold text-foreground">500+ real interview questions</span> from Top tech companies like
-            <span className="font-semibold text-foreground"> Google, Amazon, Microsoft</span> and more. Everything you need to crack your nextfrontend interviews. */}
-Ace frontend interview rounds using our curated Interview Kits containing latest and real interview questions from top tech companies like
+            Ace frontend interview rounds using our curated Interview Kits containing latest and real interview questions from top tech companies like
             <span className="font-semibold text-foreground"> Google, Amazon, Microsoft</span> and more.
           </p>
 
-  <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-    <div className="flex items-center justify-between">
-      <div >
-        <p className="text-xs text-muted-foreground">Get Javascript Interview Kit At Just</p>
-        <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">₹{js_kit_price}</span>
-              <span className="text-sm text-muted-foreground line-through">₹{js_kit_original_price}</span>
-              <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded">
-                SAVE {discount_percentage}%
-              </span>
-        </div>
-      </div>
-      <div className="text-right">
-        <p className="text-xs font-semibold">✓ Instant Access</p>
-        <p className="text-xs text-muted-foreground">✓ Lifetime Updates</p>
-      </div>
-    </div>
-  </div>
+          <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">Get Javascript Interview Kit At Just</p>
+                <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">₹{js_kit_price}</span>
+                      <span className="text-sm text-muted-foreground line-through">₹{js_kit_original_price}</span>
+                      <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded">
+                        SAVE {discount_percentage}%
+                      </span>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-xs font-semibold">✓ Instant Access</p>
+                <p className="text-xs text-muted-foreground">✓ Lifetime Updates</p>
+              </div>
+            </div>
+          </div>
 
           {/* CTA Buttons with Urgency */}
           <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -75,10 +74,6 @@ Ace frontend interview rounds using our curated Interview Kits containing latest
             </a>
             <a href="#features" className="inline-flex group">
               <span className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-secondary text-secondary px-4 sm:px-6 py-3 font-medium hover:bg-secondary/10 transition-all group-hover:border-primary">
-                {/* <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg> */}
                 Know More 
               </span>
             </a>
@@ -86,37 +81,81 @@ Ace frontend interview rounds using our curated Interview Kits containing latest
 
           {/* Trust Indicators */}
           <div className="mt-6 flex flex-wrap items-center gap-4 text-xs sm:text-sm">
-            <div className="flex items-center gap-1">
-              {/* <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg> */}
-              {/* <span className="font-medium">Money-Back Guarantee</span> */}
-            </div>
-            {/* <div className="flex items-center gap-1">
-              <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-              </svg>
-              <span className="font-medium">Secure Payment</span>
-            </div> */}
-            {/* <div className="flex items-center gap-1">
-              <svg className="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-              </svg>
-              <span className="font-medium">12,847 Developers</span>
-            </div> */}
+            {/* Keep empty as per your existing code */}
           </div>
-
-          {/* Scarcity Element */}
-          {/* <div className="mt-4 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-md border border-yellow-200 dark:border-yellow-800">
-            <p className="text-xs text-yellow-700 dark:text-yellow-400 font-medium">
-              ⚡ Only 17 spots left at this price • Price increases to ₹99 after that
-            </p>
-          </div> */}
         </div>
 
-        {/* Right Column - Testimonial Card Instead of Generic Image */}
+        {/* Right Column - Hero Image (Desktop Only) */}
+        <div className="hidden md:block relative">
+          <div className="relative w-full h-[500px]">
+            {/* Main illustration container */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 rounded-3xl overflow-hidden shadow-2xl">
+              {/* You can replace this with an actual image */}
+              <Image
+                src="/hero-illustration.png" // Add your actual image path
+                alt="Frontend Interview Preparation"
+                fill
+                className="object-cover"
+                priority
+                onError={(e) => {
+                  // Fallback to placeholder if image doesn't exist
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              
+              {/* Fallback illustration if no image */}
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10">
+                <div className="text-center p-8">
+                  {/* Code editor illustration */}
+                  <div className="bg-gray-900 rounded-lg p-4 shadow-2xl max-w-sm mx-auto">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    </div>
+                    <div className="space-y-2 font-mono text-xs text-left">
+                      <div className="text-purple-400">const <span className="text-blue-400">interview</span> = {`{`}</div>
+                      <div className="ml-4 text-green-400">javascript: <span className="text-yellow-300">"500+ Questions"</span>,</div>
+                      <div className="ml-4 text-green-400">react: <span className="text-yellow-300">"300+ Questions"</span>,</div>
+                      <div className="ml-4 text-green-400">dsa: <span className="text-yellow-300">"200+ Problems"</span>,</div>
+                      <div className="ml-4 text-green-400">success: <span className="text-orange-400">true</span></div>
+                      <div className="text-purple-400">{`}`};</div>
+                    </div>
+                  </div>
 
+                  {/* Floating badges */}
+                  <div className="mt-6 flex justify-center gap-4">
+                    <div className="bg-white rounded-full px-3 py-1 shadow-lg text-xs font-semibold text-gray-800 animate-bounce">
+                      JS
+                    </div>
+                    <div className="bg-white rounded-full px-3 py-1 shadow-lg text-xs font-semibold text-gray-800 animate-bounce animation-delay-2000">
+                      REACT
+                    </div>
+                    <div className="bg-white rounded-full px-3 py-1 shadow-lg text-xs font-semibold text-gray-800 animate-bounce animation-delay-4000">
+                      DSA
+                    </div>
+                  </div>
+
+                  {/* Success stats */}
+                  <div className="mt-8 grid grid-cols-2 gap-4">
+                    <div className="bg-white/80 backdrop-blur rounded-lg p-3">
+                      <div className="text-2xl font-bold text-blue-600">2.5K+</div>
+                      <div className="text-xs text-gray-600">Engineers Placed</div>
+                    </div>
+                    <div className="bg-white/80 backdrop-blur rounded-lg p-3">
+                      <div className="text-2xl font-bold text-green-600">97%</div>
+                      <div className="text-xs text-gray-600">Success Rate</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Decorative elements */}
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-blue-400 rounded-full opacity-20 animate-pulse animation-delay-2000"></div>
+          </div>
+        </div>
       </div>
     </section>
   )
