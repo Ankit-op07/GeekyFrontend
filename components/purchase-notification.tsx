@@ -166,6 +166,11 @@ export function PurchaseNotifications() {
     return () => clearTimeout(initialTimer)
   }, [])
 
+  const getRandomViewers = ()=>{
+    return 23
+    // return Math.floor(Math.random() * 20) + 5
+  } // 5 to 25 viewers
+
   if (!currentNotification) return null
 
   return (
@@ -233,7 +238,7 @@ export function PurchaseNotifications() {
 
             {/* Price badge */}
             <div className="text-right">
-              <div className="text-xs text-gray-500 line-through">₹{currentNotification.product.price * 2}</div>
+              <div className="text-xs text-gray-500 line-through">₹{(currentNotification.product.price + 1) * 10 - 1}</div>
               <div className="text-sm font-bold text-green-600">₹{currentNotification.product.price}</div>
             </div>
           </div>
@@ -242,7 +247,7 @@ export function PurchaseNotifications() {
           <div className="mt-3 pt-3 border-t flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] text-gray-500">
               <TrendingUp className="w-3 h-3 text-green-500" />
-              <span>23 others viewing this</span>
+              <span>{getRandomViewers()} others viewing this</span>
             </div>
             <span className="text-[10px] text-blue-600 font-semibold">View Kit →</span>
           </div>

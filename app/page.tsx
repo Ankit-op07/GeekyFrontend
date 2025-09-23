@@ -18,7 +18,8 @@ export default function Page() {
       <SiteHeader />
       {/* <NotificationBanner /> */}
       <Hero />
-      {/* <ProductsShowcase /> */}
+      <ProductsShowcase />
+      {/* <ImageProductsShowcase/> */}
       
       {/* <Inside /> */}
       <Features />

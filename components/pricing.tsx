@@ -1,15 +1,19 @@
-"use client"
 // components/pricing.tsx
+"use client"
+import { useState } from "react"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { PaymentButton } from '@/components/payment-button';
 import { useDevicePricing } from '@/hooks/use-device-detection';
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link"
 import { appConstants } from "@/lib/appConstants";
+import { Check, Star, Zap, Shield, Clock, Eye, ArrowRight, Sparkles, Crown, Rocket, TrendingUp } from "lucide-react"
 
 export function Pricing() {
   const { js, complete, experiences, isLoading } = useDevicePricing();
-      const { js_kit_price, js_kit_original_price, discount_percentage, complete_kit_price, complete_kit_original_price  } = appConstants();
+  const { js_kit_price, js_kit_original_price, discount_percentage, complete_kit_price, complete_kit_original_price } = appConstants();
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   
   // Show loading state while detecting device
   if (isLoading) {
@@ -18,13 +22,20 @@ export function Pricing() {
   
   const plans = [
     {
-      name: "JS Interview Preparation Kit",
-      description: "JavaScript focused preparation",
+      name: "JS Interview Kit",
+      fullName: "JS Interview Preparation Kit",
+      description: "Master JavaScript fundamentals",
       priceINR: js_kit_price,
       originalPriceINR: js_kit_original_price,
       discountPercentage: discount_percentage,
       popular: false,
-      previewUrl: "https://drive.google.com/file/d/11t2PZoGjKk7dcOchtIEYizLV51DDbuDH/view?usp=sharing",
+      icon: <Zap className="w-6 h-6" />,
+      color: "from-yellow-400 to-orange-500",
+      bgGradient: "from-yellow-50 via-amber-50/50 to-orange-50",
+      shadowColor: "shadow-yellow-200",
+      previewUrl: "/preview",
+      badge: "FOUNDATION",
+      savings: js_kit_original_price - js_kit_price,
       features: [
         "JS Interview preparation questions",
         "Tricky JS questions asked in interviews",
@@ -35,14 +46,23 @@ export function Pricing() {
         "Regular updates included",
         "Lifetime access",
       ],
+      highlights: ["500+ Questions", "Quick Notes", "Weekly Updates"]
     },
     {
-      name: "Complete Frontend Interview Preparation Kit",
-      description: "End-to-end interview preparation",
+      name: "Complete Frontend Kit",
+      fullName: "Complete Frontend Interview Preparation Kit",
+      description: "Everything you need to succeed",
       priceINR: complete_kit_price,
       originalPriceINR: complete_kit_original_price,
       discountPercentage: discount_percentage,
+      previewUrl: "/preview",
       popular: true,
+      icon: <Crown className="w-6 h-6" />,
+      color: "from-purple-500 to-pink-500",
+      bgGradient: "from-purple-50 via-pink-50/50 to-rose-50",
+      shadowColor: "shadow-purple-200",
+      badge: "BEST VALUE",
+      savings: complete_kit_original_price - complete_kit_price,
       features: [
         "JS Interview Preparation Kit content included",
         "Resources to learn Frontend (Gold Mine)",
@@ -55,14 +75,23 @@ export function Pricing() {
         "Regular updates included",
         "Lifetime access",
       ],
+      highlights: ["All-in-One", "DSA Included", "Premium Support"]
     },
     {
-      name: "Frontend Interview Experiences Kit",
-      description: "Real interview insights",
+      name: "Interview Experiences",
+      fullName: "Frontend Interview Experiences Kit",
+      description: "Learn from real experiences",
       priceINR: 299,
       originalPriceINR: 2999,
       discountPercentage: 90,
       popular: false,
+      icon: <Rocket className="w-6 h-6" />,
+      color: "from-indigo-500 to-purple-600",
+      bgGradient: "from-indigo-50 via-purple-50/50 to-indigo-50",
+      shadowColor: "shadow-indigo-200",
+      badge: "INSIDER",
+      savings: 2700,
+      comingSoon: true,
       features: [
         "30+ curated interview experiences (SDE/Frontend)",
         "Company-wise patterns and rounds breakdown",
@@ -72,155 +101,252 @@ export function Pricing() {
         "Regular updates included",
         "Lifetime access",
       ],
+      highlights: ["30+ Stories", "Real Questions", "Negotiation Tips"]
     },
   ] as const;
 
   return (
-    <section id="pricing" className="mx-auto max-w-7xl px-4 py-12 md:py-20">
-      <header className="text-center mb-8">
-        {/* Limited time badge */}
-        <div className="inline-flex items-center gap-2 rounded-full bg-red-100 dark:bg-red-900/30 px-3 py-1 text-xs font-bold text-red-600 dark:text-red-400 mb-4">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-          </span>
-          LIMITED TIME: {plans[0].discountPercentage}% OFF
-        </div>
-        
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-2">
-          Simple Pricing
-        </h2>
-        <p className="text-sm sm:text-base text-muted-foreground">
-          One-time payment, lifetime access
-        </p>
-
-        {/* Trust indicators */}
-        <div className="mt-6 flex justify-center items-center gap-3 sm:gap-6 flex-wrap text-xs sm:text-sm">
-          <div className="flex items-center gap-1">
-            <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            <span className="font-medium">Instant Access</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-              <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-            </svg>
-            <span className="font-medium">2500+ Developers</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <svg className="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-            </svg>
-            <span className="font-medium">Secure Payment</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile-first card layout */}
-      <div className="grid gap-4 md:gap-6 md:grid-cols-3">
-        {plans.map((p, index) => {
-          const hasDiscount = p.originalPriceINR !== null && p.discountPercentage !== null
-          
-          return (
-            <Card 
-              key={p.name} 
-              className={`relative flex flex-col ${
-                p.popular 
-                  ? `border-2 border-blue-500 shadow-lg md:scale-105` 
-                  : 'border hover:shadow-md transition-shadow'
-              }`}
-            >
-              {/* Popular badge */}
-              {p.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                  <span className="inline-flex items-center rounded-full bg-blue-500 px-3 py-0.5 text-xs font-bold text-white whitespace-nowrap">
-                    MOST POPULAR
-                  </span>
-                </div>
-              )}
-
-              {/* Discount badge */}
-              {hasDiscount && (
-                <div className="absolute -top-2 -right-2 z-10">
-                  <span className="inline-flex items-center rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white">
-                    -{p.discountPercentage}%
-                  </span>
-                </div>
-              )}
-              
-              <CardHeader className="pb-3">
-                {/* Title */}
-                <div className="flex items-center gap-2 mb-2">
-                  <CardTitle className="text-base sm:text-lg">{p.name}</CardTitle>
-                </div>
-                
-                {/* Price */}
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl sm:text-3xl font-bold">
-                    ₹{p.priceINR || "Custom"}
-                  </span>
-                  {hasDiscount && (
-                    <span className="text-sm sm:text-base text-muted-foreground line-through">
-                      ₹{p.originalPriceINR}
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">{p.description}</p>
-              </CardHeader>
-
-              <CardContent className="flex-1 py-3">
-                <ul className="space-y-1.5">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex gap-2 text-xs sm:text-sm">
-                      <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-foreground/80">{f}</span>
-                    </li>
-                  ))}
-                  {/* {p.features.length > 5 && (
-                    <li className="text-xs text-muted-foreground pl-6">
-                      +{p.features.length - 5} more features
-                    </li>
-                  )} */}
-                </ul>
-              </CardContent>
-
-              <CardFooter className="flex flex-col gap-2 pt-3">
-                <PaymentButton
-                  amount={p.priceINR}
-                  originalAmount={p.originalPriceINR || undefined}
-                  planName={p.name}
-                  buttonText={index === 2 ? "Coming Soon" : "Get Access"}
-                  className={`w-full h-10 text-sm font-semibold ${
-                    p.popular 
-                      ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                      : 'bg-primary text-primary-foreground hover:bg-primary/90'
-                  }`}
-                  disabled={index === 2}
-                />
-                
-                <Link href="/preview" className="w-full">
-                  <button className="w-full h-9 inline-flex items-center justify-center rounded-md border text-xs font-medium hover:bg-accent/50 transition-colors">
-                    <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  Preview Content
-                  </button>
-                </Link>
-              </CardFooter>
-            </Card>
-          )
-        })}
+    <section id="pricing" className="relative py-16 md:py-24 overflow-hidden">
+      {/* Premium background */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50/50" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
       </div>
 
-      {/* Bottom note */}
-      <p className="text-center text-xs sm:text-sm text-muted-foreground mt-8">
-        ✓ Instant access after payment • ✓ Lifetime updates included • ✓ 100% genuine content
-      </p>
+      <div className="mx-auto max-w-7xl px-4">
+        {/* Header */}
+        <header className="text-center mb-12">
+          {/* Limited time badge */}
+          <div className="inline-flex items-center gap-2 mb-6 animate-bounce">
+            <Badge className="bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 px-4 py-1.5 text-xs font-bold shadow-lg">
+              <Sparkles className="w-4 h-4 mr-1.5 animate-pulse" />
+              LIMITED TIME: {discount_percentage}% OFF ALL KITS
+            </Badge>
+          </div>
+          
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <span className="text-gray-900">Invest in Your</span>
+            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent ml-2">
+              Future
+            </span>
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            One-time payment, lifetime value. Join thousands who've landed their dream jobs.
+          </p>
+
+          {/* Value props */}
+          {/* <div className="mt-8 flex justify-center items-center gap-8 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+                <Check className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs text-gray-500">Instant</p>
+                <p className="text-sm font-semibold">Download</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center shadow-lg">
+                <Shield className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs text-gray-500">Secure</p>
+                <p className="text-sm font-semibold">Payment</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                <Clock className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs text-gray-500">Lifetime</p>
+                <p className="text-sm font-semibold">Access</p>
+              </div>
+            </div>
+          </div> */}
+        </header>
+
+        {/* Pricing Cards */}
+        <div className="grid gap-8 md:grid-cols-3 lg:gap-10 mb-12">
+          {plans.map((plan, index) => {
+            const isHovered = hoveredCard === index;
+            
+            return (
+              <div
+                key={plan.name}
+                className={`relative ${plan.popular ? 'md:-mt-4' : ''}`}
+                onMouseEnter={() => setHoveredCard(index)}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                {/* Popular glow effect */}
+                {plan.popular && (
+                  <div className="absolute -inset-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-3xl opacity-20 blur-2xl animate-pulse" />
+                )}
+
+                <Card 
+                  className={`
+                    relative h-full transition-all duration-500 border-0 rounded-2xl
+                    ${isHovered ? 'transform -translate-y-2 scale-[1.02]' : ''}
+                    ${plan.comingSoon ? 'opacity-90' : ''}
+                  `}
+                  style={{
+                    background: `linear-gradient(135deg, ${plan.bgGradient})`,
+                    boxShadow: isHovered 
+                      ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' 
+                      : '0 10px 30px -10px rgba(0, 0, 0, 0.15)'
+                  }}
+                >
+                  {/* Card background gradient */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${plan.bgGradient} opacity-50 rounded-2xl`} />
+
+                  {/* Top badges */}
+                  <div className="absolute -top-3 left-0 right-0 flex justify-center gap-2 z-20">
+                    {plan.popular && (
+                      <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0 px-4 py-1 text-xs font-bold shadow-lg">
+                        <Star className="w-3 h-3 mr-1 fill-white" />
+                        MOST POPULAR
+                      </Badge>
+                    )}
+                    {plan.badge && !plan.popular && (
+                      <Badge className="bg-white/90 backdrop-blur text-gray-700 border-0 px-3 py-1 text-xs font-semibold shadow-md">
+                        {plan.badge}
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Discount corner badge */}
+                  {!plan.comingSoon && (
+                    <div className="absolute -top-2 -right-2 z-20">
+                      <div className="bg-gradient-to-r from-red-500 to-rose-500 text-white text-sm px-3 py-1.5 rounded-full font-bold shadow-lg transform rotate-3 hover:rotate-6 transition-transform">
+                        -{plan.discountPercentage}%
+                      </div>
+                    </div>
+                  )}
+
+                  <CardHeader className="relative z-10 pb-4">
+                    {/* Icon */}
+                    <div className="mb-4">
+                      <div className={`w-16 h-16 bg-gradient-to-br ${plan.color} rounded-2xl flex items-center justify-center shadow-lg mx-auto transform ${isHovered ? 'rotate-6 scale-110' : ''} transition-all duration-300`}>
+                        <div className="text-white">{plan.icon}</div>
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <CardTitle className="text-xl font-bold text-center text-gray-900 mb-2">
+                      {plan.name}
+                    </CardTitle>
+                    <p className="text-sm text-gray-600 text-center">{plan.description}</p>
+
+                    {/* Quick highlights */}
+                    <div className="flex flex-wrap gap-1 justify-center mt-3">
+                      {plan.highlights.map((highlight, idx) => (
+                        <Badge key={idx} variant="secondary" className="text-[10px] px-2 py-0.5 bg-white/70">
+                          {highlight}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="relative z-10 py-4">
+                    {/* Price section */}
+                    <div className="text-center mb-6">
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <span className="text-4xl font-black text-gray-900">
+                          ₹{plan.priceINR}
+                        </span>
+                        <div className="text-left">
+                          <div className="text-xs text-gray-500 line-through">₹{plan.originalPriceINR}</div>
+                          <div className="text-xs font-semibold text-green-600">Save ₹{plan.savings}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Features list - Show all with better design */}
+                    <div className="space-y-0 bg-white/50 rounded-xl p-3">
+                      {plan.features.map((feature, idx) => (
+                        <div 
+                          key={idx} 
+                          className={`flex items-start gap-2 py-1.5 ${idx !== plan.features.length - 1 ? 'border-b border-gray-100' : ''}`}
+                        >
+                          <div className={`w-4 h-4 rounded-full bg-gradient-to-br ${plan.color} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                            <Check className="w-2.5 h-2.5 text-white" />
+                          </div>
+                          <span className="text-xs text-gray-700 leading-relaxed">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+
+                  <CardFooter className="relative z-10 flex flex-col gap-3 pt-4">
+                    {/* CTA Button */}
+                    {!plan.comingSoon ? (
+                      <>
+                        <PaymentButton
+                          amount={plan.priceINR}
+                          originalAmount={plan.originalPriceINR}
+                          planName={plan.fullName}
+                          buttonText="Get Instant Access"
+                          className={`
+                            w-full h-12 text-sm font-bold shadow-lg
+                            ${plan.popular 
+                              ? `bg-gradient-to-r ${plan.color} text-white hover:shadow-xl` 
+                              : 'bg-gray-900 text-white hover:bg-gray-800'
+                            }
+                            transform transition-all duration-300 hover:scale-[1.02]
+                            ${isHovered ? 'shadow-xl' : ''}
+                          `}
+                          disabled={false}
+                        />
+                        
+                        {/* Preview link - Only for JS Kit */}
+                        {plan.previewUrl && (
+                          <Link href={plan.previewUrl} className="w-full">
+                            <button className="w-full h-10 inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-200 bg-white/70 backdrop-blur text-sm font-medium hover:bg-gray-50 transition-all group">
+                              <Eye className="w-4 h-4" />
+                              Preview Content
+                              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                          </Link>
+                        )}
+                      </>
+                    ) : (
+                      <button 
+                        disabled 
+                        className="w-full h-12 text-sm font-bold bg-gray-300 text-gray-600 rounded-lg cursor-not-allowed"
+                      >
+                        Coming Soon
+                      </button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Bottom section */}
+        <div className="text-center">
+          <div className="inline-flex items-center gap-8 px-8 py-4 bg-white/80 backdrop-blur rounded-full shadow-lg">
+            <div className="flex items-center gap-2 text-sm">
+              <TrendingUp className="w-4 h-4 text-green-500" />
+              <span className="text-gray-700">2,500+ Placed</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+              <span className="text-gray-700">4.9/5 Rating</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <Shield className="w-4 h-4 text-blue-500" />
+              <span className="text-gray-700">Secure Checkout</span>
+            </div>
+          </div>
+
+          <p className="mt-8 text-sm text-gray-500">
+            🔒 SSL Secured • 💳 Multiple Payment Options • 📧 Instant Email Delivery
+          </p>
+        </div>
+      </div>
     </section>
   )
 }
@@ -228,31 +354,35 @@ export function Pricing() {
 // Skeleton loader for pricing section
 function PricingSkeletonLoader() {
   return (
-    <section id="pricing" className="mx-auto max-w-7xl px-4 py-12 md:py-20">
-      <div className="text-center mb-8">
-        <Skeleton className="h-8 w-48 mx-auto mb-4" />
-        <Skeleton className="h-10 w-64 mx-auto mb-2" />
-        <Skeleton className="h-6 w-48 mx-auto" />
+    <section className="mx-auto max-w-7xl px-4 py-16">
+      <div className="text-center mb-12">
+        <Skeleton className="h-8 w-64 mx-auto mb-4" />
+        <Skeleton className="h-12 w-96 mx-auto mb-2" />
+        <Skeleton className="h-6 w-64 mx-auto" />
       </div>
       
-      <div className="grid gap-4 md:gap-6 md:grid-cols-3">
+      <div className="grid gap-8 md:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <Card key={i} className="relative flex flex-col">
-            <CardHeader>
-              <Skeleton className="h-6 w-3/4 mb-2" />
-              <Skeleton className="h-10 w-24" />
-            </CardHeader>
-            <CardContent className="flex-1">
-              <div className="space-y-2">
-                {[1, 2, 3, 4, 5].map((j) => (
-                  <Skeleton key={j} className="h-4 w-full" />
-                ))}
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Skeleton className="h-10 w-full" />
-            </CardFooter>
-          </Card>
+          <div key={i} className="relative">
+            <Card className="h-full">
+              <CardHeader>
+                <Skeleton className="h-16 w-16 mx-auto mb-4 rounded-2xl" />
+                <Skeleton className="h-6 w-3/4 mx-auto mb-2" />
+                <Skeleton className="h-4 w-1/2 mx-auto" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-10 w-32 mx-auto mb-4" />
+                <div className="space-y-2">
+                  {[1, 2, 3, 4, 5].map((j) => (
+                    <Skeleton key={j} className="h-4 w-full" />
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Skeleton className="h-12 w-full" />
+              </CardFooter>
+            </Card>
+          </div>
         ))}
       </div>
     </section>
