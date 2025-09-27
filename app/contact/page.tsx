@@ -217,7 +217,7 @@ export default function ContactPage() {
             <div className="bg-white rounded-lg p-6 border">
               <h3 className="font-semibold mb-2">How do I access my purchased materials?</h3>
               <p className="text-sm text-muted-foreground">
-                You'll receive an email with download links within 5 minutes of payment. 
+                You'll receive an email with Google drive link and access instantly after the payment completion.
                 Check your spam folder if you don't see it.
               </p>
             </div>

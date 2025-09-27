@@ -9,7 +9,7 @@ const faqData = [
   },
   {
     question: "How do I access the content?",
-    answer: "You'll get instant download links after payment. Access your materials anytime, anywhere.",
+    answer: "You'll receive an email with Google drive link and access instantly after the payment completion. Check your spam folder if you don't see it.",
     icon: "📥"
   },
   {
