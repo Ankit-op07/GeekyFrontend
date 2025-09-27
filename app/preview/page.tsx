@@ -180,7 +180,7 @@ export default function ContentPreviewPage() {
       {/* Hero Section */}
       <section className="px-4 py-6 text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-red-100 dark:bg-red-900/30 px-3 py-1 text-xs font-bold text-red-600 dark:text-red-400 mb-4 animate-pulse">
-          🔥 50% OFF - Limited Time
+          🔥 {discount_percentage}% OFF - Limited Time
         </div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
           <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -224,7 +224,7 @@ export default function ContentPreviewPage() {
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="text-3xl font-bold">{activeKitData.price}</span>
                 <span className="text-sm line-through opacity-70">{activeKitData.originalPrice}</span>
-                <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">SAVE 50%</span>
+                <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">SAVE {discount_percentage}%</span>
               </div>
               <p className="text-xs mt-1 opacity-90">{activeKitData.tagline}</p>
             </div>
@@ -317,7 +317,7 @@ export default function ContentPreviewPage() {
         <div className="max-w-2xl mx-auto">
           <Link href="/#pricing">
             <button className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition-transform">
-              Get Instant Access - {activeKitData.price} (50% OFF)
+              Get Instant Access - {activeKitData.price} ({discount_percentage}% OFF)
             </button>
           </Link>
         </div>
