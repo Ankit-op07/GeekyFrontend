@@ -92,7 +92,7 @@ export function FAQ() {
         </div>
 
         {/* Contact CTA */}
-        <div className="mt-8 text-center p-6 bg-secondary/10 rounded-lg">
+        {/* <div className="mt-8 text-center p-6 bg-secondary/10 rounded-lg">
           <h3 className="text-base font-semibold mb-2">Still have questions?</h3>
           <a
             href="https://www.instagram.com/geeky_frontend/"
@@ -105,7 +105,7 @@ export function FAQ() {
             </svg>
             Contact on Instagram
           </a>
-        </div>
+        </div> */}
       </div>
     </section>
   )

@@ -166,7 +166,7 @@ export default function PrivacyPage() {
             </p>
             <div className="mt-3 space-y-1 text-muted-foreground">
               <p>Email: support@geekyfrontend.com</p>
-              <p>Instagram: @geeky_frontend</p>
+              {/* <p>Instagram: @geeky_frontend</p> */}
               <p>Location: Jaipur, Rajasthan, India</p>
             </div>
           </section>

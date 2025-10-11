@@ -68,7 +68,7 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
+              {/* <div className="flex items-start gap-4">
                 <div className="p-3 bg-purple-100 rounded-lg">
                   <Instagram className="w-5 h-5 text-purple-600" />
                 </div>
@@ -86,7 +86,7 @@ export default function ContactPage() {
                     Best for: Updates, success stories, tips
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-orange-100 rounded-lg">
