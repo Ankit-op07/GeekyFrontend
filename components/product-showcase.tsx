@@ -49,7 +49,7 @@ const products: Product[] = [
   },
   {
     id: "react-kit",
-    title: "Reactjs Interview Preparation Kit",
+    title: "Complete Frontend Interview Preparation Kit",
     shortTitle: "Complete Frontend Kit",
     price: {
       current: 99,
@@ -68,7 +68,7 @@ const products: Product[] = [
   },
   {
     id: "complete-frontend",
-    title: "Frontend Mastery Pro Interview Kit",
+    title: "Frontend Mastery Pro Interview Preparation Kit",
     shortTitle: "Frontend Mastery Pro Kit",
     price: {
       current: 149,
