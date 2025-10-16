@@ -3,11 +3,11 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowRight, Sparkles, Users, Star, Zap, TrendingUp, Clock, Flame, Code2, Atom, Server, Briefcase } from "lucide-react"
+import { ArrowRight, Sparkles, Users, Star, Zap, TrendingUp, Clock, Flame, Code2, Atom, Server, Briefcase, Binary,Boxes, } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { PaymentButton } from '@/components/payment-button';
+import { PaymentButton } from "@/components/payment-button"
 
 export interface Product {
   id: string
@@ -33,8 +33,8 @@ const products: Product[] = [
     title: "JS Interview Preparation Kit",
     shortTitle: "JavaScript Interview Kit",
     price: {
-      current: 49,
-      original: 499
+      current: 99,
+      original: 999
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 via-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
@@ -52,8 +52,8 @@ const products: Product[] = [
     title: "Reactjs Interview Preparation Kit",
     shortTitle: "React.js Interview Kit",
     price: {
-      current: 79,
-      original: 799
+      current: 129,
+      original: 1299
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 via-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -71,8 +71,8 @@ const products: Product[] = [
     title: "Complete Frontend Interview Preparation Kit",
     shortTitle: "Complete Frontend Interview Kit",
     price: {
-      current: 99,
-      original: 999
+      current: 149,
+      original: 1499
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 rounded-2xl flex items-center justify-center shadow-lg">
@@ -106,6 +106,26 @@ const products: Product[] = [
     tag: "Backend"
   },
   {
+    id: "dsa-kit",
+    title: "DSA Interview Preparation Kit",
+    shortTitle: "DSA Interview Kit",
+    price: {
+      current: 199,
+      original: 1999
+    },
+    // Choose Binary as primary; swap to <Boxes /> if preferred
+    icon: (
+      <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-600 rounded-2xl flex items-center justify-center shadow-lg">
+        <Boxes className="w-8 h-8 text-white drop-shadow" />
+      </div>
+    ),
+    bgGradient: "from-indigo-50 via-white to-violet-50",
+    iconBg: "bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-600",
+    studentsCount: 156,
+    discount: 90,
+    tag: "Data Structures & Algorithms"
+  },
+  {
     id: "interview-experiences",
     title: "Interview Experiences",
     shortTitle: "Interview Experiences",
@@ -120,10 +140,9 @@ const products: Product[] = [
     ),
     bgGradient: "from-indigo-50 via-white to-purple-50",
     iconBg: "bg-gradient-to-br from-indigo-500 to-purple-600",
-    comingSoon: true,
     discount: 90,
     tag: "Insights"
-  }
+  },
 ]
 
 export function ProductsShowcase() {
@@ -146,7 +165,7 @@ export function ProductsShowcase() {
               LIMITED TIME: 90% OFF
             </Badge>
           </div>
-          
+
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
             Choose Your
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent ml-2">
@@ -163,28 +182,28 @@ export function ProductsShowcase() {
           {products.map((product) => (
             <div
               key={product.id}
-            //   href={`/products/${product.id}`}
               className="group block h-full"
-            //   onMouseEnter={() => setHoveredCard(product.id)}
-            //   onMouseLeave={() => setHoveredCard(null)}
+              // onMouseEnter={() => setHoveredCard(product.id)}
+              // onMouseLeave={() => setHoveredCard(null)}
             >
-              <div className={`
-                relative h-full bg-white rounded-2xl p-4 transition-all duration-500
-                ${hoveredCard === product.id 
-                  ? 'transform -translate-y-2 scale-[1.02]' 
-                  : 'hover:-translate-y-1'
-                }
-                ${product.comingSoon ? 'opacity-85' : ''}
-              `}
-              style={{
-                boxShadow: hoveredCard === product.id 
-                  ? '0 20px 40px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.03)' 
-                  : '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.02)'
-              }}
+              <div
+                className={`
+                  relative h-full bg-white rounded-2xl p-4 transition-all duration-500
+                  ${hoveredCard === product.id 
+                    ? 'transform -translate-y-2 scale-[1.02]' 
+                    : 'hover:-translate-y-1'
+                  }
+                  ${product.comingSoon ? 'opacity-85' : ''}
+                `}
+                style={{
+                  boxShadow: hoveredCard === product.id 
+                    ? '0 20px 40px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.03)' 
+                    : '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.02)'
+                }}
               >
                 {/* Subtle gradient background */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${product.bgGradient} opacity-40 rounded-2xl`} />
-                
+
                 {/* Popular badge - Elegant placement */}
                 {product.popular && (
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
@@ -193,15 +212,6 @@ export function ProductsShowcase() {
                     </Badge>
                   </div>
                 )}
-
-                {/* Coming Soon overlay */}
-                {/* {product.comingSoon && (
-                  <div className="absolute inset-0 bg-gray-900/10 rounded-2xl z-10 flex items-center justify-center">
-                    <Badge className="bg-white/90 text-gray-700 text-xs px-3 py-1.5 font-bold shadow-lg">
-                      COMING SOON
-                    </Badge>
-                  </div>
-                )} */}
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col h-full">
@@ -263,11 +273,11 @@ export function ProductsShowcase() {
                     </div>
 
                     {/* CTA Button - Premium style */}
-                   <PaymentButton
-                          amount={product.price.current}
-                          originalAmount={product.price.original}
-                          planName={product.title}
-                          buttonText="Get Access"
+                    <PaymentButton
+                      amount={product.price.current}
+                      originalAmount={product.price.original}
+                      planName={product.title}
+                      buttonText="Get Access"
                       className={`
                         w-full h-9 text-xs font-bold
                         ${product.comingSoon 
@@ -278,7 +288,7 @@ export function ProductsShowcase() {
                         group/btn relative overflow-hidden rounded-lg
                       `}
                       disabled={product.comingSoon}
-                        />
+                    />
                   </div>
                 </div>
               </div>
@@ -314,12 +324,8 @@ export function ProductsShowcase() {
 
       <style jsx>{`
         @keyframes spin-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
         .animate-spin-slow {
           animation: spin-slow 8s linear infinite;

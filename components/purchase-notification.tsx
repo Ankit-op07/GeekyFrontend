@@ -45,7 +45,7 @@ const products = [
     id: "js", 
     name: "JavaScript Interview Preparation Kit", 
     shortName: "JS Kit",
-    price: 49,
+    price: 99,
     color: "from-yellow-400 to-orange-400"
   },
 //   { 
@@ -59,7 +59,7 @@ const products = [
     id: "complete", 
     name: "Complete Frontend Interview Preparation Kit", 
     shortName: "Complete Kit",
-    price: 99,
+    price: 149,
     color: "from-purple-400 to-pink-400"
   },
 //   { 
