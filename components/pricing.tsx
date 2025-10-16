@@ -49,9 +49,9 @@ export function Pricing() {
       highlights: ["500+ Questions", "Quick Notes", "Weekly Updates"]
     },
     {
-      name: "Complete Frontend Kit",
-      fullName: "Complete Frontend Interview Preparation Kit",
-      description: "Everything you need to succeed",
+      name: "Frontend Mastery Pro Interview Kit",
+      fullName: "Frontend Mastery Pro Interview Preparation Kit",
+      description: "Everything you need to crack frontend interviews",
       priceINR: complete_kit_price,
       originalPriceINR: complete_kit_original_price,
       discountPercentage: discount_percentage,
@@ -72,6 +72,7 @@ export function Pricing() {
         "DSA for Frontend: Must know problems",
         "Machine coding practice: components & mini-apps",
         "Cold Email Templates and How to Cold email guide (Bonus)",
+        "Include Real Interview Experiences ",
         "Regular updates included",
         "Lifetime access",
       ],

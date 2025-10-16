@@ -33,8 +33,8 @@ const products: Product[] = [
     title: "JS Interview Preparation Kit",
     shortTitle: "JavaScript Interview Kit",
     price: {
-      current: 99,
-      original: 999
+      current: 79,
+      original: 799
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 via-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
@@ -50,10 +50,10 @@ const products: Product[] = [
   {
     id: "react-kit",
     title: "Reactjs Interview Preparation Kit",
-    shortTitle: "React.js Interview Kit",
+    shortTitle: "Complete Frontend Kit",
     price: {
-      current: 129,
-      original: 1299
+      current: 99,
+      original: 999
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 via-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -68,8 +68,8 @@ const products: Product[] = [
   },
   {
     id: "complete-frontend",
-    title: "Complete Frontend Interview Preparation Kit",
-    shortTitle: "Complete Frontend Interview Kit",
+    title: "Frontend Mastery Pro Interview Kit",
+    shortTitle: "Frontend Mastery Pro Kit",
     price: {
       current: 149,
       original: 1499
