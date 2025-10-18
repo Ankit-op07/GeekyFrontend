@@ -4,7 +4,7 @@ export function appConstants() {
     return {
         // current prices
         js_kit_price: 49,
-        complete_kit_price: 99,
+        complete_kit_price: 39,
         experiences_kit_price: 299,
         react_kit_price: 79,
         node_kit_price: 149,
