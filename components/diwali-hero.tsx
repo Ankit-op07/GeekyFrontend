@@ -174,7 +174,7 @@ export function DiwaliHero() {
           <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500/20 to-yellow-500/20 border border-yellow-400/50 px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-bold mb-3 sm:mb-4 backdrop-blur-sm">
             <span className="text-base sm:text-lg animate-bounce">🪔</span>
             <span className="bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent text-xs sm:text-sm">
-              Happy Diwali! Special Festive Offer
+              Happy Diwali! Special Festive Offer 90% OFF on All Interview Kits
             </span>
             <span className="text-base sm:text-lg animate-bounce" style={{ animationDelay: '0.3s' }}>✨</span>
           </div>
