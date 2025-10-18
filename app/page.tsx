@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/site-header"
 import { NotificationBanner } from "@/components/notification-banner"
 import { Hero } from "@/components/hero"
+import { DiwaliHero } from "@/components/diwali-hero"
 import { Inside } from "@/components/inside"
 import { SiteFooter } from "@/components/site-footer"
 import { Features } from "@/components/features"
@@ -11,13 +12,15 @@ import { ContentPreview } from "@/components/content-preview"
 import { AIChatbot } from "@/components/ai-chatbot";
 import { ProductsShowcase } from "@/components/product-showcase"
 import { ImageProductsShowcase } from "@/components/image-product-showcase"
+import { NamasteReactSection } from "@/components/namaste-react-section"
 
 export default function Page() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
       <SiteHeader />
       {/* <NotificationBanner /> */}
-      <Hero />
+            {/* <NamasteReactSection /> */}
+      <DiwaliHero />
       <ProductsShowcase />
       {/* <ImageProductsShowcase/> */}
       
