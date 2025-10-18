@@ -3,7 +3,7 @@
 export function appConstants() {
     return {
         // current prices
-        js_kit_price: 79,
+        js_kit_price: 99,
         complete_kit_price: 149,
         experiences_kit_price: 299,
         react_kit_price: 129,
@@ -12,7 +12,7 @@ export function appConstants() {
         mern_kit_price: 199,
         mern_project_bundle_price: 99,
         //original prices
-        js_kit_original_price: 799,
+        js_kit_original_price: 999,
         complete_kit_original_price: 1499,
         experiences_kit_original_price: 2999,
         react_kit_original_price: 1299,
