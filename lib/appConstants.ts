@@ -3,19 +3,19 @@
 export function appConstants() {
     return {
         // current prices
-        js_kit_price: 99,
-        complete_kit_price: 149,
+        js_kit_price: 49,
+        complete_kit_price: 99,
         experiences_kit_price: 299,
-        react_kit_price: 129,
+        react_kit_price: 79,
         node_kit_price: 149,
         dsa_kit_price: 199,
         mern_kit_price: 199,
         mern_project_bundle_price: 99,
         //original prices
-        js_kit_original_price: 999,
-        complete_kit_original_price: 1499,
+        js_kit_original_price: 499,
+        complete_kit_original_price: 999,
         experiences_kit_original_price: 2999,
-        react_kit_original_price: 1299,
+        react_kit_original_price: 79,
         node_kit_original_price: 149,
         dsa_kit_original_price: 199,
         mern_kit_original_price: 199,
