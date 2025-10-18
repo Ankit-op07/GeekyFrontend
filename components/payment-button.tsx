@@ -230,9 +230,7 @@ export function PaymentButton({
 
             {/* Secure Payment Text */}
             <p className="text-center text-xs text-muted-foreground pt-2">
-              🔒 Secure payment via Razorpay<br>
-              </br>
-              💡 Please return to this screen after payment to receive course access.
+              🔒 Secure payment via Razorpay
             </p>
           </div>
         </DialogContent>
