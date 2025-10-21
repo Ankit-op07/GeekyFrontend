@@ -20,7 +20,7 @@ export default function Page() {
       <SiteHeader />
       {/* <NotificationBanner /> */}
             {/* <NamasteReactSection /> */}
-      <DiwaliHero />
+      <Hero />
       <ProductsShowcase />
       {/* <ImageProductsShowcase/> */}
       
