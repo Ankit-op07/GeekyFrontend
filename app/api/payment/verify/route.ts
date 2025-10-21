@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       'Complete Frontend Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!,
       'Frontend Interview Experiences Kit': process.env.EXPERIENCES_KIT_FOLDER_ID!,
       'Reactjs Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!,
-      'Node.js Interview Preparation Kit': process.env.JS_KIT_FOLDER_ID!,
+      'Node.js Interview Preparation Kit': process.env.NODEJS_KIT_FOLDER_ID!,
     };
 
     const folderId = folderIds[planName];
