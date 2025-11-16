@@ -962,7 +962,7 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   <p className="text-sm text-green-600 font-medium mt-2">
-                    You save ₹{savings.toLocaleString()} today!
+                    You save ₹{kit.originalPrice - kit.price} today!
                   </p>
                 </div>
 
@@ -1225,7 +1225,7 @@ export default function CheckoutPage() {
                 <span className="text-base sm:text-lg font-bold">₹{kit.price}</span>
                 <span className="text-xs line-through text-muted-foreground">₹{kit.originalPrice}</span>
               </div>
-              <p className="text-xs text-green-600 font-medium truncate">{kit.discount}% OFF • Save ₹{savings.toLocaleString()}</p>
+              <p className="text-xs text-green-600 font-medium truncate">{kit.discount}% OFF • Save ₹{kit.originalPrice - kit.price}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
