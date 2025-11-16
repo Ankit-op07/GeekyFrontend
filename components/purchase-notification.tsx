@@ -62,13 +62,13 @@ const products = [
     price: 99,
     color: "from-purple-400 to-pink-400"
   },
-//   { 
-//     id: "node", 
-//     name: "Node.js Interview Kit", 
-//     shortName: "Node.js Kit",
-//     price: 89,
-//     color: "from-green-400 to-emerald-400"
-//   }
+  { 
+    id: "node", 
+    name: "Node.js Backend Mastery Kit", 
+    shortName: "Node.js Interview Kit",
+    price: 299,
+    color: "from-green-400 to-emerald-400"
+  }
 ]
 
 // Time variations for authenticity

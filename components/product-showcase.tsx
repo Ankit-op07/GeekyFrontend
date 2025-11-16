@@ -91,8 +91,8 @@ const products: Product[] = [
     title: "Node.js Interview Preparation Kit",
     shortTitle: "Node.js Interview Kit",
     price: {
-      current: 149,
-      original: 1499
+      current: 299,
+      original: 2999
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -101,7 +101,7 @@ const products: Product[] = [
     ),
     bgGradient: "from-green-50 via-white to-emerald-50",
     iconBg: "bg-gradient-to-br from-green-500 to-emerald-600",
-    studentsCount: 1456,
+    studentsCount: 6500,
     discount: 90,
     tag: "Backend"
   },
