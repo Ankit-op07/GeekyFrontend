@@ -467,7 +467,7 @@ const kitsData: Record<string, KitDetails> = {
   },
   nodejs: {
     id: "nodejs",
-    name: "Node.js Backend Mastery Kit",
+    name: "Node.js Interview Preparation Kit",
     tagline: "Interview Questions from Real FAANG & Product Company Interviews",
     price: 299,
     originalPrice: 2999,

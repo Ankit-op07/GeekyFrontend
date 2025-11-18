@@ -59,6 +59,33 @@ export function PaymentButton({
     }
   };
 
+  // Function to send conversion event to Meta
+  const trackMetaConversion = async (email: string, name: string) => {
+    try {
+      await fetch('/api/conversion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_name: 'Purchase',
+          user_data: {
+            em: email, // Will be hashed server-side
+            ph: null,
+          },
+          custom_data: {
+            currency: 'INR',
+            value: amount.toString(),
+            content_type: 'course',
+            content_ids: ['nodejs-interview-kit'],
+            content_name: planName,
+          },
+        }),
+      });
+    } catch (error) {
+      console.error('Meta conversion tracking error:', error);
+      // Don't block user flow if tracking fails
+    }
+  };
+
   const handlePayment = async () => {
     // Validate email
     if (!userDetails.email) {
@@ -71,16 +98,21 @@ export function PaymentButton({
     }
 
     setIsProcessing(true);
-    setTimeout(()=>{
-          setIsOpen(false);
-    },1000)
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 1000);
     
     await initiatePayment({
       amount,
       planName,
       userEmail: userDetails.email,
       userName: userDetails.name,
-      onSuccess: (response) => {
+      onSuccess: async (response) => {
+        // Track Meta conversion on successful payment
+        if(planName === "Node.js Interview Preparation Kit"){
+        await trackMetaConversion(userDetails.email, userDetails.name);
+        }
+        
         setUserDetails({ email: '', name: '' });
         setIsProcessing(false);
         
@@ -101,7 +133,7 @@ export function PaymentButton({
     // Reset processing state after timeout (fallback)
     setTimeout(() => {
       setIsProcessing(false);
-    }, 30000); // 30 seconds timeout
+    }, 30000);
   };
 
   return (
