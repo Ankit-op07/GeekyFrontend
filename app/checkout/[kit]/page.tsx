@@ -1059,12 +1059,12 @@ export default function CheckoutPage() {
                     </p>
                   </div>
 
-                  <div className="text-center">
+                  {/* <div className="text-center">
                     <p className="text-xs text-muted-foreground break-words">
                       Questions? Contact{' '}
                       <a href="https://wa.me/919166011247" className="text-primary underline">WhatsApp</a>
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </Card>
 

@@ -48,7 +48,7 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
+              {/* <div className="flex items-start gap-4">
                 <div className="p-3 bg-green-100 rounded-lg">
                   <MessageCircle className="w-5 h-5 text-green-600" />
                 </div>
@@ -66,7 +66,7 @@ export default function ContactPage() {
                     Best for: Quick support, payment issues
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               {/* <div className="flex items-start gap-4">
                 <div className="p-3 bg-purple-100 rounded-lg">
@@ -257,7 +257,7 @@ export default function ContactPage() {
             Our support team typically responds within 2-4 hours during business hours
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
+            {/* <a 
               href="https://wa.me/919166011247" 
               target="_blank"
               rel="noopener noreferrer"
@@ -265,9 +265,9 @@ export default function ContactPage() {
             >
               <MessageCircle className="w-4 h-4" />
               WhatsApp Us
-            </a>
+            </a> */}
             <a 
-              href="mailto:support@geekyfrontend.com" 
+              href="mailto:geekyfrontend@gmail.com" 
               className="inline-flex items-center justify-center gap-2 px-6 py-3 border rounded-lg font-medium hover:bg-accent"
             >
               <Mail className="w-4 h-4" />
