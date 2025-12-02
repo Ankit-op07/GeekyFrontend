@@ -52,8 +52,8 @@ const products: Product[] = [
     title: "Reactjs Interview Preparation Kit",
     shortTitle: "React.js Interview Kit",
     price: {
-      current: 79,
-      original: 799
+      current: 199,
+      original: 1999
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 via-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -62,7 +62,7 @@ const products: Product[] = [
     ),
     bgGradient: "from-blue-50 via-white to-cyan-50",
     iconBg: "bg-gradient-to-br from-cyan-400 to-blue-600",
-    studentsCount: 1823,
+    studentsCount: 11340,
     discount: 90,
     tag: "Framework"
   },

@@ -17,7 +17,7 @@ import {
   BookOpen, Code, Zap, Target, Gift, AlertCircle, Lock,
   ChevronRight, Sparkles, Trophy, Rocket, Brain,
   FileText, Video, Download, RefreshCw, HeartHandshake,
-  ArrowLeft, CreditCard, X
+  ArrowLeft, CreditCard, X, Atom, Mail
 } from "lucide-react"
 
 interface KitDetails {
@@ -69,6 +69,7 @@ interface KitDetails {
   }[]
 }
 
+const { react_kit_price, react_kit_original_price } = appConstants()
 /* ---------- Custom Node SVG Icon (inline) ---------- */
 function NodeIcon({ size = 36 }: { size?: number }) {
   return (
@@ -217,25 +218,25 @@ const kitsData: Record<string, KitDetails> = {
     id: "react",
     name: "React Interview Mastery Kit",
     tagline: "Land your dream React job with confidence",
-    price: 49,
-    originalPrice: 499,
+    price: react_kit_price,
+    originalPrice: react_kit_original_price,
     discount: 90,
-    icon: <Code className="w-6 h-6" />,
+    icon: <Atom className="w-8 h-8 text-white drop-shadow animate-spin-slow" />,
     color: "from-blue-500 to-cyan-500",
     bgGradient: "from-blue-50 via-white to-cyan-50",
-    students: 3421,
+    students: 11340,
     rating: 4.9,
     reviews: 634,
     lastUpdated: "Updated yesterday",
     features: [
       {
         icon: <Target className="w-5 h-5" />,
-        title: "400+ React Questions",
+        title: "500+ ReactJS Interview Questions",
         description: "From hooks to performance optimization"
       },
       {
         icon: <Rocket className="w-5 h-5" />,
-        title: "Real Interview Scenarios",
+        title: "ReactJS System Design Questions",
         description: "Asked at Meta, Netflix, Airbnb"
       },
       {
@@ -247,28 +248,84 @@ const kitsData: Record<string, KitDetails> = {
         icon: <Sparkles className="w-5 h-5" />,
         title: "State Management",
         description: "Redux, Context, Zustand patterns"
+      },
+      {
+        icon: <FileText className="w-5 h-5" />,
+        title: "Cheatsheets & Revision Notes",
+        description: "Short Notes, Just before interview handbook, Handwritten notes"
+      },
+      {
+        icon: <Mail className="w-5 h-5" />,
+        title: "Resume and Cold Email Templates",
+        description: "Faang Resumes and Cold email templates that worked"
       }
     ],
     curriculum: [
       {
         module: "React Fundamentals",
-        topics: ["Components", "Props & State", "Lifecycle", "Events", "Conditional Rendering"],
+        topics: [
+          "Components & Props",
+          "State & Lifecycle",
+          "Event Handling",
+          "Conditional Rendering",
+          "Lists & Keys",
+          "JSX & Rendering Logic"
+        ],
         hours: 6
       },
       {
-        module: "Hooks Mastery",
-        topics: ["useState", "useEffect", "useContext", "useReducer", "Custom Hooks"],
+        module: "Hooks Deep Dive",
+        topics: [
+          "useState, useEffect, useRef",
+          "Custom Hooks",
+          "Rules of Hooks",
+          "Performance with Hooks",
+          "useContext, useReducer",
+          "Advanced Patterns"
+        ],
         hours: 7
       },
       {
-        module: "Advanced Patterns",
-        topics: ["HOCs", "Render Props", "Compound Components", "Context Patterns"],
+        module: "State Management",
+        topics: [
+          "Redux Essentials",
+          "Context API",
+          "Zustand & Alternatives",
+          "State Design Patterns",
+          "Global vs Local State",
+          "Best Practices"
+        ],
         hours: 5
       },
       {
-        module: "Performance & Testing",
-        topics: ["React.memo", "useMemo", "useCallback", "Code Splitting", "Testing Library"],
+        module: "System Design & Performance",
+        topics: [
+          "React System Design Questions",
+          "Performance Optimization",
+          "Code Splitting & Lazy Loading",
+          "Reconciliation & Virtual DOM",
+          "Testing with React Testing Library",
+          "Real Interview Scenarios"
+        ],
         hours: 5
+      },
+      {
+        module: "Cheatsheets & Revision Notes",
+        topics: [
+          "One-page React Cheatsheet",
+          "Revision Notes for Interviews",
+          "Handwritten Summaries"
+        ],
+        hours: 2
+      },
+      {
+        module: "Resume & Cold Email Templates",
+        topics: [
+          "FAANG Resume Templates",
+          "Cold Email Scripts",
+          "Tips for Getting Referrals"
+        ],
+        hours: 1
       }
     ],
     included: [
@@ -313,7 +370,7 @@ const kitsData: Record<string, KitDetails> = {
       },
       {
         question: "Is Next.js covered?",
-        answer: "We cover React fundamentals. Next.js specific questions are in our Complete Kit."
+        answer: "We cover React fundamentals. Next.js specific questions will be getting added soon."
       }
     ],
     bonuses: [
