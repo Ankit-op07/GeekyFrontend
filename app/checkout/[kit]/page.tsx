@@ -216,7 +216,7 @@ const kitsData: Record<string, KitDetails> = {
   },
   react: {
     id: "react",
-    name: "React Interview Mastery Kit",
+    name: "Reactjs Interview Preparation Kit",
     tagline: "Land your dream React job with confidence",
     price: react_kit_price,
     originalPrice: react_kit_original_price,
