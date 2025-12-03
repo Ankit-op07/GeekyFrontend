@@ -75,7 +75,7 @@ export function PaymentButton({
             currency: 'INR',
             value: amount.toString(),
             content_type: 'course',
-            content_ids: ['nodejs-interview-kit'],
+            content_ids: [planName],
             content_name: planName,
           },
         }),
