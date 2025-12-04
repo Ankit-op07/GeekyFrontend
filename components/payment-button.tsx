@@ -109,9 +109,8 @@ export function PaymentButton({
       userName: userDetails.name,
       onSuccess: async (response) => {
         // Track Meta conversion on successful payment
-        if(planName === "Node.js Interview Preparation Kit"){
+
         await trackMetaConversion(userDetails.email, userDetails.name);
-        }
         
         setUserDetails({ email: '', name: '' });
         setIsProcessing(false);
