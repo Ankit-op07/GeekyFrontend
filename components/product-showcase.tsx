@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PaymentButton } from '@/components/payment-button';
-
+import { appConstants } from "@/lib/appConstants"
+const { js_kit_price, react_kit_price, complete_kit_price, js_kit_original_price, react_kit_original_price, complete_kit_original_price } = appConstants()
 export interface Product {
   id: string
   title: string
@@ -33,8 +34,8 @@ const products: Product[] = [
     title: "JS Interview Preparation Kit",
     shortTitle: "JavaScript Interview Kit",
     price: {
-      current: 49,
-      original: 499
+      current: js_kit_price,
+      original: js_kit_original_price
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 via-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
@@ -52,8 +53,8 @@ const products: Product[] = [
     title: "Reactjs Interview Preparation Kit",
     shortTitle: "React.js Interview Kit",
     price: {
-      current: 199,
-      original: 1999
+      current: react_kit_price,
+      original: react_kit_original_price
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 via-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -71,8 +72,8 @@ const products: Product[] = [
     title: "Complete Frontend Interview Preparation Kit",
     shortTitle: "Complete Frontend Interview Kit",
     price: {
-      current: 99,
-      original: 999
+      current: complete_kit_price,
+      original: complete_kit_original_price
     },
     icon: (
       <div className="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 rounded-2xl flex items-center justify-center shadow-lg">

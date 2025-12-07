@@ -5,7 +5,8 @@ import { useState, useEffect } from "react"
 import { X, ShoppingBag, MapPin, Verified, TrendingUp } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import Image from "next/image"
-
+import { appConstants } from "@/lib/appConstants"
+const { js_kit_price, react_kit_price, complete_kit_price } = appConstants()
 // Indian names database for genuine randomization
 const indianNames = {
   first: [
@@ -45,26 +46,26 @@ const products = [
     id: "js", 
     name: "JavaScript Interview Preparation Kit", 
     shortName: "JS Kit",
-    price: 49,
+    price: js_kit_price,
     color: "from-yellow-400 to-orange-400"
   },
-//   { 
-//     id: "react", 
-//     name: "React Interview Preparation Kit", 
-//     shortName: "React Kit",
-//     price: 79,
-//     color: "from-blue-400 to-cyan-400"
-//   },
+  { 
+    id: "react", 
+    name: "React Interview Preparation Kit", 
+    shortName: "React Kit",
+    price: react_kit_price,
+    color: "from-blue-400 to-cyan-400"
+  },
   { 
     id: "complete", 
     name: "Complete Frontend Interview Preparation Kit", 
     shortName: "Complete Kit",
-    price: 99,
+    price: complete_kit_price,
     color: "from-purple-400 to-pink-400"
   },
   { 
     id: "node", 
-    name: "Node.js Backend Mastery Kit", 
+    name: "Node.js Interview Preparation Kit", 
     shortName: "Node.js Interview Kit",
     price: 299,
     color: "from-green-400 to-emerald-400"

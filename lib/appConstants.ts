@@ -2,12 +2,12 @@
 
 export function appConstants() {
     return {
-        js_kit_price: 49,
-        complete_kit_price: 99,
+        js_kit_price: 99,
+        complete_kit_price: 299,
         experiences_kit_price: 299,
         react_kit_price: 199,
-        js_kit_original_price: 499,
-        complete_kit_original_price: 999,
+        js_kit_original_price: 999,
+        complete_kit_original_price: 2999,
         experiences_kit_original_price: 2999,
         react_kit_original_price: 1999,
         js_interview_kit_ios_price: 99,
