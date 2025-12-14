@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
+import Razorpay from 'razorpay';
 
 // ---------------------------------------------------------
-// 1. CONFIGURATION (Drive & Email)
+// 1. CONFIGURATION
 // ---------------------------------------------------------
 
-// Google Drive setup
+// Google Drive setup with Service Account
 const auth = new google.auth.GoogleAuth({
   credentials: {
     client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -22,29 +23,35 @@ const drive = google.drive({ version: 'v3', auth });
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER, // Ensure this ENV is set
-    pass: process.env.EMAIL_PASS, // Ensure this ENV is set
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
+// Razorpay instance (Needed to fetch order details if notes are missing)
+const razorpay = new Razorpay({
+  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+});
+
 // ---------------------------------------------------------
-// 2. HELPER FUNCTIONS (From your Verify Route)
+// 2. HELPER FUNCTIONS
 // ---------------------------------------------------------
 
-// CRITICAL FUNCTION: Share folder using "anyone with link" method
+// Grant folder access logic
 async function grantFolderAccess(folderId: string, userEmail: string) {
   try {
-    // Method 1: Create "anyone with link" permission (NO SPAM, INSTANT ACCESS)
+    // Method 1: Create "anyone with link" permission (Instant Access)
     await drive.permissions.create({
       fileId: folderId,
       requestBody: {
         role: 'reader',
         type: 'anyone',
-        allowFileDiscovery: false, // Only people with link can access
+        allowFileDiscovery: false, 
       },
     });
 
-    // Method 2: Also add specific user permission (belt and suspenders approach)
+    // Method 2: Specific user permission (Backup)
     try {
       await drive.permissions.create({
         fileId: folderId,
@@ -53,11 +60,10 @@ async function grantFolderAccess(folderId: string, userEmail: string) {
           type: 'user',
           emailAddress: userEmail,
         },
-        sendNotificationEmail: false, // Don't send Google's email (we send our own)
+        sendNotificationEmail: false,
       });
     } catch (e) {
-      // User-specific sharing might fail for non-Gmail accounts, but that's OK
-      console.log('Non-gmail account specific share skipped, relying on link access.');
+      console.log('Specific user share failed (likely non-gmail), relying on link access.');
     }
 
     // Get the shareable link
@@ -86,10 +92,10 @@ async function grantFolderAccess(folderId: string, userEmail: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    // A. Webhook Signature Verification
+    // A. Verify Signature
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET!;
     const signature = request.headers.get('x-razorpay-signature');
-    const body = await request.text(); // Raw body needed for hashing
+    const body = await request.text();
 
     if (!signature) {
       return NextResponse.json({ status: 401, error: 'Missing signature' }, { status: 401 });
@@ -108,43 +114,63 @@ export async function POST(request: NextRequest) {
     // B. Parse Event
     const event = JSON.parse(body);
 
-    // Only process successful payments
     if (event.event === 'payment.captured') {
       const payment = event.payload.payment.entity;
       
-      const userEmail = payment.email;
-      // IMPORTANT: In Webhook, kitName comes from the 'notes' you sent when creating order
-      const planName = payment.notes?.kitName || 'Complete Frontend Interview Preparation Kit'; 
-      const razorpay_order_id = payment.order_id;
-      const razorpay_payment_id = payment.id;
+      // 1. Get User Email (Check payment entity first, then notes)
+      const userEmail = payment.email || payment.notes?.userEmail;
 
       if (!userEmail) {
-        console.error('Webhook: Email missing in payload');
+        console.error('Webhook Error: Email not found in payload');
         return NextResponse.json({ status: 200, message: 'Email missing' });
       }
 
-      // C. Select Folder ID (Your exact mapping)
+      // 2. CRITICAL FIX: Get Plan Name (Payment Notes -> Order Fetch -> Fallback)
+      let planName = payment.notes?.planName;
+
+      // If planName is missing in payment, fetch the original Order
+      if (!planName && payment.order_id) {
+        try {
+          console.log(`Searching for notes in Order ID: ${payment.order_id}`);
+          const order = await razorpay.orders.fetch(payment.order_id);
+          
+          if (order.notes && order.notes.planName) {
+            planName = order.notes.planName;
+            console.log(`✅ Found Plan Name in Order: ${planName}`);
+          }
+        } catch (err) {
+          console.error('Failed to fetch order details:', err);
+        }
+      }
+
+      // Fallback if absolutely nothing is found
+      if (!planName) {
+        planName = 'Complete Frontend Interview Preparation Kit';
+        console.log('⚠️ Using Fallback Plan Name');
+      }
+
+      // 3. Select Folder ID
       const folderIds: { [key: string]: string } = {
         'JS Interview Preparation Kit': process.env.JS_KIT_FOLDER_ID!,
         'Complete Frontend Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!,
         'Frontend Interview Experiences Kit': process.env.EXPERIENCES_KIT_FOLDER_ID!,
-        'Reactjs Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!, // Check if this should be a REACT_ID env?
+        'Reactjs Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!, 
         'Node.js Interview Preparation Kit': process.env.NODEJS_KIT_FOLDER_ID!,
       };
 
       const folderId = folderIds[planName];
 
       if (!folderId) {
-        console.error(`Webhook: No folder ID found for plan: ${planName}`);
-        // Return 200 to stop Razorpay retrying on logical error
-        return NextResponse.json({ status: 200, message: 'Plan not found' });
+        console.error(`ERROR: No Folder ID found for plan: "${planName}"`);
+        // We return 200 to acknowledge webhook, but log the error
+        return NextResponse.json({ status: 200, message: 'Plan ID not found' });
       }
 
-      // D. Grant Access & Send Email
+      // 4. Grant Access
       const accessResult = await grantFolderAccess(folderId, userEmail);
 
       if (accessResult.success) {
-        // YOUR EXACT EMAIL TEMPLATE
+        // 5. Send Professional Email
         const emailHtml = `
           <!DOCTYPE html>
           <html>
@@ -213,7 +239,6 @@ export async function POST(request: NextRequest) {
                       <li>The folder has been shared with your email: <strong>${userEmail}</strong></li>
                       <li>You can also find it in Google Drive under "Shared with me"</li>
                       <li>You have view-only access to protect the content</li>
-                      <li>Download the PDFs for offline access</li>
                     </ul>
                   </div>
                   
@@ -224,11 +249,11 @@ export async function POST(request: NextRequest) {
                     <table style="color: #666; font-size: 14px;">
                       <tr>
                         <td style="padding: 5px 0;">Order ID:</td>
-                        <td style="padding: 5px 0 5px 20px;"><strong>${razorpay_order_id}</strong></td>
+                        <td style="padding: 5px 0 5px 20px;"><strong>${payment.order_id}</strong></td>
                       </tr>
                       <tr>
                         <td style="padding: 5px 0;">Payment ID:</td>
-                        <td style="padding: 5px 0 5px 20px;"><strong>${razorpay_payment_id}</strong></td>
+                        <td style="padding: 5px 0 5px 20px;"><strong>${payment.id}</strong></td>
                       </tr>
                       <tr>
                         <td style="padding: 5px 0;">Course:</td>
@@ -251,7 +276,7 @@ export async function POST(request: NextRequest) {
                 <td style="padding: 30px; background-color: #f8f9fa; text-align: center;">
                   <p style="color: #999; font-size: 12px; margin: 0;">
                     © 2025 Geeky Frontend. All rights reserved.<br>
-                    This email was sent to ${userEmail} because you made a purchase on our platform.
+                    This email was sent to ${userEmail}.
                   </p>
                 </td>
               </tr>
@@ -279,7 +304,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Always return 200 OK to Razorpay so they don't keep hitting the webhook
     return NextResponse.json({ status: 200, message: 'Webhook processed' });
     
   } catch (error) {
