@@ -138,7 +138,7 @@ export function useRazorpay() {
 
             const result = await verifyResponse.json();
 
-            if (verifyResponse.ok && result.verified) {
+            if (result.success) {
               // SUCCESS - Show success toast
               toast({
                 title: '✅ Payment Successful!',
