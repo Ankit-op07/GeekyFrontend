@@ -2,7 +2,7 @@
 
 export function appConstants() {
     return {
-        js_kit_price: 99,
+        js_kit_price: 5,
         complete_kit_price: 299,
         experiences_kit_price: 299,
         react_kit_price: 199,
