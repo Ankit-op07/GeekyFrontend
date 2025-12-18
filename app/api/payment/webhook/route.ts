@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
         'JS Interview Preparation Kit': process.env.JS_KIT_FOLDER_ID!,
         'Complete Frontend Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!,
         'Frontend Interview Experiences Kit': process.env.EXPERIENCES_KIT_FOLDER_ID!,
-        'Reactjs Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!, 
+        'Reactjs Interview Preparation Kit': process.env.REACT_KIT_FOLDER_ID!, 
         'Node.js Interview Preparation Kit': process.env.NODEJS_KIT_FOLDER_ID!,
       };
 
