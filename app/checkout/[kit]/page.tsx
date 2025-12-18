@@ -552,7 +552,7 @@ complete: {
   faqs: [
     {
       question: "Is JavaScript Kit included?",
-      answer: "Yes, the entire JS Kit (₹49 value) is included for free along with React, DSA, Machine Coding, System Design and more."
+      answer: "Yes, the entire JS Kit (₹" + js_kit_price + " value) is included for free along with React, DSA, Machine Coding, System Design and more."
     },
     {
       question: "How long does it take to finish?",
