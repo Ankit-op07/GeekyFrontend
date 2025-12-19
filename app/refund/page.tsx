@@ -8,7 +8,7 @@ export default function RefundPage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
       <SiteHeader />
-      
+
       <div className="mx-auto max-w-4xl px-4 py-24 md:py-32">
         {/* Header */}
         <div className="mb-8">
@@ -26,7 +26,7 @@ export default function RefundPage() {
                 All sales are final. We do not offer refunds or cancellations under any circumstances.
               </p>
               <p className="text-muted-foreground">
-                Please read this policy carefully before making a purchase. By purchasing our products, 
+                Please read this policy carefully before making a purchase. By purchasing our products,
                 you acknowledge and agree that all sales are final and non-refundable.
               </p>
             </div>
@@ -38,7 +38,7 @@ export default function RefundPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">1. Nature of Digital Products</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Geeky Frontend provides digital educational materials that are delivered instantly upon purchase. 
+              Geeky Frontend provides digital educational materials that are delivered instantly upon purchase.
               Due to the nature of digital content:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground mt-3">
@@ -57,7 +57,7 @@ export default function RefundPage() {
                   <span className="text-lg">📚</span> Instant Access
                 </h3>
                 <p className="text-muted-foreground">
-                  Once payment is confirmed, you receive immediate access to all course materials. 
+                  Once payment is confirmed, you receive immediate access to all course materials.
                   The knowledge and content cannot be "unlearned" or returned.
                 </p>
               </div>
@@ -67,7 +67,7 @@ export default function RefundPage() {
                   <span className="text-lg">🔒</span> Intellectual Property Protection
                 </h3>
                 <p className="text-muted-foreground">
-                  Our materials contain proprietary content and strategies. The no-refund policy helps 
+                  Our materials contain proprietary content and strategies. The no-refund policy helps
                   protect our intellectual property from unauthorized distribution.
                 </p>
               </div>
@@ -77,7 +77,7 @@ export default function RefundPage() {
                   <span className="text-lg">💰</span> Fair Pricing
                 </h3>
                 <p className="text-muted-foreground">
-                  We offer our products at highly competitive prices with significant discounts. 
+                  We offer our products at highly competitive prices with significant discounts.
                   Our pricing reflects the no-refund policy.
                 </p>
               </div>
@@ -94,7 +94,7 @@ export default function RefundPage() {
               <li>Check the curriculum and topics covered</li>
               <li>Read the FAQ section for common questions</li>
               <li>View sample content available on our product pages</li>
-              <li>Contact us at support@geekyfrontend.com if you have questions</li>
+              <li>Contact us at geekyfrontend@gmail.com if you have questions</li>
             </ul>
           </section>
 
@@ -105,7 +105,7 @@ export default function RefundPage() {
                 <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-muted-foreground">
-                    <span className="font-semibold">Order cancellations are not possible</span> once payment 
+                    <span className="font-semibold">Order cancellations are not possible</span> once payment
                     is processed. The digital products are delivered automatically and instantly upon successful payment.
                   </p>
                 </div>
@@ -124,7 +124,7 @@ export default function RefundPage() {
               <li>Payment charged but order not processed due to system error</li>
             </ul>
             <p className="text-muted-foreground leading-relaxed mt-3">
-              Such cases will be evaluated individually and require proof of the issue. Contact support@geekyfrontend.com 
+              Such cases will be evaluated individually and require proof of the issue. Contact geekyfrontend@gmail.com
               with transaction details if you believe your case qualifies.
             </p>
           </section>
@@ -173,7 +173,7 @@ export default function RefundPage() {
               For questions about this policy or technical issues with accessing your purchased content:
             </p>
             <div className="mt-3 space-y-1 text-muted-foreground">
-              <p>Email: support@geekyfrontend.com</p>
+              <p>Email: geekyfrontend@gmail.com</p>
               {/* <p>Instagram: @geeky_frontend</p> */}
               <p>Response Time: Within 24 hours</p>
             </div>

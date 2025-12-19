@@ -7,7 +7,7 @@ export default function TermsPage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
       <SiteHeader />
-      
+
       <div className="mx-auto max-w-4xl px-4 py-24 md:py-32">
         {/* Header */}
         <div className="mb-8">
@@ -20,7 +20,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">1. Acceptance of Terms</h2>
             <p className="text-muted-foreground leading-relaxed">
-              By accessing and using Geeky Frontend ("the Website"), you agree to be bound by these Terms and Conditions. 
+              By accessing and using Geeky Frontend ("the Website"), you agree to be bound by these Terms and Conditions.
               If you do not agree with any part of these terms, you must not use our website or purchase our products.
             </p>
           </section>
@@ -41,7 +41,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">3. Digital Product Delivery</h2>
             <p className="text-muted-foreground leading-relaxed">
-              All products are delivered digitally via email within 5-10 minutes of successful payment. 
+              All products are delivered digitally via email within 5-10 minutes of successful payment.
               Download links and access instructions will be sent to the email address provided during purchase.
             </p>
           </section>
@@ -62,7 +62,7 @@ export default function TermsPage() {
               IMPORTANT: All sales are final. We do not offer refunds under any circumstances.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              Due to the digital nature of our products and immediate access upon purchase, we maintain a strict no-refund policy. 
+              Due to the digital nature of our products and immediate access upon purchase, we maintain a strict no-refund policy.
               By purchasing our products, you acknowledge and agree that all sales are final and non-refundable.
             </p>
           </section>
@@ -96,8 +96,8 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">8. Limitation of Liability</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Geeky Frontend shall not be liable for any indirect, incidental, special, or consequential damages 
-              arising from the use or inability to use our products. Our total liability shall not exceed the 
+              Geeky Frontend shall not be liable for any indirect, incidental, special, or consequential damages
+              arising from the use or inability to use our products. Our total liability shall not exceed the
               amount paid for the specific product in question.
             </p>
           </section>
@@ -105,8 +105,8 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">9. Disclaimer</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Our educational materials are provided "as is" without warranties of any kind. While we strive for accuracy, 
-              we do not guarantee specific outcomes, job placements, or interview success. Individual results may vary 
+              Our educational materials are provided "as is" without warranties of any kind. While we strive for accuracy,
+              we do not guarantee specific outcomes, job placements, or interview success. Individual results may vary
               based on personal effort and circumstances.
             </p>
           </section>
@@ -114,7 +114,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">10. Modifications</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We reserve the right to modify these terms at any time. Continued use of our website after changes 
+              We reserve the right to modify these terms at any time. Continued use of our website after changes
               constitutes acceptance of the modified terms.
             </p>
           </section>
@@ -122,7 +122,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">11. Governing Law</h2>
             <p className="text-muted-foreground leading-relaxed">
-              These terms shall be governed by and construed in accordance with the laws of India. 
+              These terms shall be governed by and construed in accordance with the laws of India.
               Any disputes shall be subject to the exclusive jurisdiction of the courts in Rajasthan, India.
             </p>
           </section>
@@ -133,7 +133,7 @@ export default function TermsPage() {
               For any questions about these Terms and Conditions, please contact us at:
             </p>
             <div className="mt-3 space-y-1 text-muted-foreground">
-              <p>Email: support@geekyfrontend.com</p>
+              <p>Email: geekyfrontend@gmail.com</p>
               <p>Instagram: @geeky_frontend</p>
             </div>
           </section>

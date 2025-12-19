@@ -6,7 +6,7 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
       <SiteHeader />
-      
+
       {/* Hero Section */}
       <section className="relative mx-auto max-w-7xl px-4 pt-24 pb-12 md:pt-32 md:pb-20">
         <div className="text-center">
@@ -27,7 +27,7 @@ export default function ContactPage() {
           <div>
             <h2 className="text-2xl font-bold mb-6">Let's Connect</h2>
             <p className="text-muted-foreground mb-8">
-              We typically respond within 2-4 hours during business hours. For urgent queries, 
+              We typically respond within 2-4 hours during business hours. For urgent queries,
               WhatsApp is the fastest way to reach us.
             </p>
 
@@ -39,8 +39,8 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Email</h3>
-                  <a href="mailto:support@geekyfrontend.com" className="text-muted-foreground hover:text-primary">
-                    support@geekyfrontend.com
+                  <a href="mailto:geekyfrontend@gmail.com" className="text-muted-foreground hover:text-primary">
+                    geekyfrontend@gmail.com
                   </a>
                   <p className="text-sm text-muted-foreground mt-1">
                     Best for: General inquiries, feedback
@@ -212,7 +212,7 @@ export default function ContactPage() {
           <h2 className="text-2xl font-bold text-center mb-8">
             Frequently Asked Questions
           </h2>
-          
+
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div className="bg-white rounded-lg p-6 border">
               <h3 className="font-semibold mb-2">How do I access my purchased materials?</h3>
@@ -221,27 +221,27 @@ export default function ContactPage() {
                 Check your spam folder if you don't see it.
               </p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 border">
               <h3 className="font-semibold mb-2">What payment methods do you accept?</h3>
               <p className="text-sm text-muted-foreground">
-                We accept all major payment methods through Razorpay including UPI, 
+                We accept all major payment methods through Razorpay including UPI,
                 Credit/Debit Cards, Net Banking, and Wallets.
               </p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 border">
               <h3 className="font-semibold mb-2">Do you offer refunds?</h3>
               <p className="text-sm text-muted-foreground">
-                Due to the digital nature of our products, we don't offer refunds. 
+                Due to the digital nature of our products, we don't offer refunds.
                 However, we provide sample content to preview before purchase.
               </p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 border">
               <h3 className="font-semibold mb-2">Can I share my account with others?</h3>
               <p className="text-sm text-muted-foreground">
-                Each purchase is for individual use only. Sharing accounts or materials 
+                Each purchase is for individual use only. Sharing accounts or materials
                 violates our terms of service.
               </p>
             </div>
@@ -266,8 +266,8 @@ export default function ContactPage() {
               <MessageCircle className="w-4 h-4" />
               WhatsApp Us
             </a> */}
-            <a 
-              href="mailto:geekyfrontend@gmail.com" 
+            <a
+              href="mailto:geekyfrontend@gmail.com"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 border rounded-lg font-medium hover:bg-accent"
             >
               <Mail className="w-4 h-4" />

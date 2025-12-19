@@ -7,7 +7,7 @@ export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
       <SiteHeader />
-      
+
       <div className="mx-auto max-w-4xl px-4 py-24 md:py-32">
         {/* Header */}
         <div className="mb-8">
@@ -20,8 +20,8 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">1. Introduction</h2>
             <p className="text-muted-foreground leading-relaxed">
-              At Geeky Frontend, we are committed to protecting your privacy and ensuring the security of your personal information. 
-              This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website 
+              At Geeky Frontend, we are committed to protecting your privacy and ensuring the security of your personal information.
+              This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website
               and purchase our products.
             </p>
           </section>
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
                   <li>Payment information (processed securely via Razorpay)</li>
                 </ul>
               </div>
-              
+
               {/* <div>
                 <h3 className="text-lg font-semibold mb-2">Automatically Collected Information</h3>
                 <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
@@ -70,8 +70,8 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">4. Payment Processing</h2>
             <p className="text-muted-foreground leading-relaxed">
-              All payment transactions are processed through Razorpay, a secure third-party payment gateway. 
-              We do not store or have access to your credit card details, bank account information, or other sensitive payment data. 
+              All payment transactions are processed through Razorpay, a secure third-party payment gateway.
+              We do not store or have access to your credit card details, bank account information, or other sensitive payment data.
               Razorpay's privacy policy governs the collection and use of your payment information.
             </p>
           </section>
@@ -79,7 +79,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">5. Data Storage and Security</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We implement appropriate technical and organizational security measures to protect your personal information against 
+              We implement appropriate technical and organizational security measures to protect your personal information against
               unauthorized access, alteration, disclosure, or destruction.
             </p>
           </section>
@@ -101,8 +101,8 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">7. Cookies and Tracking Technologies</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We use cookies and similar tracking technologies to enhance your browsing experience and analyze website traffic. 
-              You can control cookie preferences through your browser settings. Disabling cookies may limit certain features 
+              We use cookies and similar tracking technologies to enhance your browsing experience and analyze website traffic.
+              You can control cookie preferences through your browser settings. Disabling cookies may limit certain features
               of our website.
             </p>
           </section>
@@ -110,8 +110,8 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">8. Third-Party Links</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Our website may contain links to third-party websites (such as Google Drive for content delivery). 
-              We are not responsible for the privacy practices of these external sites. We encourage you to review 
+              Our website may contain links to third-party websites (such as Google Drive for content delivery).
+              We are not responsible for the privacy practices of these external sites. We encourage you to review
               their privacy policies before providing any personal information.
             </p>
           </section>
@@ -128,15 +128,15 @@ export default function PrivacyPage() {
               <li>Opt-out: Unsubscribe from marketing communications</li>
             </ul>
             <p className="text-muted-foreground leading-relaxed mt-3">
-              To exercise these rights, please contact us at support@geekyfrontend.com
+              To exercise these rights, please contact us at geekyfrontend@gmail.com
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-3">10. Children's Privacy</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Our services are not directed to individuals under the age of 18. We do not knowingly collect personal 
-              information from children. If you believe we have collected information from a minor, please contact us 
+              Our services are not directed to individuals under the age of 18. We do not knowingly collect personal
+              information from children. If you believe we have collected information from a minor, please contact us
               immediately for removal.
             </p>
           </section>
@@ -144,8 +144,8 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">11. Data Retention</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We retain your personal information only for as long as necessary to fulfill the purposes outlined in this 
-              Privacy Policy, comply with legal obligations, resolve disputes, and enforce our agreements. Purchase records 
+              We retain your personal information only for as long as necessary to fulfill the purposes outlined in this
+              Privacy Policy, comply with legal obligations, resolve disputes, and enforce our agreements. Purchase records
               are maintained for accounting and tax purposes as required by law.
             </p>
           </section>
@@ -153,7 +153,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">12. Updates to This Policy</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. 
+              We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements.
               We will notify you of any material changes by updating the "Last updated" date at the top of this policy.
             </p>
           </section>
@@ -161,11 +161,11 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-3">13. Contact Us</h2>
             <p className="text-muted-foreground leading-relaxed">
-              If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, 
+              If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices,
               please contact us at:
             </p>
             <div className="mt-3 space-y-1 text-muted-foreground">
-              <p>Email: support@geekyfrontend.com</p>
+              <p>Email: geekyfrontend@gmail.com</p>
               {/* <p>Instagram: @geeky_frontend</p> */}
               <p>Location: Jaipur, Rajasthan, India</p>
             </div>
