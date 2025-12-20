@@ -6,11 +6,10 @@ import Razorpay from 'razorpay';
 import connectToDatabase from '@/lib/db';
 import Order from '@/lib/models/Order';
 
-// ---------------------------------------------------------
-// 1. CONFIGURATION
-// ---------------------------------------------------------
+// ============================================================
+// CONFIGURATION
+// ============================================================
 
-// Google Drive setup with Service Account
 const auth = new google.auth.GoogleAuth({
   credentials: {
     client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -21,7 +20,6 @@ const auth = new google.auth.GoogleAuth({
 
 const drive = google.drive({ version: 'v3', auth });
 
-// Email transporter setup
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -30,364 +28,295 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Razorpay instance (Needed to fetch order details if notes are missing)
 const razorpay = new Razorpay({
   key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
   key_secret: process.env.RAZORPAY_KEY_SECRET!,
 });
 
-// ---------------------------------------------------------
-// 2. HELPER FUNCTIONS
-// ---------------------------------------------------------
+const FOLDER_IDS: Record<string, string> = {
+  'JS Interview Preparation Kit': process.env.JS_KIT_FOLDER_ID!,
+  'Complete Frontend Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!,
+  'Frontend Interview Experiences Kit': process.env.EXPERIENCES_KIT_FOLDER_ID!,
+  'Reactjs Interview Preparation Kit': process.env.REACT_KIT_FOLDER_ID!,
+  'Node.js Interview Preparation Kit': process.env.NODEJS_KIT_FOLDER_ID!,
+};
 
-// Grant folder access logic
+// ============================================================
+// HELPER FUNCTIONS
+// ============================================================
+
+function verifySignature(body: string, signature: string, secret: string): boolean {
+  const expected = crypto.createHmac('sha256', secret).update(body).digest('hex');
+  return expected === signature;
+}
+
 async function grantFolderAccess(folderId: string, userEmail: string) {
   try {
-    // Method 1: Create "anyone with link" permission (Instant Access)
+    // Public link access
     await drive.permissions.create({
       fileId: folderId,
-      requestBody: {
-        role: 'reader',
-        type: 'anyone',
-        allowFileDiscovery: false,
-      },
+      requestBody: { role: 'reader', type: 'anyone', allowFileDiscovery: false },
     });
 
-    // Method 2: Specific user permission (Backup)
+    // User-specific access (may fail for non-Gmail users)
     try {
       await drive.permissions.create({
         fileId: folderId,
-        requestBody: {
-          role: 'reader',
-          type: 'user',
-          emailAddress: userEmail,
-        },
+        requestBody: { role: 'reader', type: 'user', emailAddress: userEmail },
         sendNotificationEmail: false,
       });
-    } catch (e) {
-      console.log('Specific user share failed (likely non-gmail), relying on link access.');
+    } catch {
+      // Ignore - user might already have access or non-Gmail
     }
 
-    // Get the shareable link
-    const file = await drive.files.get({
-      fileId: folderId,
-      fields: 'name,webViewLink',
-    });
-
-    return {
-      success: true,
-      folderName: file.data.name,
-      folderLink: file.data.webViewLink,
-    };
+    const file = await drive.files.get({ fileId: folderId, fields: 'name,webViewLink' });
+    return { success: true, folderLink: file.data.webViewLink, folderName: file.data.name };
   } catch (error: any) {
-    console.error('Error granting access:', error);
-    return {
-      success: false,
-      error: error.message,
-    };
+    console.error('Drive access error:', error.message);
+    return { success: false, error: error.message };
   }
 }
 
-// ---------------------------------------------------------
-// 3. MAIN WEBHOOK LOGIC
-// ---------------------------------------------------------
+function buildEmailHtml(planName: string, userEmail: string, folderLink: string, orderId: string, paymentId: string) {
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f4f4f4;">
+  <table align="center" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+    <tr>
+      <td style="padding:40px 30px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);text-align:center;">
+        <h1 style="color:white;margin:0;font-size:28px;">Welcome to Geeky Frontend! 🎉</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px 30px;background:white;">
+        <p style="color:#333;font-size:16px;line-height:1.6;margin:0 0 20px;">Dear Developer,</p>
+        <p style="color:#333;font-size:16px;line-height:1.6;margin:0 0 20px;">
+          Thank you for purchasing the <strong>${planName}</strong>!
+        </p>
+        <p style="color:#333;font-size:16px;line-height:1.6;margin:0 0 30px;">
+          Your payment has been verified. You now have immediate access to all materials.
+        </p>
+        <table width="100%" cellspacing="0" cellpadding="0">
+          <tr>
+            <td style="background:#f8f9fa;padding:20px;border-radius:8px;">
+              <h2 style="color:#333;font-size:18px;margin:0 0 15px;">📚 Access Your Course:</h2>
+              <table cellspacing="0" cellpadding="0">
+                <tr>
+                  <td style="border-radius:5px;background:#4F46E5;">
+                    <a href="${folderLink}" target="_blank" style="display:inline-block;padding:14px 30px;font-size:16px;color:white;text-decoration:none;">
+                      Open Course Materials →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="color:#999;font-size:12px;margin:20px 0 0;">
+                Or copy: <a href="${folderLink}" style="color:#4F46E5;">${folderLink}</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+        <div style="margin-top:30px;padding:20px;background:#fff3cd;border-radius:8px;border-left:4px solid #ffc107;">
+          <p style="color:#856404;font-size:14px;margin:0;"><strong>💡 Tips:</strong></p>
+          <ul style="color:#856404;font-size:14px;margin:10px 0 0;padding-left:20px;">
+            <li>Shared with: <strong>${userEmail}</strong></li>
+            <li>Find it in Google Drive → "Shared with me"</li>
+          </ul>
+        </div>
+        <div style="margin-top:30px;padding-top:30px;border-top:1px solid #e0e0e0;">
+          <h3 style="color:#333;font-size:16px;margin:0 0 10px;">Payment Details:</h3>
+          <table style="color:#666;font-size:14px;">
+            <tr><td style="padding:5px 0;">Order ID:</td><td style="padding:5px 0 5px 20px;"><strong>${orderId}</strong></td></tr>
+            <tr><td style="padding:5px 0;">Payment ID:</td><td style="padding:5px 0 5px 20px;"><strong>${paymentId}</strong></td></tr>
+            <tr><td style="padding:5px 0;">Course:</td><td style="padding:5px 0 5px 20px;"><strong>${planName}</strong></td></tr>
+          </table>
+        </div>
+        <div style="margin-top:30px;">
+          <p style="color:#666;font-size:14px;margin:0;">Need help? Email: support@geekyfrontend.com</p>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:30px;background:#f8f9fa;text-align:center;">
+        <p style="color:#999;font-size:12px;margin:0;">© 2025 Geeky Frontend. All rights reserved.</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+async function sendEmailWithRetry(to: string, subject: string, html: string, text: string, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await transporter.sendMail({
+        from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
+        to,
+        subject,
+        html,
+        text,
+        headers: { 'X-Priority': '1', 'X-MSMail-Priority': 'High', Importance: 'high' },
+      });
+      console.log(`✅ Email sent to ${to} (attempt ${attempt})`);
+      return true;
+    } catch (error: any) {
+      console.error(`❌ Email attempt ${attempt} failed:`, error.message);
+      if (attempt < maxRetries) await new Promise((r) => setTimeout(r, 2000));
+    }
+  }
+  return false;
+}
+
+// ============================================================
+// DATABASE HELPERS
+// ============================================================
+
+async function connectDB(): Promise<boolean> {
+  if (!process.env.MONGODB_URI) {
+    console.log('⚠️ MONGODB_URI not configured - skipping database operations');
+    return false;
+  }
+  try {
+    await connectToDatabase();
+    console.log('✅ Database connected');
+    return true;
+  } catch (error: any) {
+    console.error('❌ Database connection failed:', error.message);
+    return false;
+  }
+}
+
+async function checkExistingOrder(orderId: string, dbConnected: boolean) {
+  if (!dbConnected) return null;
+  try {
+    return await Order.findOne({ orderId });
+  } catch (error: any) {
+    console.error('⚠️ Order lookup failed:', error.message);
+    return null;
+  }
+}
+
+async function createOrder(data: any, dbConnected: boolean) {
+  if (!dbConnected) return;
+  try {
+    await Order.create(data);
+    console.log(`📦 Order ${data.orderId} saved to DB`);
+  } catch (error: any) {
+    console.error('⚠️ Failed to create order:', error.message);
+  }
+}
+
+async function updateOrderStatus(orderId: string, status: string, dbConnected: boolean, errorMessage?: string) {
+  if (!dbConnected) return;
+  try {
+    await Order.findOneAndUpdate({ orderId }, { status, ...(errorMessage && { errorMessage }) });
+    console.log(`📦 Order ${orderId} updated to '${status}'`);
+  } catch (error: any) {
+    console.error('⚠️ Failed to update order:', error.message);
+  }
+}
+
+// ============================================================
+// MAIN WEBHOOK HANDLER
+// ============================================================
 
 export async function POST(request: NextRequest) {
   try {
-    // A. Verify Signature
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET!;
     const signature = request.headers.get('x-razorpay-signature');
     const body = await request.text();
 
-    if (!signature) {
-      return NextResponse.json({ status: 401, error: 'Missing signature' }, { status: 401 });
+    // Verify signature
+    if (!signature || !verifySignature(body, signature, webhookSecret)) {
+      console.error('❌ Invalid signature');
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
+    console.log('✅ Signature verified');
 
-    const expectedSignature = crypto
-      .createHmac('sha256', webhookSecret)
-      .update(body)
-      .digest('hex');
+    // Connect to database (optional)
+    const dbConnected = await connectDB();
 
-    if (expectedSignature !== signature) {
-      console.error('❌ Invalid Webhook Signature');
-      console.error('   Expected:', expectedSignature);
-      console.error('   Received:', signature);
-      console.error('   Secret length:', webhookSecret?.length || 0);
-      return NextResponse.json({ status: 400, error: 'Invalid signature' }, { status: 400 });
-    }
-
-    console.log('✅ Signature verified successfully');
-
-    // B. Connect to Database
-    await connectToDatabase();
-
-    // C. Parse Event
+    // Parse event
     const event = JSON.parse(body);
 
     if (event.event === 'payment.captured') {
       const payment = event.payload.payment.entity;
       const orderId = payment.order_id;
+      const paymentId = payment.id;
 
-      // ✅ IDEMPOTENCY CHECK: Skip if already processed
-      const existingOrder = await Order.findOne({ orderId });
-      if (existingOrder) {
-        if (existingOrder.status === 'email_sent') {
-          console.log(`⏭️ Skipping: Order ${orderId} already processed successfully`);
-          return NextResponse.json({ status: 200, message: 'Already processed' });
-        }
-        // If status is 'processing' or 'failed', we'll retry
-        console.log(`🔄 Retrying: Order ${orderId} (previous status: ${existingOrder.status})`);
+      // Idempotency check
+      const existingOrder = await checkExistingOrder(orderId, dbConnected);
+      if (existingOrder?.status === 'email_sent') {
+        console.log(`⏭️ Order ${orderId} already processed - skipping`);
+        return NextResponse.json({ message: 'Already processed' });
       }
 
-      // 1. Get User Email (Check payment entity first, then notes)
+      // Get user email
       const userEmail = payment.email || payment.notes?.userEmail;
-
       if (!userEmail) {
-        console.error('Webhook Error: Email not found in payload');
-        return NextResponse.json({ status: 200, message: 'Email missing' });
+        console.error('❌ No email in payment');
+        return NextResponse.json({ message: 'Email missing' });
       }
 
-      // 2. CRITICAL FIX: Get Plan Name (Payment Notes -> Order Fetch -> Fallback)
+      // Get plan name
       let planName = payment.notes?.planName;
-
-      // If planName is missing in payment, fetch the original Order
-      if (!planName && payment.order_id) {
+      if (!planName && orderId) {
         try {
-          console.log(`Searching for notes in Order ID: ${payment.order_id}`);
-          const order = await razorpay.orders.fetch(payment.order_id);
-
-          if (order.notes && order.notes.planName) {
-            planName = order.notes.planName;
-            console.log(`✅ Found Plan Name in Order: ${planName}`);
-          }
-        } catch (err) {
-          console.error('Failed to fetch order details:', err);
-        }
+          const order = await razorpay.orders.fetch(orderId);
+          planName = order.notes?.planName;
+        } catch { }
       }
+      planName = planName || 'Complete Frontend Interview Preparation Kit';
+      console.log(`📋 Processing: ${userEmail} - ${planName}`);
 
-      // Fallback if absolutely nothing is found
-      if (!planName) {
-        planName = 'Complete Frontend Interview Preparation Kit';
-        console.log('⚠️ Using Fallback Plan Name');
-      }
-
-      // 3. Select Folder ID
-      const folderIds: { [key: string]: string } = {
-        'JS Interview Preparation Kit': process.env.JS_KIT_FOLDER_ID!,
-        'Complete Frontend Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!,
-        'Frontend Interview Experiences Kit': process.env.EXPERIENCES_KIT_FOLDER_ID!,
-        'Reactjs Interview Preparation Kit': process.env.REACT_KIT_FOLDER_ID!,
-        'Node.js Interview Preparation Kit': process.env.NODEJS_KIT_FOLDER_ID!,
-      };
-
-      const folderId = folderIds[planName];
-
+      // Get folder ID
+      const folderId = FOLDER_IDS[planName];
       if (!folderId) {
-        console.error(`ERROR: No Folder ID found for plan: "${planName}"`);
-        return NextResponse.json({ status: 200, message: 'Plan ID not found' });
+        console.error(`❌ No folder for plan: ${planName}`);
+        return NextResponse.json({ message: 'Invalid plan' });
       }
 
-      // ✅ SAVE ORDER TO DB (if new)
+      // Save order to DB
       if (!existingOrder) {
-        await Order.create({
+        await createOrder({
           orderId,
-          paymentId: payment.id,
+          paymentId,
           email: userEmail,
           planName,
           amount: payment.amount,
-          status: 'processing'
-        });
-        console.log(`📦 Order ${orderId} saved to DB (status: processing)`);
+          status: 'processing',
+        }, dbConnected);
       }
 
-      // 4. Grant Access
-      const accessResult = await grantFolderAccess(folderId, userEmail);
-
-      // ✅ FIX: Check BOTH success AND folderLink exist
-      if (!accessResult.success || !accessResult.folderLink) {
-        console.error(`❌ CRITICAL: Drive access failed for ${userEmail}`, {
-          orderId: payment.order_id,
-          planName,
-          error: accessResult.error || 'folderLink is undefined'
-        });
-        // Return 200 so Razorpay doesn't retry infinitely, but log the failure
-        return NextResponse.json({ status: 200, message: 'Drive access failed' });
+      // Grant folder access
+      const access = await grantFolderAccess(folderId, userEmail);
+      if (!access.success || !access.folderLink) {
+        console.error('❌ Drive access failed:', access.error);
+        await updateOrderStatus(orderId, 'failed', dbConnected, access.error);
+        return NextResponse.json({ message: 'Drive access failed' });
       }
+      console.log(`✅ Access granted: ${access.folderLink}`);
 
-      console.log(`✅ Drive access granted for ${userEmail}, link: ${accessResult.folderLink}`);
+      // Send email
+      const emailHtml = buildEmailHtml(planName, userEmail, access.folderLink, orderId, paymentId);
+      const emailSent = await sendEmailWithRetry(
+        userEmail,
+        `✅ Access Ready: ${planName} - Geeky Frontend`,
+        emailHtml,
+        `Your course is ready! Access here: ${access.folderLink}`
+      );
 
-      // 5. Send Professional Email with RETRY LOGIC
-      const emailHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Welcome to Geeky Frontend</title>
-        </head>
-        <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
-          <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
-            <tr>
-              <td style="padding: 40px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center;">
-                <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to Geeky Frontend! 🎉</h1>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: 40px 30px; background-color: white;">
-                <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                  Dear Developer,
-                </p>
-                
-                <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                  Thank you for purchasing the <strong>${planName}</strong>!
-                </p>
-                
-                <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
-                  Your payment has been successfully verified. You now have immediate access to all course materials.
-                </p>
-                
-                <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                  <tr>
-                    <td style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
-                      <h2 style="color: #333; font-size: 18px; margin: 0 0 15px 0;">
-                        📚 Access Your Course Materials:
-                      </h2>
-                      
-                      <p style="color: #666; font-size: 14px; margin: 0 0 20px 0;">
-                        Click the button below to access your course materials immediately:
-                      </p>
-                      
-                      <table border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td style="border-radius: 5px; background-color: #4F46E5;">
-                            <a href="${accessResult.folderLink}" target="_blank" style="display: inline-block; padding: 14px 30px; font-size: 16px; color: white; text-decoration: none; border-radius: 5px;">
-                              Open Course Materials →
-                            </a>
-                          </td>
-                        </tr>
-                      </table>
-                      
-                      <p style="color: #999; font-size: 12px; margin: 20px 0 0 0;">
-                        If the button doesn't work, copy and paste this link into your browser:<br>
-                        <a href="${accessResult.folderLink}" style="color: #4F46E5; word-break: break-all;">
-                          ${accessResult.folderLink}
-                        </a>
-                      </p>
-                    </td>
-                  </tr>
-                </table>
-                
-                <div style="margin-top: 30px; padding: 20px; background-color: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
-                  <p style="color: #856404; font-size: 14px; margin: 0;">
-                    <strong>💡 Quick Tips:</strong>
-                  </p>
-                  <ul style="color: #856404; font-size: 14px; margin: 10px 0 0 0; padding-left: 20px;">
-                    <li>The folder has been shared with your email: <strong>${userEmail}</strong></li>
-                    <li>You can also find it in Google Drive under "Shared with me"</li>
-                    <li>You have view-only access to protect the content</li>
-                  </ul>
-                </div>
-                
-                <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #e0e0e0;">
-                  <h3 style="color: #333; font-size: 16px; margin: 0 0 10px 0;">
-                    Payment Details:
-                  </h3>
-                  <table style="color: #666; font-size: 14px;">
-                    <tr>
-                      <td style="padding: 5px 0;">Order ID:</td>
-                      <td style="padding: 5px 0 5px 20px;"><strong>${payment.order_id}</strong></td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 5px 0;">Payment ID:</td>
-                      <td style="padding: 5px 0 5px 20px;"><strong>${payment.id}</strong></td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 5px 0;">Course:</td>
-                      <td style="padding: 5px 0 5px 20px;"><strong>${planName}</strong></td>
-                    </tr>
-                  </table>
-                </div>
-                
-                <div style="margin-top: 30px;">
-                  <p style="color: #666; font-size: 14px; line-height: 1.6; margin: 0;">
-                    If you face any issues accessing the materials, please contact us immediately:
-                  </p>
-                  <ul style="color: #666; font-size: 14px; margin: 10px 0 0 0;">
-                    <li>Email: support@geekyfrontend.com</li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: 30px; background-color: #f8f9fa; text-align: center;">
-                <p style="color: #999; font-size: 12px; margin: 0;">
-                  © 2025 Geeky Frontend. All rights reserved.<br>
-                  This email was sent to ${userEmail}.
-                </p>
-              </td>
-            </tr>
-          </table>
-        </body>
-        </html>`;
-
-      // ✅ FIX: Retry email up to 3 times with delay
-      const MAX_RETRIES = 3;
-      let emailSent = false;
-      let lastError: any = null;
-
-      for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-        try {
-          await transporter.sendMail({
-            from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
-            to: userEmail,
-            subject: `✅ Access Ready: ${planName} - Geeky Frontend`,
-            text: `Your payment is successful! Access your course here: ${accessResult.folderLink}`,
-            html: emailHtml,
-            headers: {
-              'X-Priority': '1',
-              'X-MSMail-Priority': 'High',
-              'Importance': 'high',
-            },
-          });
-          console.log(`✅ Email sent successfully to ${userEmail} (attempt ${attempt})`);
-          emailSent = true;
-          break; // Success, exit loop
-        } catch (emailError: any) {
-          lastError = emailError;
-          console.error(`❌ Email attempt ${attempt} failed for ${userEmail}:`, emailError.message);
-          if (attempt < MAX_RETRIES) {
-            // Wait 2 seconds before retry
-            await new Promise(resolve => setTimeout(resolve, 2000));
-          }
-        }
-      }
-
-      if (!emailSent) {
-        console.error(`❌ CRITICAL: All ${MAX_RETRIES} email attempts failed for ${userEmail}`, {
-          orderId,
-          planName,
-          folderLink: accessResult.folderLink,
-          error: lastError?.message
-        });
-        // ✅ UPDATE DB: Mark as failed
-        await Order.findOneAndUpdate(
-          { orderId },
-          { status: 'failed', errorMessage: lastError?.message }
-        );
+      // Update order status
+      if (emailSent) {
+        await updateOrderStatus(orderId, 'email_sent', dbConnected);
       } else {
-        // ✅ UPDATE DB: Mark as email_sent
-        await Order.findOneAndUpdate(
-          { orderId },
-          { status: 'email_sent' }
-        );
-        console.log(`📦 Order ${orderId} updated to 'email_sent'`);
+        await updateOrderStatus(orderId, 'failed', dbConnected, 'Email sending failed');
       }
     }
 
-    return NextResponse.json({ status: 200, message: 'Webhook processed' });
-
-  } catch (error) {
-    console.error('Webhook Error:', error);
-    return NextResponse.json({ status: 500, error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ message: 'Webhook processed' });
+  } catch (error: any) {
+    console.error('❌ Webhook error:', error.message);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }
