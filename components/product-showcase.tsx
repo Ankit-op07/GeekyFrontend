@@ -5,9 +5,6 @@ import { useState } from "react"
 import Link from "next/link"
 import { ArrowRight, Sparkles, Users, Star, Zap, TrendingUp, Clock, Flame, Code2, Atom, Server, Briefcase } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { PaymentButton } from '@/components/payment-button';
 import { appConstants } from "@/lib/appConstants"
 const { js_kit_price, react_kit_price, complete_kit_price, js_kit_original_price, react_kit_original_price, complete_kit_original_price } = appConstants()
 export interface Product {
@@ -70,7 +67,7 @@ const products: Product[] = [
   {
     id: "complete",
     title: "Complete Frontend Interview Preparation Kit",
-    shortTitle: "Complete Frontend Interview Kit",
+    shortTitle: "Complete Frontend Interview Kit (JS Kit Included)",
     price: {
       current: complete_kit_price,
       original: complete_kit_original_price
@@ -85,12 +82,12 @@ const products: Product[] = [
     popular: true,
     studentsCount: 5892,
     discount: 90,
-    tag: "All-in-One"
+    tag: "All-in-One Frontend"
   },
   {
     id: "nodejs",
     title: "Node.js Interview Preparation Kit",
-    shortTitle: "Node.js Interview Kit",
+    shortTitle: "Node.js Interview Kit (JS Kit Included)",
     price: {
       current: 299,
       original: 2999
@@ -104,7 +101,7 @@ const products: Product[] = [
     iconBg: "bg-gradient-to-br from-green-500 to-emerald-600",
     studentsCount: 6500,
     discount: 90,
-    tag: "Backend"
+    tag: "Backend Pro"
   }
 ]
 
