@@ -8,6 +8,7 @@ import Image from "next/image"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { PaymentButton } from '@/components/payment-button'
+import { NodejsCheckoutContent } from "@/components/nodejs-checkout-content"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -598,7 +599,7 @@ const kitsData: Record<string, KitDetails> = {
   nodejs: {
     id: "nodejs",
     name: "Node.js Interview Preparation Kit",
-    tagline: "Interview Questions from Real FAANG & Product Company Interviews",
+    tagline: "Complete Backend Mastery: From Zero to FAANG-Ready in 4 Weeks",
     price: 299,
     originalPrice: 2999,
     discount: 90,
@@ -611,105 +612,80 @@ const kitsData: Record<string, KitDetails> = {
     lastUpdated: "Updated 2 days ago",
     features: [
       {
-        icon: <Shield className="w-5 h-5" />,
-        title: "Complete Backend Concepts",
-        description: "Event Loop, Streams, Clusters, Security, Performance & Production Deployment"
-      },
-      {
-        icon: <Zap className="w-5 h-5" />,
-        title: "25 Comprehensive Modules",
-        description: "Node.js, Express, MongoDB, REST APIs, Authentication, Testing & More"
-      },
-      {
         icon: <BookOpen className="w-5 h-5" />,
-        title: "Visual Learning Approach",
-        description: "200+ pages with diagrams, flowcharts and step-by-step explanations"
+        title: "End-to-End Learning Path",
+        description: "Structured 4-week roadmap from Node.js basics to production deployment with daily tasks"
       },
       {
-        icon: <Brain className="w-5 h-5" />,
-        title: "Scenario-Based Questions",
-        description: "Learn how to think like a senior developer in problem-solving rounds"
+        icon: <FileText className="w-5 h-5" />,
+        title: "6 Premium PDFs (250+ Pages)",
+        description: "Comprehensive guides covering Node.js, Express, MongoDB, REST APIs, Authentication & more"
       },
       {
         icon: <Code className="w-5 h-5" />,
-        title: "200+ Real Interview Questions",
-        description: "Actual questions from Amazon, Microsoft, Swiggy, Zomato, PhonePe & more"
+        title: "200+ Interview Questions",
+        description: "Real questions from Amazon, Google, Microsoft, Swiggy, Zomato, PhonePe with detailed solutions"
+      },
+      {
+        icon: <Target className="w-5 h-5" />,
+        title: "Quick Revision Cheatsheets",
+        description: "One-page summaries for Event Loop, Express Middleware, MongoDB Queries & more"
+      },
+      {
+        icon: <Brain className="w-5 h-5" />,
+        title: "Scenario-Based Problems",
+        description: "Real-world challenges: Design Rate Limiter, Build Auth System, Handle File Uploads"
       },
       {
         icon: <Rocket className="w-5 h-5" />,
         title: "Production-Ready Projects",
-        description: "Build real-world apps: Rate Limiter, File Streaming, Auth System, Chat App"
+        description: "Build 4 complete projects with code: REST API, Auth System, File Streaming, Chat App"
       },
     ],
     curriculum: [
       {
-        module: "Node.js Core & Fundamentals",
+        module: "Week 1: Node.js Fundamentals",
         topics: [
-          "Event Loop & Async Flow",
-          "Single-threaded vs Multi-threaded",
-          "V8 Engine Deep Dive",
-          "Built-in Modules (fs, path, http, events, os)",
-          "NPM & Project Setup"
-        ],
-        hours: 8
-      },
-      {
-        module: "Express.js Mastery",
-        topics: [
-          "Express Basics & Server Setup",
-          "Middleware Architecture",
-          "Routing Patterns & Best Practices",
-          "Template Engines (EJS)",
-          "Error Handling & Debugging",
-          "Application vs Route-level Middleware"
+          "What is Node.js & Why Backend?",
+          "Event Loop Deep Dive",
+          "Async Patterns (Callbacks, Promises, Async/Await)",
+          "Built-in Modules (fs, path, http, events)",
+          "NPM & Project Structure"
         ],
         hours: 10
       },
       {
-        module: "REST API Development",
+        module: "Week 2: Express.js Mastery",
         topics: [
-          "REST Principles & Guidelines",
-          "HTTP Methods & Status Codes",
-          "CORS, Serialization & Deserialization",
-          "Authentication (JWT, API Keys, OAuth)",
-          "Authorization & Security Patterns"
+          "Express Setup & Server Creation",
+          "Middleware Architecture (App vs Route-level)",
+          "Routing Patterns & Best Practices",
+          "Error Handling & Debugging",
+          "Template Engines (EJS)"
         ],
-        hours: 7
+        hours: 10
       },
       {
-        module: "MongoDB & Mongoose",
+        module: "Week 3: MongoDB & REST APIs",
         topics: [
-          "NoSQL vs RDBMS Concepts",
-          "MongoDB Setup & CRUD Operations",
-          "Query Operators & Projection",
-          "Indexes & Performance",
+          "MongoDB Fundamentals & CRUD",
           "Mongoose Schemas & Models",
-          "Data Validation & Relationships"
+          "Data Validation & Relationships",
+          "REST API Design Principles",
+          "Authentication (JWT, Sessions, OAuth)"
         ],
-        hours: 9
+        hours: 12
       },
       {
-        module: "Security, Performance & Deployment",
+        module: "Week 4: Advanced & Production",
         topics: [
-          "XSS & SQL Injection Prevention",
-          "Password Hashing with Bcrypt",
+          "Security (XSS, CSRF, SQL Injection)",
           "Performance Optimization",
-          "Production Deployment Strategies",
-          "Testing with Jest",
-          "WebSocket for Real-time Apps"
+          "Testing with Jest & Supertest",
+          "WebSocket & Real-time Apps",
+          "Production Deployment (Docker, PM2, AWS)"
         ],
-        hours: 6
-      },
-      {
-        module: "JavaScript Essentials for Node",
-        topics: [
-          "Modern ES6+ Features",
-          "Async/Await & Promises",
-          "Destructuring & Spread Operators",
-          "Arrow Functions & Callbacks",
-          "Classes & Object-Oriented JS"
-        ],
-        hours: 4
+        hours: 12
       }
     ],
     included: [
@@ -720,18 +696,23 @@ const kitsData: Record<string, KitDetails> = {
       },
       {
         icon: <Code className="w-4 h-4" />,
-        text: "200+ Code Examples",
-        value: "Copy-paste ready"
+        text: "200+ Interview Questions",
+        value: "With solutions"
       },
       {
         icon: <Target className="w-4 h-4" />,
-        text: "Real Interview Questions",
-        value: "FAANG tested"
+        text: "Cheatsheets & Revision Notes",
+        value: "Quick reference"
       },
       {
-        icon: <Download className="w-4 h-4" />,
-        text: "Instant Access",
-        value: "Download now"
+        icon: <BookOpen className="w-4 h-4" />,
+        text: "4-Week Study Roadmap",
+        value: "Day-by-day plan"
+      },
+      {
+        icon: <Rocket className="w-4 h-4" />,
+        text: "4 Production Projects",
+        value: "With source code"
       },
       {
         icon: <RefreshCw className="w-4 h-4" />,
@@ -740,8 +721,13 @@ const kitsData: Record<string, KitDetails> = {
       },
       {
         icon: <HeartHandshake className="w-4 h-4" />,
-        text: "Priority Support",
+        text: "Priority Email Support",
         value: "12hr response"
+      },
+      {
+        icon: <Download className="w-4 h-4" />,
+        text: "Instant Access",
+        value: "Start in 2 mins"
       }
     ],
     testimonials: [
@@ -749,7 +735,7 @@ const kitsData: Record<string, KitDetails> = {
         name: "Karan Verma",
         role: "Backend Engineer",
         company: "Zomato",
-        text: "The 200+ questions covered everything I was asked. Event loop section alone helped me answer 5 questions confidently. Best money I ever spent!",
+        text: "The week-wise plan kept me on track. Event loop section alone helped me answer 5 questions confidently. Went from 8 LPA to 18 LPA!",
         rating: 5
       },
       {
@@ -763,7 +749,7 @@ const kitsData: Record<string, KitDetails> = {
         name: "Sandeep Rao",
         role: "Senior Backend Developer",
         company: "PhonePe",
-        text: "MongoDB and authentication sections are gold. The scenario-based questions prepared me for real-world problem solving rounds perfectly.",
+        text: "The cheatsheets saved me during last-minute revision. MongoDB and authentication sections are absolute gold. 200+ questions covered everything!",
         rating: 5
       },
       {
@@ -776,40 +762,40 @@ const kitsData: Record<string, KitDetails> = {
     ],
     faqs: [
       {
-        question: "Is this suitable for beginners or experienced developers?",
-        answer: "Perfect for both! Beginners will learn from basics (what is Node.js) to advanced concepts. Experienced developers (1-5 years) will benefit from the real interview questions, scenario-based problems, and production deployment strategies."
+        question: "What exactly do I get in this kit?",
+        answer: "You get: (1) 6 comprehensive PDFs covering Node.js, Express, MongoDB, REST APIs, Authentication & Deployment (250+ pages), (2) 200+ real interview questions with detailed solutions, (3) Quick revision cheatsheets for all topics, (4) 4-week structured study roadmap with daily tasks, (5) 4 production-ready project codebases, (6) Lifetime updates & priority support."
       },
       {
-        question: "Are these real interview questions from top companies?",
-        answer: "Yes! All the questions are collected from actual interviews at Amazon, Microsoft, Google, Swiggy, Zomato, PhonePe, Razorpay, and other top product companies. Each question includes detailed explanations with code examples."
+        question: "Is this suitable for beginners?",
+        answer: "Absolutely! Week 1 starts from 'What is Node.js?' and builds up systematically. The 4-week roadmap is designed to take you from zero to interview-ready. Experienced developers can skip Week 1 and jump to advanced topics."
       },
       {
         question: "How is this different from free YouTube tutorials?",
-        answer: "Free resources are scattered and incomplete. This kit provides: (1) Structured learning path with multiple organized modules, (2) Curated interview questions you won't find together anywhere, (3) Visual diagrams explaining complex concepts, (4) Production-ready code examples, and (5) Scenario-based questions that test real problem-solving skills."
+        answer: "Free resources are scattered and don't focus on interviews. This kit provides: (1) Curated 200+ questions actually asked in FAANG/product companies, (2) Structured 4-week roadmap with daily tasks, (3) Quick revision cheatsheets you can't find anywhere, (4) Visual diagrams explaining Event Loop, Middleware flow, etc., (5) Production-ready code examples."
       },
       {
-        question: "Do I get MongoDB and Express content too?",
-        answer: "Absolutely! The kit includes chapters on Express.js (middleware, routing, error handling), chapters on MongoDB & Mongoose (schemas, queries, indexes), plus REST API development, authentication, testing, and deployment."
+        question: "Are these real interview questions?",
+        answer: "Yes! All 200+ questions are collected from actual interviews at Amazon, Microsoft, Google, Swiggy, Zomato, PhonePe, Razorpay, and other top product companies. Each question includes detailed explanations with code examples."
       },
       {
-        question: "Will I get updates when new questions are added?",
+        question: "Will I get updates when new content is added?",
         answer: "Yes! All updates are completely free for life. We update the content monthly based on latest interview trends and feedback from students who recently gave interviews."
       },
       {
         question: "How long will it take to complete?",
-        answer: "Most students complete in 3-4 weeks studying 2-3 hours daily. However, you have lifetime access, so you can learn at your own pace and use it as a reference before interviews."
+        answer: "The 4-week roadmap is designed for 2-3 hours daily study. You can complete faster or slower based on your schedule. You have lifetime access, so use it as a reference anytime."
       }
     ],
     bonuses: [
       {
         icon: <Gift className="w-5 h-5" />,
-        title: "Quick Revision Sheets",
+        title: "Quick Revision Cheatsheets",
         value: "₹1499",
-        description: "One-page cheat sheets for last-minute prep covering all 25 modules"
+        description: "One-page summaries for Event Loop, Middleware, MongoDB Queries, JWT Auth & more"
       },
       {
         icon: <Video className="w-5 h-5" />,
-        title: "Deployment Guide",
+        title: "Deployment Masterclass Guide",
         value: "₹1999",
         description: "Complete guide: Local to Production with Docker, PM2, AWS EC2 & Nginx"
       },
@@ -817,7 +803,7 @@ const kitsData: Record<string, KitDetails> = {
         icon: <Trophy className="w-5 h-5" />,
         title: "Resume Templates",
         value: "₹999",
-        description: "ATS-optimized resume templates specifically for Node.js developers"
+        description: "ATS-optimized resume templates specifically for Node.js/Backend developers"
       }
     ]
   }
@@ -898,56 +884,392 @@ export default function CheckoutPage() {
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6 lg:space-y-8 min-w-0">
-            {/* Hero Section - IMPROVED MOBILE */}
-            <Card className={`p-4 md:p-6 bg-gradient-to-br ${kit.bgGradient || "from-green-50 to-white"} border-0 overflow-hidden`}>
-              <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-5">
-                <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center shadow-md flex-shrink-0`}>
-                  {kit.id === "nodejs" ? <NodeIcon size={42} /> : kit.icon}
-                </div>
-                <div className="flex-1 min-w-0 w-full">
-                  <div className="flex items-start gap-2 mb-1">
-                    <h1 className="text-lg md:text-2xl font-bold leading-tight break-words">{kit.name}</h1>
+            {/* Use dedicated Node.js component for nodejs kit */}
+            {kit.id === "nodejs" ? (
+              <NodejsCheckoutContent />
+            ) : (
+              <Card className={`p-4 md:p-6 bg-gradient-to-br ${kit.bgGradient || "from-gray-50 to-white"} border-0 overflow-hidden`}>
+                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-5">
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center shadow-md flex-shrink-0`}>
+                    {kit.id === "nodejs" ? <NodeIcon size={42} /> : kit.icon}
                   </div>
-                  <p className="text-xs md:text-sm text-muted-foreground mb-2 break-words">{kit.tagline}</p>
+                  <div className="flex-1 min-w-0 w-full">
+                    <div className="flex items-start gap-2 mb-1">
+                      <h1 className="text-lg md:text-2xl font-bold leading-tight break-words">{kit.name}</h1>
+                    </div>
+                    <p className="text-xs md:text-sm text-muted-foreground mb-2 break-words">{kit.tagline}</p>
 
-                  {/* Trust micro-row - IMPROVED WRAPPING */}
-                  <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm">
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <Users className="w-4 h-4 text-blue-500" />
-                      <span className="font-semibold">{kit.students.toLocaleString()}</span>
-                      <span className="text-muted-foreground">students</span>
-                    </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                      <span className="font-semibold">{kit.rating}</span>
-                      {/* <span className="text-muted-foreground">({kit.reviews})</span> */}
-                    </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      {/* <Clock className="w-4 h-4 text-green-500" /> */}
-                      {/* <span className="text-green-600 font-medium text-xs">{kit.lastUpdated}</span> */}
+                    {/* Trust micro-row - IMPROVED WRAPPING */}
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm">
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <Users className="w-4 h-4 text-blue-500" />
+                        <span className="font-semibold">{kit.students.toLocaleString()}</span>
+                        <span className="text-muted-foreground">students</span>
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                        <span className="font-semibold">{kit.rating}</span>
+                        {/* <span className="text-muted-foreground">({kit.reviews})</span> */}
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {/* <Clock className="w-4 h-4 text-green-500" /> */}
+                        {/* <span className="text-green-600 font-medium text-xs">{kit.lastUpdated}</span> */}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Node hero sub-row - IMPROVED WRAPPING */}
-              {kit.id === "nodejs" && (
-                <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  <div className="flex items-center gap-2 bg-white/60 px-2 py-1 rounded-md shadow-sm">
-                    <Shield className="w-4 h-4 text-green-700 flex-shrink-0" />
-                    <span className="whitespace-nowrap">Complete Backend ( NodeJS ) Roadmap</span>
+                {/* Node hero sub-row - IMPROVED WRAPPING */}
+                {kit.id === "nodejs" && (
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                    <div className="flex items-center gap-2 bg-white/60 px-2 py-1 rounded-md shadow-sm">
+                      <Shield className="w-4 h-4 text-green-700 flex-shrink-0" />
+                      <span className="whitespace-nowrap">Complete Backend ( NodeJS ) Roadmap</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-white/60 px-2 py-1 rounded-md shadow-sm">
+                      <Target className="w-4 h-4 text-green-700 flex-shrink-0" />
+                      <span className="whitespace-nowrap">Interview-focused questions and patterns</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-white/60 px-2 py-1 rounded-md shadow-sm">
+                      <Rocket className="w-4 h-4 text-green-700 flex-shrink-0" />
+                      <span className="whitespace-nowrap">200+ Interview Questions Ebook ( The Real Gem )</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/60 px-2 py-1 rounded-md shadow-sm">
-                    <Target className="w-4 h-4 text-green-700 flex-shrink-0" />
-                    <span className="whitespace-nowrap">Interview-focused questions and patterns</span>
+                )}
+              </Card>
+            )}
+
+            {/* Node.js Specific: 4-Week Roadmap Visual */}
+            {kit.id === "nodejs" && (
+              <Card className="p-4 md:p-6 overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                <h2 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                  <Target className="w-5 h-5 text-green-600 flex-shrink-0" />
+                  Your 4-Week Learning Roadmap
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { week: 1, title: "Node.js Core", icon: "🚀", topics: ["Event Loop", "Async Patterns", "Built-in Modules"], color: "from-green-400 to-green-500" },
+                    { week: 2, title: "Express.js", icon: "⚡", topics: ["Middleware", "Routing", "Error Handling"], color: "from-emerald-400 to-emerald-500" },
+                    { week: 3, title: "MongoDB & APIs", icon: "🗄️", topics: ["CRUD", "REST Design", "Authentication"], color: "from-teal-400 to-teal-500" },
+                    { week: 4, title: "Production", icon: "🎯", topics: ["Security", "Testing", "Deployment"], color: "from-green-500 to-emerald-600" }
+                  ].map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="relative p-3 bg-white rounded-xl shadow-sm border border-green-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                      style={{ animationDelay: `${idx * 0.1}s` }}
+                    >
+                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center text-white text-lg mb-2 shadow-md`}>
+                        {item.icon}
+                      </div>
+                      <p className="text-xs text-green-600 font-semibold mb-0.5">Week {item.week}</p>
+                      <h3 className="font-bold text-sm text-gray-900 mb-2">{item.title}</h3>
+                      <ul className="space-y-1">
+                        {item.topics.map((topic, tidx) => (
+                          <li key={tidx} className="flex items-center gap-1.5 text-xs text-gray-600">
+                            <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
+                            {topic}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-4 text-center text-xs text-green-700 font-medium">
+                  ✨ Daily tasks included • 2-3 hours/day • Go from zero to interview-ready
+                </p>
+              </Card>
+            )}
+
+            {/* Node.js Specific: What's Inside Preview */}
+            {kit.id === "nodejs" && (
+              <Card className="p-4 md:p-6 overflow-hidden">
+                <h2 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-purple-500 flex-shrink-0" />
+                  What's Inside the Kit
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {[
+                    { icon: "📚", title: "8 PDFs", subtitle: "500+ Pages", desc: "Complete guides" },
+                    { icon: "❓", title: "200+ Questions", subtitle: "With Solutions", desc: "FAANG tested" },
+                    { icon: "📝", title: "Cheatsheets", subtitle: "Quick Revision", desc: "One-pagers" },
+                    { icon: "🗓️", title: "4-Week Plan", subtitle: "Day-by-Day", desc: "Structured path" },
+                    { icon: "💻", title: "4 Projects", subtitle: "Production Ready", desc: "With source code" },
+                    { icon: "🎁", title: "Bonuses", subtitle: "Worth ₹4,497", desc: "Free included" }
+                  ].map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 hover:border-green-200 hover:shadow-md transition-all duration-300 text-center"
+                    >
+                      <div className="text-2xl mb-2">{item.icon}</div>
+                      <h3 className="font-bold text-sm text-gray-900">{item.title}</h3>
+                      <p className="text-xs text-green-600 font-medium">{item.subtitle}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+            {/* Node.js Specific: Cheatsheets Preview */}
+            {kit.id === "nodejs" && (
+              <Card className="p-4 md:p-6 overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+                <h2 className="text-base md:text-lg font-bold mb-3 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-purple-600 flex-shrink-0" />
+                  Quick Revision Cheatsheets
+                  <Badge className="bg-purple-100 text-purple-700 text-xs border-0 ml-auto">FREE Bonus</Badge>
+                </h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  One-page summaries for last-minute revision. Print them or save on phone!
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {[
+                    "Event Loop Flow",
+                    "Express Middleware",
+                    "MongoDB Queries",
+                    "JWT Authentication",
+                    "REST API Design",
+                    "Error Handling",
+                    "Security Patterns",
+                    "Deployment Steps"
+                  ].map((sheet, idx) => (
+                    <div
+                      key={idx}
+                      className="p-2.5 bg-white rounded-lg border border-purple-100 flex items-center gap-2 hover:border-purple-300 hover:shadow-sm transition-all"
+                    >
+                      <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-pink-400 rounded flex items-center justify-center">
+                        <FileText className="w-3 h-3 text-white" />
+                      </div>
+                      <span className="text-xs font-medium text-gray-700 truncate">{sheet}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+            {/* INTERACTIVE: Sample Interview Questions Preview */}
+            {kit.id === "nodejs" && (
+              <Card className="p-4 md:p-6 overflow-hidden border-2 border-green-200 bg-gradient-to-br from-green-50/50 to-white">
+                <h2 className="text-base md:text-lg font-bold mb-2 flex items-center gap-2">
+                  <Brain className="w-5 h-5 text-green-600 flex-shrink-0" />
+                  Try Sample Interview Questions
+                  <Badge className="bg-green-100 text-green-700 text-xs border-0 ml-auto">Interactive</Badge>
+                </h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  Click on any question to reveal the answer. These are real questions from top companies!
+                </p>
+                <div className="space-y-3">
+                  {[
+                    {
+                      q: "What is the Event Loop in Node.js?",
+                      a: "The Event Loop is a mechanism that allows Node.js to perform non-blocking I/O operations despite being single-threaded. It continuously checks the call stack and callback queue, executing callbacks when the stack is empty. It has 6 phases: timers, pending callbacks, idle/prepare, poll, check, and close callbacks.",
+                      difficulty: "Common",
+                      company: "Amazon"
+                    },
+                    {
+                      q: "Explain the difference between process.nextTick() and setImmediate()",
+                      a: "process.nextTick() executes callbacks at the end of the current operation, before the event loop continues. setImmediate() executes callbacks in the CHECK phase of the next event loop iteration. nextTick() has higher priority and can starve the event loop if called recursively.",
+                      difficulty: "Tricky",
+                      company: "Microsoft"
+                    },
+                    {
+                      q: "How does middleware work in Express.js?",
+                      a: "Middleware are functions that have access to req, res, and next(). They execute in order, can modify request/response objects, end the request-response cycle, or call next() to pass control. Types: Application-level, Router-level, Error-handling, Built-in, and Third-party middleware.",
+                      difficulty: "Common",
+                      company: "Swiggy"
+                    }
+                  ].map((item, idx) => (
+                    <details
+                      key={idx}
+                      className="group border border-green-200 rounded-xl overflow-hidden hover:shadow-md transition-all"
+                    >
+                      <summary className="cursor-pointer p-4 bg-white hover:bg-green-50 transition-colors flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                          {idx + 1}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm text-gray-900 pr-8">{item.q}</p>
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <Badge variant="outline" className="text-[10px] border-green-300 text-green-700">{item.difficulty}</Badge>
+                            <Badge variant="outline" className="text-[10px] border-blue-300 text-blue-700">Asked at {item.company}</Badge>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-gray-400 group-open:rotate-90 transition-transform flex-shrink-0 mt-1" />
+                      </summary>
+                      <div className="p-4 pt-0 bg-gradient-to-b from-green-50 to-white border-t border-green-100">
+                        <div className="p-3 bg-white rounded-lg border border-green-100 mt-3">
+                          <p className="text-xs font-semibold text-green-700 mb-1.5 flex items-center gap-1">
+                            <Check className="w-3 h-3" /> Model Answer:
+                          </p>
+                          <p className="text-sm text-gray-700 leading-relaxed">{item.a}</p>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2 text-center">
+                          ✨ 200+ more questions like this in the kit
+                        </p>
+                      </div>
+                    </details>
+                  ))}
+                </div>
+                <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200 text-center">
+                  <p className="text-xs text-yellow-800">
+                    <span className="font-semibold">💡 Tip:</span> The kit includes detailed explanations for each question with code examples and follow-up questions interviewers might ask!
+                  </p>
+                </div>
+              </Card>
+            )}
+
+            {/* INTERACTIVE: Before/After Skill Transformation */}
+            {kit.id === "nodejs" && (
+              <Card className="p-4 md:p-6 overflow-hidden">
+                <h2 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                  Your Transformation Journey
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Before */}
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-red-50 to-orange-50 border border-red-200">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                        <X className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="font-bold text-red-700">Before the Kit</h3>
+                    </div>
+                    <ul className="space-y-2">
+                      {[
+                        "Confused about Event Loop phases",
+                        "Can't explain async/await properly",
+                        "No idea about Express middleware flow",
+                        "Struggle with MongoDB queries",
+                        "Fear System Design questions",
+                        "No structured preparation plan"
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-red-800">
+                          <X className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/60 px-2 py-1 rounded-md shadow-sm">
-                    <Rocket className="w-4 h-4 text-green-700 flex-shrink-0" />
-                    <span className="whitespace-nowrap">200+ Interview Questions Ebook ( The Real Gem )</span>
+
+                  {/* After */}
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="font-bold text-green-700">After the Kit</h3>
+                    </div>
+                    <ul className="space-y-2">
+                      {[
+                        "Crystal clear Event Loop understanding",
+                        "Explain async patterns with diagrams",
+                        "Master middleware & routing patterns",
+                        "Write complex MongoDB aggregations",
+                        "Confidently tackle System Design",
+                        "Complete in 4 weeks, interview-ready"
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-green-800">
+                          <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
-              )}
-            </Card>
+              </Card>
+            )}
+
+            {/* INTERACTIVE: Why This Kit vs Free Resources */}
+            {kit.id === "nodejs" && (
+              <Card className="p-4 md:p-6 overflow-hidden">
+                <h2 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-yellow-600 flex-shrink-0" />
+                  Why This Kit vs Free Resources?
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-2 font-semibold text-gray-700">Feature</th>
+                        <th className="text-center py-3 px-2">
+                          <span className="inline-flex items-center gap-1 text-gray-500">
+                            📺 YouTube
+                          </span>
+                        </th>
+                        <th className="text-center py-3 px-2">
+                          <span className="inline-flex items-center gap-1 text-gray-500">
+                            📝 Blogs
+                          </span>
+                        </th>
+                        <th className="text-center py-3 px-2">
+                          <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                            ⭐ This Kit
+                          </span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { feature: "Interview-focused content", youtube: false, blogs: false, kit: true },
+                        { feature: "Structured 4-week roadmap", youtube: false, blogs: false, kit: true },
+                        { feature: "Real FAANG questions", youtube: false, blogs: false, kit: true },
+                        { feature: "Quick revision cheatsheets", youtube: false, blogs: false, kit: true },
+                        { feature: "Production projects", youtube: "partial", blogs: false, kit: true },
+                        { feature: "Scenario-based problems", youtube: false, blogs: false, kit: true },
+                        { feature: "Lifetime updates", youtube: false, blogs: false, kit: true },
+                        { feature: "Priority support", youtube: false, blogs: false, kit: true },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-3 px-2 font-medium text-gray-700">{row.feature}</td>
+                          <td className="py-3 px-2 text-center">
+                            {row.youtube === true ? (
+                              <Check className="w-5 h-5 text-green-500 mx-auto" />
+                            ) : row.youtube === "partial" ? (
+                              <span className="text-yellow-500">~</span>
+                            ) : (
+                              <X className="w-5 h-5 text-red-400 mx-auto" />
+                            )}
+                          </td>
+                          <td className="py-3 px-2 text-center">
+                            {row.blogs ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-red-400 mx-auto" />}
+                          </td>
+                          <td className="py-3 px-2 text-center bg-green-50">
+                            <Check className="w-5 h-5 text-green-600 mx-auto" />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mt-4 p-3 bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg text-center">
+                  <p className="text-sm font-semibold text-green-800">
+                    💰 Save 100+ hours of scattered learning. Get everything organized in one place.
+                  </p>
+                </div>
+              </Card>
+            )}
+
+            {/* INTERACTIVE: Success Metrics */}
+            {kit.id === "nodejs" && (
+              <Card className="p-4 md:p-6 overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                <h2 className="text-base md:text-lg font-bold mb-4 text-center">
+                  Our Students' Success
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    { value: "6,741+", label: "Students Enrolled", icon: "👥" },
+                    { value: "97%", label: "Interview Clear Rate", icon: "🎯" },
+                    { value: "3x", label: "Average Salary Hike", icon: "💰" },
+                    { value: "4.9/5", label: "Student Rating", icon: "⭐" }
+                  ].map((stat, idx) => (
+                    <div key={idx} className="text-center p-3 bg-white rounded-xl shadow-sm border border-blue-100">
+                      <div className="text-2xl mb-1">{stat.icon}</div>
+                      <p className="text-2xl font-black text-gray-900">{stat.value}</p>
+                      <p className="text-xs text-gray-600">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
 
             {/* What You'll Get - IMPROVED MOBILE */}
             <Card className="p-4 md:p-6 overflow-hidden">
@@ -1356,6 +1678,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-    </main>
+    </main >
   )
 }

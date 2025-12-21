@@ -5,8 +5,8 @@ import { useDevicePricing } from '@/hooks/use-device-detection';
 import { appConstants } from "@/lib/appConstants";
 
 export function Hero() {
-    const { js, complete, isLoading } = useDevicePricing();
-    const { js_kit_price, js_kit_original_price, discount_percentage } = appConstants();
+  const { js, complete, isLoading } = useDevicePricing();
+  const { js_kit_price, js_kit_original_price, discount_percentage } = appConstants();
   return (
     <section className="relative mx-auto max-w-7xl px-4 pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
       {/* Animated gradient background - adjusted for mobile */}
@@ -32,7 +32,7 @@ export function Hero() {
             <span className="text-foreground">Crack Frontend Interviews With</span>
             <br />
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Real Interview Questions
+              Real Interview Questions
             </span>
             <br />
             <span className="text-foreground">in 30 days</span>
@@ -44,37 +44,31 @@ export function Hero() {
             <span className="font-semibold text-foreground"> Google, Amazon, Microsoft</span> and more.
           </p>
 
-          <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Get Javascript Interview Kit At Just</p>
-                <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">₹{js_kit_price}</span>
-                      <span className="text-sm text-muted-foreground line-through">₹{js_kit_original_price}</span>
-                      <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded">
-                        SAVE {discount_percentage}%
-                      </span>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xs font-semibold">✓ Instant Access</p>
-                <p className="text-xs text-muted-foreground">✓ Lifetime Updates</p>
-              </div>
+          {/* Trust indicators */}
+          <div className="mt-6 flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span className="text-sm font-medium text-green-700">2,500+ Engineers Placed</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-full">
+              <span className="text-sm font-medium text-blue-700">✓ Lifetime Access</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-full">
+              <span className="text-sm font-medium text-purple-700">✓ Regular Updates</span>
             </div>
           </div>
 
-          {/* CTA Buttons with Urgency */}
-          <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <a href="#pricing" className="group inline-flex relative">
+          {/* CTA Buttons */}
+          <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <a href="#products" className="group inline-flex relative">
               <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-200"></span>
               <span className="relative w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 text-white font-medium shadow-lg hover:shadow-xl transition-all hover:scale-105">
-                Get Instant Access →
-                <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded">{discount_percentage}% OFF</span>
+                Explore Interview Kits →
               </span>
             </a>
             <a href="#features" className="inline-flex group">
               <span className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-secondary text-secondary px-4 sm:px-6 py-3 font-medium hover:bg-secondary/10 transition-all group-hover:border-primary">
-                Know More 
+                Why Choose Us
               </span>
             </a>
           </div>
@@ -102,7 +96,7 @@ export function Hero() {
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              
+
               {/* Fallback illustration if no image */}
               <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10">
                 <div className="text-center p-8">

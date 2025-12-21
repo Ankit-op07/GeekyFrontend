@@ -30,7 +30,7 @@ export interface Product {
 
 const products: Product[] = [
   {
-    id: "javascript-kit",
+    id: "javascript",
     title: "JS Interview Preparation Kit",
     shortTitle: "JavaScript Interview Kit",
     price: {
@@ -49,7 +49,7 @@ const products: Product[] = [
     tag: "Foundation"
   },
   {
-    id: "react-kit",
+    id: "react",
     title: "Reactjs Interview Preparation Kit",
     shortTitle: "React.js Interview Kit",
     price: {
@@ -68,7 +68,7 @@ const products: Product[] = [
     tag: "Framework"
   },
   {
-    id: "complete-frontend",
+    id: "complete",
     title: "Complete Frontend Interview Preparation Kit",
     shortTitle: "Complete Frontend Interview Kit",
     price: {
@@ -88,7 +88,7 @@ const products: Product[] = [
     tag: "All-in-One"
   },
   {
-    id: "nodejs-kit",
+    id: "nodejs",
     title: "Node.js Interview Preparation Kit",
     shortTitle: "Node.js Interview Kit",
     price: {
@@ -105,25 +105,6 @@ const products: Product[] = [
     studentsCount: 6500,
     discount: 90,
     tag: "Backend"
-  },
-  {
-    id: "interview-experiences",
-    title: "Interview Experiences",
-    shortTitle: "Interview Experiences",
-    price: {
-      current: 299,
-      original: 2999
-    },
-    icon: (
-      <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg opacity-80">
-        <Briefcase className="w-8 h-8 text-white drop-shadow" />
-      </div>
-    ),
-    bgGradient: "from-indigo-50 via-white to-purple-50",
-    iconBg: "bg-gradient-to-br from-indigo-500 to-purple-600",
-    comingSoon: true,
-    discount: 90,
-    tag: "Insights"
   }
 ]
 
@@ -131,7 +112,7 @@ export function ProductsShowcase() {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 
   return (
-    <section className="relative pb-12  md:py-20 overflow-hidden bg-gradient-to-b from-gray-50/50 via-white to-gray-50/50">
+    <section id="products" className="relative pb-12  md:py-20 overflow-hidden bg-gradient-to-b from-gray-50/50 via-white to-gray-50/50">
       {/* Premium background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50 via-transparent to-transparent opacity-60" />
@@ -147,7 +128,7 @@ export function ProductsShowcase() {
               LIMITED TIME: 90% OFF
             </Badge>
           </div>
-          
+
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
             Choose Your
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent ml-2">
@@ -164,28 +145,28 @@ export function ProductsShowcase() {
           {products.map((product) => (
             <div
               key={product.id}
-            //   href={`/products/${product.id}`}
+              //   href={`/products/${product.id}`}
               className="group block h-full"
             //   onMouseEnter={() => setHoveredCard(product.id)}
             //   onMouseLeave={() => setHoveredCard(null)}
             >
               <div className={`
                 relative h-full bg-white rounded-2xl p-4 transition-all duration-500
-                ${hoveredCard === product.id 
-                  ? 'transform -translate-y-2 scale-[1.02]' 
+                ${hoveredCard === product.id
+                  ? 'transform -translate-y-2 scale-[1.02]'
                   : 'hover:-translate-y-1'
                 }
                 ${product.comingSoon ? 'opacity-85' : ''}
               `}
-              style={{
-                boxShadow: hoveredCard === product.id 
-                  ? '0 20px 40px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.03)' 
-                  : '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.02)'
-              }}
+                style={{
+                  boxShadow: hoveredCard === product.id
+                    ? '0 20px 40px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.03)'
+                    : '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.02)'
+                }}
               >
                 {/* Subtle gradient background */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${product.bgGradient} opacity-40 rounded-2xl`} />
-                
+
                 {/* Popular badge - Elegant placement */}
                 {product.popular && (
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
@@ -263,23 +244,24 @@ export function ProductsShowcase() {
                       </div>
                     </div>
 
-                    {/* CTA Button - Premium style */}
-                   <PaymentButton
-                          amount={product.price.current}
-                          originalAmount={product.price.original}
-                          planName={product.title}
-                          buttonText="Get Access"
-                      className={`
-                        w-full h-9 text-xs font-bold
-                        ${product.comingSoon 
-                          ? 'bg-gray-300 cursor-not-allowed text-gray-500' 
-                          : `${product.iconBg} hover:opacity-95 text-white shadow-lg hover:shadow-xl`
-                        }
-                        border-0 transition-all duration-300
-                        group/btn relative overflow-hidden rounded-lg
-                      `}
-                      disabled={product.comingSoon}
-                        />
+                    {/* CTA Button - Link to checkout */}
+                    <Link href={product.comingSoon ? '#' : `/checkout/${product.id}`}>
+                      <button
+                        className={`
+                          w-full h-9 text-xs font-bold rounded-lg flex items-center justify-center gap-1
+                          ${product.comingSoon
+                            ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                            : `${product.iconBg} hover:opacity-95 text-white shadow-lg hover:shadow-xl`
+                          }
+                          border-0 transition-all duration-300
+                          group/btn relative overflow-hidden
+                        `}
+                        disabled={product.comingSoon}
+                      >
+                        {product.comingSoon ? 'Coming Soon' : 'Get Access'}
+                        {!product.comingSoon && <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform" />}
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>
