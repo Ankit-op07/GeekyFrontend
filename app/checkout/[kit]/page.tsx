@@ -9,6 +9,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { PaymentButton } from '@/components/payment-button'
 import { NodejsCheckoutContent } from "@/components/nodejs-checkout-content"
+import { PlacementKitCheckoutContent } from "@/components/placement-kit-checkout-content"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -806,6 +807,212 @@ const kitsData: Record<string, KitDetails> = {
         description: "ATS-optimized resume templates specifically for Node.js/Backend developers"
       }
     ]
+  },
+  placement: {
+    id: "placement",
+    name: "Ultimate Campus Placement Kit",
+    tagline: "Everything You Need to Crack Your Dream Placement – From Zero to Offer Letter",
+    price: 499,
+    originalPrice: 4999,
+    discount: 90,
+    icon: <Award className="w-6 h-6" />,
+    color: "from-indigo-600 to-purple-600",
+    bgGradient: "from-indigo-50 via-white to-purple-50",
+    students: 12450,
+    rating: 4.95,
+    reviews: 2847,
+    lastUpdated: "Updated this week",
+    features: [
+      {
+        icon: <Code className="w-5 h-5" />,
+        title: "7 Complete Technical Subject Folders",
+        description: "Comprehensive notes & questions for DSA, DBMS & SQL, Computer Networks, Operating System, OOPs, System Design & Software Engineering"
+      },
+      {
+        icon: <BookOpen className="w-5 h-5" />,
+        title: "25+ Job Interview Preparation Scripts",
+        description: "Word-by-word scripts for every interview scenario – from 'Tell me about yourself' to complex behavioral questions"
+      },
+      {
+        icon: <Brain className="w-5 h-5" />,
+        title: "LeetCode Problems PDF",
+        description: "Handpicked coding problems actually asked in placement drives – with detailed solutions & explanations"
+      },
+      {
+        icon: <Target className="w-5 h-5" />,
+        title: "HR Interview Questions Bank",
+        description: "50+ most common HR questions with winning answers that got students placed at top companies"
+      },
+      {
+        icon: <FileText className="w-5 h-5" />,
+        title: "Geeky Frontend Resources",
+        description: "Curated frontend learning resources, roadmaps, and project ideas for complete placement preparation"
+      },
+      {
+        icon: <Rocket className="w-5 h-5" />,
+        title: "Off-Campus Hiring Companies List",
+        description: "Updated list of companies actively hiring freshers off-campus with direct application links"
+      },
+      {
+        icon: <Sparkles className="w-5 h-5" />,
+        title: "Resume & Cover Letter Templates",
+        description: "ATS-optimized templates + career advice that helped students get shortlisted at FAANG & product companies"
+      },
+      {
+        icon: <Trophy className="w-5 h-5" />,
+        title: "Template + Advice Document",
+        description: "Expert tips on resume building, interview preparation strategy & career planning"
+      }
+    ],
+    curriculum: [
+      {
+        module: "Core CS Fundamentals (7 Folders)",
+        topics: [
+          "Data Structures & Algorithms – Arrays, Trees, Graphs, DP & more",
+          "DBMS & SQL – Normalization, Queries, Transactions",
+          "Computer Networks – OSI Model, TCP/IP, Protocols",
+          "Operating System – Processes, Memory, Scheduling",
+          "OOPs – Pillars, Design Patterns, SOLID Principles",
+          "System Design – Basics for freshers",
+          "Software Engineering – SDLC, Agile, Testing"
+        ],
+        hours: 25
+      },
+      {
+        module: "Coding Preparation",
+        topics: [
+          "LeetCode Problems PDF with solutions",
+          "Pattern-based problem solving",
+          "Time & Space Complexity analysis",
+          "Most asked coding questions in placements"
+        ],
+        hours: 15
+      },
+      {
+        module: "Interview Mastery",
+        topics: [
+          "25+ Job Interview Scripts (Word-by-word)",
+          "HR Interview Questions with winning answers",
+          "Behavioral question frameworks (STAR method)",
+          "Technical interview strategies"
+        ],
+        hours: 8
+      },
+      {
+        module: "Career Resources",
+        topics: [
+          "ATS-friendly Resume Templates",
+          "Cover Letter Templates",
+          "Companies Hiring Freshers Off-Campus list",
+          "Template + Advice for career planning",
+          "Geeky Frontend Resources"
+        ],
+        hours: 4
+      }
+    ],
+    included: [
+      { icon: <Code className="w-4 h-4" />, text: "7 Technical Subject Folders", value: "Complete CS coverage" },
+      { icon: <FileText className="w-4 h-4" />, text: "25+ Interview Scripts", value: "Word-by-word guides" },
+      { icon: <BookOpen className="w-4 h-4" />, text: "LeetCode Problems PDF", value: "With solutions" },
+      { icon: <Target className="w-4 h-4" />, text: "HR Interview Questions", value: "50+ questions" },
+      { icon: <Sparkles className="w-4 h-4" />, text: "Resume & Cover Letter", value: "ATS-optimized" },
+      { icon: <Rocket className="w-4 h-4" />, text: "Companies Hiring List", value: "Off-campus jobs" },
+      { icon: <Download className="w-4 h-4" />, text: "Instant Access", value: "Start in 2 mins" },
+      { icon: <RefreshCw className="w-4 h-4" />, text: "Lifetime Updates", value: "Forever free" }
+    ],
+    testimonials: [
+      {
+        name: "Aditya Sharma",
+        role: "Software Engineer",
+        company: "TCS Digital",
+        text: "₹499 for this is an absolute steal! The 7 technical folders covered everything asked in my interview. Got placed with 7 LPA package!",
+        rating: 5
+      },
+      {
+        name: "Sneha Gupta",
+        role: "Associate Developer",
+        company: "Infosys",
+        text: "The interview scripts are gold! I literally used the 'Tell me about yourself' script and impressed my interviewer. Got selected in first attempt!",
+        rating: 5
+      },
+      {
+        name: "Rohit Kumar",
+        role: "SDE",
+        company: "Amazon",
+        text: "LeetCode PDF + DSA folder = Perfect combo. The off-campus companies list helped me find opportunities I didn't know existed. Now at Amazon!",
+        rating: 5
+      },
+      {
+        name: "Priya Patel",
+        role: "Frontend Developer",
+        company: "Flipkart",
+        text: "The Geeky Frontend resources and System Design folder helped me crack Flipkart! This kit has everything a fresher needs. Worth every rupee!",
+        rating: 5
+      },
+      {
+        name: "Karan Mehta",
+        role: "Graduate Trainee",
+        company: "Wipro",
+        text: "Was struggling with OS and DBMS concepts. The organized folders made revision super easy. Placed with 5 LPA in just 2 months of preparation!",
+        rating: 5
+      }
+    ],
+    faqs: [
+      {
+        question: "What exactly do I get in this kit?",
+        answer: "You get: (1) 7 complete technical subject folders (DSA, DBMS & SQL, Computer Networks, OS, OOPs, System Design, Software Engineering), (2) 25+ Job Interview Scripts, (3) LeetCode Problems PDF, (4) HR Interview Questions, (5) Resume & Cover Letter Templates, (6) Companies Hiring Freshers Off-Campus list, (7) Geeky Frontend Resources, (8) Template + Career Advice document."
+      },
+      {
+        question: "Why ₹499? Is it worth the price?",
+        answer: "Absolutely! Consider this: A single mock interview costs ₹500-2000. Private placement coaching charges ₹15,000-50,000. This kit gives you 7 technical folders, 25+ interview scripts, coding problems, HR questions, resume templates – everything curated by placement experts. Students have landed 5-15 LPA packages using this kit. The ROI is 100x."
+      },
+      {
+        question: "Who is this kit for?",
+        answer: "Perfect for: (1) Final year students preparing for campus placements, (2) 2nd/3rd year students wanting a head start, (3) Fresh graduates looking for off-campus opportunities, (4) Anyone targeting WITCH companies (Wipro, Infosys, TCS, Cognizant, HCL), (5) Students aiming for product companies like Amazon, Flipkart, etc."
+      },
+      {
+        question: "Are these actual interview questions?",
+        answer: "Yes! All questions are collected from real placement drives at TCS, Infosys, Wipro, Cognizant, Amazon, Microsoft, Flipkart, and 100+ other companies. The HR interview questions and interview scripts are based on what actually gets asked."
+      },
+      {
+        question: "I'm from non-CS background. Will this help?",
+        answer: "Definitely! The 7 technical folders are structured from basics to advanced. The DSA folder starts from arrays and goes to advanced topics. Perfect for students from any engineering branch switching to IT/Software roles."
+      },
+      {
+        question: "How is this different from free resources?",
+        answer: "Free resources are scattered across 100+ websites and YouTube videos. This kit gives you: (1) Everything organized in one place, (2) Interview-focused content (not academic), (3) Word-by-word interview scripts, (4) Companies actively hiring list, (5) Tested templates that got students placed. You save 200+ hours of research."
+      },
+      {
+        question: "Do I get lifetime access and updates?",
+        answer: "Yes! Once you purchase, you get lifetime access. All future updates – new interview questions, updated company lists, new resources – are free forever."
+      }
+    ],
+    bonuses: [
+      {
+        icon: <Gift className="w-5 h-5" />,
+        title: "Geeky Frontend Resources",
+        value: "₹999",
+        description: "Complete frontend learning resources, roadmaps & project ideas"
+      },
+      {
+        icon: <Trophy className="w-5 h-5" />,
+        title: "Off-Campus Companies 2025",
+        value: "₹1499",
+        description: "List of companies hiring freshers with direct application links"
+      },
+      {
+        icon: <Sparkles className="w-5 h-5" />,
+        title: "Career Advice + Template",
+        value: "₹799",
+        description: "Expert tips on resume building & interview strategy"
+      },
+      {
+        icon: <Zap className="w-5 h-5" />,
+        title: "Cover Letter Templates",
+        value: "₹499",
+        description: "Professional templates for job applications"
+      }
+    ]
   }
 }
 
@@ -884,9 +1091,11 @@ export default function CheckoutPage() {
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6 lg:space-y-8 min-w-0">
-            {/* Use dedicated Node.js component for nodejs kit */}
+            {/* Use dedicated components for nodejs and placement kits */}
             {kit.id === "nodejs" ? (
               <NodejsCheckoutContent />
+            ) : kit.id === "placement" ? (
+              <PlacementKitCheckoutContent />
             ) : (
               <Card className={`p-4 md:p-6 bg-gradient-to-br ${kit.bgGradient || "from-gray-50 to-white"} border-0 overflow-hidden`}>
                 <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-5">

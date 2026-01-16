@@ -39,6 +39,7 @@ const FOLDER_IDS: Record<string, string> = {
   'Frontend Interview Experiences Kit': process.env.EXPERIENCES_KIT_FOLDER_ID!,
   'Reactjs Interview Preparation Kit': process.env.REACT_KIT_FOLDER_ID!,
   'Node.js Interview Preparation Kit': process.env.NODEJS_KIT_FOLDER_ID!,
+  'Ultimate Campus Placement Kit': process.env.PLACEMENT_KIT_FOLDER_ID!,
 };
 
 // ============================================================
