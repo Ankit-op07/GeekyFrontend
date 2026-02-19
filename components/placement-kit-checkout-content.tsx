@@ -239,7 +239,7 @@ export function PlacementKitCheckoutContent() {
             <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-5 border border-indigo-100/50">
                 <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2 text-lg">
                     <Award className="w-5 h-5 text-indigo-600" />
-                    Why ₹299 is a No-Brainer
+                    Why ₹199 is a No-Brainer
                 </h3>
 
                 <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
@@ -261,7 +261,7 @@ export function PlacementKitCheckoutContent() {
                     </div>
                     <div className="mt-3 pt-3 border-t border-dashed border-gray-200 flex items-center justify-between">
                         <span className="text-sm text-gray-600">Get ALL this in one kit</span>
-                        <span className="text-xl font-black text-green-600">Just ₹299</span>
+                        <span className="text-xl font-black text-green-600">Just ₹199</span>
                     </div>
                 </div>
 
@@ -349,27 +349,40 @@ export function PlacementKitCheckoutContent() {
                 </div>
 
                 <div className="relative z-10">
-                    {/* Limited Time Banner */}
+                    {/* Limited Time Banner - Enhanced Urgency */}
+                    <div className="bg-red-500/20 backdrop-blur-md border border-red-500/30 rounded-xl get-started-btn p-3 mb-6 animate-pulse">
+                        <div className="flex items-center justify-center gap-2 text-center">
+                            <Clock className="w-4 h-4 text-red-100" />
+                            <span className="text-sm font-bold text-white">
+                                Huge Discount Ends on 28th Feb
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Discount Badge */}
                     <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 inline-flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                        <span className="text-xs font-semibold">94% OFF – Limited Time Offer</span>
+                        <span className="text-xs font-semibold">96% OFF – Offer valid till 28 Feb</span>
                     </div>
 
                     <div className="text-center mb-5">
                         <p className="text-indigo-200 text-sm mb-2">Complete Placement Kit</p>
                         <div className="flex items-center justify-center gap-3">
-                            <span className="text-5xl font-black">₹299</span>
+                            <span className="text-5xl font-black">₹199</span>
                             <div className="text-left">
                                 <span className="text-xl text-white/60 line-through block">₹4,999</span>
                                 <Badge className="bg-white/20 text-white border-0 text-xs font-bold">
-                                    Save ₹4,700
+                                    Save ₹4,800
                                 </Badge>
                             </div>
                         </div>
+                        <p className="text-xs text-red-200 font-medium mt-2 animate-bounce">
+                            ⚠️ Price increasing to ₹4,999 after 28th Feb
+                        </p>
                     </div>
 
                     <PaymentButton
-                        amount={299}
+                        amount={199}
                         originalAmount={4999}
                         planName="Ultimate Campus Placement Kit"
                         buttonText="Get Instant Access →"
