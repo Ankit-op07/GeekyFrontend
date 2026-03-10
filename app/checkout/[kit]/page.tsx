@@ -1072,21 +1072,10 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white via-gray-50/50 to-white pt-12 lg:pt-8 overflow-x-hidden">
+    <main className="min-h-screen bg-gradient-to-b from-white via-gray-50/50 to-white pt-20 lg:pt-20 overflow-x-hidden">
       <SiteHeader />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 md:py-8">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 md:mb-6 overflow-x-auto">
-          <Link href="/" className="hover:text-primary flex items-center gap-1 flex-shrink-0">
-            <ArrowLeft className="w-3 h-3" />
-            Home
-          </Link>
-          <ChevronRight className="w-3 h-3 flex-shrink-0" />
-          <span className="flex-shrink-0">Checkout</span>
-          <ChevronRight className="w-3 h-3 flex-shrink-0" />
-          <span className="text-foreground font-medium truncate">{kit.name}</span>
-        </div>
 
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Main Content */}
