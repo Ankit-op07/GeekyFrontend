@@ -2,7 +2,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { SiteHeader } from "@/components/site-header"
@@ -88,6 +88,15 @@ function NodeIcon({ size = 36 }: { size?: number }) {
       </g>
     </svg>
   )
+}
+
+/** Map from checkout page slug → KIT_CATALOG ID */
+const SLUG_TO_KIT_ID: Record<string, string> = {
+  javascript: 'js-kit',
+  react: 'react-kit',
+  nodejs: 'nodejs-kit',
+  placement: 'placement-kit',
+  complete: 'complete-kit',
 }
 
 function parseCurrencyValue(value?: string): number {
@@ -1025,6 +1034,31 @@ export default function CheckoutPage() {
   const [selectedTestimonial, setSelectedTestimonial] = useState(0)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [mobileCheckoutOpen, setMobileCheckoutOpen] = useState(false)
+  const searchParams = useSearchParams()
+
+  // Show toast based on magic link redirect result
+  useEffect(() => {
+    const authSuccess = searchParams.get('auth_success')
+    const authError = searchParams.get('auth_error')
+    if (authSuccess === '1') {
+      // Remove params from URL cleanly
+      const url = new URL(window.location.href)
+      url.searchParams.delete('auth_success')
+      window.history.replaceState({}, '', url.toString())
+    } else if (authError) {
+      const messages: Record<string, string> = {
+        link_expired: 'Your sign-in link has expired. Please request a new one.',
+        invalid_link: 'This sign-in link is invalid or has already been used.',
+        server_error: 'Something went wrong. Please try again.',
+        missing_token: 'Invalid sign-in link. Please try again.',
+      }
+      const url = new URL(window.location.href)
+      url.searchParams.delete('auth_error')
+      window.history.replaceState({}, '', url.toString())
+      // We can't use useToast here easily without prop drilling, so console log
+      console.warn('Auth error from magic link:', authError, messages[authError])
+    }
+  }, [searchParams])
 
   const bonusesSum = useMemo(() => {
     return kit?.bonuses?.reduce((acc, b) => acc + parseCurrencyValue(b.value), 0) || 0
@@ -1689,9 +1723,7 @@ export default function CheckoutPage() {
 
                 {/* CTA Button */}
                 <PaymentButton
-                  amount={kit.price}
-                  originalAmount={kit.originalPrice}
-                  planName={kit.name}
+                  kitId={SLUG_TO_KIT_ID[kit.id] || kit.id}
                   buttonText="🔥 Get Instant Access Now"
                   className="w-full h-12 md:h-14 text-base font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-md"
                 />
@@ -1762,9 +1794,7 @@ export default function CheckoutPage() {
                     </button>
                     <div className="w-20">
                       <PaymentButton
-                        amount={kit.price}
-                        originalAmount={kit.originalPrice}
-                        planName={kit.name}
+                        kitId={SLUG_TO_KIT_ID[kit.id] || kit.id}
                         buttonText="Buy"
                         className="w-full h-10 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600"
                       />
@@ -1802,9 +1832,7 @@ export default function CheckoutPage() {
 
                     <div className="mb-2">
                       <PaymentButton
-                        amount={kit.price}
-                        originalAmount={kit.originalPrice}
-                        planName={kit.name}
+                        kitId={SLUG_TO_KIT_ID[kit.id] || kit.id}
                         buttonText="Get Instant Access Now"
                         className="w-full h-10 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600"
                       />
@@ -1878,9 +1906,7 @@ export default function CheckoutPage() {
           </div>
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <PaymentButton
-              amount={kit.price}
-              originalAmount={kit.originalPrice}
-              planName={kit.name}
+              kitId={SLUG_TO_KIT_ID[kit.id] || kit.id}
               buttonText={`Buy Now • ₹${kit.price}`}
               className="h-10 sm:h-12 px-3 sm:px-6 text-xs sm:text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 shadow-md whitespace-nowrap"
             />

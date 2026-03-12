@@ -14,14 +14,15 @@ export function Pricing() {
   const { js, complete, experiences, isLoading } = useDevicePricing();
   const { js_kit_price, js_kit_original_price, discount_percentage, complete_kit_price, complete_kit_original_price } = appConstants();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  
+
   // Show loading state while detecting device
   if (isLoading) {
     return <PricingSkeletonLoader />;
   }
-  
+
   const plans = [
     {
+      kitId: 'js-kit',
       name: "JS Interview Kit",
       fullName: "JS Interview Preparation Kit",
       description: "Master JavaScript fundamentals",
@@ -49,6 +50,7 @@ export function Pricing() {
       highlights: ["500+ Questions", "Quick Notes", "Weekly Updates"]
     },
     {
+      kitId: 'complete-kit',
       name: "Complete Frontend Kit",
       fullName: "Complete Frontend Interview Preparation Kit",
       description: "Everything you need to succeed",
@@ -78,6 +80,7 @@ export function Pricing() {
       highlights: ["All-in-One", "DSA Included", "Premium Support"]
     },
     {
+      kitId: 'experiences-kit',
       name: "Interview Experiences",
       fullName: "Frontend Interview Experiences Kit",
       description: "Learn from real experiences",
@@ -103,7 +106,7 @@ export function Pricing() {
       ],
       highlights: ["30+ Stories", "Real Questions", "Negotiation Tips"]
     },
-  ] as const;
+  ];
 
   return (
     <section id="pricing" className="relative py-16 md:py-24 overflow-hidden">
@@ -124,7 +127,7 @@ export function Pricing() {
               LIMITED TIME: {discount_percentage}% OFF ALL KITS
             </Badge>
           </div>
-          
+
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             <span className="text-gray-900">Invest in Your</span>
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent ml-2">
@@ -171,7 +174,7 @@ export function Pricing() {
         <div className="grid gap-8 md:grid-cols-3 lg:gap-10 mb-12">
           {plans.map((plan, index) => {
             const isHovered = hoveredCard === index;
-            
+
             return (
               <div
                 key={plan.name}
@@ -184,7 +187,7 @@ export function Pricing() {
                   <div className="absolute -inset-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-3xl opacity-20 blur-2xl animate-pulse" />
                 )}
 
-                <Card 
+                <Card
                   className={`
                     relative h-full transition-all duration-500 border-0 rounded-2xl
                     ${isHovered ? 'transform -translate-y-2 scale-[1.02]' : ''}
@@ -192,8 +195,8 @@ export function Pricing() {
                   `}
                   style={{
                     background: `linear-gradient(135deg, ${plan.bgGradient})`,
-                    boxShadow: isHovered 
-                      ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' 
+                    boxShadow: isHovered
+                      ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
                       : '0 10px 30px -10px rgba(0, 0, 0, 0.15)'
                   }}
                 >
@@ -265,8 +268,8 @@ export function Pricing() {
                     {/* Features list - Show all with better design */}
                     <div className="space-y-0 bg-white/50 rounded-xl p-3">
                       {plan.features.map((feature, idx) => (
-                        <div 
-                          key={idx} 
+                        <div
+                          key={idx}
                           className={`flex items-start gap-2 py-1.5 ${idx !== plan.features.length - 1 ? 'border-b border-gray-100' : ''}`}
                         >
                           <div className={`w-4 h-4 rounded-full bg-gradient-to-br ${plan.color} flex items-center justify-center flex-shrink-0 mt-0.5`}>
@@ -283,14 +286,12 @@ export function Pricing() {
                     {!plan.comingSoon ? (
                       <>
                         <PaymentButton
-                          amount={plan.priceINR}
-                          originalAmount={plan.originalPriceINR}
-                          planName={plan.fullName}
+                          kitId={plan.kitId}
                           buttonText="Get Instant Access"
                           className={`
                             w-full h-12 text-sm font-bold shadow-lg
-                            ${plan.popular 
-                              ? `bg-gradient-to-r ${plan.color} text-white hover:shadow-xl` 
+                            ${plan.popular
+                              ? `bg-gradient-to-r ${plan.color} text-white hover:shadow-xl`
                               : 'bg-gray-900 text-white hover:bg-gray-800'
                             }
                             transform transition-all duration-300 hover:scale-[1.02]
@@ -298,7 +299,7 @@ export function Pricing() {
                           `}
                           disabled={false}
                         />
-                        
+
                         {/* Preview link - Only for JS Kit */}
                         {plan.previewUrl && (
                           <Link href={plan.previewUrl} className="w-full">
@@ -311,8 +312,8 @@ export function Pricing() {
                         )}
                       </>
                     ) : (
-                      <button 
-                        disabled 
+                      <button
+                        disabled
                         className="w-full h-12 text-sm font-bold bg-gray-300 text-gray-600 rounded-lg cursor-not-allowed"
                       >
                         Coming Soon
@@ -360,7 +361,7 @@ function PricingSkeletonLoader() {
         <Skeleton className="h-12 w-96 mx-auto mb-2" />
         <Skeleton className="h-6 w-64 mx-auto" />
       </div>
-      
+
       <div className="grid gap-8 md:grid-cols-3">
         {[1, 2, 3].map((i) => (
           <div key={i} className="relative">

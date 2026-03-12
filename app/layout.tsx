@@ -10,6 +10,7 @@ import { Suspense } from "react"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { PurchaseNotifications } from "@/components/purchase-notification"
+import { NextAuthProvider } from "@/components/providers/next-auth-provider"
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -50,12 +51,14 @@ export default function RootLayout({
         </Script>
         <noscript>
           <img height="1" width="1" style={{ display: 'none' }}
-               src="https://www.facebook.com/tr?id=796816952836344&ev=PageView&noscript=1" />
+            src="https://www.facebook.com/tr?id=796816952836344&ev=PageView&noscript=1" />
         </noscript>
-        <Suspense fallback={null}>{children}</Suspense>
-        <Analytics />
-        <Toaster />
-        <PurchaseNotifications />
+        <NextAuthProvider>
+          <Suspense fallback={null}>{children}</Suspense>
+          <Analytics />
+          <Toaster />
+          <PurchaseNotifications />
+        </NextAuthProvider>
       </body>
     </html>
   )

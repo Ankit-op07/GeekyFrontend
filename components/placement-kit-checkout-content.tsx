@@ -382,9 +382,7 @@ export function PlacementKitCheckoutContent() {
                     </div>
 
                     <PaymentButton
-                        amount={199}
-                        originalAmount={4999}
-                        planName="Ultimate Campus Placement Kit"
+                        kitId="placement-kit"
                         buttonText="Get Instant Access →"
                         className="w-full h-14 text-lg font-bold bg-white text-indigo-700 hover:bg-indigo-50 rounded-xl shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
                     />

@@ -455,9 +455,7 @@ export function NodejsCheckoutContent() {
                 </div>
 
                 <PaymentButton
-                    amount={299}
-                    originalAmount={2999}
-                    planName="Node.js Interview Preparation Kit"
+                    kitId="nodejs-kit"
                     buttonText="🚀 Get Instant Access"
                     className="w-full h-12 text-base font-bold bg-white text-green-700 hover:bg-green-50 shadow-xl"
                 />

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
+import { getKitById } from '@/lib/appConstants';
 
 const razorpay = new Razorpay({
   key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
@@ -8,15 +9,32 @@ const razorpay = new Razorpay({
 
 export async function POST(request: NextRequest) {
   try {
-    const { amount, planName, userEmail } = await request.json();
+    const { kitId, userEmail, userName, userMobile } = await request.json();
+
+    if (!kitId || !userEmail) {
+      return NextResponse.json({ error: 'Kit ID and email are required' }, { status: 400 });
+    }
+
+    // Resolve price server-side — never trust client-sent amounts
+    const kit = getKitById(kitId);
+    if (!kit) {
+      return NextResponse.json({ error: 'Invalid kit ID' }, { status: 400 });
+    }
+
+    if (kit.comingSoon) {
+      return NextResponse.json({ error: 'This kit is not available yet' }, { status: 400 });
+    }
 
     const order = await razorpay.orders.create({
-      amount: amount * 100, // Amount in paise
+      amount: kit.price * 100, // Amount in paise
       currency: 'INR',
-      receipt: `receipt_${Date.now()}`,
+      receipt: `${kitId}_${Date.now()}`,
       notes: {
-        planName,
+        kitId,
+        planName: kit.name,
         userEmail,
+        userName: userName || '',
+        userMobile: userMobile || '',
       },
     });
 
@@ -24,12 +42,11 @@ export async function POST(request: NextRequest) {
       orderId: order.id,
       amount: order.amount,
       currency: order.currency,
+      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     });
+
   } catch (error) {
     console.error('Error creating order:', error);
-    return NextResponse.json(
-      { error: 'Failed to create order' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { X, ShoppingBag, MapPin, Verified, TrendingUp } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import Image from "next/image"
@@ -96,10 +97,15 @@ interface NotificationData {
 }
 
 export function PurchaseNotifications() {
+  const pathname = usePathname()
   const [notifications, setNotifications] = useState<NotificationData[]>([])
   const [isVisible, setIsVisible] = useState(false)
   const [currentNotification, setCurrentNotification] = useState<NotificationData | null>(null)
   const [lastShownNames, setLastShownNames] = useState<Set<string>>(new Set())
+
+  // Don't show purchase notifications on authenticated pages
+  const suppressedPaths = ['/dashboard', '/learn', '/admin']
+  const isSuppressed = suppressedPaths.some(p => pathname?.startsWith(p))
 
   // Generate random notification data
   const generateNotification = (): NotificationData => {
@@ -115,7 +121,7 @@ export function PurchaseNotifications() {
     const updatedNames = new Set(lastShownNames)
     updatedNames.add(fullName)
     if (updatedNames.size > 20) {
-      const firstItem = updatedNames.values().next().value
+      const firstItem = updatedNames.values().next().value as string
       updatedNames.delete(firstItem)
     }
     setLastShownNames(updatedNames)
@@ -172,7 +178,7 @@ export function PurchaseNotifications() {
     // return Math.floor(Math.random() * 20) + 5
   } // 5 to 25 viewers
 
-  if (!currentNotification) return null
+  if (isSuppressed || !currentNotification) return null
 
   return (
     <>
