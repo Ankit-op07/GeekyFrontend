@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
-
-// Google Drive setup
-const auth = new google.auth.GoogleAuth({
-    credentials: {
-        client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    },
-    scopes: ['https://www.googleapis.com/auth/drive'],
-});
-
-const drive = google.drive({ version: 'v3', auth });
+import jwt from 'jsonwebtoken';
+import connectToDatabase from '@/lib/db';
+import CompanyKitUser from '@/lib/models/CompanyKitUser';
 
 // Email transporter
 const transporter = nodemailer.createTransport({
@@ -22,148 +13,146 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Folder IDs
-const folderIds: { [key: string]: string } = {
-    'JS Interview Preparation Kit': process.env.JS_KIT_FOLDER_ID!,
-    'Complete Frontend Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!,
-    'Frontend Interview Experiences Kit': process.env.EXPERIENCES_KIT_FOLDER_ID!,
-    'Reactjs Interview Preparation Kit': process.env.REACT_KIT_FOLDER_ID!,
-    'Node.js Interview Preparation Kit': process.env.NODEJS_KIT_FOLDER_ID!,
-};
+function buildOnboardingEmail(course: string, email: string, setPasswordLink: string) {
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+    <tr>
+      <td style="padding: 40px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to Geeky Frontend! 🎉</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Your account is ready</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 40px 30px; background-color: white;">
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+          Hello! 👋
+        </p>
 
-async function grantFolderAccess(folderId: string, userEmail: string) {
-    try {
-        // Public link access
-        try {
-            await drive.permissions.create({
-                fileId: folderId,
-                requestBody: { role: 'reader', type: 'anyone', allowFileDiscovery: false },
-            });
-        } catch (e) {
-            // Permission might already exist
-        }
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+          Great news! You now have access to the <strong>${course}</strong>. An account has been created for you on Geeky Frontend.
+        </p>
 
-        // Specific user access
-        try {
-            await drive.permissions.create({
-                fileId: folderId,
-                requestBody: { role: 'reader', type: 'user', emailAddress: userEmail },
-                sendNotificationEmail: false,
-            });
-        } catch (e) {
-            // User might already have access
-        }
+        <!-- Step 1: Set Password -->
+        <div style="background: #f0f4ff; border: 2px solid #667eea; border-radius: 12px; padding: 25px; margin: 25px 0;">
+          <h2 style="color: #4338ca; font-size: 18px; margin: 0 0 10px 0;">🔐 Step 1: Set Your Password</h2>
+          <p style="color: #555; font-size: 14px; margin: 0 0 15px 0;">
+            First, set up a password for your account so you can log in anytime.
+          </p>
+          <table cellspacing="0" cellpadding="0">
+            <tr>
+              <td style="border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <a href="${setPasswordLink}" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 16px; color: white; text-decoration: none; font-weight: bold;">
+                  Set Your Password →
+                </a>
+              </td>
+            </tr>
+          </table>
+          <p style="color: #999; font-size: 12px; margin: 15px 0 0 0;">⏰ This link expires in 24 hours</p>
+        </div>
 
-        const file = await drive.files.get({
-            fileId: folderId,
-            fields: 'name,webViewLink',
-        });
+        <!-- Step 2: Access Course on Platform -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 25px; margin: 25px 0;">
+          <h2 style="color: white; font-size: 18px; margin: 0 0 10px 0;">📚 Step 2: Access Your Course</h2>
+          <p style="color: rgba(255,255,255,0.85); font-size: 14px; margin: 0 0 15px 0;">
+            After logging in, you can access your course materials directly on your dashboard.
+          </p>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 16px; color: #667eea; background-color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+            Go To Dashboard
+          </a>
+        </div>
 
-        return { success: true, folderLink: file.data.webViewLink, folderName: file.data.name };
-    } catch (error: any) {
-        return { success: false, error: error.message };
-    }
+        <!-- Quick Tips -->
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
+          <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">
+            <strong>💡 Quick Tips:</strong>
+          </p>
+          <ul style="color: #666; font-size: 14px; margin: 0; padding-left: 20px;">
+            <li>Your account email: <strong>${email}</strong></li>
+            <li>Login anytime at: <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login" style="color: #667eea;">geekyfrontend.com/login</a></li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 25px; background-color: #f8f9fa; text-align: center;">
+        <p style="color: #999; font-size: 12px; margin: 0;">
+          Questions? Email us at support@geekyfrontend.com<br>
+          © 2025 Geeky Frontend
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
 }
 
 export async function POST(request: NextRequest) {
     try {
-        const { email, phone, course } = await request.json();
+        const { email, phone, course, name } = await request.json();
 
         if (!email || !course) {
             return NextResponse.json({ error: 'Email and course are required' }, { status: 400 });
         }
 
-        const folderId = folderIds[course];
-        if (!folderId) {
-            return NextResponse.json({ error: 'Invalid course selected' }, { status: 400 });
+        // 1. Create or update user account in the database
+        await connectToDatabase();
+        let user = await CompanyKitUser.findOne({ email: email.toLowerCase() });
+        let isNewUser = false;
+
+        if (user) {
+            // User exists — add kit to purchasedKits if not already present
+            if (!user.purchasedKits.includes(course)) {
+                user.purchasedKits.push(course);
+            }
+            user.subscriptionStatus = 'active';
+            await user.save();
+        } else {
+            // Create new user account
+            isNewUser = true;
+            user = await CompanyKitUser.create({
+                email: email.toLowerCase(),
+                name: name || email.split('@')[0],
+                mobile: phone || undefined,
+                emailVerified: true,
+                subscriptionStatus: 'active',
+                purchasedKits: [course],
+                completedQuestions: [],
+                favoriteQuestions: [],
+                mustChangePassword: true,
+            });
         }
 
-        // Grant access
-        const accessResult = await grantFolderAccess(folderId, email);
+        // 2. Generate a set-password JWT token (24h expiry for admin-granted access)
+        const jwtSecret = process.env.JWT_SECRET || 'secret_key';
+        const setPasswordToken = jwt.sign(
+            { id: user._id.toString(), type: 'set-password' },
+            jwtSecret,
+            { expiresIn: '24h' }
+        );
 
-        if (!accessResult.success || !accessResult.folderLink) {
-            return NextResponse.json({ error: 'Failed to grant access: ' + accessResult.error }, { status: 500 });
-        }
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+        const setPasswordLink = `${baseUrl}/reset-password?token=${setPasswordToken}`;
 
-        // Send beautiful email (no payment details)
-        const emailHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      </head>
-      <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
-          <tr>
-            <td style="padding: 40px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Access Granted!</h1>
-              <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Welcome to Geeky Frontend</p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 40px 30px; background-color: white;">
-              <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                Hello! 👋
-              </p>
-              
-              <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                Great news! You now have access to the <strong>${course}</strong>.
-              </p>
-              
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 30px 0;">
-                <tr>
-                  <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; text-align: center;">
-                    <p style="color: white; font-size: 14px; margin: 0 0 15px 0;">Click below to access your materials:</p>
-                    <a href="${accessResult.folderLink}" target="_blank" style="display: inline-block; padding: 16px 40px; font-size: 16px; color: #667eea; background-color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                      📚 Open Course Materials
-                    </a>
-                  </td>
-                </tr>
-              </table>
-              
-              <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">
-                  <strong>💡 Quick Tips:</strong>
-                </p>
-                <ul style="color: #666; font-size: 14px; margin: 0; padding-left: 20px;">
-                  <li>The folder is shared with: <strong>${email}</strong></li>
-                  <li>You can also find it in Google Drive → "Shared with me"</li>
-                  <li>Bookmark the folder for easy access</li>
-                </ul>
-              </div>
-              
-              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-                <p style="color: #999; font-size: 13px; margin: 0;">
-                  Direct link: <a href="${accessResult.folderLink}" style="color: #667eea;">${accessResult.folderLink}</a>
-                </p>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 25px; background-color: #f8f9fa; text-align: center;">
-              <p style="color: #999; font-size: 12px; margin: 0;">
-                Questions? Email us at support@geekyfrontend.com<br>
-                © 2025 Geeky Frontend
-              </p>
-            </td>
-          </tr>
-        </table>
-      </body>
-      </html>
-    `;
+        // 3. Send onboarding email
+        const emailHtml = buildOnboardingEmail(course, email, setPasswordLink);
 
         await transporter.sendMail({
             from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: `🎉 Your Access to ${course} is Ready!`,
+            subject: `🎉 Welcome to Geeky Frontend — Your ${course} Access is Ready!`,
             html: emailHtml,
-            text: `You now have access to ${course}. Open here: ${accessResult.folderLink}`,
+            text: `Welcome to Geeky Frontend! Your account has been created. Set your password here: ${setPasswordLink} — Access your course dashboard at ${baseUrl}/dashboard`,
         });
 
         return NextResponse.json({
             success: true,
-            message: `Access granted and email sent to ${email}`
+            message: `${isNewUser ? 'Account created' : 'Kit added'} and onboarding email sent to ${email}`,
         });
 
     } catch (error: any) {

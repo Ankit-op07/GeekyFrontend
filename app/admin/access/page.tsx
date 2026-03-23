@@ -8,10 +8,16 @@ const courses = [
     'Frontend Interview Experiences Kit',
     'Reactjs Interview Preparation Kit',
     'Node.js Interview Preparation Kit',
+    'Node.js Backend Mastery Kit',
+    'Ultimate Campus Placement Kit',
+    'Company Wise DSA Kit — 3 Months',
+    'Company Wise DSA Kit — 6 Months',
+    'Company Wise DSA Kit — Lifetime',
 ];
 
 export default function AdminAccessPage() {
     const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [course, setCourse] = useState('');
     const [loading, setLoading] = useState(false);
@@ -26,7 +32,7 @@ export default function AdminAccessPage() {
             const res = await fetch('/api/admin/grant-access', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, phone, course }),
+                body: JSON.stringify({ email, name, phone, course }),
             });
 
             const data = await res.json();
@@ -34,6 +40,7 @@ export default function AdminAccessPage() {
             if (res.ok) {
                 setMessage({ type: 'success', text: data.message });
                 setEmail('');
+                setName('');
                 setPhone('');
                 setCourse('');
             } else {
@@ -77,7 +84,7 @@ export default function AdminAccessPage() {
                     textAlign: 'center',
                     fontSize: '14px',
                 }}>
-                    Grant course access to users
+                    Grant course access &amp; create user account
                 </p>
 
                 <form onSubmit={handleSubmit}>
@@ -99,6 +106,27 @@ export default function AdminAccessPage() {
                                 fontSize: '14px',
                                 outline: 'none',
                                 transition: 'border-color 0.2s',
+                                boxSizing: 'border-box',
+                            }}
+                        />
+                    </div>
+
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '500' }}>
+                            Full Name (Optional)
+                        </label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="John Doe"
+                            style={{
+                                width: '100%',
+                                padding: '12px 16px',
+                                borderRadius: '8px',
+                                border: '2px solid #e0e0e0',
+                                fontSize: '14px',
+                                outline: 'none',
                                 boxSizing: 'border-box',
                             }}
                         />
