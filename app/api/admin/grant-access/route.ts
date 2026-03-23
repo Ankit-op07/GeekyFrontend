@@ -6,15 +6,15 @@ import CompanyKitUser from '@/lib/models/CompanyKitUser';
 
 // Email transporter
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
 function buildOnboardingEmail(course: string, email: string, setPasswordLink: string) {
-    return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -62,7 +62,7 @@ function buildOnboardingEmail(course: string, email: string, setPasswordLink: st
           <p style="color: rgba(255,255,255,0.85); font-size: 14px; margin: 0 0 15px 0;">
             After logging in, you can access your course materials directly on your dashboard.
           </p>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 16px; color: #667eea; background-color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+          <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/dashboard" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 16px; color: #667eea; background-color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
             Go To Dashboard
           </a>
         </div>
@@ -74,7 +74,7 @@ function buildOnboardingEmail(course: string, email: string, setPasswordLink: st
           </p>
           <ul style="color: #666; font-size: 14px; margin: 0; padding-left: 20px;">
             <li>Your account email: <strong>${email}</strong></li>
-            <li>Login anytime at: <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login" style="color: #667eea;">geekyfrontend.com/login</a></li>
+            <li>Login anytime at: <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/login" style="color: #667eea;">geekyfrontend.com/login</a></li>
           </ul>
         </div>
       </td>
@@ -93,70 +93,70 @@ function buildOnboardingEmail(course: string, email: string, setPasswordLink: st
 }
 
 export async function POST(request: NextRequest) {
-    try {
-        const { email, phone, course, name } = await request.json();
+  try {
+    const { email, phone, course, name } = await request.json();
 
-        if (!email || !course) {
-            return NextResponse.json({ error: 'Email and course are required' }, { status: 400 });
-        }
-
-        // 1. Create or update user account in the database
-        await connectToDatabase();
-        let user = await CompanyKitUser.findOne({ email: email.toLowerCase() });
-        let isNewUser = false;
-
-        if (user) {
-            // User exists — add kit to purchasedKits if not already present
-            if (!user.purchasedKits.includes(course)) {
-                user.purchasedKits.push(course);
-            }
-            user.subscriptionStatus = 'active';
-            await user.save();
-        } else {
-            // Create new user account
-            isNewUser = true;
-            user = await CompanyKitUser.create({
-                email: email.toLowerCase(),
-                name: name || email.split('@')[0],
-                mobile: phone || undefined,
-                emailVerified: true,
-                subscriptionStatus: 'active',
-                purchasedKits: [course],
-                completedQuestions: [],
-                favoriteQuestions: [],
-                mustChangePassword: true,
-            });
-        }
-
-        // 2. Generate a set-password JWT token (24h expiry for admin-granted access)
-        const jwtSecret = process.env.JWT_SECRET || 'secret_key';
-        const setPasswordToken = jwt.sign(
-            { id: user._id.toString(), type: 'set-password' },
-            jwtSecret,
-            { expiresIn: '24h' }
-        );
-
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-        const setPasswordLink = `${baseUrl}/reset-password?token=${setPasswordToken}`;
-
-        // 3. Send onboarding email
-        const emailHtml = buildOnboardingEmail(course, email, setPasswordLink);
-
-        await transporter.sendMail({
-            from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: `🎉 Welcome to Geeky Frontend — Your ${course} Access is Ready!`,
-            html: emailHtml,
-            text: `Welcome to Geeky Frontend! Your account has been created. Set your password here: ${setPasswordLink} — Access your course dashboard at ${baseUrl}/dashboard`,
-        });
-
-        return NextResponse.json({
-            success: true,
-            message: `${isNewUser ? 'Account created' : 'Kit added'} and onboarding email sent to ${email}`,
-        });
-
-    } catch (error: any) {
-        console.error('Admin grant access error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!email || !course) {
+      return NextResponse.json({ error: 'Email and course are required' }, { status: 400 });
     }
+
+    // 1. Create or update user account in the database
+    await connectToDatabase();
+    let user = await CompanyKitUser.findOne({ email: email.toLowerCase() });
+    let isNewUser = false;
+
+    if (user) {
+      // User exists — add kit to purchasedKits if not already present
+      if (!user.purchasedKits.includes(course)) {
+        user.purchasedKits.push(course);
+      }
+      user.subscriptionStatus = 'active';
+      await user.save();
+    } else {
+      // Create new user account
+      isNewUser = true;
+      user = await CompanyKitUser.create({
+        email: email.toLowerCase(),
+        name: name || email.split('@')[0],
+        mobile: phone || undefined,
+        emailVerified: true,
+        subscriptionStatus: 'active',
+        purchasedKits: [course],
+        completedQuestions: [],
+        favoriteQuestions: [],
+        mustChangePassword: true,
+      });
+    }
+
+    // 2. Generate a set-password JWT token (24h expiry for admin-granted access)
+    const jwtSecret = process.env.JWT_SECRET || 'secret_key';
+    const setPasswordToken = jwt.sign(
+      { id: user._id.toString(), type: 'set-password' },
+      jwtSecret,
+      { expiresIn: '24h' }
+    );
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const setPasswordLink = `${baseUrl}/reset-password?token=${setPasswordToken}`;
+
+    // 3. Send onboarding email
+    const emailHtml = buildOnboardingEmail(course, email, setPasswordLink);
+
+    await transporter.sendMail({
+      from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: `🎉 Welcome to Geeky Frontend — Your ${course} Access is Ready!`,
+      html: emailHtml,
+      text: `Welcome to Geeky Frontend! Your account has been created. Set your password here: ${setPasswordLink} — Access your course dashboard at ${baseUrl}/dashboard`,
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `${isNewUser ? 'Account created' : 'Kit added'} and onboarding email sent to ${email}`,
+    });
+
+  } catch (error: any) {
+    console.error('Admin grant access error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }

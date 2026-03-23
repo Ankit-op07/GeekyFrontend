@@ -1,10 +1,11 @@
+
 // app/admin/content/page.tsx
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import {
     Plus, Trash2, Save, Loader2, ChevronDown, ChevronRight,
-    BookOpen, FileText, Layers
+    BookOpen, FileText, Layers, Edit3, ArrowUp, ArrowDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -94,13 +95,25 @@ export default function AdminContentPage() {
     const [newKitIcon, setNewKitIcon] = useState('📚');
     const [newKitColor, setNewKitColor] = useState('from-violet-500 to-purple-500');
 
+    // ── Edit Kit Dialog ──
+    const [editKitOpen, setEditKitOpen] = useState(false);
+    const [editKitData, setEditKitData] = useState<Kit | null>(null);
+
     // ── Add Chapter Dialog ──
     const [addChapterOpen, setAddChapterOpen] = useState(false);
     const [newChapterTitle, setNewChapterTitle] = useState('');
 
+    // ── Edit Chapter Dialog ──
+    const [editChapterOpen, setEditChapterOpen] = useState(false);
+    const [editChapterTitle, setEditChapterTitle] = useState('');
+
     // ── Add Topic Dialog ──
     const [addTopicOpen, setAddTopicOpen] = useState(false);
     const [newTopicTitle, setNewTopicTitle] = useState('');
+
+    // ── Edit Topic Dialog ──
+    const [editTopicOpen, setEditTopicOpen] = useState(false);
+    const [editTopicDialogTitle, setEditTopicDialogTitle] = useState('');
 
     // ── Fetch Kits ──
     const fetchKits = useCallback(async () => {
@@ -188,6 +201,64 @@ export default function AdminContentPage() {
         } catch (e) { console.error(e); }
     };
 
+    const openEditKit = (kit: Kit) => {
+        setEditKitData(kit);
+        setEditKitOpen(true);
+    };
+
+    const handleUpdateKit = async () => {
+        if (!editKitData || !editKitData.name.trim()) return;
+        setSaving(true);
+        try {
+            await fetch('/api/admin/content/kits', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    _id: editKitData._id,
+                    name: editKitData.name,
+                    description: editKitData.description,
+                    icon: editKitData.icon,
+                    color: editKitData.color,
+                }),
+            });
+            setEditKitOpen(false);
+            setEditKitData(null);
+            fetchKits();
+        } catch (e) { console.error(e); }
+        setSaving(false);
+    };
+
+    const handleMoveKit = async (kit: Kit, direction: 'up' | 'down') => {
+        const currentIndex = kits.findIndex(k => k._id === kit._id);
+        if (currentIndex === -1) return;
+        if (direction === 'up' && currentIndex === 0) return;
+        if (direction === 'down' && currentIndex === kits.length - 1) return;
+
+        const otherIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+        const otherKit = kits[otherIndex];
+
+        setSaving(true);
+        try {
+            const newKitOrder = otherKit.order;
+            const newOtherKitOrder = kit.order;
+
+            await Promise.all([
+                fetch('/api/admin/content/kits', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ _id: kit._id, order: newKitOrder }),
+                }),
+                fetch('/api/admin/content/kits', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ _id: otherKit._id, order: newOtherKitOrder }),
+                })
+            ]);
+            fetchKits();
+        } catch (e) { console.error(e); }
+        setSaving(false);
+    };
+
     const handleAddChapter = async () => {
         if (!newChapterTitle.trim() || !selectedKit) return;
         setSaving(true);
@@ -216,6 +287,92 @@ export default function AdminContentPage() {
         } catch (e) { console.error(e); }
     };
 
+    const openEditChapter = (ch: Chapter) => {
+        setSelectedChapter(ch);
+        setEditChapterTitle(ch.title);
+        setEditChapterOpen(true);
+    };
+
+    const handleUpdateChapter = async () => {
+        if (!selectedChapter || !editChapterTitle.trim() || !selectedKit) return;
+        setSaving(true);
+        try {
+            await fetch('/api/admin/content/chapters', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    _id: selectedChapter._id,
+                    title: editChapterTitle,
+                }),
+            });
+            setEditChapterOpen(false);
+            fetchChapters(selectedKit._id);
+        } catch (e) { console.error(e); }
+        setSaving(false);
+    };
+
+    const handleMoveChapter = async (ch: Chapter, direction: 'up' | 'down') => {
+        const currentIndex = chapters.findIndex(c => c._id === ch._id);
+        if (currentIndex === -1) return;
+        if (direction === 'up' && currentIndex === 0) return;
+        if (direction === 'down' && currentIndex === chapters.length - 1) return;
+
+        const otherIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+        const otherChapter = chapters[otherIndex];
+
+        setSaving(true);
+        try {
+            const newChOrder = otherChapter.order;
+            const newOtherChOrder = ch.order;
+
+            await Promise.all([
+                fetch('/api/admin/content/chapters', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ _id: ch._id, order: newChOrder }),
+                }),
+                fetch('/api/admin/content/chapters', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ _id: otherChapter._id, order: newOtherChOrder }),
+                })
+            ]);
+            if (selectedKit) fetchChapters(selectedKit._id);
+        } catch (e) { console.error(e); }
+        setSaving(false);
+    };
+
+    const handleMoveTopic = async (t: Topic, direction: 'up' | 'down') => {
+        const currentIndex = topics.findIndex(item => item._id === t._id);
+        if (currentIndex === -1) return;
+        if (direction === 'up' && currentIndex === 0) return;
+        if (direction === 'down' && currentIndex === topics.length - 1) return;
+
+        const otherIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+        const otherTopic = topics[otherIndex];
+
+        setSaving(true);
+        try {
+            const newOrder = otherTopic.order;
+            const newOtherOrder = t.order;
+
+            await Promise.all([
+                fetch('/api/admin/content/topics', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ _id: t._id, order: newOrder }),
+                }),
+                fetch('/api/admin/content/topics', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ _id: otherTopic._id, order: newOtherOrder }),
+                })
+            ]);
+            if (selectedChapter) fetchTopics(selectedChapter._id);
+        } catch (e) { console.error(e); }
+        setSaving(false);
+    };
+
     const handleAddTopic = async () => {
         if (!newTopicTitle.trim() || !selectedChapter || !selectedKit) return;
         setSaving(true);
@@ -240,6 +397,33 @@ export default function AdminContentPage() {
             if (selectedTopic?._id === tId) setSelectedTopic(null);
             if (selectedChapter) fetchTopics(selectedChapter._id);
         } catch (e) { console.error(e); }
+    };
+
+    const openEditTopic = (t: Topic) => {
+        setSelectedTopic(t);
+        setEditTopicDialogTitle(t.title);
+        setEditTopicOpen(true);
+    };
+
+    const handleUpdateTopicMetadata = async () => {
+        if (!selectedTopic || !editTopicDialogTitle.trim() || !selectedChapter) return;
+        setSaving(true);
+        try {
+            await fetch('/api/admin/content/topics', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    _id: selectedTopic._id,
+                    title: editTopicDialogTitle,
+                }),
+            });
+            setEditTopicOpen(false);
+            fetchTopics(selectedChapter._id);
+            if (selectedTopic._id === selectedTopic._id) {
+                setEditTitle(editTopicDialogTitle);
+            }
+        } catch (e) { console.error(e); }
+        setSaving(false);
     };
 
     const handleSaveContent = async () => {
@@ -348,6 +532,56 @@ export default function AdminContentPage() {
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>
+
+                            {/* Edit Kit Dialog */}
+                            <Dialog open={editKitOpen} onOpenChange={setEditKitOpen}>
+                                <DialogContent className="bg-slate-900 border-white/10 text-white">
+                                    <DialogHeader>
+                                        <DialogTitle>Edit Kit</DialogTitle>
+                                        <DialogDescription className="text-slate-400">Edit existing learning kit</DialogDescription>
+                                    </DialogHeader>
+                                    {editKitData && (
+                                        <div className="space-y-3 py-2">
+                                            <div className="space-y-1.5">
+                                                <Label className="text-slate-300 text-sm">Name *</Label>
+                                                <Input value={editKitData.name} onChange={e => setEditKitData({ ...editKitData, name: e.target.value })} className="bg-white/5 border-white/10 text-white" />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <Label className="text-slate-300 text-sm">Description</Label>
+                                                <Input value={editKitData.description} onChange={e => setEditKitData({ ...editKitData, description: e.target.value })} className="bg-white/5 border-white/10 text-white" />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div className="space-y-1.5">
+                                                    <Label className="text-slate-300 text-sm">Icon</Label>
+                                                    <Input value={editKitData.icon} onChange={e => setEditKitData({ ...editKitData, icon: e.target.value })} className="bg-white/5 border-white/10 text-white" />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <Label className="text-slate-300 text-sm">Color</Label>
+                                                    <Select value={editKitData.color} onValueChange={color => setEditKitData({ ...editKitData, color })}>
+                                                        <SelectTrigger className="bg-white/5 border-white/10 text-white"><SelectValue /></SelectTrigger>
+                                                        <SelectContent>
+                                                            {GRADIENT_OPTIONS.map(g => (
+                                                                <SelectItem key={g.value} value={g.value}>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div className={`w-3 h-3 rounded bg-gradient-to-r ${g.value}`} />
+                                                                        {g.label}
+                                                                    </div>
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <DialogFooter>
+                                        <Button variant="outline" onClick={() => setEditKitOpen(false)} className="border-white/10 text-slate-300">Cancel</Button>
+                                        <Button onClick={handleUpdateKit} disabled={saving || !editKitData?.name.trim()} className="bg-violet-600 hover:bg-violet-700">
+                                            {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null} Save Changes
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         </div>
 
                         {loading ? (
@@ -367,12 +601,16 @@ export default function AdminContentPage() {
                                             {k.icon}
                                         </div>
                                         <span className="text-sm text-white truncate flex-1">{k.name}</span>
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <button onClick={e => e.stopPropagation()} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-500/20">
-                                                    <Trash2 className="w-3 h-3 text-red-400" />
-                                                </button>
-                                            </AlertDialogTrigger>
+                                        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5">
+                                            <button onClick={e => { e.stopPropagation(); handleMoveKit(k, 'up'); }} className="p-1 rounded hover:bg-white/10" title="Move Up"><ArrowUp className="w-3 h-3 text-slate-300" /></button>
+                                            <button onClick={e => { e.stopPropagation(); handleMoveKit(k, 'down'); }} className="p-1 rounded hover:bg-white/10" title="Move Down"><ArrowDown className="w-3 h-3 text-slate-300" /></button>
+                                            <button onClick={e => { e.stopPropagation(); openEditKit(k); }} className="p-1 rounded hover:bg-violet-500/20" title="Edit Kit"><Edit3 className="w-3 h-3 text-violet-400" /></button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <button onClick={e => e.stopPropagation()} className="p-1 rounded hover:bg-red-500/20" title="Delete Kit">
+                                                        <Trash2 className="w-3 h-3 text-red-400" />
+                                                    </button>
+                                                </AlertDialogTrigger>
                                             <AlertDialogContent className="bg-slate-900 border-white/10 text-white">
                                                 <AlertDialogHeader>
                                                     <AlertDialogTitle>Delete &quot;{k.name}&quot;?</AlertDialogTitle>
@@ -384,6 +622,7 @@ export default function AdminContentPage() {
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -422,6 +661,24 @@ export default function AdminContentPage() {
                                             </DialogFooter>
                                         </DialogContent>
                                     </Dialog>
+
+                                    {/* Edit Chapter Dialog */}
+                                    <Dialog open={editChapterOpen} onOpenChange={setEditChapterOpen}>
+                                        <DialogContent className="bg-slate-900 border-white/10 text-white">
+                                            <DialogHeader>
+                                                <DialogTitle>Edit Chapter</DialogTitle>
+                                                <DialogDescription className="text-slate-400">Edit chapter in {selectedKit.name}</DialogDescription>
+                                            </DialogHeader>
+                                            <div className="space-y-1.5 py-2">
+                                                <Label className="text-slate-300 text-sm">Chapter Title *</Label>
+                                                <Input value={editChapterTitle} onChange={e => setEditChapterTitle(e.target.value)} className="bg-white/5 border-white/10 text-white" />
+                                            </div>
+                                            <DialogFooter>
+                                                <Button variant="outline" onClick={() => setEditChapterOpen(false)} className="border-white/10 text-slate-300">Cancel</Button>
+                                                <Button onClick={handleUpdateChapter} disabled={saving || !editChapterTitle.trim()} className="bg-violet-600 hover:bg-violet-700">Save</Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
 
                                 {chaptersLoading ? (
@@ -445,12 +702,16 @@ export default function AdminContentPage() {
                                                     }
                                                     <span className="text-slate-500 text-xs font-bold">{String(ci + 1).padStart(2, '0')}</span>
                                                     <span className="text-sm text-slate-300 truncate flex-1">{ch.title}</span>
-                                                    <AlertDialog>
-                                                        <AlertDialogTrigger asChild>
-                                                            <button onClick={e => e.stopPropagation()} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-500/20">
-                                                                <Trash2 className="w-3 h-3 text-red-400" />
-                                                            </button>
-                                                        </AlertDialogTrigger>
+                                                    <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5">
+                                                        <button onClick={e => { e.stopPropagation(); handleMoveChapter(ch, 'up'); }} className="p-1 rounded hover:bg-white/10" title="Move Up"><ArrowUp className="w-3 h-3 text-slate-400" /></button>
+                                                        <button onClick={e => { e.stopPropagation(); handleMoveChapter(ch, 'down'); }} className="p-1 rounded hover:bg-white/10" title="Move Down"><ArrowDown className="w-3 h-3 text-slate-400" /></button>
+                                                        <button onClick={e => { e.stopPropagation(); openEditChapter(ch); }} className="p-1 rounded hover:bg-violet-500/20" title="Edit Chapter"><Edit3 className="w-3 h-3 text-violet-400" /></button>
+                                                        <AlertDialog>
+                                                            <AlertDialogTrigger asChild>
+                                                                <button onClick={e => e.stopPropagation()} className="p-1 rounded hover:bg-red-500/20" title="Delete Chapter">
+                                                                    <Trash2 className="w-3 h-3 text-red-400" />
+                                                                </button>
+                                                            </AlertDialogTrigger>
                                                         <AlertDialogContent className="bg-slate-900 border-white/10 text-white">
                                                             <AlertDialogHeader>
                                                                 <AlertDialogTitle>Delete chapter?</AlertDialogTitle>
@@ -462,6 +723,7 @@ export default function AdminContentPage() {
                                                             </AlertDialogFooter>
                                                         </AlertDialogContent>
                                                     </AlertDialog>
+                                                    </div>
                                                 </div>
 
                                                 {selectedChapter?._id === ch._id && (
@@ -481,12 +743,16 @@ export default function AdminContentPage() {
                                                                     >
                                                                         <FileText className="w-3.5 h-3.5 flex-shrink-0" />
                                                                         <span className="text-xs truncate flex-1">{t.title}</span>
-                                                                        <AlertDialog>
-                                                                            <AlertDialogTrigger asChild>
-                                                                                <button onClick={e => e.stopPropagation()} className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-500/20">
-                                                                                    <Trash2 className="w-2.5 h-2.5 text-red-400" />
-                                                                                </button>
-                                                                            </AlertDialogTrigger>
+                                                                        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5">
+                                                                            <button onClick={e => { e.stopPropagation(); handleMoveTopic(t, 'up'); }} className="p-0.5 rounded hover:bg-white/10" title="Move Up"><ArrowUp className="w-2.5 h-2.5 text-slate-400" /></button>
+                                                                            <button onClick={e => { e.stopPropagation(); handleMoveTopic(t, 'down'); }} className="p-0.5 rounded hover:bg-white/10" title="Move Down"><ArrowDown className="w-2.5 h-2.5 text-slate-400" /></button>
+                                                                            <button onClick={e => { e.stopPropagation(); openEditTopic(t); }} className="p-0.5 rounded hover:bg-violet-500/20" title="Edit Topic Name"><Edit3 className="w-2.5 h-2.5 text-violet-400" /></button>
+                                                                            <AlertDialog>
+                                                                                <AlertDialogTrigger asChild>
+                                                                                    <button onClick={e => e.stopPropagation()} className="p-0.5 rounded hover:bg-red-500/20" title="Delete Topic">
+                                                                                        <Trash2 className="w-2.5 h-2.5 text-red-400" />
+                                                                                    </button>
+                                                                                </AlertDialogTrigger>
                                                                             <AlertDialogContent className="bg-slate-900 border-white/10 text-white">
                                                                                 <AlertDialogHeader>
                                                                                     <AlertDialogTitle>Delete topic?</AlertDialogTitle>
@@ -498,6 +764,7 @@ export default function AdminContentPage() {
                                                                                 </AlertDialogFooter>
                                                                             </AlertDialogContent>
                                                                         </AlertDialog>
+                                                                        </div>
                                                                     </div>
                                                                 ))}
                                                                 <Dialog open={addTopicOpen} onOpenChange={setAddTopicOpen}>
@@ -521,6 +788,25 @@ export default function AdminContentPage() {
                                                                         </DialogFooter>
                                                                     </DialogContent>
                                                                 </Dialog>
+
+                                                                    {/* Edit Topic Dialog */}
+                                                                    <Dialog open={editTopicOpen} onOpenChange={setEditTopicOpen}>
+                                                                        <DialogContent className="bg-slate-900 border-white/10 text-white">
+                                                                            <DialogHeader>
+                                                                                <DialogTitle>Edit Topic Name</DialogTitle>
+                                                                                <DialogDescription className="text-slate-400">Rename topic in {selectedChapter?.title}</DialogDescription>
+                                                                            </DialogHeader>
+                                                                            <div className="space-y-1.5 py-2">
+                                                                                <Label className="text-slate-300 text-sm">Topic Title *</Label>
+                                                                                <Input value={editTopicDialogTitle} onChange={e => setEditTopicDialogTitle(e.target.value)} className="bg-white/5 border-white/10 text-white" />
+                                                                            </div>
+                                                                            <DialogFooter>
+                                                                                <Button variant="outline" onClick={() => setEditTopicOpen(false)} className="border-white/10 text-slate-300">Cancel</Button>
+                                                                                <Button onClick={handleUpdateTopicMetadata} disabled={saving || !editTopicDialogTitle.trim()} className="bg-violet-600 hover:bg-violet-700">Save</Button>
+                                                                            </DialogFooter>
+                                                                        </DialogContent>
+                                                                    </Dialog>
+
                                                             </>
                                                         )}
                                                     </div>

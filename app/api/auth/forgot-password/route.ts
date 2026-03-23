@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         const jwtSecret = process.env.JWT_SECRET || 'secret_key';
         const resetToken = jwt.sign({ id: user._id.toString(), type: 'reset' }, jwtSecret, { expiresIn: '15m' });
 
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
         const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
 
         const mailOptions = {
