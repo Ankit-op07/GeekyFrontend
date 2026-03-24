@@ -13,7 +13,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useSidebarContext } from "../sidebar-context";
-import parse, { Element } from "html-react-parser";
+import parse, { Element, domToReact, type DOMNode } from "html-react-parser";
 import { marked } from "marked";
 import { CodeBlock } from "@/components/learn/code-block";
 import "highlight.js/styles/atom-one-dark.css";
@@ -276,6 +276,15 @@ export default function TopicPage() {
 
                   return <CodeBlock code={code} language={language} />;
                 }
+
+                // Wrap tables in a scrollable container
+                if (domNode instanceof Element && domNode.name === "table") {
+                  return (
+                    <div className="table-wrapper">
+                      <table>{domToReact(domNode.children as DOMNode[])}</table>
+                    </div>
+                  );
+                }
               },
             })
           ) : (
@@ -485,34 +494,51 @@ export default function TopicPage() {
           }
           .topic-content table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
-            margin: 1.25rem 0;
+            margin: 1.5rem 0;
+            font-size: 0.875rem;
+          }
+          .topic-content .table-wrapper {
+            overflow-x: auto;
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 0.75rem;
-            overflow-x: auto;
-            display: block;
-            white-space: nowrap;
+            margin: 1.5rem 0;
+          }
+          .topic-content .table-wrapper table {
+            margin: 0;
+            border: none;
+            border-radius: 0;
           }
           .topic-content th {
-            background: rgba(139, 92, 246, 0.08);
+            background: rgba(139, 92, 246, 0.12);
             color: #e2e8f0;
             font-weight: 600;
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 1.1rem;
             text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 0.875rem;
+            white-space: nowrap;
+          }
+          .topic-content th:first-child {
+            border-radius: 0.75rem 0 0 0;
+          }
+          .topic-content th:last-child {
+            border-radius: 0 0.75rem 0 0;
           }
           .topic-content td {
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 1.1rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 0.875rem;
+            vertical-align: middle;
+          }
+          .topic-content td:not(:first-child) {
+            white-space: nowrap;
           }
           .topic-content tr:last-child td {
             border-bottom: none;
           }
           .topic-content tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.025);
           }
 
           /* highlight.js overrides for dark theme consistency */

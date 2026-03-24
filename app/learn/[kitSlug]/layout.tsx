@@ -66,7 +66,24 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                 if (d.kit) setKit(d.kit);
                 if (d.sidebar) {
                     setSidebar(d.sidebar);
-                    setExpandedChapters(new Set(d.sidebar.map((ch: SidebarChapter) => ch._id)));
+                    // Only expand the first chapter by default
+                    const firstChapter = d.sidebar[0];
+                    if (firstChapter) {
+                        // If already on a topic, expand the chapter that contains it
+                        const currentSlug = pathname.split('/').pop();
+                        const activeChapter = d.sidebar.find((ch: SidebarChapter) =>
+                            ch.topics.some((t: { slug: string }) => t.slug === currentSlug)
+                        );
+                        const chapterToExpand = activeChapter || firstChapter;
+                        setExpandedChapters(new Set([chapterToExpand._id]));
+
+                        // If we're on the kit root (no topic selected), redirect to first topic
+                        const pathParts = pathname.split('/').filter(Boolean);
+                        const isKitRoot = pathParts.length === 2; // e.g. /learn/react-interview-kit
+                        if (isKitRoot && firstChapter.topics?.length > 0) {
+                            router.replace(`/learn/${kitSlug}/${firstChapter.topics[0].slug}`);
+                        }
+                    }
                 }
             })
             .catch(console.error)
