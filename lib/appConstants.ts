@@ -65,7 +65,7 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
         id: 'js-kit',
         name: 'JS Interview Preparation Kit',
         tagline: 'Master JavaScript fundamentals',
-        price: 5,
+        price: 149,
         originalPrice: 1499,
         duration: 'Lifetime',
         badge: 'FOUNDATION',
