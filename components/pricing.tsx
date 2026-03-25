@@ -64,6 +64,7 @@ export function Pricing() {
       bgGradient: "from-purple-50 via-pink-50/50 to-rose-50",
       shadowColor: "shadow-purple-200",
       badge: "BEST VALUE",
+      comingSoon: true,
       savings: complete_kit_original_price - complete_kit_price,
       features: [
         "JS Interview Preparation Kit content included",

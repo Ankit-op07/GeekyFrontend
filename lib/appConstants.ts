@@ -87,6 +87,7 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
         originalPrice: 2999,
         duration: 'Lifetime',
         badge: 'BEST VALUE',
+        comingSoon: true,
         features: [
             'JS Interview Preparation Kit content included',
             'Resources to learn Frontend (Gold Mine)',
@@ -180,6 +181,7 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
         price: 299,
         originalPrice: 1499,
         duration: 'Lifetime',
+        comingSoon: true,
         features: ['System Design', 'Database Modeling', 'API Security', 'Performance Scaling', 'Lifetime access'],
     },
 };

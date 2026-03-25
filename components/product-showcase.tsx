@@ -80,6 +80,7 @@ const products: Product[] = [
     bgGradient: "from-purple-50 via-white to-pink-50",
     iconBg: "bg-gradient-to-br from-purple-500 to-pink-500",
     popular: true,
+    comingSoon: true,
     studentsCount: 5892,
     discount: 90,
     tag: "All-in-One Frontend"
@@ -99,6 +100,7 @@ const products: Product[] = [
     ),
     bgGradient: "from-green-50 via-white to-emerald-50",
     iconBg: "bg-gradient-to-br from-green-500 to-emerald-600",
+    comingSoon: true,
     studentsCount: 6500,
     discount: 90,
     tag: "Backend Pro"

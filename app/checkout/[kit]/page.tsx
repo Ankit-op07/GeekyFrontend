@@ -13,7 +13,7 @@ import { PlacementKitCheckoutContent } from "@/components/placement-kit-checkout
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { appConstants } from "@/lib/appConstants"
+import { appConstants, getKitById } from "@/lib/appConstants"
 import {
   Check, Star, Shield, Clock, TrendingUp, Users, Award,
   BookOpen, Code, Zap, Target, Gift, AlertCircle, Lock,
@@ -1074,6 +1074,13 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!kitId || !kitsData[kitId]) {
+      router.replace('/')
+      return
+    }
+    // Block checkout for coming-soon kits
+    const catalogId = SLUG_TO_KIT_ID[kitId] || kitId
+    const catalogKit = getKitById(catalogId)
+    if (catalogKit?.comingSoon) {
       router.replace('/')
       return
     }
