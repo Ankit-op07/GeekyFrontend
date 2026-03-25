@@ -16,123 +16,93 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-/* ── Beautiful New-User Welcome Email (no passwords!) ─────────── */
-function buildNewUserEmail(opts: {
+/* ── Onboarding Email — matches admin grant-access style ─────── */
+function buildOnboardingEmail(opts: {
   userName: string;
   kitName: string;
+  email: string;
+  setPasswordUrl?: string;
   dashboardUrl: string;
-  setPasswordUrl: string;
+  loginUrl: string;
+  hasPassword?: boolean;
 }): string {
+  const showPasswordStep = !opts.hasPassword && opts.setPasswordUrl;
   return `<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Kit is Ready</title>
 </head>
-<body style="margin:0;padding:0;background:#f0f2f5;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-  <div style="max-width:560px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#7c3aed 0%,#4f46e5 100%);padding:32px 24px;text-align:center;">
-      <div style="width:56px;height:56px;background:rgba(255,255,255,0.2);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
-        <span style="font-size:28px;">🚀</span>
-      </div>
-      <h1 style="color:#ffffff;font-size:22px;font-weight:700;margin:0 0 4px;">Your Kit is Ready!</h1>
-      <p style="color:rgba(255,255,255,0.85);font-size:14px;margin:0;">Payment successful — let's get started</p>
-    </div>
-
-    <!-- Body -->
-    <div style="padding:28px 24px;">
-      <p style="color:#1a1a2e;font-size:15px;margin:0 0 16px;">Hi <strong>${opts.userName}</strong>,</p>
-      <p style="color:#44475a;font-size:14px;line-height:1.6;margin:0 0 20px;">
-        Thank you for your purchase! You now have full access to:
-      </p>
-
-      <!-- Kit Card -->
-      <div style="background:#f8f7ff;border:1px solid #e8e5ff;border-radius:12px;padding:20px;margin:0 0 24px;text-align:center;">
-        <p style="color:#7c3aed;font-size:18px;font-weight:700;margin:0;">${opts.kitName}</p>
-      </div>
-
-      <!-- CTA: Start Learning -->
-      <div style="text-align:center;margin:0 0 16px;">
-        <a href="${opts.dashboardUrl}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;box-shadow:0 4px 12px rgba(124,58,237,0.3);">
-          Start Learning →
-        </a>
-      </div>
-
-      <!-- CTA: Set Password -->
-      <div style="text-align:center;margin:0 0 24px;">
-        <a href="${opts.setPasswordUrl}" style="display:inline-block;padding:10px 24px;background:#ffffff;color:#7c3aed;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;border:2px solid #7c3aed;">
-          Set Your Password
-        </a>
-      </div>
-
-      <!-- Info -->
-      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 16px;margin:0 0 20px;">
-        <p style="color:#166534;font-size:13px;line-height:1.5;margin:0;">
-          <strong>🔑 Secure your account:</strong> Click "Set Your Password" above to create a password. This link expires in 24 hours.
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+    <tr>
+      <td style="padding: 40px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to Geeky Frontend! 🎉</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Your account is ready</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 40px 30px; background-color: white;">
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+          Hi <strong>${opts.userName}</strong>! 👋
         </p>
-      </div>
 
-      <hr style="border:none;border-top:1px solid #f0f0f0;margin:24px 0;" />
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+          Thank you for your purchase! You now have full access to the <strong>${opts.kitName}</strong>.${!opts.hasPassword ? ' An account has been created for you on Geeky Frontend.' : ''}
+        </p>
 
-      <p style="color:#9ca3af;font-size:12px;text-align:center;margin:0;line-height:1.5;">
-        If you didn't make this purchase, please contact us at support@geekyfrontend.com<br />
-        © ${new Date().getFullYear()} Geeky Frontend. All rights reserved.
-      </p>
-    </div>
-  </div>
-</body>
-</html>`;
-}
+        ${showPasswordStep ? `
+        <!-- Step 1: Set Password -->
+        <div style="background: #f0f4ff; border: 2px solid #667eea; border-radius: 12px; padding: 25px; margin: 25px 0;">
+          <h2 style="color: #4338ca; font-size: 18px; margin: 0 0 10px 0;">🔐 Step 1: Set Your Password</h2>
+          <p style="color: #555; font-size: 14px; margin: 0 0 15px 0;">
+            First, set up a password for your account so you can log in anytime.
+          </p>
+          <table cellspacing="0" cellpadding="0">
+            <tr>
+              <td style="border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <a href="${opts.setPasswordUrl}" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 16px; color: white; text-decoration: none; font-weight: bold;">
+                  Set Your Password →
+                </a>
+              </td>
+            </tr>
+          </table>
+          <p style="color: #999; font-size: 12px; margin: 15px 0 0 0;">⏰ This link expires in 24 hours</p>
+        </div>
+        ` : ''}
 
-/* ── Kit Added Email (returning user) ─────────────────────────── */
-function buildKitAddedEmail(opts: {
-  userName: string;
-  kitName: string;
-  dashboardUrl: string;
-}): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kit Added</title>
-</head>
-<body style="margin:0;padding:0;background:#f0f2f5;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-  <div style="max-width:560px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <!-- ${showPasswordStep ? 'Step 2' : ''}: Access Course on Platform -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 25px; margin: 25px 0;">
+          <h2 style="color: white; font-size: 18px; margin: 0 0 10px 0;">📚 ${showPasswordStep ? 'Step 2: ' : ''}Access Your Course</h2>
+          <p style="color: rgba(255,255,255,0.85); font-size: 14px; margin: 0 0 15px 0;">
+            ${showPasswordStep ? 'After setting your password, access' : 'Access'} your course materials directly on your dashboard.
+          </p>
+          <a href="${opts.dashboardUrl}" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 16px; color: #667eea; background-color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+            Go To Dashboard
+          </a>
+        </div>
 
-    <div style="background:linear-gradient(135deg,#7c3aed 0%,#4f46e5 100%);padding:32px 24px;text-align:center;">
-      <div style="width:56px;height:56px;background:rgba(255,255,255,0.2);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
-        <span style="font-size:28px;">✅</span>
-      </div>
-      <h1 style="color:#ffffff;font-size:22px;font-weight:700;margin:0 0 4px;">Kit Added!</h1>
-      <p style="color:rgba(255,255,255,0.85);font-size:14px;margin:0;">Your new kit is ready to use</p>
-    </div>
-
-    <div style="padding:28px 24px;">
-      <p style="color:#1a1a2e;font-size:15px;margin:0 0 16px;">Hi <strong>${opts.userName}</strong>,</p>
-      <p style="color:#44475a;font-size:14px;line-height:1.6;margin:0 0 20px;">
-        Your purchase was successful! We've added the following to your account:
-      </p>
-
-      <div style="background:#f8f7ff;border:1px solid #e8e5ff;border-radius:12px;padding:20px;margin:0 0 24px;text-align:center;">
-        <p style="color:#7c3aed;font-size:18px;font-weight:700;margin:0;">${opts.kitName}</p>
-      </div>
-
-      <div style="text-align:center;margin:0 0 24px;">
-        <a href="${opts.dashboardUrl}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;box-shadow:0 4px 12px rgba(124,58,237,0.3);">
-          Go to Dashboard →
-        </a>
-      </div>
-
-      <hr style="border:none;border-top:1px solid #f0f0f0;margin:24px 0;" />
-      <p style="color:#9ca3af;font-size:12px;text-align:center;margin:0;line-height:1.5;">
-        © ${new Date().getFullYear()} Geeky Frontend. All rights reserved.
-      </p>
-    </div>
-  </div>
+        <!-- Quick Tips -->
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
+          <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">
+            <strong>💡 Quick Tips:</strong>
+          </p>
+          <ul style="color: #666; font-size: 14px; margin: 0; padding-left: 20px;">
+            <li>Your account email: <strong>${opts.email}</strong></li>
+            <li>Login anytime at: <a href="${opts.loginUrl}" style="color: #667eea;">geekyfrontend.in/login</a></li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 25px; background-color: #f8f9fa; text-align: center;">
+        <p style="color: #999; font-size: 12px; margin: 0;">
+          Questions? Email us at support@geekyfrontend.com<br>
+          © ${new Date().getFullYear()} Geeky Frontend
+        </p>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>`;
 }
@@ -209,9 +179,7 @@ export async function POST(request: NextRequest) {
       // Increment purchasesCount on corresponding Kits in the DB
       try {
         const allowedSlugs = getAllowedSlugs([planName]);
-        if (allowedSlugs === 'all') {
-          await Kit.updateMany({}, { $inc: { purchasesCount: 1 } });
-        } else if (allowedSlugs.size > 0) {
+        if (allowedSlugs.size > 0) {
           const orConditions = Array.from(allowedSlugs).map(s => ({ slug: { $regex: s, $options: 'i' } }));
           await Kit.updateMany({ $or: orConditions }, { $inc: { purchasesCount: 1 } });
         }
@@ -236,40 +204,36 @@ export async function POST(request: NextRequest) {
     // --- Send email ---
     try {
       const dashboardUrl = `${baseUrl}/dashboard`;
+      const loginUrl = `${baseUrl}/login`;
+      const userHasPassword = !!user.password;
 
-      if (isNewUser) {
-        // Generate a secure set-password token (24h expiry)
+      let setPasswordUrl: string | undefined;
+      if (!userHasPassword) {
         const jwtSecret = process.env.JWT_SECRET || 'secret_key';
         const setPasswordToken = jwt.sign(
           { id: user._id.toString(), type: 'set-password' },
           jwtSecret,
           { expiresIn: '24h' }
         );
-        const setPasswordUrl = `${baseUrl}/reset-password?token=${setPasswordToken}`;
-
-        await transporter.sendMail({
-          from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
-          to: userEmail,
-          subject: `Your GeekyFrontend Kit is Ready 🚀`,
-          html: buildNewUserEmail({
-            userName: userName || user.name || 'there',
-            kitName: planName || 'Interview Kit',
-            dashboardUrl,
-            setPasswordUrl,
-          }),
-        });
-      } else {
-        await transporter.sendMail({
-          from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
-          to: userEmail,
-          subject: `✅ Kit added — ${planName || 'Your Kit'}`,
-          html: buildKitAddedEmail({
-            userName: user.name || 'there',
-            kitName: planName || 'Interview Kit',
-            dashboardUrl,
-          }),
-        });
+        setPasswordUrl = `${baseUrl}/reset-password?token=${setPasswordToken}`;
       }
+
+      await transporter.sendMail({
+        from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
+        to: userEmail,
+        subject: userHasPassword
+          ? `✅ Kit added — ${planName || 'Your Kit'}`
+          : `🎉 Welcome to Geeky Frontend — Your ${planName || 'Kit'} Access is Ready!`,
+        html: buildOnboardingEmail({
+          userName: userName || user.name || 'there',
+          kitName: planName || 'Interview Kit',
+          email: userEmail,
+          setPasswordUrl,
+          dashboardUrl,
+          loginUrl,
+          hasPassword: userHasPassword,
+        }),
+      });
       console.log(`✉️ Email sent to ${userEmail}`);
     } catch (emailErr) {
       console.error('Failed to send email:', emailErr);

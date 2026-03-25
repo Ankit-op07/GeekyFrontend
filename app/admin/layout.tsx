@@ -1,13 +1,15 @@
 // app/admin/layout.tsx
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     BookOpen, Building2, Users, ShieldCheck, Menu, X,
-    LayoutDashboard, ChevronRight
+    LayoutDashboard, ChevronRight, Loader2, Lock
 } from 'lucide-react';
+
+const ADMIN_EMAIL = 'geekyfrontend@gmail.com';
 
 const ADMIN_NAV = [
     { href: '/admin/content', label: 'Content', icon: BookOpen, desc: 'Manage kits & topics' },
@@ -18,7 +20,54 @@ const ADMIN_NAV = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const router = useRouter();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [authState, setAuthState] = useState<'loading' | 'allowed' | 'denied'>('loading');
+
+    useEffect(() => {
+        fetch('/api/auth/session')
+            .then(r => r.json())
+            .then(d => {
+                if (!d.user) {
+                    router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+                } else if (d.user.email?.toLowerCase() !== ADMIN_EMAIL) {
+                    setAuthState('denied');
+                } else {
+                    setAuthState('allowed');
+                }
+            })
+            .catch(() => router.replace('/login'));
+    }, [pathname, router]);
+
+    if (authState === 'loading') {
+        return (
+            <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+                <Loader2 className="w-7 h-7 animate-spin text-violet-400" />
+            </div>
+        );
+    }
+
+    if (authState === 'denied') {
+        return (
+            <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+                <div className="text-center max-w-sm px-6">
+                    <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
+                        <Lock className="w-7 h-7 text-red-400" />
+                    </div>
+                    <h2 className="text-white text-xl font-bold mb-2">Access Denied</h2>
+                    <p className="text-slate-400 text-sm mb-6">
+                        This area is restricted to administrators only.
+                    </p>
+                    <Link
+                        href="/dashboard"
+                        className="inline-block px-5 py-2.5 rounded-xl bg-violet-600 text-white font-medium hover:bg-violet-700 transition-colors text-sm"
+                    >
+                        ← Back to Dashboard
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     const SidebarContent = () => (
         <>
@@ -109,3 +158,4 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
     );
 }
+

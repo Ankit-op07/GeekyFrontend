@@ -7,8 +7,7 @@ import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import { extractSessionFromRequest } from '@/lib/session';
 import { getAllowedSlugs } from '@/lib/appConstants';
 
-function kitMatchesSlugs(kitSlug: string, allowedSlugs: Set<string> | 'all'): boolean {
-    if (allowedSlugs === 'all') return true;
+function kitMatchesSlugs(kitSlug: string, allowedSlugs: Set<string>): boolean {
     for (const pattern of allowedSlugs) {
         if (kitSlug.toLowerCase().includes(pattern)) return true;
     }

@@ -22,21 +22,22 @@ export interface KitCatalogItem {
  * Uses substring matching on slug so minor naming differences work.
  */
 export const PLAN_TO_SLUGS: Record<string, string[]> = {
-    // JS variants
+    // Each kit is independent — buying one does NOT grant access to others
+    // JS kit
     "JavaScript Interview Mastery Kit": ["javascript"],
     "JS Interview Preparation Kit": ["javascript"],
-    // React variants
+    // React kit
     "Reactjs Interview Preparation Kit": ["react"],
     "React.js Interview Preparation Kit": ["react"],
-    // Node variants
+    // Node kit
     "Node.js Interview Preparation Kit": ["node"],
     "Node.js Backend Mastery Kit": ["node"],
-    // Complete — grants access to all
-    "Complete Frontend Interview Preparation Kit": ["javascript", "react", "node", "frontend", "complete"],
+    // Complete kit — its OWN kit only, does NOT include JS/React/Node
+    "Complete Frontend Interview Preparation Kit": ["complete"],
     // Experiences
-    "Frontend Interview Experiences Kit": ["frontend", "experiences"],
+    "Frontend Interview Experiences Kit": ["experiences"],
     // Placement
-    "Ultimate Campus Placement Kit": ["placement", "campus"],
+    "Ultimate Campus Placement Kit": ["placement"],
     // Company kits (DSA)
     "Company Wise DSA Kit — 3 Months": ["company"],
     "Company Wise DSA Kit — 6 Months": ["company"],
@@ -47,7 +48,7 @@ export const PLAN_TO_SLUGS: Record<string, string[]> = {
  * Given a user's purchasedKits array, return the set of slug substrings
  * that the user should have access to.
  */
-export function getAllowedSlugs(purchasedKits: string[]): Set<string> | 'all' {
+export function getAllowedSlugs(purchasedKits: string[]): Set<string> {
     const slugs = new Set<string>();
     for (const plan of purchasedKits) {
         const mapped = PLAN_TO_SLUGS[plan];
@@ -55,8 +56,6 @@ export function getAllowedSlugs(purchasedKits: string[]): Set<string> | 'all' {
             mapped.forEach(s => slugs.add(s));
         }
     }
-    // "Complete" kit grants everything
-    if (slugs.size >= 4) return 'all';
     return slugs;
 }
 

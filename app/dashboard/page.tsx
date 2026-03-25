@@ -58,7 +58,7 @@ export default function DashboardPage() {
     const [completedQuestions, setCompletedQuestions] = useState<Set<string>>(new Set())
     const [favorites, setFavorites] = useState<Set<string>>(new Set())
 
-    // Load progress from API
+    // Load progress from API (company questions)
     const fetchProgress = useCallback(async () => {
         try {
             const res = await fetch("/api/user/progress")
@@ -67,9 +67,6 @@ export default function DashboardPage() {
                 const completed = data.completedQuestions || []
                 setCompletedQuestions(new Set(completed))
                 setFavorites(new Set(data.favoriteQuestions || []))
-                setTopicsStudied(completed.length)
-                // Rough estimate: ~3 min per topic studied
-                setHoursSpent(Math.round((completed.length * 3) / 60))
             }
         } catch { /* ignore if not logged in yet */ }
     }, [])
@@ -159,6 +156,22 @@ export default function DashboardPage() {
             setLoading(false)
         }
     }, [router])
+
+    // Load topics studied count from localStorage (same tracking as learn pages)
+    useEffect(() => {
+        let total = 0
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i)
+            if (key?.startsWith('gf-completed-')) {
+                try {
+                    const arr = JSON.parse(localStorage.getItem(key) || '[]')
+                    if (Array.isArray(arr)) total += arr.length
+                } catch { /* ignore parse errors */ }
+            }
+        }
+        setTopicsStudied(total)
+        setHoursSpent(Math.round((total * 3) / 60))
+    }, [])
 
     useEffect(() => {
         checkAuth().then(() => {
@@ -442,7 +455,6 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                         { label: "React Kit", href: "/checkout/react", emoji: "⚛️" },
                         { label: "Node.js Kit", href: "/checkout/nodejs", emoji: "🟢" },
                         { label: "Complete Kit", href: "/checkout/complete", emoji: "🚀" },
-                        { label: "Placement Kit", href: "/checkout/placement", emoji: "🎓" },
                     ].map(q => (
                         <Link key={q.href} href={q.href}
                             className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-white/5 hover:border-violet-500/30 hover:bg-white/5 transition-all text-slate-300 hover:text-white text-sm font-medium group">

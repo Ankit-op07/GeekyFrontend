@@ -35,14 +35,9 @@ export async function GET(
         }
 
         const allowedSlugs = getAllowedSlugs(user.purchasedKits || []);
-        let hasAccess = false;
-        if (allowedSlugs === 'all') {
-            hasAccess = true;
-        } else {
-            hasAccess = Array.from(allowedSlugs).some(s =>
-                kitSlug.toLowerCase().includes(s.toLowerCase())
-            );
-        }
+        const hasAccess = Array.from(allowedSlugs).some(s =>
+            kitSlug.toLowerCase().includes(s.toLowerCase())
+        );
 
         if (!hasAccess) {
             return NextResponse.json({ error: 'Access denied' }, { status: 403 });
