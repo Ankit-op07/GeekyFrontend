@@ -10,6 +10,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { PaymentButton } from '@/components/payment-button'
 import { NodejsCheckoutContent } from "@/components/nodejs-checkout-content"
 import { PlacementKitCheckoutContent } from "@/components/placement-kit-checkout-content"
+import { ReactCheckoutContent } from "@/components/react-checkout-content"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -227,8 +228,8 @@ const kitsData: Record<string, KitDetails> = {
   },
   react: {
     id: "react",
-    name: "Reactjs Interview Preparation Kit",
-    tagline: "Land your dream React job with confidence",
+    name: "React.js Interview Preparation Kit",
+    tagline: "57 articles. 15 machine coding challenges. 10 modules. The complete React interview kit.",
     price: react_kit_price,
     originalPrice: react_kit_original_price,
     discount: 90,
@@ -238,164 +239,132 @@ const kitsData: Record<string, KitDetails> = {
     students: 11340,
     rating: 4.9,
     reviews: 634,
-    lastUpdated: "Updated yesterday",
+    lastUpdated: "Updated this week",
     features: [
       {
-        icon: <Target className="w-5 h-5" />,
-        title: "500+ ReactJS Interview Questions",
-        description: "From hooks to performance optimization"
+        icon: <BookOpen className="w-5 h-5" />,
+        title: "57 In-Depth Articles",
+        description: "Structured across 10 modules covering every React concept"
       },
       {
-        icon: <Rocket className="w-5 h-5" />,
-        title: "ReactJS System Design Questions",
-        description: "Asked at Meta, Netflix, Airbnb"
+        icon: <Code className="w-5 h-5" />,
+        title: "15 Machine Coding Challenges",
+        description: "Complete, production-quality solutions with edge cases"
       },
       {
         icon: <Brain className="w-5 h-5" />,
-        title: "Hooks Deep Dive",
-        description: "Master useState, useEffect, custom hooks"
+        title: "60+ Output-Based Questions",
+        description: "Tricky questions with detailed explanations"
+      },
+      {
+        icon: <Target className="w-5 h-5" />,
+        title: "Scripted Interview Answers",
+        description: "Ready-to-use answers for every major concept"
       },
       {
         icon: <Sparkles className="w-5 h-5" />,
-        title: "State Management",
-        description: "Redux, Context, Zustand patterns"
+        title: "Design Patterns & Testing",
+        description: "HOC, Render Props, SOLID + RTL, Jest, MSW"
       },
       {
         icon: <FileText className="w-5 h-5" />,
-        title: "Cheatsheets & Revision Notes",
-        description: "Short Notes, Just before interview handbook, Handwritten notes"
-      },
-      {
-        icon: <Mail className="w-5 h-5" />,
-        title: "Resume and Cold Email Templates",
-        description: "Faang Resumes and Cold email templates that worked"
+        title: "Scenario & Behavioral Rounds",
+        description: "Diagnostic frameworks and prepared answers"
       }
     ],
     curriculum: [
       {
-        module: "React Fundamentals",
-        topics: [
-          "Components & Props",
-          "State & Lifecycle",
-          "Event Handling",
-          "Conditional Rendering",
-          "Lists & Keys",
-          "JSX & Rendering Logic"
-        ],
+        module: "Core Fundamentals",
+        topics: ["Virtual DOM", "JSX & Props", "State & useEffect", "Keys & Refs", "Error Boundaries"],
+        hours: 10
+      },
+      {
+        module: "Advanced Hooks & Patterns",
+        topics: ["useReducer", "useMemo/useCallback", "Custom Hooks", "React.memo"],
         hours: 6
       },
       {
-        module: "Hooks Deep Dive",
-        topics: [
-          "useState, useEffect, useRef",
-          "Custom Hooks",
-          "Rules of Hooks",
-          "Performance with Hooks",
-          "useContext, useReducer",
-          "Advanced Patterns"
-        ],
-        hours: 7
+        module: "Routing & State Management",
+        topics: ["React Router v6", "Redux Toolkit", "Context API", "Protected Routes"],
+        hours: 8
       },
       {
-        module: "State Management",
-        topics: [
-          "Redux Essentials",
-          "Context API",
-          "Zustand & Alternatives",
-          "State Design Patterns",
-          "Global vs Local State",
-          "Best Practices"
-        ],
+        module: "Performance & Design Patterns",
+        topics: ["Code Splitting", "Virtualization", "HOC", "Compound Components", "SOLID"],
+        hours: 11
+      },
+      {
+        module: "Machine Coding & Testing",
+        topics: ["15 Coding Challenges", "React Testing Library", "Jest & MSW"],
+        hours: 18
+      },
+      {
+        module: "Scenario & Behavioral",
+        topics: ["Architecture Questions", "Optimization Frameworks", "Behavioral Templates"],
         hours: 5
-      },
-      {
-        module: "System Design & Performance",
-        topics: [
-          "React System Design Questions",
-          "Performance Optimization",
-          "Code Splitting & Lazy Loading",
-          "Reconciliation & Virtual DOM",
-          "Testing with React Testing Library",
-          "Real Interview Scenarios"
-        ],
-        hours: 5
-      },
-      {
-        module: "Cheatsheets & Revision Notes",
-        topics: [
-          "One-page React Cheatsheet",
-          "Revision Notes for Interviews",
-          "Handwritten Summaries"
-        ],
-        hours: 2
-      },
-      {
-        module: "Resume & Cold Email Templates",
-        topics: [
-          "FAANG Resume Templates",
-          "Cold Email Scripts",
-          "Tips for Getting Referrals"
-        ],
-        hours: 1
       }
     ],
     included: [
-      { icon: <FileText className="w-4 h-4" />, text: "5 Comprehensive PDFs", value: "250+ pages" },
-      { icon: <Code className="w-4 h-4" />, text: "Component Examples", value: "180+ snippets" },
-      { icon: <Download className="w-4 h-4" />, text: "Instant Download", value: "Get in 2 mins" },
+      { icon: <FileText className="w-4 h-4" />, text: "57 In-Depth Articles", value: "62K+ words" },
+      { icon: <Code className="w-4 h-4" />, text: "15 Machine Coding Solutions", value: "With edge cases" },
+      { icon: <Brain className="w-4 h-4" />, text: "60+ Output-Based Questions", value: "Explanations" },
+      { icon: <Target className="w-4 h-4" />, text: "Scripted Interview Answers", value: "Every topic" },
       { icon: <RefreshCw className="w-4 h-4" />, text: "Lifetime Updates", value: "Forever free" },
-      { icon: <Users className="w-4 h-4" />, text: "Discord Community", value: "1000+ members" },
       { icon: <HeartHandshake className="w-4 h-4" />, text: "Email Support", value: "24hr response" }
     ],
     testimonials: [
       {
-        name: "Anjali Gupta",
-        role: "React Developer",
-        company: "Swiggy",
-        text: "The hooks section cleared all my doubts. Got 3 offers after studying this!",
+        name: "Rahul Sharma",
+        role: "Frontend Engineer",
+        company: "Amazon",
+        text: "Stopped reading random articles and followed this kit module by module. Got an offer in 3 weeks!",
         rating: 5
       },
       {
-        name: "Vikram Shah",
-        role: "Frontend Lead",
-        company: "PhonePe",
-        text: "Performance optimization patterns helped me ace the technical round.",
+        name: "Priya Patel",
+        role: "SDE-2",
+        company: "Microsoft",
+        text: "Finally understood when useCallback hurts. The 'when NOT to optimize' section changed my thinking.",
         rating: 5
       },
       {
         name: "Sneha Roy",
-        role: "SDE-2",
+        role: "Senior Frontend Engineer",
         company: "Razorpay",
-        text: "Best investment I made. Covers everything from basics to advanced patterns!",
+        text: "Scripted interview answers were a game changer. Went from 12 LPA to 28 LPA!",
         rating: 5
       }
     ],
     faqs: [
       {
-        question: "Do I need to know JavaScript first?",
-        answer: "Yes, basic JavaScript knowledge is recommended. We have a separate JS Kit if you need to brush up."
+        question: "Is this for beginners or experienced developers?",
+        answer: "Both. Every article covers the concept from scratch for freshers, then goes deeper for intermediate and senior levels. Questions are tagged with difficulty levels."
       },
       {
-        question: "Does this cover React 18?",
-        answer: "Yes! All content is updated for React 18 including concurrent features and new hooks."
+        question: "Is this just a list of questions and answers?",
+        answer: "No. Each article teaches the concept with real code, explains the traps interviewers set, includes output-based questions, and ends with a scripted answer you can use."
       },
       {
-        question: "Is Next.js covered?",
-        answer: "We cover React fundamentals. Next.js specific questions will be getting added soon."
+        question: "Does it cover machine coding rounds?",
+        answer: "Yes. Module 7 has 15 complete machine coding challenges with full solutions: Todo App, Shopping Cart, Infinite Scroll, Modal, Dropdown, Pagination, and more."
+      },
+      {
+        question: "Is the content up to date?",
+        answer: "Yes. All content uses React 18+ patterns, React Router v6, Redux Toolkit, and modern hooks. Legacy patterns mentioned only for context."
       }
     ],
     bonuses: [
       {
         icon: <Gift className="w-5 h-5" />,
-        title: "Component Library",
+        title: "Output-Based Question Bank",
         value: "₹1499",
-        description: "20+ production-ready components"
+        description: "60+ tricky what-does-this-print questions"
       },
       {
-        icon: <Video className="w-5 h-5" />,
-        title: "Live Coding Session",
+        icon: <Sparkles className="w-5 h-5" />,
+        title: "Interview Answer Scripts",
         value: "₹1999",
-        description: "Build a real-time app from scratch"
+        description: "Paragraph-length answers for every concept"
       }
     ]
   },
@@ -1137,6 +1106,8 @@ export default function CheckoutPage() {
               <NodejsCheckoutContent />
             ) : kit.id === "placement" ? (
               <PlacementKitCheckoutContent />
+            ) : kit.id === "react" ? (
+              <ReactCheckoutContent />
             ) : (
               <Card className={`p-4 md:p-6 bg-gradient-to-br ${kit.bgGradient || "from-gray-50 to-white"} border-0 overflow-hidden`}>
                 <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-5">
@@ -1521,131 +1492,139 @@ export default function CheckoutPage() {
               </Card>
             )}
 
-            {/* What You'll Get - IMPROVED MOBILE */}
-            <Card className="p-4 md:p-6 overflow-hidden">
-              <h2 className="text-base md:text-lg font-bold mb-3 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-yellow-500 flex-shrink-0" />
-                What You'll Get
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {kit.features.map((feature, idx) => (
-                  <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-white/60 backdrop-blur-sm border border-gray-100 shadow-sm transition-colors min-w-0">
-                    <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${kit.color} flex items-center justify-center text-white flex-shrink-0`}>
-                      {feature.icon}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold mb-0.5 text-sm break-words">{feature.title}</h3>
-                      <p className="text-xs text-muted-foreground break-words">{feature.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Curriculum - IMPROVED MOBILE */}
-            <Card className="p-4 md:p-6 overflow-hidden">
-              <div className="flex items-center justify-between mb-3 gap-2">
-                <h2 className="text-base md:text-lg font-bold flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                  Curriculum
+            {/* What You'll Get - IMPROVED MOBILE (skip for react — has its own) */}
+            {kit.id !== "react" && (
+              <Card className="p-4 md:p-6 overflow-hidden">
+                <h2 className="text-base md:text-lg font-bold mb-3 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                  What You'll Get
                 </h2>
-                <Badge variant="secondary" className="text-xs flex-shrink-0">Structured · Project-based</Badge>
-              </div>
-              <div className="space-y-3">
-                {kit.curriculum.map((module, idx) => (
-                  <div key={idx} className="border rounded-lg p-3 hover:shadow-sm transition-shadow">
-                    <div className="flex items-center justify-between mb-2 gap-2">
-                      <h3 className="font-semibold text-sm break-words flex-1">{module.module}</h3>
-                      {/* <Badge variant="secondary" className="text-xs flex-shrink-0">{module.hours} hrs</Badge> */}
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {module.topics.map((topic, tidx) => (
-                        <Badge key={tidx} variant="outline" className="text-xs">
-                          {topic}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Testimonials - IMPROVED MOBILE */}
-            <Card className="p-4 md:p-6 overflow-hidden">
-              <div className="flex items-center justify-between mb-3 gap-2">
-                <h2 className="text-base md:text-lg font-bold flex items-center gap-2">
-                  <Trophy className="w-4 h-4 text-green-500 flex-shrink-0" />
-                  Success Stories
-                </h2>
-                <Badge variant="secondary" className="text-xs flex-shrink-0">{kit.reviews} reviews</Badge>
-              </div>
-
-              <div className="space-y-3" role="list" aria-roledescription="carousel">
-                {kit.testimonials.map((testimonial, idx) => (
-                  <div
-                    key={idx}
-                    role="listitem"
-                    aria-hidden={selectedTestimonial !== idx}
-                    className={`p-3 rounded-lg border transition-all cursor-pointer focus:outline-none flex gap-3 items-start min-w-0 ${selectedTestimonial === idx ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    onClick={() => setSelectedTestimonial(idx)}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") setSelectedTestimonial(idx)
-                    }}
-                  >
-                    <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-white flex-shrink-0">
-                      <span className="font-semibold text-green-700">{testimonial.name.split(' ').map(n => n[0]).slice(0, 2).join('')}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1">
-                        <div className="min-w-0">
-                          <p className="font-semibold text-sm break-words">{testimonial.name}</p>
-                          <p className="text-xs text-muted-foreground break-words">{testimonial.role} • {testimonial.company}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center gap-0.5">
-                            {[...Array(testimonial.rating)].map((_, i) => (
-                              <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                            ))}
-                          </div>
-                          <Badge className={`bg-gradient-to-r ${kit.color} text-white border-0 text-xs flex-shrink-0`}>Verified</Badge>
-                        </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {kit.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-white/60 backdrop-blur-sm border border-gray-100 shadow-sm transition-colors min-w-0">
+                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${kit.color} flex items-center justify-center text-white flex-shrink-0`}>
+                        {feature.icon}
                       </div>
-                      <p className="text-sm text-gray-700 italic break-words">"{testimonial.text}"</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold mb-0.5 text-sm break-words">{feature.title}</h3>
+                        <p className="text-xs text-muted-foreground break-words">{feature.description}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
+                  ))}
+                </div>
+              </Card>
+            )}
 
-            {/* FAQs - IMPROVED MOBILE */}
-            <Card className="p-4 md:p-6 overflow-hidden">
-              <h2 className="text-base md:text-lg font-bold mb-3 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-purple-500 flex-shrink-0" />
-                FAQ
-              </h2>
-              <div className="space-y-2">
-                {kit.faqs.map((faq, idx) => (
-                  <div key={idx} className="border rounded-lg overflow-hidden">
-                    <button
-                      onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                      aria-expanded={openFaq === idx}
-                      aria-controls={`faq-panel-${idx}`}
-                      className="w-full p-3 text-left flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors min-w-0"
+            {/* Curriculum - IMPROVED MOBILE (skip for react) */}
+            {kit.id !== "react" && (
+              <Card className="p-4 md:p-6 overflow-hidden">
+                <div className="flex items-center justify-between mb-3 gap-2">
+                  <h2 className="text-base md:text-lg font-bold flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                    Curriculum
+                  </h2>
+                  <Badge variant="secondary" className="text-xs flex-shrink-0">Structured · Project-based</Badge>
+                </div>
+                <div className="space-y-3">
+                  {kit.curriculum.map((module, idx) => (
+                    <div key={idx} className="border rounded-lg p-3 hover:shadow-sm transition-shadow">
+                      <div className="flex items-center justify-between mb-2 gap-2">
+                        <h3 className="font-semibold text-sm break-words flex-1">{module.module}</h3>
+                        {/* <Badge variant="secondary" className="text-xs flex-shrink-0">{module.hours} hrs</Badge> */}
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {module.topics.map((topic, tidx) => (
+                          <Badge key={tidx} variant="outline" className="text-xs">
+                            {topic}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+            {/* Testimonials - IMPROVED MOBILE (skip for react) */}
+            {kit.id !== "react" && (
+              <Card className="p-4 md:p-6 overflow-hidden">
+                <div className="flex items-center justify-between mb-3 gap-2">
+                  <h2 className="text-base md:text-lg font-bold flex items-center gap-2">
+                    <Trophy className="w-4 h-4 text-green-500 flex-shrink-0" />
+                    Success Stories
+                  </h2>
+                  <Badge variant="secondary" className="text-xs flex-shrink-0">{kit.reviews} reviews</Badge>
+                </div>
+
+                <div className="space-y-3" role="list" aria-roledescription="carousel">
+                  {kit.testimonials.map((testimonial, idx) => (
+                    <div
+                      key={idx}
+                      role="listitem"
+                      aria-hidden={selectedTestimonial !== idx}
+                      className={`p-3 rounded-lg border transition-all cursor-pointer focus:outline-none flex gap-3 items-start min-w-0 ${selectedTestimonial === idx ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      onClick={() => setSelectedTestimonial(idx)}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") setSelectedTestimonial(idx)
+                      }}
                     >
-                      <span className="font-medium text-sm break-words flex-1">{faq.question}</span>
-                      <ChevronRight className={`w-4 h-4 transition-transform flex-shrink-0 ${openFaq === idx ? 'rotate-90' : ''}`} />
-                    </button>
-                    {openFaq === idx && (
-                      <div id={`faq-panel-${idx}`} role="region" aria-hidden={openFaq !== idx} className="p-3 pt-0 text-sm text-muted-foreground break-words">
-                        {faq.answer}
+                      <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-white flex-shrink-0">
+                        <span className="font-semibold text-green-700">{testimonial.name.split(' ').map(n => n[0]).slice(0, 2).join('')}</span>
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </Card>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1">
+                          <div className="min-w-0">
+                            <p className="font-semibold text-sm break-words">{testimonial.name}</p>
+                            <p className="text-xs text-muted-foreground break-words">{testimonial.role} • {testimonial.company}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-0.5">
+                              {[...Array(testimonial.rating)].map((_, i) => (
+                                <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                              ))}
+                            </div>
+                            <Badge className={`bg-gradient-to-r ${kit.color} text-white border-0 text-xs flex-shrink-0`}>Verified</Badge>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-700 italic break-words">"{testimonial.text}"</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+            {/* FAQs - IMPROVED MOBILE (skip for react) */}
+            {kit.id !== "react" && (
+              <Card className="p-4 md:p-6 overflow-hidden">
+                <h2 className="text-base md:text-lg font-bold mb-3 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                  FAQ
+                </h2>
+                <div className="space-y-2">
+                  {kit.faqs.map((faq, idx) => (
+                    <div key={idx} className="border rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                        aria-expanded={openFaq === idx}
+                        aria-controls={`faq-panel-${idx}`}
+                        className="w-full p-3 text-left flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors min-w-0"
+                      >
+                        <span className="font-medium text-sm break-words flex-1">{faq.question}</span>
+                        <ChevronRight className={`w-4 h-4 transition-transform flex-shrink-0 ${openFaq === idx ? 'rotate-90' : ''}`} />
+                      </button>
+                      {openFaq === idx && (
+                        <div id={`faq-panel-${idx}`} role="region" aria-hidden={openFaq !== idx} className="p-3 pt-0 text-sm text-muted-foreground break-words">
+                          {faq.answer}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
           </div>
 
           {/* Right Column - Sticky Checkout Card (desktop) */}
@@ -1864,8 +1843,8 @@ export default function CheckoutPage() {
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-2">
                   <Download className="w-5 h-5 text-white" />
                 </div>
-                <p className="font-semibold text-sm">Instant Download</p>
-                <p className="text-xs text-muted-foreground mt-1">Get access in 2 minutes</p>
+                <p className="font-semibold text-sm">Instant Access</p>
+                <p className="text-xs text-muted-foreground mt-1">Get access instantly</p>
               </div>
               <div>
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-2">

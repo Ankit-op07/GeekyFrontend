@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { CheckCircle2, Loader2, ShieldCheck, Lock, CreditCard, Zap, Star, AlertTriangle, User, LogIn } from "lucide-react"
+import { CheckCircle2, Loader2, ShieldCheck, Lock, CreditCard, Zap, Star, AlertTriangle, User, LogIn, Atom, FileText, Code } from "lucide-react"
 import { KIT_CATALOG, getKitById } from "@/lib/appConstants"
 
 interface SessionUser {
@@ -402,25 +402,38 @@ function PayContent() {
                     <div className="order-1 lg:order-2 lg:sticky lg:top-24">
                         <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
                             {/* Product card */}
-                            <div className="p-6 border-b border-gray-100 flex gap-4 items-start">
-                                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shrink-0 shadow-md shadow-violet-500/20">
-                                    <Star className="w-7 h-7 text-white" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-start justify-between gap-2">
-                                        <div>
-                                            <h3 className="font-bold text-[15px] leading-snug text-gray-900">{kit.name}</h3>
-                                            <p className="text-xs text-gray-400 mt-0.5">{kit.duration} access</p>
-                                        </div>
-                                        {kit.badge && (
-                                            <span className="text-[10px] font-bold uppercase tracking-wider bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full shrink-0">
-                                                {kit.badge}
-                                            </span>
-                                        )}
+                            <div className="p-6 border-b border-gray-100">
+                                <div className="flex gap-4 items-start">
+                                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 shadow-md ${
+                                        kitId === 'react-kit'
+                                            ? 'bg-gradient-to-br from-cyan-500 to-blue-600 shadow-blue-500/20'
+                                            : 'bg-gradient-to-br from-violet-600 to-indigo-600 shadow-violet-500/20'
+                                    }`}>
+                                        {kitId === 'react-kit'
+                                            ? <Atom className="w-7 h-7 text-white" />
+                                            : <Star className="w-7 h-7 text-white" />
+                                        }
                                     </div>
-                                    <p className="text-xs text-gray-500 mt-2 leading-relaxed">
-                                        {kit.features.slice(0, 3).join(", ")} and more.
-                                    </p>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div>
+                                                <h3 className="font-bold text-[15px] leading-snug text-gray-900">{kit.name}</h3>
+                                                <p className="text-xs text-gray-400 mt-0.5">{kit.duration} access</p>
+                                            </div>
+                                            {kit.badge && (
+                                                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 ${
+                                                    kit.badge === 'BESTSELLER'
+                                                        ? 'bg-amber-100 text-amber-700'
+                                                        : 'bg-violet-100 text-violet-700'
+                                                }`}>
+                                                    {kit.badge === 'BESTSELLER' ? '⭐ ' : ''}{kit.badge}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+                                            {kit.tagline}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 

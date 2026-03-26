@@ -47,7 +47,7 @@ const products: Product[] = [
   },
   {
     id: "react",
-    title: "Reactjs Interview Preparation Kit",
+    title: "React.js Interview Preparation Kit",
     shortTitle: "React.js Interview Kit",
     price: {
       current: react_kit_price,
@@ -60,9 +60,10 @@ const products: Product[] = [
     ),
     bgGradient: "from-blue-50 via-white to-cyan-50",
     iconBg: "bg-gradient-to-br from-cyan-400 to-blue-600",
+    popular: true,
     studentsCount: 11340,
     discount: 90,
-    tag: "Framework"
+    tag: "Bestseller"
   },
   {
     id: "complete",
@@ -79,7 +80,6 @@ const products: Product[] = [
     ),
     bgGradient: "from-purple-50 via-white to-pink-50",
     iconBg: "bg-gradient-to-br from-purple-500 to-pink-500",
-    popular: true,
     comingSoon: true,
     studentsCount: 5892,
     discount: 90,

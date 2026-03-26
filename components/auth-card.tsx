@@ -17,12 +17,6 @@ export function AuthCard({ children, maxWidth = "max-w-[420px]" }: { children: R
             <div className="auth-bg-noise" />
 
             <div className={`w-full ${maxWidth} relative z-10 auth-card-entrance`}>
-                {/* Logo */}
-                <div className="flex justify-center mb-8">
-                    <Link href="/" className="auth-logo-link">
-                        <Image src="/inter.png" alt="Geeky Frontend" width={130} height={44} priority className="opacity-90 hover:opacity-100 transition-opacity" />
-                    </Link>
-                </div>
 
                 {/* Glass card */}
                 <div className="auth-glass-card">
