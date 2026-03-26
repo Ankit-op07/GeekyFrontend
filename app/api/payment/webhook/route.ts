@@ -133,7 +133,7 @@ function buildEmailHtml(planName: string, userEmail: string, folderLink: string,
           </table>
         </div>
         <div style="margin-top:30px;">
-          <p style="color:#666;font-size:14px;margin:0;">Need help? Email: support@geekyfrontend.com</p>
+          <p style="color:#666;font-size:14px;margin:0;">Need help? Email: geekyfrontend@gmail.com</p>
         </div>
       </td>
     </tr>

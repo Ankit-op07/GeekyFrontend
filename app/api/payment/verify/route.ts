@@ -97,7 +97,7 @@ function buildOnboardingEmail(opts: {
     <tr>
       <td style="padding: 25px; background-color: #f8f9fa; text-align: center;">
         <p style="color: #999; font-size: 12px; margin: 0;">
-          Questions? Email us at support@geekyfrontend.com<br>
+          Questions? Email us at geekyfrontend@gmail.com<br>
           © ${new Date().getFullYear()} Geeky Frontend
         </p>
       </td>
