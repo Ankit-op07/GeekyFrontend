@@ -140,6 +140,7 @@ const DATE_PRESETS = [
 ];
 
 const EMAIL_TEMPLATES = [
+    { id: 'platform_onboarding', name: '🚀 Platform Onboarding', subject: '🎉 Congratulations — You Now Have Access to the New Geeky Frontend Platform!' },
     { id: 'new_offer', name: 'New Offer', subject: '🎉 Special Offer for You - Geeky Frontend' },
     { id: 'new_content', name: 'New Content', subject: '📚 New Content Added - Geeky Frontend' },
     { id: 'announcement', name: 'Announcement', subject: '📢 Important Announcement - Geeky Frontend' },
@@ -489,7 +490,7 @@ export default function AdminUsersPage() {
                                     {/* Template Selection */}
                                     <div className="space-y-2">
                                         <Label>Email Template</Label>
-                                        <Select value={emailTemplate} onValueChange={setEmailTemplate}>
+                                        <Select value={emailTemplate} onValueChange={(v) => { setEmailTemplate(v); setEmailResult(null); }}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select template" />
                                             </SelectTrigger>
@@ -502,6 +503,24 @@ export default function AdminUsersPage() {
                                             </SelectContent>
                                         </Select>
                                     </div>
+
+                                    {/* Onboarding info banner */}
+                                    {emailTemplate === 'platform_onboarding' && (
+                                        <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 space-y-2">
+                                            <p className="text-sm font-semibold text-purple-800">
+                                                🚀 Platform Onboarding Email
+                                            </p>
+                                            <ul className="text-xs text-purple-700 space-y-1">
+                                                <li>✅ Sends a <strong>personalised email</strong> to each user with their specific kit name</li>
+                                                <li>✅ Auto-creates their <strong>platform account</strong> if it doesn't exist yet</li>
+                                                <li>✅ Generates a unique <strong>set-password link</strong> (valid 7 days) per user</li>
+                                                <li>✅ Directs them to their dashboard after password setup</li>
+                                            </ul>
+                                            <p className="text-xs text-purple-500 pt-1">
+                                                The personal note below is optional — leave blank to use the default template.
+                                            </p>
+                                        </div>
+                                    )}
 
                                     {/* Custom Subject (for custom template) */}
                                     {emailTemplate === 'custom' && (
@@ -532,18 +551,28 @@ export default function AdminUsersPage() {
                                         </Select>
                                     </div>
 
-                                    {/* Message */}
+                                    {/* Message / Personal Note */}
                                     <div className="space-y-2">
-                                        <Label>Message Content</Label>
+                                        <Label>
+                                            {emailTemplate === 'platform_onboarding'
+                                                ? 'Personal Note (optional)'
+                                                : 'Message Content'}
+                                        </Label>
                                         <Textarea
                                             value={emailMessage}
                                             onChange={(e) => setEmailMessage(e.target.value)}
-                                            placeholder="Write your message here... This will be placed in the email template body."
-                                            className="min-h-[150px]"
+                                            placeholder={
+                                                emailTemplate === 'platform_onboarding'
+                                                    ? 'Add a personal note from the team shown inside the email (optional)...'
+                                                    : 'Write your message here... This will be placed in the email template body.'
+                                            }
+                                            className="min-h-[120px]"
                                         />
-                                        <p className="text-xs text-gray-500">
-                                            Tip: You can use HTML for formatting (e.g., &lt;b&gt;bold&lt;/b&gt;, &lt;br&gt; for line breaks)
-                                        </p>
+                                        {emailTemplate !== 'platform_onboarding' && (
+                                            <p className="text-xs text-gray-500">
+                                                Tip: You can use HTML for formatting (e.g., &lt;b&gt;bold&lt;/b&gt;, &lt;br&gt; for line breaks)
+                                            </p>
+                                        )}
                                     </div>
 
                                     {/* Test Email */}
@@ -559,7 +588,11 @@ export default function AdminUsersPage() {
                                             <Button
                                                 variant="outline"
                                                 onClick={() => handleSendEmail(true)}
-                                                disabled={!emailTestAddress || !emailMessage || emailSending}
+                                                disabled={
+                                                    !emailTestAddress ||
+                                                    emailSending ||
+                                                    (emailTemplate !== 'platform_onboarding' && !emailMessage)
+                                                }
                                             >
                                                 {emailSending ? (
                                                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -573,7 +606,7 @@ export default function AdminUsersPage() {
                                     {/* Result Message */}
                                     {emailResult && (
                                         <div
-                                            className={`p-3 rounded-lg ${emailResult.success
+                                            className={`p-3 rounded-lg text-sm ${emailResult.success
                                                 ? 'bg-green-100 text-green-800'
                                                 : 'bg-red-100 text-red-800'
                                                 }`}
@@ -592,7 +625,10 @@ export default function AdminUsersPage() {
                                     </Button>
                                     <Button
                                         onClick={() => handleSendEmail(false)}
-                                        disabled={!emailMessage || emailSending}
+                                        disabled={
+                                            emailSending ||
+                                            (emailTemplate !== 'platform_onboarding' && !emailMessage)
+                                        }
                                         className="gap-2 bg-emerald-600 hover:bg-emerald-700"
                                     >
                                         {emailSending ? (
