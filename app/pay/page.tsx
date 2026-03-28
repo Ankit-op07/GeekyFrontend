@@ -151,6 +151,25 @@ function PayContent() {
                     })
                     const vData = await vRes.json()
                     if (vData.success) {
+                        fetch("/api/conversion", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                event_name: "Purchase",
+                                user_data: {
+                                    em: resolvedEmail,
+                                    ph: mobile ? `91${mobile}` : undefined,
+                                    fn: resolvedName,
+                                },
+                                custom_data: {
+                                    currency: orderData.currency || "INR",
+                                    value: kit.price,
+                                    content_name: kit.name,
+                                    content_ids: [kitId],
+                                },
+                            }),
+                        }).catch(err => console.error("Conversion API error:", err));
+
                         router.push("/dashboard")
                         router.refresh()
                     } else {
@@ -404,11 +423,10 @@ function PayContent() {
                             {/* Product card */}
                             <div className="p-6 border-b border-gray-100">
                                 <div className="flex gap-4 items-start">
-                                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 shadow-md ${
-                                        kitId === 'react-kit'
-                                            ? 'bg-gradient-to-br from-cyan-500 to-blue-600 shadow-blue-500/20'
-                                            : 'bg-gradient-to-br from-violet-600 to-indigo-600 shadow-violet-500/20'
-                                    }`}>
+                                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 shadow-md ${kitId === 'react-kit'
+                                        ? 'bg-gradient-to-br from-cyan-500 to-blue-600 shadow-blue-500/20'
+                                        : 'bg-gradient-to-br from-violet-600 to-indigo-600 shadow-violet-500/20'
+                                        }`}>
                                         {kitId === 'react-kit'
                                             ? <Atom className="w-7 h-7 text-white" />
                                             : <Star className="w-7 h-7 text-white" />
@@ -421,11 +439,10 @@ function PayContent() {
                                                 <p className="text-xs text-gray-400 mt-0.5">{kit.duration} access</p>
                                             </div>
                                             {kit.badge && (
-                                                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 ${
-                                                    kit.badge === 'BESTSELLER'
-                                                        ? 'bg-amber-100 text-amber-700'
-                                                        : 'bg-violet-100 text-violet-700'
-                                                }`}>
+                                                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 ${kit.badge === 'BESTSELLER'
+                                                    ? 'bg-amber-100 text-amber-700'
+                                                    : 'bg-violet-100 text-violet-700'
+                                                    }`}>
                                                     {kit.badge === 'BESTSELLER' ? '⭐ ' : ''}{kit.badge}
                                                 </span>
                                             )}
