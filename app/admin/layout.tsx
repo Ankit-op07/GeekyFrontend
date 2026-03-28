@@ -12,9 +12,10 @@ import {
 const ADMIN_EMAIL = 'geekyfrontend@gmail.com';
 
 const ADMIN_NAV = [
+    { href: '/admin/platform-users', label: 'Platform Users', icon: Users, desc: 'Registered platform users' },
     { href: '/admin/content', label: 'Content', icon: BookOpen, desc: 'Manage kits & topics' },
     { href: '/admin/questions', label: 'Questions', icon: Building2, desc: 'Company-wise questions' },
-    { href: '/admin/users', label: 'Users', icon: Users, desc: 'User management' },
+    { href: '/admin/users', label: 'Orders', icon: Users, desc: 'Purchase orders management' },
     { href: '/admin/access', label: 'Access', icon: ShieldCheck, desc: 'Grant course access' },
 ];
 
@@ -95,8 +96,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             href={item.href}
                             onClick={() => setMobileOpen(false)}
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all group ${isActive
-                                    ? 'bg-violet-500/15 text-violet-300 font-medium'
-                                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                ? 'bg-violet-500/15 text-violet-300 font-medium'
+                                : 'text-slate-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             <Icon className={`w-4.5 h-4.5 flex-shrink-0 ${isActive ? 'text-violet-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
