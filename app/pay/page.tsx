@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { CheckCircle2, Loader2, ShieldCheck, Lock, CreditCard, Zap, Star, AlertTriangle, User, LogIn, Atom, FileText, Code } from "lucide-react"
 import { KIT_CATALOG, getKitById } from "@/lib/appConstants"
+import { trackPurchase } from "@/lib/meta-pixel"
 
 interface SessionUser {
     id: string
@@ -151,24 +152,18 @@ function PayContent() {
                     })
                     const vData = await vRes.json()
                     if (vData.success) {
-                        fetch("/api/conversion", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                event_name: "Purchase",
-                                user_data: {
-                                    em: resolvedEmail,
-                                    ph: mobile ? `91${mobile}` : undefined,
-                                    fn: resolvedName,
-                                },
-                                custom_data: {
-                                    currency: orderData.currency || "INR",
-                                    value: kit.price,
-                                    content_name: kit.name,
-                                    content_ids: [kitId],
-                                },
-                            }),
-                        }).catch(err => console.error("Conversion API error:", err));
+                        // ✅ Fixed: Track purchase with both Pixel + CAPI, with deduplication
+                        const nameParts = resolvedName?.split(' ') || [];
+                        trackPurchase({
+                            email: resolvedEmail,
+                            phone: mobile ? `91${mobile}` : undefined,
+                            firstName: nameParts[0],
+                            lastName: nameParts.slice(1).join(' ') || undefined,
+                            value: kit.price,
+                            currency: orderData.currency || 'INR',
+                            contentName: kit.name,
+                            contentIds: [kitId],
+                        });
 
                         router.push("/dashboard")
                         router.refresh()
