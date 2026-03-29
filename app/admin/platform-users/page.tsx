@@ -24,7 +24,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Search, Users, CheckCircle, XCircle, Loader2, AlertCircle, RefreshCw, Key, Trash2 } from 'lucide-react';
+import { Search, Users, CheckCircle, XCircle, Loader2, AlertCircle, RefreshCw, Key, Trash2, Mail } from 'lucide-react';
 
 interface PlatformUser {
     _id: string;
@@ -45,6 +45,7 @@ export default function PlatformUsersPage() {
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+    const [sendReminderLoading, setSendReminderLoading] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -91,6 +92,27 @@ export default function PlatformUsersPage() {
             console.error('Error deleting user:', error);
         } finally {
             setDeleteLoading(null);
+        }
+    };
+
+    const handleSendReminders = async () => {
+        if (!confirm('Are you sure you want to send setup reminder emails to all users who have not set up their account or logged in yet?')) {
+            return;
+        }
+        setSendReminderLoading(true);
+        try {
+            const res = await fetch('/api/admin/setup-reminder', { method: 'POST' });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Failed to send reminders.');
+        } finally {
+            setSendReminderLoading(false);
         }
     };
 
@@ -146,6 +168,14 @@ export default function PlatformUsersPage() {
                         >
                             <RefreshCw className="w-4 h-4" />
                             Refresh
+                        </Button>
+                        <Button
+                            onClick={handleSendReminders}
+                            disabled={sendReminderLoading}
+                            className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white"
+                        >
+                            {sendReminderLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                            Send Reminders
                         </Button>
                     </div>
                 </div>
