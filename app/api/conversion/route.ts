@@ -3,13 +3,15 @@ import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
   try {
-    const { event_name, event_id, user_data, custom_data } = await request.json();
+    const body = await request.json();
+    const { event_name, event_id, user_data, custom_data } = body;
 
     const PIXEL_ID = process.env.PIXEL_ID;
     const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
     const API_VERSION = process.env.API_VERSION || 'v22.0';
 
     if (!PIXEL_ID || !META_ACCESS_TOKEN) {
+      console.error('[CAPI] Missing env vars — PIXEL_ID:', !!PIXEL_ID, 'TOKEN:', !!META_ACCESS_TOKEN);
       return NextResponse.json(
         { success: false, error: 'Missing Meta credentials' },
         { status: 500 }
@@ -22,20 +24,20 @@ export async function POST(request: NextRequest) {
 
     // Build hashed user data with all matching parameters
     const hashedUserData: Record<string, any> = {
-      // Hashed PII fields (Meta requires these as arrays for some, strings for others)
+      // Hashed PII — Meta requires SHA-256 hashing for all PII fields
       ...(user_data.em ? { em: [hash(user_data.em)] } : {}),
       ...(user_data.ph ? { ph: [hash(user_data.ph)] } : {}),
       ...(user_data.fn ? { fn: [hash(user_data.fn)] } : {}),
       ...(user_data.ln ? { ln: [hash(user_data.ln)] } : {}),
 
-      // Non-hashed fields critical for matching
+      // Non-hashed fields — critical for event matching
       client_ip_address:
         request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
         request.headers.get('x-real-ip') ||
         '',
       client_user_agent: request.headers.get('user-agent') || '',
 
-      // Meta cookie identifiers (sent from browser, NOT hashed)
+      // Meta cookie identifiers — NOT hashed, passed as-is
       ...(user_data.fbc ? { fbc: user_data.fbc } : {}),
       ...(user_data.fbp ? { fbp: user_data.fbp } : {}),
     };
@@ -47,32 +49,45 @@ export async function POST(request: NextRequest) {
       action_source: 'website',
       user_data: hashedUserData,
       custom_data,
-      // event_id is critical for deduplication with browser pixel
-      ...(event_id ? { event_id } : {}),
+      // event_id MUST be present for deduplication with browser pixel
+      event_id: event_id || undefined,
     };
 
-    const response = await fetch(
-      `https://graph.facebook.com/${API_VERSION}/${PIXEL_ID}/events`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          data: [eventPayload],
-          access_token: META_ACCESS_TOKEN,
-        }),
-      }
-    );
+    // Log for debugging (remove in production once confirmed working)
+    console.log('[CAPI] Sending event:', {
+      event_name,
+      event_id,
+      has_em: !!user_data.em,
+      has_ph: !!user_data.ph,
+      has_fbc: !!user_data.fbc,
+      has_fbp: !!user_data.fbp,
+      has_ip: !!hashedUserData.client_ip_address,
+      has_ua: !!hashedUserData.client_user_agent,
+      event_source_url: eventPayload.event_source_url,
+    });
+
+    const url = `https://graph.facebook.com/${API_VERSION}/${PIXEL_ID}/events`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        data: [eventPayload],
+        access_token: META_ACCESS_TOKEN,
+      }),
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Meta CAPI error:', JSON.stringify(data, null, 2));
+      console.error('[CAPI] ❌ Meta API error:', JSON.stringify(data, null, 2));
       throw new Error(data.error?.message || 'Meta API error');
     }
 
+    console.log('[CAPI] ✅ Success:', JSON.stringify(data));
     return NextResponse.json({ success: true, fb_response: data });
   } catch (err: any) {
-    console.error('Conversion API error:', err);
+    console.error('[CAPI] ❌ Error:', err.message);
     return NextResponse.json(
       { success: false, error: err.message },
       { status: 500 }

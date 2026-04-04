@@ -152,9 +152,9 @@ function PayContent() {
                     })
                     const vData = await vRes.json()
                     if (vData.success) {
-                        // ✅ Fixed: Track purchase with both Pixel + CAPI, with deduplication
+                        // ✅ AWAIT trackPurchase — must complete before navigation
                         const nameParts = resolvedName?.split(' ') || [];
-                        trackPurchase({
+                        await trackPurchase({
                             email: resolvedEmail,
                             phone: mobile ? `91${mobile}` : undefined,
                             firstName: nameParts[0],

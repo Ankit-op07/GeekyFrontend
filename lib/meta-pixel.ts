@@ -3,7 +3,7 @@
  *
  * Usage:
  *   import { trackPurchase } from '@/lib/meta-pixel';
- *   trackPurchase({ email, phone, name, value, currency, contentName, contentIds });
+ *   await trackPurchase({ email, phone, name, value, currency, contentName, contentIds });
  */
 
 // ─── Cookie helpers ──────────────────────────────────────────────
@@ -30,9 +30,10 @@ export function getFbp(): string | null {
 
 // ─── Event ID generator ─────────────────────────────────────────
 
-/** Generate a unique event ID for deduplication between Pixel and CAPI */
+/** Generate a unique event ID for deduplication between Pixel and CAPI.
+ *  Uses only alphanumeric characters and hyphens — no special chars that Meta might reject.
+ */
 export function generateEventId(): string {
-    // Use crypto.randomUUID if available, fallback to timestamp + random
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
         return crypto.randomUUID();
     }
@@ -41,7 +42,12 @@ export function generateEventId(): string {
 
 // ─── Production domain check ────────────────────────────────────
 
-const PRODUCTION_DOMAINS = ['geekyfrontend.com', 'geekyfrontend.in'];
+const PRODUCTION_DOMAINS = [
+    'geekyfrontend.com',
+    'www.geekyfrontend.com',
+    'geekyfrontend.in',
+    'www.geekyfrontend.in',
+];
 
 export function isProductionDomain(): boolean {
     if (typeof window === 'undefined') return false;
@@ -67,8 +73,9 @@ interface TrackPurchaseParams {
  * 2. Server-side Conversions API — for reliable, ad-blocker-proof tracking
  *
  * Both use the same event_id so Meta deduplicates them.
+ * Returns a Promise — ALWAYS await this before navigating away.
  */
-export function trackPurchase({
+export async function trackPurchase({
     email,
     phone,
     firstName,
@@ -77,7 +84,7 @@ export function trackPurchase({
     currency = 'INR',
     contentName,
     contentIds,
-}: TrackPurchaseParams): void {
+}: TrackPurchaseParams): Promise<void> {
     // Only fire on production domains
     if (!isProductionDomain()) {
         console.log('[Meta] Skipping — not a production domain');
@@ -87,53 +94,73 @@ export function trackPurchase({
     const eventId = generateEventId();
     const fbc = getFbc();
     const fbp = getFbp();
+    const sourceUrl = window.location.href;
 
-    // 1️⃣ Browser-side pixel event (with event ID for deduplication)
-    if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+    console.log('[Meta] Tracking Purchase — eventId:', eventId);
+    console.log('[Meta] Cookies — fbc:', fbc, '| fbp:', fbp);
+
+    // 1️⃣ Browser-side pixel event (with eventID for deduplication)
+    if (typeof (window as any).fbq === 'function') {
         (window as any).fbq(
             'track',
             'Purchase',
             {
-                value,
-                currency,
+                value: value,
+                currency: currency,
                 content_name: contentName,
                 content_ids: contentIds,
             },
             { eventID: eventId }
         );
+        console.log('[Meta] ✅ Browser pixel fired — eventID:', eventId);
+    } else {
+        console.warn('[Meta] ❌ fbq not found — browser pixel did NOT fire');
     }
 
-    // 2️⃣ Server-side CAPI event (same event ID)
-    fetch('/api/conversion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            event_name: 'Purchase',
-            event_id: eventId,
-            user_data: {
-                em: email,
-                ph: phone || undefined,
-                fn: firstName || undefined,
-                ln: lastName || undefined,
-                fbc: fbc || undefined,
-                fbp: fbp || undefined,
-                source_url: window.location.href,
-            },
-            custom_data: {
-                value,
-                currency,
-                content_name: contentName,
-                content_ids: contentIds,
-            },
-        }),
-    }).catch((err) => console.error('[Meta] CAPI error:', err));
+    // 2️⃣ Server-side CAPI event (same event_id for deduplication)
+    try {
+        const response = await fetch('/api/conversion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event_name: 'Purchase',
+                event_id: eventId,
+                user_data: {
+                    em: email || undefined,
+                    ph: phone || undefined,
+                    fn: firstName || undefined,
+                    ln: lastName || undefined,
+                    fbc: fbc || undefined,
+                    fbp: fbp || undefined,
+                    source_url: sourceUrl,
+                },
+                custom_data: {
+                    value: value,
+                    currency: currency,
+                    content_name: contentName,
+                    content_ids: contentIds,
+                },
+            }),
+        });
+
+        const data = await response.json();
+        console.log('[Meta] CAPI response:', data);
+
+        if (!data.success) {
+            console.error('[Meta] ❌ CAPI failed:', data.error);
+        } else {
+            console.log('[Meta] ✅ CAPI success — event_id:', eventId);
+        }
+    } catch (err) {
+        console.error('[Meta] ❌ CAPI fetch error:', err);
+    }
 }
 
 // ─── Track PageView (for manual use if needed) ──────────────────
 
 export function trackPageView(): void {
     if (!isProductionDomain()) return;
-    if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+    if (typeof (window as any).fbq === 'function') {
         (window as any).fbq('track', 'PageView');
     }
 }
