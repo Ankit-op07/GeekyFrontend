@@ -5,6 +5,7 @@ import {
     Mail, Send, Users, CheckCircle2, XCircle, Loader2,
     RefreshCw, FlaskConical, BookOpen, ChevronDown, Info,
     Sparkles, ShieldCheck, AlertTriangle, Plus, X, Trash2,
+    Lock, Unlock, RotateCcw,
 } from 'lucide-react';
 
 /* ─── Types ──────────────────────────────────────────────────────── */
@@ -17,6 +18,7 @@ interface KitStat {
 interface Buyer {
     email: string;
     name: string;
+    hasSetPassword: boolean;
 }
 
 interface SendResult {
@@ -25,6 +27,7 @@ interface SendResult {
     sentCount?: number;
     accessGrantedCount?: number;
     failedCount?: number;
+    skippedCount?: number;
     totalRecipients?: number;
     failedEmails?: string[];
     results?: { email: string; success: boolean; error?: string }[];
@@ -77,6 +80,15 @@ export default function KitOnboardingPage() {
     const [bulkResult, setBulkResult] = useState<SendResult | null>(null);
     const [confirmOpen, setConfirmOpen] = useState(false);
 
+    // Resend to pending
+    const [pendingLoading, setPendingLoading] = useState(false);
+    const [pendingResult, setPendingResult] = useState<SendResult | null>(null);
+    const [pendingConfirmOpen, setPendingConfirmOpen] = useState(false);
+
+    // Counts
+    const [pendingCount, setPendingCount] = useState(0);
+    const [completedCount, setCompletedCount] = useState(0);
+
     /* ── Fetch kit stats on mount ─────────────────────────────────── */
     const fetchStats = useCallback(async () => {
         setStatsLoading(true);
@@ -99,10 +111,16 @@ export default function KitOnboardingPage() {
         setBuyersLoading(true);
         setBulkResult(null);
         setTestResult(null);
+        setPendingResult(null);
+        setPendingConfirmOpen(false);
         const encoded = encodeURIComponent(selectedKit);
         fetch(`/api/admin/kit-onboarding?kit=${encoded}`)
             .then(r => r.json())
-            .then(d => setBuyers(d.buyers || []))
+            .then(d => {
+                setBuyers(d.buyers || []);
+                setPendingCount(d.pendingCount ?? 0);
+                setCompletedCount(d.completedCount ?? 0);
+            })
             .catch(console.error)
             .finally(() => setBuyersLoading(false));
     }, [selectedKit]);
@@ -178,6 +196,43 @@ export default function KitOnboardingPage() {
             setBulkResult({ success: false, message: e.message });
         } finally {
             setBulkLoading(false);
+            sendingRef.current = false;
+        }
+    };
+
+    /* ── Resend to pending only ────────────────────────────────────── */
+    const sendPending = async () => {
+        if (sendingRef.current) return;
+        if (!selectedKit || pendingCount === 0) return;
+        sendingRef.current = true;
+        setPendingLoading(true);
+        setPendingResult(null);
+        setPendingConfirmOpen(false);
+        try {
+            const res = await fetch('/api/admin/kit-onboarding', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    kitName: selectedKit,
+                    personalNote: personalNote || undefined,
+                    pendingOnly: true,
+                }),
+            });
+            const data = await res.json();
+            setPendingResult({ success: res.ok, ...data });
+            // Refresh buyer list after sending
+            if (res.ok) {
+                const encoded = encodeURIComponent(selectedKit);
+                const refreshRes = await fetch(`/api/admin/kit-onboarding?kit=${encoded}`);
+                const refreshData = await refreshRes.json();
+                setBuyers(refreshData.buyers || []);
+                setPendingCount(refreshData.pendingCount ?? 0);
+                setCompletedCount(refreshData.completedCount ?? 0);
+            }
+        } catch (e: any) {
+            setPendingResult({ success: false, message: e.message });
+        } finally {
+            setPendingLoading(false);
             sendingRef.current = false;
         }
     };
@@ -298,19 +353,42 @@ export default function KitOnboardingPage() {
                             </div>
                         ) : (
                             <div className="bg-[#0d0d14] border border-white/[0.08] rounded-xl overflow-hidden">
+                                {/* Status summary bar */}
+                                <div className="flex items-center gap-4 px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
+                                    <div className="flex items-center gap-1.5 text-xs">
+                                        <div className="w-2 h-2 rounded-full bg-amber-400" />
+                                        <span className="text-amber-300 font-medium">{pendingCount} pending</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 text-xs">
+                                        <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                                        <span className="text-emerald-300 font-medium">{completedCount} set password</span>
+                                    </div>
+                                </div>
                                 <div className="max-h-64 overflow-y-auto">
                                     {buyers.map((b, i) => (
                                         <div
                                             key={b.email}
                                             className={`flex items-center gap-3 px-4 py-2.5 text-sm ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}
                                         >
-                                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${b.hasSetPassword
+                                                ? 'bg-gradient-to-br from-emerald-500 to-green-600'
+                                                : 'bg-gradient-to-br from-amber-500 to-orange-600'
+                                                }`}>
                                                 {(b.name || b.email).charAt(0).toUpperCase()}
                                             </div>
-                                            <div className="min-w-0">
+                                            <div className="min-w-0 flex-1">
                                                 <p className="text-slate-200 font-medium truncate capitalize">{b.name}</p>
                                                 <p className="text-slate-500 text-xs truncate">{b.email}</p>
                                             </div>
+                                            {b.hasSetPassword ? (
+                                                <span className="flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full font-medium shrink-0">
+                                                    <Unlock className="w-2.5 h-2.5" /> Password set
+                                                </span>
+                                            ) : (
+                                                <span className="flex items-center gap-1 text-[10px] text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded-full font-medium shrink-0">
+                                                    <Lock className="w-2.5 h-2.5" /> Pending
+                                                </span>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
@@ -564,6 +642,113 @@ export default function KitOnboardingPage() {
                                 </div>
                             )}
                         </div>
+                    </section>
+                )}
+
+                {/* ════════════════════════════════════════════════════
+                    STEP 6: Resend to pending users only
+                   ════════════════════════════════════════════════════ */}
+                {selectedKit && pendingCount > 0 && (
+                    <section>
+                        <div className="flex items-center gap-2 mb-3">
+                            <div className="w-6 h-6 rounded-full bg-amber-600 text-white text-xs font-bold flex items-center justify-center">6</div>
+                            <h2 className="text-white text-sm font-semibold flex items-center gap-2">
+                                <RotateCcw className="w-4 h-4 text-amber-400" />
+                                Resend to Pending Users
+                                <span className="text-amber-400 bg-amber-500/15 text-xs px-2 py-0.5 rounded-full">
+                                    {pendingCount} pending
+                                </span>
+                            </h2>
+                        </div>
+
+                        <p className="text-slate-500 text-xs mb-4">
+                            Only sends to users who <strong className="text-amber-400">haven&apos;t set their password yet</strong>.
+                            Users who already completed setup are automatically skipped.
+                        </p>
+
+                        {!pendingConfirmOpen ? (
+                            <button
+                                onClick={() => setPendingConfirmOpen(true)}
+                                disabled={pendingLoading || pendingCount === 0}
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold text-sm shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {pendingLoading
+                                    ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
+                                    : <><RotateCcw className="w-4 h-4" /> Resend to {pendingCount} pending user{pendingCount !== 1 ? 's' : ''}</>
+                                }
+                            </button>
+                        ) : (
+                            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-5 max-w-lg">
+                                <p className="text-amber-300 font-semibold text-sm mb-1 flex items-center gap-2">
+                                    <AlertTriangle className="w-4 h-4" />
+                                    Confirm resend to pending
+                                </p>
+                                <p className="text-slate-400 text-sm mb-4">
+                                    This will send onboarding emails to <strong className="text-white">{pendingCount} user{pendingCount !== 1 ? 's' : ''}</strong> who
+                                    haven&apos;t set their password.
+                                    <br />
+                                    <span className="text-emerald-400">{completedCount} user{completedCount !== 1 ? 's' : ''} already completed — they will be skipped.</span>
+                                </p>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={sendPending}
+                                        disabled={pendingLoading}
+                                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all disabled:opacity-70"
+                                    >
+                                        {pendingLoading
+                                            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Processing…</>
+                                            : <><Send className="w-3.5 h-3.5" /> Yes, resend now</>
+                                        }
+                                    </button>
+                                    <button
+                                        onClick={() => setPendingConfirmOpen(false)}
+                                        disabled={pendingLoading}
+                                        className="px-4 py-2 rounded-lg border border-white/10 text-slate-400 hover:text-white text-sm transition-all"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Pending result */}
+                        {pendingResult && (
+                            <div className={`mt-4 rounded-xl border p-5 ${pendingResult.success ? 'bg-emerald-500/[0.08] border-emerald-500/20' : 'bg-red-500/[0.08] border-red-500/20'}`}>
+                                <div className="flex items-center gap-2 mb-2">
+                                    {pendingResult.success
+                                        ? <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                                        : <XCircle className="w-4 h-4 text-red-400" />
+                                    }
+                                    <p className={`text-sm font-medium ${pendingResult.success ? 'text-emerald-300' : 'text-red-300'}`}>
+                                        {pendingResult.message}
+                                    </p>
+                                </div>
+                                {pendingResult.success && (
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
+                                        <div className="bg-white/5 rounded-lg p-3 text-center">
+                                            <p className="text-xl font-bold text-emerald-300">{pendingResult.sentCount ?? 0}</p>
+                                            <p className="text-slate-400 text-[10px] mt-1">Emails sent</p>
+                                        </div>
+                                        <div className="bg-white/5 rounded-lg p-3 text-center">
+                                            <p className="text-xl font-bold text-violet-300">{pendingResult.accessGrantedCount ?? 0}</p>
+                                            <p className="text-slate-400 text-[10px] mt-1">Access granted</p>
+                                        </div>
+                                        {(pendingResult.skippedCount ?? 0) > 0 && (
+                                            <div className="bg-white/5 rounded-lg p-3 text-center">
+                                                <p className="text-xl font-bold text-slate-300">{pendingResult.skippedCount}</p>
+                                                <p className="text-slate-400 text-[10px] mt-1">Skipped</p>
+                                            </div>
+                                        )}
+                                        {(pendingResult.failedCount ?? 0) > 0 && (
+                                            <div className="bg-red-500/10 rounded-lg p-3 text-center">
+                                                <p className="text-xl font-bold text-red-300">{pendingResult.failedCount}</p>
+                                                <p className="text-slate-400 text-[10px] mt-1">Failed</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </section>
                 )}
 

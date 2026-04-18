@@ -295,8 +295,10 @@ export async function GET(request: NextRequest) {
     ]);
     console.log(`[kit-onboarding GET] Found ${kitStats.length} kits`);
 
-    // If a specific kit is requested, return the actual email list
-    let buyers: { email: string; name: string }[] = [];
+    // If a specific kit is requested, return the actual email list with password status
+    let buyers: { email: string; name: string; hasSetPassword: boolean }[] = [];
+    let pendingCount = 0;
+    let completedCount = 0;
     if (kitName) {
       console.log(`[kit-onboarding GET] Fetching buyers for kit: "${kitName}"`);
       const orders = await Order.find({
@@ -307,20 +309,36 @@ export async function GET(request: NextRequest) {
       const uniqueEmails = [...new Set(orders.map((o) => o.email))];
       console.log(`[kit-onboarding GET] Found ${uniqueEmails.length} unique buyers`);
 
-      // Enrich with names from CompanyKitUser if they exist
+      // Enrich with names + password status from CompanyKitUser
       const users = await CompanyKitUser.find({
         email: { $in: uniqueEmails.map((e) => e.toLowerCase()) },
-      }).select('email name').lean() as Array<{ email: string; name: string }>;
+      }).select('email name mustChangePassword password').lean() as Array<{
+        email: string; name: string; mustChangePassword?: boolean; password?: string;
+      }>;
 
-      const userMap = new Map(users.map((u) => [u.email.toLowerCase(), u.name]));
+      const userMap = new Map(users.map((u) => [
+        u.email.toLowerCase(),
+        {
+          name: u.name,
+          // User has set password if: mustChangePassword is false AND password exists
+          hasSetPassword: !u.mustChangePassword && !!u.password,
+        },
+      ]));
 
-      buyers = uniqueEmails.map((email) => ({
-        email,
-        name: userMap.get(email.toLowerCase()) || email.split('@')[0].replace(/[._-]/g, ' '),
-      }));
+      buyers = uniqueEmails.map((email) => {
+        const info = userMap.get(email.toLowerCase());
+        const hasSetPassword = info?.hasSetPassword ?? false;
+        if (hasSetPassword) completedCount++;
+        else pendingCount++;
+        return {
+          email,
+          name: info?.name || email.split('@')[0].replace(/[._-]/g, ' '),
+          hasSetPassword,
+        };
+      });
     }
 
-    return NextResponse.json({ kitStats, buyers });
+    return NextResponse.json({ kitStats, buyers, pendingCount, completedCount });
   } catch (error: any) {
     console.error('[kit-onboarding GET] ❌ Error:', error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -339,6 +357,7 @@ export async function POST(request: NextRequest) {
       personalNote,  // optional personal note in emails
       testEmails,    // array of test emails (new — supports multiple)
       testEmail,     // single test email (backward-compat)
+      pendingOnly,   // if true, only email users who haven't set their password yet
     } = body;
 
     console.log('[kit-onboarding POST] ── Request received ──');
@@ -409,7 +428,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── BULK SEND — all buyers of the kit ────────────────────────
-    console.log(`[kit-onboarding POST] 📨 BULK mode — finding buyers for: "${kitName}"`);
+    console.log(`[kit-onboarding POST] 📨 BULK mode — finding buyers for: "${kitName}" | pendingOnly: ${!!pendingOnly}`);
 
     // Find all unique buyers of this kit
     const orders = await Order.find({
@@ -438,14 +457,57 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // ── If pendingOnly, filter to users who haven't set their password ──
+    let targetEmails = emailToKit;
+    let skippedCount = 0;
+    if (pendingOnly) {
+      const allEmails = [...emailToKit.keys()];
+      const existingUsers = await CompanyKitUser.find({
+        email: { $in: allEmails },
+      }).select('email mustChangePassword password').lean() as Array<{
+        email: string; mustChangePassword?: boolean; password?: string;
+      }>;
+
+      // Users who have set password: mustChangePassword is false AND password exists
+      const completedEmails = new Set(
+        existingUsers
+          .filter(u => !u.mustChangePassword && !!u.password)
+          .map(u => u.email.toLowerCase())
+      );
+
+      targetEmails = new Map();
+      for (const [email, kit] of emailToKit.entries()) {
+        if (completedEmails.has(email)) {
+          skippedCount++;
+          console.log(`[kit-onboarding POST]   ⏭ Skipping ${email} — already set password`);
+        } else {
+          targetEmails.set(email, kit);
+        }
+      }
+
+      console.log(`[kit-onboarding POST] pendingOnly filter: ${targetEmails.size} pending, ${skippedCount} already set password`);
+
+      if (targetEmails.size === 0) {
+        return NextResponse.json({
+          success: true,
+          message: `All ${skippedCount} buyers have already set their password. No emails needed! 🎉`,
+          sentCount: 0,
+          accessGrantedCount: 0,
+          failedCount: 0,
+          skippedCount,
+          totalRecipients: 0,
+        });
+      }
+    }
+
     let successCount = 0;
     let accessGrantedCount = 0;
     const failedEmails: string[] = [];
 
     let processed = 0;
-    for (const [email, resolvedKitName] of emailToKit.entries()) {
+    for (const [email, resolvedKitName] of targetEmails.entries()) {
       processed++;
-      console.log(`[kit-onboarding POST] [${processed}/${emailToKit.size}] Processing: ${email}`);
+      console.log(`[kit-onboarding POST] [${processed}/${targetEmails.size}] Processing: ${email}`);
 
       const result = await processOneEmail({
         email,
@@ -471,11 +533,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Onboarding complete!',
+      message: pendingOnly
+        ? `Resend complete! Emailed ${successCount} pending user${successCount !== 1 ? 's' : ''}${skippedCount > 0 ? ` (${skippedCount} already set password — skipped)` : ''}.`
+        : 'Onboarding complete!',
       sentCount: successCount,
       accessGrantedCount,
       failedCount: failedEmails.length,
-      totalRecipients: emailToKit.size,
+      skippedCount,
+      totalRecipients: targetEmails.size,
       failedEmails: failedEmails.length > 0 ? failedEmails : undefined,
     });
   } catch (error: any) {
