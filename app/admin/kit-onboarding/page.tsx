@@ -84,6 +84,7 @@ export default function KitOnboardingPage() {
     const [pendingLoading, setPendingLoading] = useState(false);
     const [pendingResult, setPendingResult] = useState<SendResult | null>(null);
     const [pendingConfirmOpen, setPendingConfirmOpen] = useState(false);
+    const [resendLimit, setResendLimit] = useState<number | ''>('');
 
     // Counts
     const [pendingCount, setPendingCount] = useState(0);
@@ -216,6 +217,7 @@ export default function KitOnboardingPage() {
                     kitName: selectedKit,
                     personalNote: personalNote || undefined,
                     pendingOnly: true,
+                    limit: resendLimit || undefined,
                 }),
             });
             const data = await res.json();
@@ -667,16 +669,31 @@ export default function KitOnboardingPage() {
                         </p>
 
                         {!pendingConfirmOpen ? (
-                            <button
-                                onClick={() => setPendingConfirmOpen(true)}
-                                disabled={pendingLoading || pendingCount === 0}
-                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold text-sm shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {pendingLoading
-                                    ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
-                                    : <><RotateCcw className="w-4 h-4" /> Resend to {pendingCount} pending user{pendingCount !== 1 ? 's' : ''}</>
-                                }
-                            </button>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <button
+                                    onClick={() => setPendingConfirmOpen(true)}
+                                    disabled={pendingLoading || pendingCount === 0}
+                                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold text-sm shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {pendingLoading
+                                        ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
+                                        : <><RotateCcw className="w-4 h-4" /> Resend to Pendings</>
+                                    }
+                                </button>
+
+                                <div className="flex items-center gap-2 bg-[#13131f] border border-white/10 rounded-xl px-3 py-1.5 focus-within:border-amber-500/50 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all text-sm">
+                                    <span className="text-slate-400 text-xs shrink-0 select-none">Limit:</span>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        placeholder="All"
+                                        value={resendLimit}
+                                        onChange={(e) => setResendLimit(e.target.value ? Number(e.target.value) : '')}
+                                        className="w-16 bg-transparent text-white placeholder:text-slate-600 outline-none text-center font-medium"
+                                        title="Maximum number of users to email (leave blank for all)"
+                                    />
+                                </div>
+                            </div>
                         ) : (
                             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-5 max-w-lg">
                                 <p className="text-amber-300 font-semibold text-sm mb-1 flex items-center gap-2">
@@ -684,8 +701,9 @@ export default function KitOnboardingPage() {
                                     Confirm resend to pending
                                 </p>
                                 <p className="text-slate-400 text-sm mb-4">
-                                    This will send onboarding emails to <strong className="text-white">{pendingCount} user{pendingCount !== 1 ? 's' : ''}</strong> who
-                                    haven&apos;t set their password.
+                                    This will send onboarding emails to <strong className="text-white">
+                                        {resendLimit ? Math.min(pendingCount, resendLimit) : pendingCount} user{pendingCount !== 1 ? 's' : ''}
+                                    </strong> who haven&apos;t set their password.
                                     <br />
                                     <span className="text-emerald-400">{completedCount} user{completedCount !== 1 ? 's' : ''} already completed — they will be skipped.</span>
                                 </p>

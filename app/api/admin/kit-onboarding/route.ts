@@ -358,6 +358,7 @@ export async function POST(request: NextRequest) {
       testEmails,    // array of test emails (new — supports multiple)
       testEmail,     // single test email (backward-compat)
       pendingOnly,   // if true, only email users who haven't set their password yet
+      limit,         // optional number to restrict how many emails to process
     } = body;
 
     console.log('[kit-onboarding POST] ── Request received ──');
@@ -497,6 +498,15 @@ export async function POST(request: NextRequest) {
           skippedCount,
           totalRecipients: 0,
         });
+      }
+    }
+
+    // Apply limit if specified
+    if (limit && typeof limit === 'number' && limit > 0) {
+      if (limit < targetEmails.size) {
+        const limitedEntries = Array.from(targetEmails.entries()).slice(0, limit);
+        targetEmails = new Map(limitedEntries);
+        console.log(`[kit-onboarding POST] Applying limit: restricting from ${emailToKit.size} to ${limit} recipients`);
       }
     }
 
