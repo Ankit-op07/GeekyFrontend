@@ -267,6 +267,12 @@ async function processOneEmail({
       html,
     });
 
+    // 4️⃣ Stamp lastOnboardingEmailSentAt
+    await CompanyKitUser.updateOne(
+      { email: cleanEmail },
+      { $set: { lastOnboardingEmailSentAt: new Date() } }
+    );
+
     console.log(`[kit-onboarding]   ✅ Email sent to: ${cleanEmail}`);
     return { success: true, email: cleanEmail };
   } catch (err: any) {
@@ -358,8 +364,12 @@ export async function POST(request: NextRequest) {
       testEmails,    // array of test emails (new — supports multiple)
       testEmail,     // single test email (backward-compat)
       pendingOnly,   // if true, only email users who haven't set their password yet
-      limit,         // optional number to restrict how many emails to process
+      limit: rawLimit, // optional number to restrict how many emails to process
+      skipRecentDays, // optional: skip users emailed within N days (default 2)
     } = body;
+
+    // Coerce limit to a proper number (frontend may send it as string)
+    const limit = rawLimit ? Number(rawLimit) : undefined;
 
     console.log('[kit-onboarding POST] ── Request received ──');
     console.log(`[kit-onboarding POST] kitName: "${kitName}"`);
@@ -459,14 +469,19 @@ export async function POST(request: NextRequest) {
     }
 
     // ── If pendingOnly, filter to users who haven't set their password ──
+    // Also skip users who were emailed within the last N days (default 2)
     let targetEmails = emailToKit;
     let skippedCount = 0;
+    let recentlyEmailedCount = 0;
     if (pendingOnly) {
+      const recentDays = typeof skipRecentDays === 'number' && skipRecentDays > 0 ? skipRecentDays : 2;
+      const recentCutoff = new Date(Date.now() - recentDays * 24 * 60 * 60 * 1000);
+
       const allEmails = [...emailToKit.keys()];
       const existingUsers = await CompanyKitUser.find({
         email: { $in: allEmails },
-      }).select('email mustChangePassword password').lean() as Array<{
-        email: string; mustChangePassword?: boolean; password?: string;
+      }).select('email mustChangePassword password lastOnboardingEmailSentAt').lean() as Array<{
+        email: string; mustChangePassword?: boolean; password?: string; lastOnboardingEmailSentAt?: Date;
       }>;
 
       // Users who have set password: mustChangePassword is false AND password exists
@@ -476,37 +491,48 @@ export async function POST(request: NextRequest) {
           .map(u => u.email.toLowerCase())
       );
 
+      // Users who were emailed recently (within recentDays)
+      const recentlyEmailed = new Set(
+        existingUsers
+          .filter(u => u.lastOnboardingEmailSentAt && new Date(u.lastOnboardingEmailSentAt) > recentCutoff)
+          .map(u => u.email.toLowerCase())
+      );
+
       targetEmails = new Map();
       for (const [email, kit] of emailToKit.entries()) {
         if (completedEmails.has(email)) {
           skippedCount++;
           console.log(`[kit-onboarding POST]   ⏭ Skipping ${email} — already set password`);
+        } else if (recentlyEmailed.has(email)) {
+          recentlyEmailedCount++;
+          console.log(`[kit-onboarding POST]   ⏭ Skipping ${email} — emailed within last ${recentDays} day(s)`);
         } else {
           targetEmails.set(email, kit);
         }
       }
 
-      console.log(`[kit-onboarding POST] pendingOnly filter: ${targetEmails.size} pending, ${skippedCount} already set password`);
+      console.log(`[kit-onboarding POST] pendingOnly filter: ${targetEmails.size} to send, ${skippedCount} already set password, ${recentlyEmailedCount} recently emailed (last ${recentDays}d)`);
 
       if (targetEmails.size === 0) {
         return NextResponse.json({
           success: true,
-          message: `All ${skippedCount} buyers have already set their password. No emails needed! 🎉`,
+          message: `No emails to send! ${skippedCount} already set password${recentlyEmailedCount > 0 ? `, ${recentlyEmailedCount} emailed within last ${recentDays} day(s)` : ''}. 🎉`,
           sentCount: 0,
           accessGrantedCount: 0,
           failedCount: 0,
           skippedCount,
+          recentlyEmailedCount,
           totalRecipients: 0,
         });
       }
     }
 
-    // Apply limit if specified
-    if (limit && typeof limit === 'number' && limit > 0) {
+    // Apply limit if specified (already coerced to number above)
+    if (limit && !isNaN(limit) && limit > 0) {
       if (limit < targetEmails.size) {
         const limitedEntries = Array.from(targetEmails.entries()).slice(0, limit);
         targetEmails = new Map(limitedEntries);
-        console.log(`[kit-onboarding POST] Applying limit: restricting from ${emailToKit.size} to ${limit} recipients`);
+        console.log(`[kit-onboarding POST] Applying limit: restricting to ${limit} out of ${emailToKit.size} recipients`);
       }
     }
 
@@ -544,7 +570,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: pendingOnly
-        ? `Resend complete! Emailed ${successCount} pending user${successCount !== 1 ? 's' : ''}${skippedCount > 0 ? ` (${skippedCount} already set password — skipped)` : ''}.`
+        ? `Resend complete! Emailed ${successCount} pending user${successCount !== 1 ? 's' : ''}${skippedCount > 0 ? ` (${skippedCount} already set password)` : ''}${recentlyEmailedCount > 0 ? ` (${recentlyEmailedCount} recently emailed — skipped)` : ''}.`
         : 'Onboarding complete!',
       sentCount: successCount,
       accessGrantedCount,

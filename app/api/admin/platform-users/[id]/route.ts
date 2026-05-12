@@ -40,3 +40,48 @@ export async function DELETE(
         );
     }
 }
+
+export async function PATCH(
+    request: NextRequest,
+    context: { params: { id: string } }
+) {
+    try {
+        await connectToDatabase();
+        const id = context.params.id;
+
+        if (!id) {
+            return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+        }
+
+        const body = await request.json();
+        const { purchasedKits, name, email } = body;
+
+        let updateData: any = {};
+        if (purchasedKits !== undefined) updateData.purchasedKits = purchasedKits;
+        if (name !== undefined) updateData.name = name;
+        if (email !== undefined) updateData.email = email;
+
+        if (Object.keys(updateData).length === 0) {
+            return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+        }
+
+        const updatedUser = await CompanyKitUser.findByIdAndUpdate(
+            id,
+            { $set: updateData },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        }
+
+        return NextResponse.json({
+            success: true,
+            message: 'User updated successfully',
+            user: updatedUser,
+        });
+    } catch (error: any) {
+        console.error('Failed to update platform user:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
+}

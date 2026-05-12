@@ -28,6 +28,7 @@ interface SendResult {
     accessGrantedCount?: number;
     failedCount?: number;
     skippedCount?: number;
+    recentlyEmailedCount?: number;
     totalRecipients?: number;
     failedEmails?: string[];
     results?: { email: string; success: boolean; error?: string }[];
@@ -217,7 +218,7 @@ export default function KitOnboardingPage() {
                     kitName: selectedKit,
                     personalNote: personalNote || undefined,
                     pendingOnly: true,
-                    limit: resendLimit || undefined,
+                    limit: resendLimit ? Number(resendLimit) : undefined,
                 }),
             });
             const data = await res.json();
@@ -754,7 +755,13 @@ export default function KitOnboardingPage() {
                                         {(pendingResult.skippedCount ?? 0) > 0 && (
                                             <div className="bg-white/5 rounded-lg p-3 text-center">
                                                 <p className="text-xl font-bold text-slate-300">{pendingResult.skippedCount}</p>
-                                                <p className="text-slate-400 text-[10px] mt-1">Skipped</p>
+                                                <p className="text-slate-400 text-[10px] mt-1">Set password</p>
+                                            </div>
+                                        )}
+                                        {(pendingResult.recentlyEmailedCount ?? 0) > 0 && (
+                                            <div className="bg-blue-500/10 rounded-lg p-3 text-center">
+                                                <p className="text-xl font-bold text-blue-300">{pendingResult.recentlyEmailedCount}</p>
+                                                <p className="text-slate-400 text-[10px] mt-1">Recently emailed</p>
                                             </div>
                                         )}
                                         {(pendingResult.failedCount ?? 0) > 0 && (

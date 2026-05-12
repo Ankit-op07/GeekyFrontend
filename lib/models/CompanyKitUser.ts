@@ -23,6 +23,10 @@ export interface ICompanyKitUser extends Document {
     purchasedKits: string[];
     completedQuestions: string[];
     favoriteQuestions: string[];
+
+
+
+    lastOnboardingEmailSentAt?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -54,6 +58,7 @@ const CompanyKitUserSchema = new Schema<ICompanyKitUser>({
     purchasedKits: [{ type: String }],
     completedQuestions: [{ type: String }],
     favoriteQuestions: [{ type: String }],
+    lastOnboardingEmailSentAt: { type: Date },
 }, { timestamps: true });
 
 // Check if subscription is valid

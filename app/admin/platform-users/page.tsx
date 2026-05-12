@@ -24,7 +24,25 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Search, Users, CheckCircle, XCircle, Loader2, AlertCircle, RefreshCw, Key, Trash2, Mail } from 'lucide-react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Search, Users, CheckCircle, XCircle, Loader2, AlertCircle, RefreshCw, Key, Trash2, Mail, Edit } from 'lucide-react';
+
+const AVAILABLE_KITS = ['JS', 'React', 'Complete', 'Node'];
 
 interface PlatformUser {
     _id: string;
@@ -44,6 +62,14 @@ export default function PlatformUsersPage() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [filterSetup, setFilterSetup] = useState('all');
+
+    // Manage User state
+    const [manageUserOpen, setManageUserOpen] = useState(false);
+    const [managingUser, setManagingUser] = useState<PlatformUser | null>(null);
+    const [managingKits, setManagingKits] = useState<string[]>([]);
+    const [saveKitsLoading, setSaveKitsLoading] = useState(false);
+
     const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
     const [sendReminderLoading, setSendReminderLoading] = useState(false);
 
@@ -116,11 +142,58 @@ export default function PlatformUsersPage() {
         }
     };
 
+    const handleManageUser = (user: PlatformUser) => {
+        setManagingUser(user);
+        setManagingKits([...(user.purchasedKits || [])]);
+        setManageUserOpen(true);
+    };
+
+    const handleToggleKit = (kit: string, checked: boolean) => {
+        setManagingKits((prev) =>
+            checked ? [...prev, kit] : prev.filter((k) => k !== kit)
+        );
+    };
+
+    const handleSaveKits = async () => {
+        if (!managingUser) return;
+        setSaveKitsLoading(true);
+        try {
+            const res = await fetch(`/api/admin/platform-users/${managingUser._id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ purchasedKits: managingKits }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setUsers(users.map(u => u._id === managingUser._id ? { ...u, purchasedKits: managingKits } : u));
+                setManageUserOpen(false);
+            } else {
+                alert('Failed to update kits: ' + data.error);
+            }
+        } catch (error) {
+            console.error('Error saving kits:', error);
+            alert('Failed to save kits.');
+        } finally {
+            setSaveKitsLoading(false);
+        }
+    };
+
+    // Filter logic
+    const filteredUsers = users.filter(u => {
+        if (filterSetup === 'complete') {
+            return u.hasPassword || u.hasGoogle;
+        }
+        if (filterSetup === 'pending') {
+            return !u.hasPassword && !u.hasGoogle;
+        }
+        return true;
+    });
+
     // Analytics
-    const totalUsers = users.length;
-    const activeUsers = users.filter((u) => u.subscriptionStatus === 'active' || u.purchasedKits.length > 0).length;
-    const passwordSetCount = users.filter((u) => u.hasPassword || u.hasGoogle).length;
-    const verifiedUsers = users.filter((u) => u.emailVerified).length;
+    const totalUsers = filteredUsers.length;
+    const activeUsers = filteredUsers.filter((u) => u.subscriptionStatus === 'active' || u.purchasedKits.length > 0).length;
+    const passwordSetCount = filteredUsers.filter((u) => u.hasPassword || u.hasGoogle).length;
+    const verifiedUsers = filteredUsers.filter((u) => u.emailVerified).length;
 
     const formatDate = (dateString?: string) => {
         if (!dateString) return 'Never';
@@ -155,12 +228,22 @@ export default function PlatformUsersPage() {
                         <div className="relative">
                             <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                             <Input
-                                placeholder="Search by name or email..."
+                                placeholder="Search explicitly by name or email..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="pl-9 w-[250px] bg-white border-0 shadow-sm"
+                                className="pl-9 w-[280px] bg-white border-0 shadow-sm"
                             />
                         </div>
+                        <Select value={filterSetup} onValueChange={setFilterSetup}>
+                            <SelectTrigger className="w-[180px] bg-white border-0 shadow-sm">
+                                <SelectValue placeholder="Setup Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Statuses</SelectItem>
+                                <SelectItem value="complete">Setup Complete</SelectItem>
+                                <SelectItem value="pending">Needs Setup</SelectItem>
+                            </SelectContent>
+                        </Select>
                         <Button
                             onClick={fetchUsers}
                             variant="secondary"
@@ -266,17 +349,17 @@ export default function PlatformUsersPage() {
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                ) : users.length === 0 ? (
+                                ) : filteredUsers.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={7} className="h-40 text-center text-gray-500">
                                             <div className="flex flex-col items-center justify-center">
                                                 <XCircle className="w-8 h-8 text-gray-400 mb-2" />
-                                                <p>No platform users found matching your search.</p>
+                                                <p>No platform users found matching your search or filters.</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    users.map((user) => (
+                                    filteredUsers.map((user) => (
                                         <TableRow key={user._id} className="hover:bg-gray-50 transition-colors">
                                             <TableCell>
                                                 <div className="flex flex-col">
@@ -342,34 +425,17 @@ export default function PlatformUsersPage() {
                                                 {formatDate(user.lastActiveDate)}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger asChild>
-                                                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50">
-                                                            {deleteLoading === user._id ? (
-                                                                <Loader2 className="w-4 h-4 animate-spin" />
-                                                            ) : (
-                                                                <Trash2 className="w-4 h-4" />
-                                                            )}
-                                                        </Button>
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader>
-                                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                                            <AlertDialogDescription>
-                                                                This action cannot be undone. This will permanently delete <strong>{user.name}</strong> from the database and remove their access to all kits.
-                                                            </AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                            <AlertDialogAction
-                                                                onClick={() => handleDelete(user._id)}
-                                                                className="bg-red-600 hover:bg-red-700"
-                                                            >
-                                                                {deleteLoading === user._id ? 'Deleting...' : 'Delete User'}
-                                                            </AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
+                                                <div className="flex justify-end gap-1">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 font-medium"
+                                                        onClick={() => handleManageUser(user)}
+                                                    >
+                                                        <Edit className="w-4 h-4 mr-1" />
+                                                        Manage
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -379,6 +445,84 @@ export default function PlatformUsersPage() {
                     </div>
                 </Card>
             </div>
+
+            {/* Manage User Dialog */}
+            <Dialog open={manageUserOpen} onOpenChange={setManageUserOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Manage Access & Kits</DialogTitle>
+                    </DialogHeader>
+                    {managingUser && (
+                        <div className="py-4 space-y-6">
+                            <div>
+                                <h3 className="font-medium text-gray-900">{managingUser.name}</h3>
+                                <p className="text-sm text-gray-500">{managingUser.email}</p>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-semibold text-gray-900">Purchased Kits</h4>
+                                <div className="space-y-2">
+                                    {AVAILABLE_KITS.map(kit => (
+                                        <div key={kit} className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id={`kit-${kit}`}
+                                                checked={managingKits.includes(kit)}
+                                                onCheckedChange={(checked) => handleToggleKit(kit, !!checked)}
+                                            />
+                                            <Label htmlFor={`kit-${kit}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                {kit}
+                                            </Label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-gray-100 flex justify-between items-center mt-6">
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50 hover:text-red-700">
+                                            {deleteLoading === managingUser._id ? (
+                                                <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                                            ) : (
+                                                <Trash2 className="w-4 h-4 mr-1" />
+                                            )}
+                                            Delete User
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action cannot be undone. This will permanently delete <strong>{managingUser.name}</strong> from the database and remove their access to all kits.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={async () => {
+                                                    await handleDelete(managingUser._id);
+                                                    setManageUserOpen(false);
+                                                }}
+                                                className="bg-red-600 hover:bg-red-700"
+                                            >
+                                                {deleteLoading === managingUser._id ? 'Deleting...' : 'Delete User'}
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
+                                <div className="flex gap-2">
+                                    <Button variant="outline" onClick={() => setManageUserOpen(false)}>Cancel</Button>
+                                    <Button onClick={handleSaveKits} disabled={saveKitsLoading} className="bg-indigo-600 hover:bg-indigo-700">
+                                        {saveKitsLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                        Save Changes
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
