@@ -4,9 +4,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import {
-  Code, Atom, Rocket, Server, ChevronRight,
-  CheckCircle2, BookOpen, ArrowRight, Sparkles,
-  Zap, Brain, Target, FileText, Database, Shield
+  Atom, Rocket,
+  CheckCircle2, BookOpen, ArrowRight, Sparkles
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
@@ -87,7 +86,7 @@ const kitsCurriculum: KitCurriculum[] = [
   {
     id: "complete",
     title: "Complete Frontend Kit",
-    subtitle: "All-in-One Bundle",
+    subtitle: "25 Chapters • 570+ Items",
     icon: (
       <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-md">
         <Rocket className="w-6 h-6 text-white" />
@@ -97,57 +96,32 @@ const kitsCurriculum: KitCurriculum[] = [
     bgGradient: "from-purple-500 to-pink-500",
     modules: [
       {
-        name: "JavaScript + React",
-        topics: ["Everything from JS Kit", "Everything from React Kit", "Advanced Patterns", "Best Practices"]
+        name: "Interview-Ready Theory",
+        topics: ["17 concept chapters", "Interviewer asks, candidate answers", "Code examples", "Follow-up questions"]
       },
       {
-        name: "HTML/CSS Excellence",
-        topics: ["Semantic HTML5", "CSS Grid & Flexbox", "Responsive Design", "Accessibility (a11y)"]
+        name: "Core Frontend Foundations",
+        topics: ["HTML & accessibility", "Modern CSS", "TypeScript", "Web fundamentals & security"]
+      },
+      {
+        name: "DSA with JavaScript",
+        topics: ["180 pattern-based problems", "Two pointers & sliding window", "DP, trees & graphs", "Complexity analysis"]
+      },
+      {
+        name: "Frontend System Design",
+        topics: ["42 walkthroughs", "RADIO framework", "WhatsApp, YouTube, Spreadsheets", "API contracts & optimization"]
       },
       {
         name: "Machine Coding",
-        topics: ["Autocomplete", "Calendar Widget", "Infinite Scroll", "Debounce/Throttle"]
+        topics: ["60 build problems", "Autocomplete, Kanban, Chat apps", "A11y & keyboard navigation", "Timed practice"]
       },
       {
-        name: "DSA in JavaScript",
-        topics: ["Arrays & Strings", "Trees & Graphs", "Dynamic Programming", "Interview Patterns"]
-      },
-      {
-        name: "System Design",
-        topics: ["Frontend Architecture", "Performance & Caching", "Microfrontends", "Security (XSS, CSRF)"]
-      }
-    ]
-  },
-  {
-    id: "nodejs",
-    title: "Node.js Kit",
-    subtitle: "Backend Proficiency",
-    icon: (
-      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
-        <Server className="w-6 h-6 text-white" />
-      </div>
-    ),
-    color: "text-green-600",
-    bgGradient: "from-green-500 to-emerald-600",
-    modules: [
-      {
-        name: "Node.js Core",
-        topics: ["Event Loop & Async", "V8 Engine", "Built-in Modules", "NPM & Project Setup"]
-      },
-      {
-        name: "Express.js Mastery",
-        topics: ["Routing & Middleware", "Error Handling", "Template Engines", "Best Practices"]
-      },
-      {
-        name: "MongoDB & Mongoose",
-        topics: ["CRUD Operations", "Schemas & Models", "Indexes & Performance", "Data Validation"]
-      },
-      {
-        name: "REST API & Security",
-        topics: ["API Design", "JWT Authentication", "Security Patterns", "Performance & Testing"]
+        name: "Revision & Career Strategy",
+        topics: ["35 JS coding challenges", "30-day prep plans", "11 quick revision sheets", "Salary negotiation scripts"]
       }
     ]
   }
+  // Node.js kit is intentionally hidden from the home page for now.
 ]
 
 export function Curriculum() {
@@ -181,13 +155,13 @@ export function Curriculum() {
         </div>
 
         {/* Kit Selector Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-10 max-w-3xl mx-auto">
           {kitsCurriculum.map((kit) => (
             <button
               key={kit.id}
               onClick={() => setActiveKit(kit.id)}
               className={`
-                flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-medium text-sm
+                flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl font-medium text-sm
                 transition-all duration-300
                 ${activeKit === kit.id
                   ? `bg-gradient-to-r ${kit.bgGradient} text-white shadow-lg scale-105`
@@ -211,7 +185,6 @@ export function Curriculum() {
                 {selectedKit.id === "javascript" && <span className="font-black text-2xl text-white">JS</span>}
                 {selectedKit.id === "react" && <Atom className="w-8 h-8 text-white" />}
                 {selectedKit.id === "complete" && <Rocket className="w-8 h-8 text-white" />}
-                {selectedKit.id === "nodejs" && <Server className="w-8 h-8 text-white" />}
               </div>
               <div>
                 <p className="text-white/80 text-sm font-medium">{selectedKit.subtitle}</p>
@@ -227,7 +200,7 @@ export function Curriculum() {
 
           {/* Modules Grid */}
           <div className="p-6 md:p-8">
-            <div className={`grid gap-4 ${selectedKit.modules.length > 4 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
+            <div className={`grid gap-4 ${selectedKit.modules.length > 4 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4'} ${selectedKit.modules.length === 4 ? 'max-w-5xl mx-auto' : ''}`}>
               {selectedKit.modules.map((module, idx) => (
                 <div
                   key={idx}

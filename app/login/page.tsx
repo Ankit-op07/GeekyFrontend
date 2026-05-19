@@ -104,7 +104,7 @@ function LoginContent() {
             const data = await res.json()
             if (!res.ok) throw new Error(data.error || "Login failed")
             setSuccess(true)
-            setTimeout(() => router.push(redirect), 600)
+            setTimeout(() => router.push("/dashboard"), 600)
         } catch (e: any) {
             setError(e.message)
         } finally {

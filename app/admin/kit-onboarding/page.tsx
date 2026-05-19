@@ -86,6 +86,7 @@ export default function KitOnboardingPage() {
     const [pendingResult, setPendingResult] = useState<SendResult | null>(null);
     const [pendingConfirmOpen, setPendingConfirmOpen] = useState(false);
     const [resendLimit, setResendLimit] = useState<number | ''>('');
+    const [pendingBatchProgress, setPendingBatchProgress] = useState('');
 
     // Counts
     const [pendingCount, setPendingCount] = useState(0);
@@ -209,33 +210,93 @@ export default function KitOnboardingPage() {
         sendingRef.current = true;
         setPendingLoading(true);
         setPendingResult(null);
+        setPendingBatchProgress('');
         setPendingConfirmOpen(false);
+
+        const requestedTotal = resendLimit ? Math.min(pendingCount, Number(resendLimit)) : pendingCount;
+        const batchSize = 75;
+        let remaining = requestedTotal;
+        let totalSent = 0;
+        let totalAccessGranted = 0;
+        let totalFailed = 0;
+        let totalSkipped = 0;
+        let totalRecentlyEmailed = 0;
+        const failedEmails: string[] = [];
+
         try {
-            const res = await fetch('/api/admin/kit-onboarding', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    kitName: selectedKit,
-                    personalNote: personalNote || undefined,
-                    pendingOnly: true,
-                    limit: resendLimit ? Number(resendLimit) : undefined,
-                }),
-            });
-            const data = await res.json();
-            setPendingResult({ success: res.ok, ...data });
-            // Refresh buyer list after sending
-            if (res.ok) {
-                const encoded = encodeURIComponent(selectedKit);
-                const refreshRes = await fetch(`/api/admin/kit-onboarding?kit=${encoded}`);
-                const refreshData = await refreshRes.json();
-                setBuyers(refreshData.buyers || []);
-                setPendingCount(refreshData.pendingCount ?? 0);
-                setCompletedCount(refreshData.completedCount ?? 0);
+            while (remaining > 0) {
+                const currentBatchLimit = Math.min(batchSize, remaining);
+                setPendingBatchProgress(`Sending batch ${Math.floor(totalSent / batchSize) + 1} · ${totalSent}/${requestedTotal} sent`);
+
+                const res = await fetch('/api/admin/kit-onboarding', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        kitName: selectedKit,
+                        personalNote: personalNote || undefined,
+                        pendingOnly: true,
+                        limit: currentBatchLimit,
+                    }),
+                });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    setPendingResult({
+                        success: false,
+                        message: data.error || data.message || 'Failed while sending pending emails.',
+                        sentCount: totalSent,
+                        accessGrantedCount: totalAccessGranted,
+                        failedCount: totalFailed,
+                        skippedCount: totalSkipped,
+                        recentlyEmailedCount: totalRecentlyEmailed,
+                        failedEmails,
+                    });
+                    return;
+                }
+
+                const sentThisBatch = data.sentCount || 0;
+                const failedThisBatch = data.failedCount || 0;
+                const skippedThisBatch = data.skippedCount || 0;
+                const recentlyEmailedThisBatch = data.recentlyEmailedCount || 0;
+
+                totalSent += sentThisBatch;
+                totalAccessGranted += data.accessGrantedCount || 0;
+                totalFailed += failedThisBatch;
+                totalSkipped += skippedThisBatch;
+                totalRecentlyEmailed = Math.max(totalRecentlyEmailed, recentlyEmailedThisBatch);
+                if (data.failedEmails?.length) failedEmails.push(...data.failedEmails);
+
+                remaining = requestedTotal - totalSent;
+
+                // Stop if this batch made no useful progress. This avoids a loop if
+                // all remaining pending users are skipped due to recent email stamps.
+                if (sentThisBatch === 0) break;
             }
+
+            setPendingResult({
+                success: true,
+                message: `Resend complete! Emailed ${totalSent} pending user${totalSent !== 1 ? 's' : ''}${totalSkipped > 0 ? ` (${totalSkipped} already set password)` : ''}${totalRecentlyEmailed > 0 ? ` (${totalRecentlyEmailed} recently emailed — skipped)` : ''}.`,
+                sentCount: totalSent,
+                accessGrantedCount: totalAccessGranted,
+                failedCount: totalFailed,
+                skippedCount: totalSkipped,
+                recentlyEmailedCount: totalRecentlyEmailed,
+                totalRecipients: requestedTotal,
+                failedEmails: failedEmails.length > 0 ? failedEmails : undefined,
+            });
+
+            // Refresh buyer list after sending
+            const encoded = encodeURIComponent(selectedKit);
+            const refreshRes = await fetch(`/api/admin/kit-onboarding?kit=${encoded}`);
+            const refreshData = await refreshRes.json();
+            setBuyers(refreshData.buyers || []);
+            setPendingCount(refreshData.pendingCount ?? 0);
+            setCompletedCount(refreshData.completedCount ?? 0);
         } catch (e: any) {
             setPendingResult({ success: false, message: e.message });
         } finally {
             setPendingLoading(false);
+            setPendingBatchProgress('');
             sendingRef.current = false;
         }
     };
@@ -677,7 +738,7 @@ export default function KitOnboardingPage() {
                                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold text-sm shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {pendingLoading
-                                        ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
+                                        ? <><Loader2 className="w-4 h-4 animate-spin" /> {pendingBatchProgress || 'Sending…'}</>
                                         : <><RotateCcw className="w-4 h-4" /> Resend to Pendings</>
                                     }
                                 </button>
@@ -703,7 +764,7 @@ export default function KitOnboardingPage() {
                                 </p>
                                 <p className="text-slate-400 text-sm mb-4">
                                     This will send onboarding emails to <strong className="text-white">
-                                        {resendLimit ? Math.min(pendingCount, resendLimit) : pendingCount} user{pendingCount !== 1 ? 's' : ''}
+                                        {resendLimit ? Math.min(pendingCount, resendLimit) : pendingCount} user{(resendLimit ? Math.min(pendingCount, resendLimit) : pendingCount) !== 1 ? 's' : ''}
                                     </strong> who haven&apos;t set their password.
                                     <br />
                                     <span className="text-emerald-400">{completedCount} user{completedCount !== 1 ? 's' : ''} already completed — they will be skipped.</span>
@@ -715,7 +776,7 @@ export default function KitOnboardingPage() {
                                         className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all disabled:opacity-70"
                                     >
                                         {pendingLoading
-                                            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Processing…</>
+                                            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> {pendingBatchProgress || 'Processing…'}</>
                                             : <><Send className="w-3.5 h-3.5" /> Yes, resend now</>
                                         }
                                     </button>

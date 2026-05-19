@@ -94,6 +94,21 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
         setMobileOpen(false);
     }, [pathname]);
 
+    // Keep only the chapter containing the active topic open when navigation
+    // happens outside the sidebar, such as the bottom Previous / Next controls.
+    useEffect(() => {
+        if (sidebar.length === 0) return;
+
+        const currentSlug = pathname.split('/').pop();
+        const activeChapter = sidebar.find((ch) =>
+            ch.topics.some((topic) => topic.slug === currentSlug)
+        );
+
+        if (!activeChapter) return;
+
+        setExpandedChapters(new Set([activeChapter._id]));
+    }, [pathname, sidebar]);
+
     const toggleChapter = useCallback((id: string) => {
         setExpandedChapters(prev => {
             const next = new Set(prev);

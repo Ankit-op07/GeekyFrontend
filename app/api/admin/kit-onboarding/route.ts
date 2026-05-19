@@ -576,6 +576,7 @@ export async function POST(request: NextRequest) {
       accessGrantedCount,
       failedCount: failedEmails.length,
       skippedCount,
+      recentlyEmailedCount,
       totalRecipients: targetEmails.size,
       failedEmails: failedEmails.length > 0 ? failedEmails : undefined,
     });

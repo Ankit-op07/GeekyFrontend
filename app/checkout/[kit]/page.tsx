@@ -371,7 +371,7 @@ const kitsData: Record<string, KitDetails> = {
   complete: {
     id: "complete",
     name: "Complete Frontend Interview Preparation Kit",
-    tagline: "The most comprehensive Frontend Interview preparation kit ever created.",
+    tagline: "25 chapters. 570+ items. 127,000+ words. From HTML basics to System Design - the only resource you need to crack frontend interviews.",
     price: complete_kit_price,
     originalPrice: complete_kit_original_price,
     discount: 90,
@@ -387,115 +387,297 @@ const kitsData: Record<string, KitDetails> = {
     features: [
       {
         icon: <BookOpen className="w-5 h-5" />,
-        title: "All-in-One Frontend Pack",
-        description: "JavaScript, React, HTML/CSS, DSA, Machine Coding, System Design — nothing else needed."
+        title: "Interview-Ready Theory",
+        description: "17 chapters of interview answers, code examples, follow-up questions, and the depth interviewers expect."
       },
       {
-        icon: <Code className="w-5 h-5" />,
-        title: "Machine Coding Challenges",
-        description: "Real-world components: Carousels, Autocomplete, Calendars, Filters, Debounce, Modals, and more."
+        icon: <Target className="w-5 h-5" />,
+        title: "180 DSA Problems in JavaScript",
+        description: "Pattern-based practice across two pointers, sliding window, DP, trees, graphs, stacks, queues, and strings."
       },
       {
         icon: <Brain className="w-5 h-5" />,
-        title: "Frontend System Design",
-        description: "Learn to design scalable UI systems like YouTube, Netflix, Instagram & dashboard architectures."
+        title: "42 Frontend System Designs",
+        description: "Design WhatsApp, YouTube, spreadsheets, e-commerce flows, dashboards, auth, analytics, and more with RADIO."
       },
       {
-        icon: <Award className="w-5 h-5" />,
-        title: "Interview Success Kit",
-        description: "Behavioral questions, negotiation scripts, recruiter psychology, and HR round mastery."
+        icon: <Code className="w-5 h-5" />,
+        title: "60 Machine Coding Problems",
+        description: "Build real UI tasks like autocomplete, Kanban, carousel, chat apps, rich text editor, Snake, and more."
       },
       {
         icon: <Zap className="w-5 h-5" />,
-        title: "Performance + Architecture",
-        description: "Critical rendering path, bundling, caching, re-renders, memoization & core web vitals."
+        title: "35 JavaScript Coding Challenges",
+        description: "SDE1 to SDE3 polyfills and utilities: Promise APIs, debounce, LRU cache, Event Emitter, VDOM differ, and reactive state."
       },
       {
-        icon: <Layers className="w-5 h-5" />,
-        title: "Beginner → Advanced Roadmap",
-        description: "Structured learning path from fundamentals to FAANG-level problems."
+        icon: <Award className="w-5 h-5" />,
+        title: "Strategy and Quick Revision",
+        description: "30-day plans for 1-3 and 3-6 years, behavioral answers, negotiation scripts, and 11 one-page revision sheets."
       }
     ],
 
     curriculum: [
       {
-        module: "JavaScript Mastery",
+        module: "Chapter 1: HTML & Semantic Markup",
         topics: [
-          "Everything from JS Kit",
-          "Advanced Patterns (Compose, Pipe, Currying, Memoize)",
-          "Async & Event Loop Deep Dive",
-          "Performance Optimization",
-          "Polyfills (bind, call, debounce, throttle, promise)"
+          "Semantic tags and structure",
+          "SEO and Open Graph meta tags",
+          "Forms, FormData, dialog, Popover API",
+          "async, defer, module, preload, prefetch"
         ],
-        hours: 18
+        hours: 2
       },
       {
-        module: "React Deep Dive",
+        module: "Chapter 2: Accessibility",
         topics: [
-          "Hooks Mastery (useCallback, useMemo, useReducer, useRef)",
-          "State Management (Redux, Zustand, Recoil)",
-          "Performance & Re-renders",
-          "Advanced Component Patterns",
-          "Testing (React Testing Library + Vitest)",
-          "React Architecture (Folder structure + clean code)"
+          "ARIA rules and landmark roles",
+          "Tabindex and roving tabindex",
+          "Focus management and traps",
+          "Accessible dropdowns and forms"
         ],
-        hours: 14
+        hours: 2
       },
       {
-        module: "HTML/CSS Excellence",
+        module: "Chapter 3: CSS & Styling",
         topics: [
-          "Semantic HTML for interviews",
-          "CSS Grid & Flexbox Mastery",
-          "Responsive Design Patterns",
-          "Advanced Animations & Transitions",
-          "Accessibility & SEO Basics"
+          "Flexbox, Grid, subgrid",
+          "Specificity, :where, :is, :has",
+          "Container queries and design tokens",
+          "Reflows, paints, FLIP, View Transitions"
         ],
-        hours: 10
+        hours: 4
       },
       {
-        module: "DSA in JavaScript",
+        module: "Chapter 4: TypeScript",
         topics: [
-          "Arrays & Strings",
-          "Hashmaps & Sliding Window",
-          "Trees, Graphs & Recursion",
-          "Dynamic Programming",
-          "Interview Patterns (Two Pointers, Backtracking)"
+          "Narrowing, generics, utility types",
+          "Mapped, conditional, template literal types",
+          "Typing React, Redux, Zustand, HOCs",
+          "tsconfig and JS-to-TS migration"
+        ],
+        hours: 5
+      },
+      {
+        module: "Chapter 5: Web Fundamentals",
+        topics: [
+          "URL to pixels pipeline",
+          "DNS, TCP/TLS, HTTP/1.1, HTTP/2, HTTP/3",
+          "REST, GraphQL, CORS, storage",
+          "Workers, WebSockets, SSE, browser APIs"
+        ],
+        hours: 4
+      },
+      {
+        module: "Chapter 6: Web Security",
+        topics: [
+          "XSS, CSRF, clickjacking",
+          "JWT vs sessions and OAuth PKCE",
+          "CSP, CORS debugging, HSTS, SRI",
+          "30-item security audit checklist"
+        ],
+        hours: 3
+      },
+      {
+        module: "Chapter 7: Rendering Patterns",
+        topics: [
+          "CSR, SSR, SSG, ISR",
+          "Streaming SSR and Suspense",
+          "React Server Components",
+          "Progressive hydration and islands"
+        ],
+        hours: 2
+      },
+      {
+        module: "Chapter 8: Optimization Techniques",
+        topics: [
+          "Core Web Vitals fixes",
+          "Bundle, image, font, network optimization",
+          "React performance and memory leaks",
+          "RUM, Lighthouse CI, performance budgets"
+        ],
+        hours: 4
+      },
+      {
+        module: "Chapter 9: Design Patterns",
+        topics: [
+          "Creational, structural, behavioral patterns",
+          "Observer, Pub/Sub, Strategy, Command",
+          "Proxy, Facade, Adapter, Composite",
+          "Pattern selection guide"
+        ],
+        hours: 4
+      },
+      {
+        module: "Chapter 10: State Management",
+        topics: [
+          "Local, lifted, global state decisions",
+          "Context performance traps",
+          "Redux Toolkit, Zustand, TanStack Query",
+          "XState, optimistic updates, cross-tab sync"
+        ],
+        hours: 3
+      },
+      {
+        module: "Chapter 11: Testing",
+        topics: [
+          "Testing trophy and mocking",
+          "React Testing Library and MSW",
+          "Playwright, visual and a11y testing",
+          "Performance testing in CI"
+        ],
+        hours: 3
+      },
+      {
+        module: "Chapter 12: Build Tools & Dev Tooling",
+        topics: [
+          "CJS vs ESM",
+          "Webpack, Vite, Rspack, Turbopack",
+          "Babel, SWC, esbuild",
+          "Module federation, pnpm, monorepos"
+        ],
+        hours: 3
+      },
+      {
+        module: "Chapter 13: Code Management",
+        topics: [
+          "Monorepo vs polyrepo",
+          "Trunk-based development vs Gitflow",
+          "CI/CD with GitHub Actions",
+          "ESLint, Prettier, Husky, commitlint"
+        ],
+        hours: 2
+      },
+      {
+        module: "Chapter 14: Next.js & Meta-Frameworks",
+        topics: [
+          "App Router conventions",
+          "Server and Client Components",
+          "Caching, revalidation, Server Actions",
+          "Middleware, image, font, deployment choices"
+        ],
+        hours: 3
+      },
+      {
+        module: "Chapter 15: AI Integration",
+        topics: [
+          "AI chat UI and streaming",
+          "ReadableStream and AbortController",
+          "Structured outputs and tool calling",
+          "Vercel AI SDK and AI interview talking points"
+        ],
+        hours: 2
+      },
+      {
+        module: "Chapter 16: React Hooks",
+        topics: [
+          "useState, useEffect, useReducer",
+          "useMemo, useCallback, useRef",
+          "React 19 hooks and form hooks",
+          "Custom hooks and rules of hooks"
+        ],
+        hours: 4
+      },
+      {
+        module: "Chapter 17: Data Structures",
+        topics: [
+          "Arrays, strings, stacks, queues",
+          "Maps, sets, linked lists, LRU cache",
+          "Trees, heaps, tries, graphs",
+          "Union-Find and selection guide"
+        ],
+        hours: 5
+      },
+      {
+        module: "Chapter 18: Algorithms - 180 Problems",
+        topics: [
+          "Sorting, searching, two pointers",
+          "Sliding window and backtracking",
+          "Dynamic programming and greedy",
+          "Trees, graphs, strings, bit manipulation"
         ],
         hours: 12
       },
       {
-        module: "Machine Coding Round",
+        module: "Chapter 19: Frontend System Design - 42 Designs",
         topics: [
-          "Autocomplete Component",
-          "Calendar Component",
-          "Infinite Scroll & Pagination",
-          "Debounce + Throttle Implementation",
-          "Tabs, Accordion, Carousel, Modal",
-          "Mini Projects & UI Assignments"
+          "RADIO framework and estimations",
+          "WhatsApp, Docs, Meet, notifications",
+          "YouTube, Instagram, Spotify, e-commerce",
+          "Spreadsheets, dashboards, auth, PWA"
         ],
         hours: 10
       },
       {
-        module: "System Design for Frontend",
+        module: "Chapter 20: Machine Coding - 60 Problems",
         topics: [
-          "Frontend Architecture",
-          "Scalability & State Isolation",
-          "Performance + Caching",
-          "Microfrontends",
-          "Security (XSS, CSRF, OAuth)",
-          "Design YouTube, Netflix, Instagram"
+          "Core UI components",
+          "Forms, layouts, navigation",
+          "Tables, trees, comments, timelines",
+          "Full apps and advanced UI challenges"
+        ],
+        hours: 12
+      },
+      {
+        module: "Chapter 21: JS Coding Problems - SDE1",
+        topics: [
+          "map, filter, reduce, bind, call, apply",
+          "Debounce, throttle, deepClone, flatten",
+          "Promise, Promise.all, Event Emitter",
+          "Curry, compose, querySelector"
+        ],
+        hours: 5
+      },
+      {
+        module: "Chapter 22: JS Coding Problems - SDE2",
+        topics: [
+          "Promise.allSettled and Promise.any",
+          "Memoize with TTL and LRU",
+          "deepEqual, JSON parse/stringify",
+          "VDOM differ, scheduler, Observable"
+        ],
+        hours: 4
+      },
+      {
+        module: "Chapter 23: JS Coding Problems - SDE3",
+        topics: [
+          "Simplified module bundler",
+          "Dependency graph resolution",
+          "Reactive state system",
+          "Proxy-based dependency tracking"
+        ],
+        hours: 3
+      },
+      {
+        module: "Chapter 24: Timed Machine Coding Practice",
+        topics: [
+          "14 interview-condition problems",
+          "30-60 minute time limits",
+          "Required and bonus features",
+          "Progress tracking table"
         ],
         hours: 8
+      },
+      {
+        module: "Chapter 25: Interview Guide & Quick Revision",
+        topics: [
+          "Interview formats and STAR answers",
+          "Salary negotiation scripts",
+          "Resume examples and 30-day plans",
+          "11 one-page revision sheets"
+        ],
+        hours: 4
       }
     ],
 
     included: [
-      { icon: <BookOpen className="w-4 h-4" />, text: "JavaScript Kit Included", value: "₹" + js_kit_price + " FREE" },
-      { icon: <Layers className="w-4 h-4" />, text: "24 Premium PDFs", value: "700+ pages" },
-      { icon: <Code className="w-4 h-4" />, text: "Code Snippets", value: "350+ examples" },
+      { icon: <Layers className="w-4 h-4" />, text: "Structured Chapters", value: "25" },
+      { icon: <FileText className="w-4 h-4" />, text: "Detailed Articles", value: "91" },
+      { icon: <Target className="w-4 h-4" />, text: "Questions & Practice Items", value: "570+" },
+      { icon: <Code className="w-4 h-4" />, text: "DSA + Coding Problems", value: "215+" },
       { icon: <Download className="w-4 h-4" />, text: "Instant Access", value: "Starts in 10 seconds" },
-      { icon: <RefreshCw className="w-4 h-4" />, text: "Lifetime Updates", value: "Always up to date" },
-      { icon: <HeartHandshake className="w-4 h-4" />, text: "Priority Support", value: "8–12 hour response" }
+      { icon: <RefreshCw className="w-4 h-4" />, text: "Lifetime Updates", value: "Included" },
+      { icon: <HeartHandshake className="w-4 h-4" />, text: "Priority Support", value: "8-12 hour response" }
     ],
 
     testimonials: [
@@ -503,77 +685,56 @@ const kitsData: Record<string, KitDetails> = {
         name: "Sakshi Verma",
         role: "Senior Frontend Engineer",
         company: "Google",
-        text: "This kit took me from 8 LPA to 35 LPA. The system design and machine coding were game changers.",
+        text: "The system design walkthroughs felt like real interview prep, not theory. RADIO made answers much easier to structure.",
         rating: 5
       },
       {
         name: "Rohan Mehta",
         role: "Tech Lead",
         company: "Uber",
-        text: "The machine coding section alone is worth 5x the price. Cleared two rounds with the calendar component.",
+        text: "The machine coding section covers the small edge cases interviewers actually ask about: keyboard nav, loading states, and accessibility.",
         rating: 5
       },
       {
         name: "Neha Singh",
         role: "Full Stack Developer",
         company: "Adobe",
-        text: "I finally understood DSA in JavaScript without relying on C++ solutions. Crystal clear explanations!",
+        text: "I finally practiced DSA in JavaScript with explanations I could reuse in interviews. The pattern-wise flow saved a lot of time.",
         rating: 5
       },
       {
         name: "Arjun Sharma",
         role: "Frontend Engineer",
         company: "Swiggy",
-        text: "React deep dive + performance section helped me clear Swiggy L3. Absolutely worth it!",
+        text: "The quick revision sheets and performance chapters helped me revise before my Swiggy frontend rounds without feeling scattered.",
         rating: 5
       }
     ],
 
     faqs: [
       {
-        question: "Is JavaScript Kit included?",
-        answer: "Yes, the entire JS Kit (₹" + js_kit_price + " value) is included for free along with React, DSA, Machine Coding, System Design and more."
+        question: "Who is this kit for?",
+        answer: "It is built for frontend engineers with 1-6 years of experience. SDE1 candidates get fundamentals, DSA, and machine coding. SDE2 candidates get TypeScript, testing, state management, and system design. SDE3 candidates get architecture, performance, design systems, and advanced JavaScript challenges."
       },
       {
-        question: "How long does it take to finish?",
-        answer: "Most students finish in 4–8 weeks with 2–3 hours daily. You get lifetime access, so take your time."
+        question: "What exactly is included?",
+        answer: "You get 25 chapters, 570+ questions/problems/practice items, 91 detailed articles, 180 DSA problems, 42 frontend system design walkthroughs, 60 machine coding problems, 35 JS coding challenges, prep plans, and quick revision sheets."
       },
       {
-        question: "Is this useful if I already know JavaScript?",
-        answer: "Absolutely. The React, Machine Coding, DSA and System Design sections alone make it worth 10x the price."
+        question: "Is this useful if I already know JavaScript and React?",
+        answer: "Yes. The kit goes beyond basics into TypeScript, web fundamentals, security, performance, testing, build tooling, DSA, frontend system design, machine coding, and SDE2/SDE3-level JavaScript implementations."
       },
       {
-        question: "Will this help with FAANG-level interviews?",
-        answer: "Yes — the kit is specifically structured around FAANG-style questions, patterns and real interview assignments."
+        question: "Will this help with product company interviews?",
+        answer: "Yes. The curriculum includes machine coding and system design patterns commonly seen at companies like Flipkart, Swiggy, Razorpay, Google, and Amazon, with practical answer structures and implementation details."
+      },
+      {
+        question: "How long will it take to complete?",
+        answer: "Most students use the 30-day plan for focused preparation, then revisit DSA, system design, and quick revision sheets before interviews. You also get lifetime access and updates."
       }
     ],
 
-    bonuses: [
-      {
-        icon: <Gift className="w-5 h-5" />,
-        title: "DSA for Frontend Engineers",
-        value: "₹2999",
-        description: "150+ handpicked problems optimised for frontend interviews"
-      },
-      {
-        icon: <Trophy className="w-5 h-5" />,
-        title: "Cold Email Templates",
-        value: "₹1999",
-        description: "Real templates that helped get replies from FAANG recruiters"
-      },
-      {
-        icon: <Sparkles className="w-5 h-5" />,
-        title: "Career Growth Roadmap",
-        value: "₹999",
-        description: "The exact roadmap from 3 LPA → 25 LPA opportunities"
-      },
-      {
-        icon: <Zap className="w-5 h-5" />,
-        title: "Frontend Projects Pack",
-        value: "₹2499",
-        description: "10+ project ideas with test cases, UI mockups & expected solutions"
-      }
-    ]
+    bonuses: []
   },
   nodejs: {
     id: "nodejs",
@@ -1002,6 +1163,7 @@ export default function CheckoutPage() {
   const [kit, setKit] = useState<KitDetails | null>(null)
   const [selectedTestimonial, setSelectedTestimonial] = useState(0)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [openCurriculum, setOpenCurriculum] = useState<number | null>(0)
   const [mobileCheckoutOpen, setMobileCheckoutOpen] = useState(false)
   const searchParams = useSearchParams()
 
@@ -1155,6 +1317,22 @@ export default function CheckoutPage() {
                       <Rocket className="w-4 h-4 text-green-700 flex-shrink-0" />
                       <span className="whitespace-nowrap">200+ Interview Questions Ebook ( The Real Gem )</span>
                     </div>
+                  </div>
+                )}
+
+                {kit.id === "complete" && (
+                  <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {[
+                      { label: "Chapters", value: "25" },
+                      { label: "Questions & Problems", value: "570+" },
+                      { label: "Detailed Articles", value: "91" },
+                      { label: "Words of Content", value: "127k+" }
+                    ].map((stat) => (
+                      <div key={stat.label} className="rounded-xl border border-white/70 bg-white/70 px-3 py-2 shadow-sm">
+                        <p className="text-base font-black text-gray-900">{stat.value}</p>
+                        <p className="text-[11px] font-medium text-muted-foreground">{stat.label}</p>
+                      </div>
+                    ))}
                   </div>
                 )}
               </Card>
@@ -1526,21 +1704,39 @@ export default function CheckoutPage() {
                   <Badge variant="secondary" className="text-xs flex-shrink-0">Structured · Project-based</Badge>
                 </div>
                 <div className="space-y-3">
-                  {kit.curriculum.map((module, idx) => (
-                    <div key={idx} className="border rounded-lg p-3 hover:shadow-sm transition-shadow">
-                      <div className="flex items-center justify-between mb-2 gap-2">
-                        <h3 className="font-semibold text-sm break-words flex-1">{module.module}</h3>
-                        {/* <Badge variant="secondary" className="text-xs flex-shrink-0">{module.hours} hrs</Badge> */}
+                  {kit.curriculum.map((module, idx) => {
+                    const isExpanded = kit.id === "complete" ? openCurriculum === idx : true
+
+                    return (
+                      <div key={idx} className="border rounded-lg hover:shadow-sm transition-shadow overflow-hidden">
+                        {kit.id === "complete" ? (
+                          <button
+                            type="button"
+                            onClick={() => setOpenCurriculum(isExpanded ? null : idx)}
+                            className="w-full flex items-center justify-between gap-2 p-3 text-left hover:bg-gray-50"
+                            aria-expanded={isExpanded}
+                          >
+                            <h3 className="font-semibold text-sm break-words flex-1">{module.module}</h3>
+                            <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${isExpanded ? 'rotate-90' : ''}`} />
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between gap-2 p-3 pb-2">
+                            <h3 className="font-semibold text-sm break-words flex-1">{module.module}</h3>
+                          </div>
+                        )}
+
+                        {isExpanded && (
+                          <div className={`flex flex-wrap gap-1.5 px-3 pb-3 ${kit.id === "complete" ? 'pt-0' : ''}`}>
+                            {module.topics.map((topic, tidx) => (
+                              <Badge key={tidx} variant="outline" className="text-xs">
+                                {topic}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {module.topics.map((topic, tidx) => (
-                          <Badge key={tidx} variant="outline" className="text-xs">
-                            {topic}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </Card>
             )}

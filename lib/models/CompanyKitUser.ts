@@ -23,6 +23,15 @@ export interface ICompanyKitUser extends Document {
     purchasedKits: string[];
     completedQuestions: string[];
     favoriteQuestions: string[];
+    kitProgress: {
+        kitSlug: string;
+        completedTopics: string[];
+        lastTopicSlug?: string;
+        completedCount: number;
+        totalTopics: number;
+        progressPercent: number;
+        updatedAt: Date;
+    }[];
 
 
 
@@ -58,6 +67,15 @@ const CompanyKitUserSchema = new Schema<ICompanyKitUser>({
     purchasedKits: [{ type: String }],
     completedQuestions: [{ type: String }],
     favoriteQuestions: [{ type: String }],
+    kitProgress: [{
+        kitSlug: { type: String, required: true, index: true },
+        completedTopics: [{ type: String }],
+        lastTopicSlug: { type: String },
+        completedCount: { type: Number, default: 0 },
+        totalTopics: { type: Number, default: 0 },
+        progressPercent: { type: Number, default: 0 },
+        updatedAt: { type: Date, default: Date.now },
+    }],
     lastOnboardingEmailSentAt: { type: Date },
 }, { timestamps: true });
 

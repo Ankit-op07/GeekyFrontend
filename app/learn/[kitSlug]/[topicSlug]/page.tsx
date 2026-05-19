@@ -75,8 +75,49 @@ export default function TopicPage() {
   useEffect(() => {
     if (topicSlug) {
       setLastTopic(kitSlug, topicSlug);
+      fetch("/api/user/kit-progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kitSlug, topicSlug, action: "view" }),
+      }).catch(() => { /* progress is non-critical */ });
     }
   }, [kitSlug, topicSlug]);
+
+  // Merge server progress with existing local progress so leaderboard metrics
+  // keep working for students who already completed topics in this browser.
+  useEffect(() => {
+    fetch(`/api/user/kit-progress?kitSlug=${encodeURIComponent(kitSlug)}`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (!data?.completedTopics) return;
+
+        setCompleted(prev => {
+          const localCompleted = getCompletedTopics(kitSlug);
+          const merged = new Set<string>([
+            ...Array.from(prev),
+            ...Array.from(localCompleted),
+            ...data.completedTopics,
+          ]);
+
+          saveCompletedTopics(kitSlug, merged);
+
+          if (merged.size !== data.completedTopics.length) {
+            fetch("/api/user/kit-progress", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                kitSlug,
+                action: "sync",
+                completedTopics: Array.from(merged),
+              }),
+            }).catch(() => { /* progress is non-critical */ });
+          }
+
+          return merged;
+        });
+      })
+      .catch(() => { /* progress is non-critical */ });
+  }, [kitSlug]);
 
   // Reading progress scroll tracker
   const handleScroll = useCallback(() => {
@@ -103,9 +144,15 @@ export default function TopicPage() {
   const toggleCompleted = useCallback(() => {
     setCompleted(prev => {
       const next = new Set(prev);
+      const action = next.has(topicSlug) ? "incomplete" : "complete";
       if (next.has(topicSlug)) next.delete(topicSlug);
       else next.add(topicSlug);
       saveCompletedTopics(kitSlug, next);
+      fetch("/api/user/kit-progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kitSlug, topicSlug, action }),
+      }).catch(() => { /* local progress is already saved */ });
       return next;
     });
   }, [kitSlug, topicSlug]);

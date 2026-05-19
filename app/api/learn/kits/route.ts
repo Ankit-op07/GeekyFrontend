@@ -14,6 +14,54 @@ function kitMatchesSlugs(kitSlug: string, allowedSlugs: Set<string>): boolean {
     return false;
 }
 
+type KitWithCounts = Record<string, any> & {
+    chaptersCount: number;
+    topicsCount: number;
+};
+
+const KIT_LIST_CACHE_TTL_MS = 60 * 1000;
+let kitsWithCountsCache: { expiresAt: number; kits: KitWithCounts[] } | null = null;
+
+async function getKitsWithCounts(): Promise<KitWithCounts[]> {
+    const now = Date.now();
+    if (kitsWithCountsCache && kitsWithCountsCache.expiresAt > now) {
+        return kitsWithCountsCache.kits;
+    }
+
+    const [allKits, chapterCounts, topicCounts] = await Promise.all([
+        Kit.find().sort({ order: 1 }).lean(),
+        Chapter.aggregate([
+            { $group: { _id: '$kitId', count: { $sum: 1 } } },
+        ]),
+        Topic.aggregate([
+            { $group: { _id: '$kitId', count: { $sum: 1 } } },
+        ]),
+    ]);
+
+    const chapterCountByKitId = new Map(
+        chapterCounts.map((item: any) => [item._id.toString(), item.count])
+    );
+    const topicCountByKitId = new Map(
+        topicCounts.map((item: any) => [item._id.toString(), item.count])
+    );
+
+    const kits = allKits.map((kit: any) => {
+        const kitId = kit._id.toString();
+        return {
+            ...kit,
+            chaptersCount: chapterCountByKitId.get(kitId) ?? 0,
+            topicsCount: topicCountByKitId.get(kitId) ?? 0,
+        };
+    });
+
+    kitsWithCountsCache = {
+        expiresAt: now + KIT_LIST_CACHE_TTL_MS,
+        kits,
+    };
+
+    return kits;
+}
+
 /**
  * GET /api/learn/kits
  * Returns ALL kits from DB. Each kit includes a `hasAccess` boolean
@@ -36,23 +84,11 @@ export async function GET(request: NextRequest) {
             ? getAllowedSlugs(purchasedKits)
             : new Set<string>();
 
-        // Fetch all kits with chapter/topic counts
-        const allKits = await Kit.find().sort({ order: 1 }).lean();
-
-        const result = await Promise.all(
-            allKits.map(async (kit: any) => {
-                const [chaptersCount, topicsCount] = await Promise.all([
-                    Chapter.countDocuments({ kitId: kit._id }),
-                    Topic.countDocuments({ kitId: kit._id }),
-                ]);
-                return {
-                    ...kit,
-                    chaptersCount,
-                    topicsCount,
-                    hasAccess: kitMatchesSlugs(kit.slug, allowedSlugs),
-                };
-            })
-        );
+        const kits = await getKitsWithCounts();
+        const result = kits.map((kit: any) => ({
+            ...kit,
+            hasAccess: kitMatchesSlugs(kit.slug, allowedSlugs),
+        }));
 
         return NextResponse.json({ kits: result });
     } catch (error: any) {

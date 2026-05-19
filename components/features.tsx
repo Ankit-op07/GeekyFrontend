@@ -4,9 +4,9 @@
 import { useState } from "react"
 import Link from "next/link"
 import {
-  Code, Atom, Rocket, Server,
-  CheckCircle2, ArrowRight, Sparkles,
-  BookOpen, Brain, Target, Zap, Trophy,
+  Code, Atom, Rocket,
+  ArrowRight, Sparkles,
+  BookOpen, Brain, Target, Zap,
   FileText, Users, TrendingUp, Star
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -78,8 +78,8 @@ const kits: Kit[] = [
   {
     id: "complete",
     title: "Complete Frontend",
-    subtitle: "All-in-One Bundle",
-    description: "The most comprehensive Frontend Interview preparation kit ever created",
+    subtitle: "25 Chapters • 127k+ Words",
+    description: "A complete interview system for 1-6 years frontend roles: theory, DSA, machine coding, system design, and revision.",
     icon: (
       <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
         <Rocket className="w-7 h-7 text-white" />
@@ -92,33 +92,13 @@ const kits: Kit[] = [
     popular: true,
     bestValue: true,
     highlights: [
-      { icon: <BookOpen className="w-4 h-4" />, text: "JS + React + DSA Included" },
-      { icon: <Code className="w-4 h-4" />, text: "Machine Coding Challenges" },
-      { icon: <Brain className="w-4 h-4" />, text: "Frontend System Design" },
-      { icon: <Trophy className="w-4 h-4" />, text: "Interview Success Kit" }
-    ]
-  },
-  {
-    id: "nodejs",
-    title: "Node.js Kit",
-    subtitle: "Backend Proficiency",
-    description: "Interview questions from real FAANG & Product Company interviews",
-    icon: (
-      <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-        <Server className="w-7 h-7 text-white" />
-      </div>
-    ),
-    color: "text-green-600",
-    bgGradient: "from-green-50 to-emerald-50",
-    borderColor: "border-green-200 hover:border-green-400",
-    price: 299,
-    highlights: [
-      { icon: <FileText className="w-4 h-4" />, text: "200+ Backend Questions" },
-      { icon: <Target className="w-4 h-4" />, text: "Express & MongoDB" },
-      { icon: <Zap className="w-4 h-4" />, text: "REST API Mastery" },
-      { icon: <Brain className="w-4 h-4" />, text: "Scenario-Based Problems" }
+      { icon: <BookOpen className="w-4 h-4" />, text: "570+ Questions & Problems" },
+      { icon: <Target className="w-4 h-4" />, text: "180 DSA Problems in JS" },
+      { icon: <Brain className="w-4 h-4" />, text: "42 Frontend System Designs" },
+      { icon: <Code className="w-4 h-4" />, text: "60 Machine Coding Problems" }
     ]
   }
+  // Node.js kit is intentionally hidden from the home page for now.
 ]
 
 export function Features() {
@@ -183,7 +163,7 @@ export function Features() {
         </div>
 
         {/* Kits Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 max-w-6xl mx-auto">
           {kits.map((kit) => (
             <div
               key={kit.id}

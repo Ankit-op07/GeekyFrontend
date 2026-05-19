@@ -3,7 +3,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowRight, Sparkles, Users, Star, Zap, TrendingUp, Clock, Flame, Code2, Atom, Server, Briefcase } from "lucide-react"
+import { ArrowRight, Zap, TrendingUp, Clock, Flame, Code2, Atom } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { appConstants } from "@/lib/appConstants"
 const { js_kit_price, react_kit_price, complete_kit_price, js_kit_original_price, react_kit_original_price, complete_kit_original_price } = appConstants()
@@ -68,7 +68,7 @@ const products: Product[] = [
   {
     id: "complete",
     title: "Complete Frontend Interview Preparation Kit",
-    shortTitle: "Complete Frontend Interview Kit (JS Kit Included)",
+    shortTitle: "Complete Frontend Interview Kit",
     price: {
       current: complete_kit_price,
       original: complete_kit_original_price
@@ -80,31 +80,11 @@ const products: Product[] = [
     ),
     bgGradient: "from-purple-50 via-white to-pink-50",
     iconBg: "bg-gradient-to-br from-purple-500 to-pink-500",
-    comingSoon: true,
-    studentsCount: 5892,
+    studentsCount: 6812,
     discount: 90,
-    tag: "All-in-One Frontend"
+    tag: "25 Chapters • 570+ Items"
   },
-  {
-    id: "nodejs",
-    title: "Node.js Interview Preparation Kit",
-    shortTitle: "Node.js Interview Kit (JS Kit Included)",
-    price: {
-      current: 299,
-      original: 2999
-    },
-    icon: (
-      <div className="w-14 h-14 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
-        <Server className="w-8 h-8 text-white drop-shadow" />
-      </div>
-    ),
-    bgGradient: "from-green-50 via-white to-emerald-50",
-    iconBg: "bg-gradient-to-br from-green-500 to-emerald-600",
-    comingSoon: true,
-    studentsCount: 6500,
-    discount: 90,
-    tag: "Backend Pro"
-  }
+  // Node.js kit is intentionally hidden from the home page for now.
 ]
 
 export function ProductsShowcase() {
@@ -140,7 +120,7 @@ export function ProductsShowcase() {
         </div>
 
         {/* Premium grid with better spacing */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 max-w-5xl mx-auto">
           {products.map((product) => (
             <div
               key={product.id}
