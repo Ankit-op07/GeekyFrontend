@@ -215,7 +215,7 @@ const kitsData: Record<string, KitDetails> = {
       {
         icon: <Gift className="w-5 h-5" />,
         title: "Quick Revision Sheets",
-        value: "₹999",
+        value: "₹999", 
         description: "One-page summaries for last-minute prep"
       },
       {
