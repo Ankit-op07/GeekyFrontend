@@ -32,4 +32,4 @@ export function PaymentButton({
       {disabled ? 'Coming Soon' : buttonText}
     </Button>
   );
-}
+} 
