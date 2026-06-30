@@ -186,7 +186,7 @@ function LoginContent() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <label className="auth-label">Password</label>
                                 <Link href="/forgot-password" className="auth-link" style={{ fontSize: '12px', marginBottom: '6px' }}>
-                                    Forgot password?
+                                    Forgot password
                                 </Link>
                             </div>
                             <div className="auth-input-wrapper">
