@@ -40,10 +40,6 @@ export async function GET(
             kitSlug.toLowerCase().includes(s.toLowerCase())
         );
 
-        if (!hasAccess) {
-            return NextResponse.json({ error: 'Access denied — you don\'t have access to this kit' }, { status: 403 });
-        }
-
         const kit = await Kit.findOne({ slug: kitSlug }).lean();
         if (!kit) {
             return NextResponse.json({ error: 'Kit not found' }, { status: 404 });
@@ -68,7 +64,16 @@ export async function GET(
             })
         );
 
-        return NextResponse.json({ kit, sidebar });
+        if (!hasAccess) {
+            return NextResponse.json({ 
+                kit, 
+                sidebar, 
+                isPreview: true, 
+                firstChapterId: chapters.length > 0 ? chapters[0]._id : null 
+            });
+        }
+
+        return NextResponse.json({ kit, sidebar, isPreview: false, firstChapterId: null });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }

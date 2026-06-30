@@ -11,7 +11,7 @@ import {
     BarChart2, Flame, RefreshCw, ShoppingBag, Building2, ArrowRight,
     Trophy, Medal, Bot, Mic, MicOff, PlayCircle, RotateCcw,
     MessageSquare, Brain, Timer, Send, Sparkles, Video,
-    ClipboardCheck, FileText
+    ClipboardCheck, FileText, Eye, ShoppingCart
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -387,7 +387,9 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
         fetch("/api/learn/kits").then(r => r.json()).then(d => { if (d.kits) setDbKits(d.kits) }).catch(() => { })
     }, [])
 
-    const ownedKits = dbKits.filter(k => k.hasAccess && !isNodeKit(k))
+    const visibleKits = dbKits.filter(k => !isNodeKit(k))
+    const ownedKits = visibleKits.filter(k => k.hasAccess)
+    const previewKits = visibleKits.filter(k => !k.hasAccess)
 
     return (
         <div className="space-y-8 max-w-5xl">
@@ -421,7 +423,7 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                         <p className="text-slate-300/80 text-sm sm:text-base mt-3 max-w-md leading-relaxed">
                             {ownedKits.length > 0
                                 ? `You have ${ownedKits.length} kit${ownedKits.length > 1 ? "s" : ""} active. Keep the momentum going!`
-                                : "Welcome to your dashboard! Browse our interview kits to get started."}
+                                : "Welcome to your dashboard! Preview any kit below or purchase one to unlock full access."}
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -511,8 +513,61 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                 </div>
             )}
 
-            {/* ── Empty state ── */}
-            {ownedKits.length === 0 && (
+            {/* ── Explore / Preview Kits ── */}
+            {previewKits.length > 0 && (
+                <div>
+                    <div className="flex items-center justify-between gap-3 mb-5">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/10">
+                                <Eye className="w-4 h-4 text-amber-400" />
+                            </div>
+                            <div>
+                                <h3 className="text-white font-semibold text-base">Explore More Kits</h3>
+                                <p className="text-slate-500 text-xs">Preview Chapter 1 free · Unlock all with purchase</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                        {previewKits.map(kit => (
+                            <div key={kit._id}
+                                className="group relative overflow-hidden bg-slate-900/50 border border-white/[0.05] rounded-2xl p-5 hover:border-amber-500/20 hover:bg-slate-900/70 transition-all duration-400">
+                                <div className="relative z-10">
+                                    <div className="flex items-start gap-3.5 mb-3">
+                                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-lg flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300 opacity-80 group-hover:opacity-100`}>
+                                            {kit.icon}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-white text-sm font-semibold truncate group-hover:text-amber-200 transition-colors">{kit.name}</p>
+                                            <p className="text-slate-500 text-xs mt-0.5">{kit.chaptersCount} chapters · {kit.topicsCount} topics</p>
+                                        </div>
+                                        <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px] px-2 py-0.5 h-5 flex items-center gap-1">
+                                            <Sparkles className="w-2.5 h-2.5" /> Preview
+                                        </Badge>
+                                    </div>
+                                    <p className="text-slate-500 text-xs line-clamp-1 mb-4">{kit.description}</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <Button size="sm" className="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-white/10 text-xs" asChild>
+                                            <Link href={`/learn/${kit.slug}`}>
+                                                <Eye className="w-3.5 h-3.5 mr-1.5" />
+                                                Preview
+                                            </Link>
+                                        </Button>
+                                        <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-xs shadow-md shadow-violet-500/20 border-0" asChild>
+                                            <Link href={getCheckoutPathForKit(kit)}>
+                                                <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                                                Buy Full Kit
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* ── Empty state (no kits at all) ── */}
+            {visibleKits.length === 0 && (
                 <div className="relative overflow-hidden text-center py-16 px-8 rounded-3xl border border-dashed border-white/10"
                      style={{ background: "linear-gradient(135deg, rgba(30,20,50,0.5) 0%, rgba(15,23,42,0.5) 100%)" }}>
                     <div className="absolute inset-0 opacity-[0.03]"
@@ -530,37 +585,6 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                     </div>
                 </div>
             )}
-
-            {/* ── Quick Links ── */}
-            <div>
-                <div className="flex items-center gap-3 mb-5">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-500/20 to-orange-500/20 flex items-center justify-center border border-yellow-500/10">
-                        <Zap className="w-4 h-4 text-yellow-400" />
-                    </div>
-                    <div>
-                        <h3 className="text-white font-semibold text-base">Quick Links</h3>
-                        <p className="text-slate-500 text-xs">Jump to interview prep kits</p>
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {[
-                        { label: "JavaScript Kit", href: "/checkout/javascript", emoji: "⚡", desc: "Master JS fundamentals", gradient: "from-yellow-500/8 to-amber-500/5" },
-                        { label: "React Kit", href: "/checkout/react", emoji: "⚛️", desc: "Component mastery", gradient: "from-cyan-500/8 to-blue-500/5" },
-                        { label: "Complete Kit", href: "/checkout/complete", emoji: "🚀", desc: "Full interview prep", gradient: "from-violet-500/8 to-purple-500/5" },
-                    ].map(q => (
-                        <Link key={q.href} href={q.href}
-                            className="group flex items-center gap-4 p-4 rounded-2xl border border-white/[0.06] hover:border-white/[0.12] transition-all duration-400 text-sm"
-                            style={{ background: `linear-gradient(135deg, ${q.gradient.includes("yellow") ? "rgba(234,179,8,0.04)" : q.gradient.includes("cyan") ? "rgba(6,182,212,0.04)" : "rgba(139,92,246,0.04)"} 0%, rgba(15,23,42,0.6) 100%)` }}>
-                            <span className="text-2xl group-hover:scale-110 transition-transform duration-300">{q.emoji}</span>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-white font-medium truncate group-hover:text-violet-200 transition-colors">{q.label}</p>
-                                <p className="text-slate-500 text-xs mt-0.5">{q.desc}</p>
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all duration-300 flex-shrink-0" />
-                        </Link>
-                    ))}
-                </div>
-            </div>
 
             {/* Inline keyframes for shimmer & wave animations */}
             <style dangerouslySetInnerHTML={{ __html: `
@@ -1777,11 +1801,17 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                                     </Badge>
                                 </div>
 
-                                <div className="mt-5">
-                                    <Button size="sm" className="w-full bg-white text-slate-950 hover:bg-violet-100" asChild>
+                                <div className="mt-5 grid grid-cols-2 gap-2">
+                                    <Button size="sm" className="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-white/10 text-xs" asChild>
+                                        <Link href={`/learn/${kit.slug}`}>
+                                            <Eye className="w-3.5 h-3.5 mr-1.5" />
+                                            Preview
+                                        </Link>
+                                    </Button>
+                                    <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-xs shadow-md shadow-violet-500/20 border-0" asChild>
                                         <Link href={getCheckoutPathForKit(kit)}>
-                                            View Kit
-                                            <ChevronRight className="w-4 h-4 ml-1" />
+                                            <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                                            Buy Full Kit
                                         </Link>
                                     </Button>
                                 </div>

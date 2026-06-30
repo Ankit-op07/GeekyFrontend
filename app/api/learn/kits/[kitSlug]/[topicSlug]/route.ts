@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Kit from '@/lib/models/Kit';
+import Chapter from '@/lib/models/Chapter';
 import Topic from '@/lib/models/Topic';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import { extractSessionFromRequest } from '@/lib/session';
@@ -9,7 +10,10 @@ import { getAllowedSlugs } from '@/lib/appConstants';
 /**
  * GET /api/learn/kits/[kitSlug]/[topicSlug]
  * Returns topic content (markdown).
- * Requires authentication and kit access.
+ * - Requires authentication.
+ * - Full-access users get any topic.
+ * - Preview users (no kit purchase) can only read topics in the FIRST chapter.
+ *   Requests for later chapters return { error: 'locked', isPreview: true } with 403.
  */
 export async function GET(
     request: NextRequest,
@@ -39,10 +43,6 @@ export async function GET(
             kitSlug.toLowerCase().includes(s.toLowerCase())
         );
 
-        if (!hasAccess) {
-            return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-        }
-
         const kit = await Kit.findOne({ slug: kitSlug }).lean();
         if (!kit) {
             return NextResponse.json({ error: 'Kit not found' }, { status: 404 });
@@ -57,16 +57,36 @@ export async function GET(
             return NextResponse.json({ error: 'Topic not found' }, { status: 404 });
         }
 
-        // Record streak activity
-        try {
-            await fetch(new URL('/api/user/streak', request.url).toString(), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    cookie: request.headers.get('cookie') || '',
-                },
-            });
-        } catch { /* non-critical */ }
+        // For preview users (no access), only allow topics in the first chapter
+        if (!hasAccess) {
+            // Get the first chapter for this kit
+            const firstChapter = await Chapter.findOne({ kitId: (kit as any)._id })
+                .sort({ order: 1 })
+                .lean() as any;
+
+            const isFirstChapter = firstChapter &&
+                (topic as any).chapterId?.toString() === firstChapter._id?.toString();
+
+            if (!isFirstChapter) {
+                return NextResponse.json(
+                    { error: 'locked', isPreview: true, message: 'This chapter is only available after purchasing the kit.' },
+                    { status: 403 }
+                );
+            }
+        }
+
+        // Record streak activity (non-critical, only for full-access users)
+        if (hasAccess) {
+            try {
+                await fetch(new URL('/api/user/streak', request.url).toString(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        cookie: request.headers.get('cookie') || '',
+                    },
+                });
+            } catch { /* non-critical */ }
+        }
 
         return NextResponse.json({ topic });
     } catch (error: any) {

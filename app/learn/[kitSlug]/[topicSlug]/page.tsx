@@ -11,6 +11,10 @@ import {
   Clock,
   Calendar,
   CheckCircle2,
+  Lock,
+  Sparkles,
+  ShoppingCart,
+  ArrowRight,
 } from "lucide-react";
 import { useSidebarContext } from "../sidebar-context";
 import parse, { Element, domToReact, type DOMNode } from "html-react-parser";
@@ -50,21 +54,27 @@ export default function TopicPage() {
   const params = useParams();
   const kitSlug = params.kitSlug as string;
   const topicSlug = params.topicSlug as string;
-  const { allTopics } = useSidebarContext();
+  const { allTopics, isPreview } = useSidebarContext();
 
   const [topic, setTopic] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [readProgress, setReadProgress] = useState(0);
   const [completed, setCompleted] = useState<Set<string>>(() => getCompletedTopics(kitSlug));
+  const [lockedPreview, setLockedPreview] = useState(false);
   const articleRef = useRef<HTMLDivElement>(null);
 
   // Fetch topic content
   useEffect(() => {
     setLoading(true);
     setReadProgress(0);
+    setLockedPreview(false);
     fetch(`/api/learn/kits/${kitSlug}/${topicSlug}`)
-      .then((r) => r.json())
-      .then((d) => {
+      .then(async (r) => {
+        const d = await r.json();
+        if (r.status === 403 && d.isPreview) {
+          setLockedPreview(true);
+          return;
+        }
         if (d.topic) setTopic(d.topic);
       })
       .catch(console.error)
@@ -207,6 +217,80 @@ export default function TopicPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
+      </div>
+    );
+  }
+
+  // Locked chapter — show upgrade wall
+  if (lockedPreview) {
+    const checkoutMap: Record<string, string> = {
+      complete: '/checkout/complete',
+      react: '/checkout/react',
+      javascript: '/checkout/javascript',
+      js: '/checkout/javascript',
+      placement: '/checkout/placement',
+    };
+    const checkoutPath = Object.entries(checkoutMap).find(([k]) => kitSlug.toLowerCase().includes(k))?.[1] ?? '/#products';
+
+    return (
+      <div className="flex items-center justify-center min-h-[80vh] px-6">
+        <div className="relative max-w-lg w-full">
+          {/* Glowing background orbs */}
+          <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+
+          <div className="relative rounded-3xl border border-white/10 bg-[#0d0d14]/90 backdrop-blur-xl p-8 text-center shadow-2xl">
+            {/* Lock icon */}
+            <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/20 flex items-center justify-center">
+              <Lock className="w-7 h-7 text-amber-400" />
+            </div>
+
+            {/* Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
+              <Sparkles className="w-3 h-3" />
+              Full Kit Required
+            </div>
+
+            <h2 className="text-2xl font-bold text-white mb-3">This chapter is locked</h2>
+            <p className="text-slate-400 text-sm leading-relaxed mb-6">
+              You&apos;re in preview mode — only <strong className="text-white">Chapter 1</strong> is
+              unlocked. Purchase the full kit to access all chapters, topics, and content.
+            </p>
+
+            {/* Feature bullets */}
+            <ul className="text-left space-y-2 mb-7">
+              {[
+                'All chapters & topics unlocked instantly',
+                'Lifetime access — learn at your own pace',
+                'New content added regularly',
+                'Progress tracking across all topics',
+              ].map((item, i) => (
+                <li key={i} className="flex items-center gap-2.5 text-sm text-slate-300">
+                  <div className="w-4 h-4 rounded-full bg-green-500/15 border border-green-500/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                  </div>
+                  {item}
+                </li>
+              ))}
+            </ul>
+
+            {/* CTA */}
+            <Link
+              href={checkoutPath}
+              className="group flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold text-sm shadow-lg shadow-violet-500/25 transition-all duration-300 mb-3"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Unlock Full Kit
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href={`/learn/${kitSlug}`}
+              className="text-slate-500 hover:text-slate-300 text-xs transition-colors"
+            >
+              ← Go back to Chapter 1
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
