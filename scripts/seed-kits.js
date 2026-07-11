@@ -138,7 +138,7 @@ const KITS = [
         ],
     },
     {
-        name: 'Complete Frontend Kit',
+        name: 'Frontend System Design Kit',
         slug: 'complete-frontend-kit',
         description: 'The ultimate bundle — HTML/CSS mastery, web performance, system design, DSA for frontend, and machine coding practice.',
         icon: '🚀', color: 'from-violet-500 to-purple-600', order: 3,

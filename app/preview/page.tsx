@@ -65,7 +65,7 @@ export default function ContentPreviewPage() {
       ]
     },
     complete: {
-      name: "Complete Frontend Kit",
+      name: "Frontend System Design Kit",
       price: "₹"+complete_kit_price,
       originalPrice: "₹"+complete_kit_original_price,
       icon: "🚀",

@@ -6,7 +6,10 @@
 
 export interface KitCatalogItem {
     id: string;
+    /** Canonical plan name — this is the string stored in purchasedKits & PLAN_TO_SLUGS. */
     name: string;
+    /** Optional marketing name shown in the UI. Falls back to `name`. */
+    displayName?: string;
     tagline: string;
     price: number;
     originalPrice: number;
@@ -14,6 +17,8 @@ export interface KitCatalogItem {
     badge?: string;
     features: string[];
     comingSoon?: boolean;
+    /** True only for the bundle SKU — grants multiple kits. */
+    isBundle?: boolean;
 }
 
 /**
@@ -32,13 +37,40 @@ export const PLAN_TO_SLUGS: Record<string, string[]> = {
     // Node kit
     "Node.js Interview Preparation Kit": ["node"],
     "Node.js Backend Mastery Kit": ["node"],
-    // Complete kit — its OWN kit only, does NOT include JS/React/Node
-    "Complete Frontend Interview Preparation Kit": ["complete"],
-    // Experiences
+    /* ── Frontend System Design Kit ──────────────────────────────
+     *  Renamed from "Complete Frontend Interview Preparation Kit" (2026-07).
+     *  ⚠️  NEVER delete the legacy key below — past buyers are stored in
+     *  CompanyKitUser.purchasedKits by the plan name they bought under.
+     *  Removing it silently revokes their access. Append, never replace.
+     * ─────────────────────────────────────────────────────────── */
+    "Complete Frontend Interview Preparation Kit": ["complete"], // legacy — DO NOT REMOVE
+    "Frontend System Design Kit": ["complete"],
+
+    // Experiences (not yet released)
     "Frontend Interview Experiences Kit": ["experiences"],
-    // Placement
-    "Ultimate Campus Placement Kit": ["placement"],
+
+    /* ── Ultimate Campus Placement Kit — RETIRED (2026-07) ───────
+     *  No longer sold; removed from KIT_CATALOG. This key MUST remain so
+     *  existing buyers keep lifetime access to content they paid for.
+     * ─────────────────────────────────────────────────────────── */
+    "Ultimate Campus Placement Kit": ["placement"], // retired SKU — DO NOT REMOVE
+
+    /* ── Complete Kit (the real bundle) ──────────────────────────
+     *  Brand-new key. MUST NOT reuse any string above, or every past buyer
+     *  of that plan would be silently upgraded to the full bundle for free.
+     *  Grants the 3 LIVE kits only — NOT the comingSoon kits.
+     * ─────────────────────────────────────────────────────────── */
+    "Complete Kit All Access Bundle": ["javascript", "react", "complete"],
 };
+
+/** The bundle SKU id — the only kit that grants multiple slugs. */
+export const BUNDLE_KIT_ID = 'complete-access-kit';
+
+/**
+ * Minimum chargeable amount on an upgrade, in ₹.
+ * Razorpay rejects ₹0 orders, so a fully-credited user still pays this floor.
+ */
+export const UPGRADE_FLOOR = 49;
 
 /**
  * Given a user's purchasedKits array, return the set of slug substrings
@@ -75,20 +107,23 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
             'Lifetime access',
         ],
     },
+    /* Renamed 2026-07 from "Complete Frontend Interview Preparation Kit".
+     * The tagline MUST lead with the full contents — the name promises system
+     * design, but system design is ~42 of 570+ items. See PRD-001 §3.1a. */
     'complete-kit': {
         id: 'complete-kit',
-        name: 'Complete Frontend Interview Preparation Kit',
-        tagline: '25 chapters. 570+ questions and practice items. 127,000+ words of frontend interview preparation.',
+        name: 'Frontend System Design Kit',
+        tagline: '42 frontend system design walkthroughs (RADIO framework) — plus 180 DSA problems, 60 machine coding challenges, 35 JS coding challenges and 91 in-depth articles.',
         price: 299,
         originalPrice: 2999,
         duration: 'Lifetime',
-        badge: 'BEST VALUE',
+        badge: 'ADVANCED',
         features: [
+            '42 frontend system design walkthroughs using the RADIO framework',
             '25 structured chapters from HTML basics to frontend system design',
             '570+ interview questions, coding problems, and practice items',
             '91 detailed articles with interview-ready answers and code examples',
             '180 DSA problems with JavaScript solutions and complexity analysis',
-            '42 frontend system design walkthroughs using the RADIO framework',
             '60 machine coding problems with accessibility and edge cases',
             '35 JavaScript coding challenges from SDE1 to SDE3 level',
             '30-day prep plans, salary negotiation scripts, and quick revision sheets',
@@ -134,14 +169,31 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
             'Instant access after payment',
         ],
     },
-    'placement-kit': {
-        id: 'placement-kit',
-        name: 'Ultimate Campus Placement Kit',
-        tagline: 'Complete campus placement preparation',
-        price: 199,
-        originalPrice: 999,
+    /* ── THE BUNDLE ──────────────────────────────────────────────
+     *  Grants the 3 LIVE kits. Does NOT grant nodejs-kit or experiences-kit.
+     *  ⚠️  Never market this as "everything" / "all future kits" — Node and
+     *  Experiences are visible on the site as coming-soon and are NOT included.
+     *  That mis-naming is the exact bug this SKU exists to fix. PRD-001 §3.1.
+     * ─────────────────────────────────────────────────────────── */
+    'complete-access-kit': {
+        id: 'complete-access-kit',
+        name: 'Complete Kit All Access Bundle',
+        displayName: 'Complete Kit — All 3 Kits, One Price',
+        tagline: 'JavaScript + React + Frontend System Design. All three kits, one price, lifetime access.',
+        price: 499,
+        originalPrice: 647, // honest anchor: 149 + 199 + 299
         duration: 'Lifetime',
-        features: ['Resume Templates', 'Aptitude Q&A', 'HR Interview Tips', 'Core CS Subjects', 'Lifetime access'],
+        badge: 'BEST VALUE',
+        isBundle: true,
+        features: [
+            'JS Interview Preparation Kit (worth ₹149)',
+            'React.js Interview Preparation Kit (worth ₹199)',
+            'Frontend System Design Kit (worth ₹299)',
+            'Save ₹148 vs buying the three separately',
+            'Everything already spent on any kit is credited toward this',
+            'Regular updates to all three kits included',
+            'Lifetime access',
+        ],
     },
     'nodejs-kit': {
         id: 'nodejs-kit',
@@ -165,6 +217,8 @@ export function getKitById(kitId: string): KitCatalogItem | undefined {
  * ─────────────────────────────────────────────────────────────── */
 export function appConstants() {
     return {
+        all_access_price: KIT_CATALOG['complete-access-kit'].price,
+        all_access_original_price: KIT_CATALOG['complete-access-kit'].originalPrice,
         js_kit_price: KIT_CATALOG['js-kit'].price,
         complete_kit_price: KIT_CATALOG['complete-kit'].price,
         experiences_kit_price: KIT_CATALOG['experiences-kit'].price,
@@ -180,3 +234,21 @@ export function appConstants() {
         experiences_kit_plan_name: KIT_CATALOG['experiences-kit'].name,
     }
 }
+
+/** UI-facing name for a kit — prefers displayName, falls back to the plan name. */
+export function getKitDisplayName(kitId: string): string {
+    const kit = KIT_CATALOG[kitId];
+    if (!kit) return kitId;
+    return kit.displayName ?? kit.name;
+}
+
+/** Every kit SKU that can actually be bought right now. */
+export function getPurchasableKits(): KitCatalogItem[] {
+    return Object.values(KIT_CATALOG).filter((k) => !k.comingSoon);
+}
+
+/**
+ * Slugs the bundle grants. Single source of truth for "what is in the bundle".
+ * Deliberately excludes comingSoon kits and the retired placement kit.
+ */
+export const BUNDLE_SLUGS = PLAN_TO_SLUGS['Complete Kit All Access Bundle'];
