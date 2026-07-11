@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import connectToDatabase from '@/lib/db';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
+import { requireAdmin } from '@/lib/admin-auth';
 
 // Email transporter
 const transporter = nodemailer.createTransport({
@@ -93,6 +94,9 @@ function buildOnboardingEmail(course: string, email: string, setPasswordLink: st
 }
 
 export async function POST(request: NextRequest) {
+  const forbidden = requireAdmin(request);
+  if (forbidden) return forbidden;
+
   try {
     const { email, phone, course, name } = await request.json();
 

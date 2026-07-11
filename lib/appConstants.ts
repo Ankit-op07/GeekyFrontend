@@ -38,10 +38,6 @@ export const PLAN_TO_SLUGS: Record<string, string[]> = {
     "Frontend Interview Experiences Kit": ["experiences"],
     // Placement
     "Ultimate Campus Placement Kit": ["placement"],
-    // Company kits (DSA)
-    "Company Wise DSA Kit — 3 Months": ["company"],
-    "Company Wise DSA Kit — 6 Months": ["company"],
-    "Company Wise DSA Kit — Lifetime": ["company"],
 };
 
 /**
@@ -138,35 +134,6 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
             'Instant access after payment',
         ],
     },
-    'company-kit-3m': {
-        id: 'company-kit-3m',
-        name: 'Company Wise DSA Kit — 3 Months',
-        tagline: '3 months of company-wise DSA prep',
-        price: 299,
-        originalPrice: 599,
-        duration: '3 Months',
-        features: ['Complete Company Questions', '24/7 Access', 'Detailed Solutions', 'Regular Updates'],
-    },
-    'company-kit-6m': {
-        id: 'company-kit-6m',
-        name: 'Company Wise DSA Kit — 6 Months',
-        tagline: '6 months of company-wise DSA prep',
-        price: 599,
-        originalPrice: 999,
-        duration: '6 Months',
-        badge: 'POPULAR',
-        features: ['Everything in 3 Months', 'Priority Updates', 'Mock Interviews Access', 'Expert Support'],
-    },
-    'company-kit-lifetime': {
-        id: 'company-kit-lifetime',
-        name: 'Company Wise DSA Kit — Lifetime',
-        tagline: 'Lifetime company-wise DSA access',
-        price: 899,
-        originalPrice: 1999,
-        duration: 'Lifetime',
-        badge: 'BEST VALUE',
-        features: ['Pay once, access forever', 'All future updates free', 'VIP Support', 'Priority Access'],
-    },
     'placement-kit': {
         id: 'placement-kit',
         name: 'Ultimate Campus Placement Kit',
@@ -202,52 +169,14 @@ export function appConstants() {
         complete_kit_price: KIT_CATALOG['complete-kit'].price,
         experiences_kit_price: KIT_CATALOG['experiences-kit'].price,
         react_kit_price: KIT_CATALOG['react-kit'].price,
-        company_kit_price: KIT_CATALOG['company-kit-3m'].price,
         js_kit_original_price: KIT_CATALOG['js-kit'].originalPrice,
         complete_kit_original_price: KIT_CATALOG['complete-kit'].originalPrice,
         experiences_kit_original_price: KIT_CATALOG['experiences-kit'].originalPrice,
         react_kit_original_price: KIT_CATALOG['react-kit'].originalPrice,
-        company_kit_original_price: KIT_CATALOG['company-kit-3m'].originalPrice,
         discount_percentage: 90,
         discount_ios_percentage: 50,
         js_kit_plan_name: KIT_CATALOG['js-kit'].name,
         complete_kit_plan_name: KIT_CATALOG['complete-kit'].name,
         experiences_kit_plan_name: KIT_CATALOG['experiences-kit'].name,
-        company_kit_plan_name: KIT_CATALOG['company-kit-3m'].name,
-
-        // Company Wise Kit Pricing Tiers
-        company_kit_plans: {
-            '3m': {
-                id: '3m',
-                name: '3 Months',
-                duration: '3 months',
-                durationDays: 90,
-                price: KIT_CATALOG['company-kit-3m'].price,
-                originalPrice: KIT_CATALOG['company-kit-3m'].originalPrice,
-                perMonth: 100,
-                popular: false,
-            },
-            '6m': {
-                id: '6m',
-                name: '6 Months',
-                duration: '6 months',
-                durationDays: 180,
-                price: KIT_CATALOG['company-kit-6m'].price,
-                originalPrice: KIT_CATALOG['company-kit-6m'].originalPrice,
-                perMonth: 100,
-                popular: true,
-            },
-            'lifetime': {
-                id: 'lifetime',
-                name: 'Lifetime',
-                duration: 'Forever',
-                durationDays: 36500,
-                price: KIT_CATALOG['company-kit-lifetime'].price,
-                originalPrice: KIT_CATALOG['company-kit-lifetime'].originalPrice,
-                perMonth: null,
-                popular: false,
-                bestValue: true,
-            },
-        },
     }
 }

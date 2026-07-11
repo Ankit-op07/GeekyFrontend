@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Question from '@/lib/models/Question';
 import Company from '@/lib/models/Company';
+import { requireAdmin } from '@/lib/admin-auth';
+import { escapeRegex } from '@/lib/escape-regex';
 
 /**
  * GET /api/companies/[id]/questions
@@ -29,7 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         if (platform && platform !== 'All') filter.platform = platform;
         if (popularity && popularity !== 'All') filter.popularity = popularity;
         if (topic && topic !== 'All') filter.tags = topic;
-        if (search) filter.title = { $regex: search, $options: 'i' };
+        if (search) filter.title = { $regex: escapeRegex(search), $options: 'i' };
 
         const questions = await Question.find(filter).sort({ frequency: -1 }).lean();
 
@@ -45,6 +47,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
  * Add a question to a company (admin)
  */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const { id } = await params;

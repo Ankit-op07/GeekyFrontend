@@ -59,7 +59,6 @@ export function SiteHeader() {
 
   const handleLogout = async () => {
     await fetch("/api/auth/session", { method: "DELETE" })
-    localStorage.removeItem("companyKitToken")
     setUser(null)
     setProfileOpen(false)
     router.push("/")

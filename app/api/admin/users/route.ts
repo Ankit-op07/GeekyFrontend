@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Order from '@/lib/models/Order';
+import { requireAdmin } from '@/lib/admin-auth';
+import { escapeRegex } from '@/lib/escape-regex';
 
 export async function GET(request: NextRequest) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
 
@@ -27,7 +32,7 @@ export async function GET(request: NextRequest) {
         }
 
         if (search) {
-            query.email = { $regex: search, $options: 'i' };
+            query.email = { $regex: escapeRegex(search), $options: 'i' };
         }
 
         // Date range filter

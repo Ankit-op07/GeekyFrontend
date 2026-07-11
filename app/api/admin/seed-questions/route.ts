@@ -1,15 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Company from '@/lib/models/Company';
 import Question from '@/lib/models/Question';
 import { COMPANIES } from '@/lib/data/company-questions';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /**
  * POST /api/admin/seed-questions
  * One-time seed: populate MongoDB from the static data file.
  * Skips companies that already exist (idempotent).
  */
-export async function POST() {
+export async function POST(request: NextRequest) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
 

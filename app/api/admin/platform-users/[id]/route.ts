@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
+import { requireAdmin } from '@/lib/admin-auth';
 
 export async function DELETE(
     request: NextRequest,
-    context: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
 
-        // Use params directly (it must be handled correctly in Next.js App Router)
-        const id = context.params.id;
+        const { id } = await context.params;
 
         if (!id) {
             return NextResponse.json(
@@ -43,11 +46,14 @@ export async function DELETE(
 
 export async function PATCH(
     request: NextRequest,
-    context: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
-        const id = context.params.id;
+        const { id } = await context.params;
 
         if (!id) {
             return NextResponse.json({ error: 'User ID is required' }, { status: 400 });

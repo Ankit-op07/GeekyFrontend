@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Question from '@/lib/models/Question';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /**
  * PUT /api/questions/[id]
  * Update a question (admin)
  */
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const { id } = await params;
@@ -23,7 +27,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
  * DELETE /api/questions/[id]
  * Delete a question (admin)
  */
-export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const { id } = await params;
