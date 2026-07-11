@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Kit from '@/lib/models/Kit';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /**
  * GET  /api/admin/content/kits     — list all kits
@@ -9,7 +10,10 @@ import Kit from '@/lib/models/Kit';
  * DELETE /api/admin/content/kits?id=xxx — delete kit + cascade
  */
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const kits = await Kit.find().sort({ order: 1 }).lean();
@@ -20,6 +24,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const body = await req.json();
@@ -41,6 +48,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const body = await req.json();
@@ -55,6 +65,9 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const id = req.nextUrl.searchParams.get('id');

@@ -153,22 +153,7 @@ export default function DashboardPage() {
             if (data.user) {
                 setUser(data.user)
             } else {
-                // Fallback: check legacy token
-                const token = localStorage.getItem("companyKitToken")
-                if (token) {
-                    const r = await fetch("/api/company-kit/check-subscription", {
-                        method: "POST", headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ sessionToken: token })
-                    })
-                    const d = await r.json()
-                    if (d.user) {
-                        setUser({ id: d.user.id, email: d.user.email, name: d.user.name, purchasedKits: d.user.purchasedKits || [] })
-                    } else {
-                        router.push("/login?redirect=/dashboard")
-                    }
-                } else {
-                    router.push("/login?redirect=/dashboard")
-                }
+                router.push("/login?redirect=/dashboard")
             }
         } catch {
             router.push("/login?redirect=/dashboard")
@@ -204,7 +189,6 @@ export default function DashboardPage() {
 
     const handleLogout = async () => {
         await fetch("/api/auth/session", { method: "DELETE" })
-        localStorage.removeItem("companyKitToken")
         router.push("/")
     }
 

@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
+import { requireAdmin } from '@/lib/admin-auth';
+import { escapeRegex } from '@/lib/escape-regex';
 
 export async function GET(request: NextRequest) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
 
@@ -12,9 +17,10 @@ export async function GET(request: NextRequest) {
 
         let query: any = {};
         if (search) {
+            const safeSearch = escapeRegex(search);
             query.$or = [
-                { email: { $regex: search, $options: 'i' } },
-                { name: { $regex: search, $options: 'i' } }
+                { email: { $regex: safeSearch, $options: 'i' } },
+                { name: { $regex: safeSearch, $options: 'i' } }
             ];
         }
 

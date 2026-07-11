@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Chapter from '@/lib/models/Chapter';
 import Topic from '@/lib/models/Topic';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /**
  * GET    /api/admin/content/chapters?kitId=xxx
@@ -11,6 +12,9 @@ import Topic from '@/lib/models/Topic';
  */
 
 export async function GET(req: NextRequest) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const kitId = req.nextUrl.searchParams.get('kitId');
@@ -24,6 +28,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const body = await req.json();
@@ -43,6 +50,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const body = await req.json();
@@ -57,6 +67,9 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const id = req.nextUrl.searchParams.get('id');

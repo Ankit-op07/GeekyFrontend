@@ -4,6 +4,8 @@ import nodemailer from 'nodemailer';
 import connectToDatabase from '@/lib/db';
 import Order from '@/lib/models/Order';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
+import { requireAdmin } from '@/lib/admin-auth';
+import { escapeRegex } from '@/lib/escape-regex';
 
 // ─────────────────────────────────────────────
 // Email transporter
@@ -273,6 +275,9 @@ function buildPlatformOnboardingEmail(
 // POST — Send emails
 // ─────────────────────────────────────────────
 export async function POST(request: NextRequest) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         const body = await request.json();
         const {
@@ -329,7 +334,7 @@ export async function POST(request: NextRequest) {
 
             const query: Record<string, any> = { status: 'email_sent' };
             if (!sendToAll && filterByKit) {
-                query.planName = { $regex: filterByKit, $options: 'i' };
+                query.planName = { $regex: escapeRegex(filterByKit), $options: 'i' };
             }
 
             // Deduplicate by email — keep latest order per email
@@ -447,7 +452,7 @@ export async function POST(request: NextRequest) {
 
         const query: Record<string, any> = { status: 'email_sent' };
         if (!sendToAll && filterByKit) {
-            query.planName = { $regex: filterByKit, $options: 'i' };
+            query.planName = { $regex: escapeRegex(filterByKit), $options: 'i' };
         }
 
         const orders = await Order.find(query).select('email').lean();
@@ -501,6 +506,9 @@ export async function POST(request: NextRequest) {
 // GET — Template list + recipient counts
 // ─────────────────────────────────────────────
 export async function GET(request: NextRequest) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
 
@@ -532,7 +540,7 @@ export async function GET(request: NextRequest) {
         if (filterByKit) {
             const filtered = await Order.distinct('email', {
                 status: 'email_sent',
-                planName: { $regex: filterByKit, $options: 'i' },
+                planName: { $regex: escapeRegex(filterByKit), $options: 'i' },
             });
             filteredCount = filtered.length;
         }

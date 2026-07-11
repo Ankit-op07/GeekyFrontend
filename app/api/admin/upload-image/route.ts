@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
+import { requireAdmin } from "@/lib/admin-auth";
 
 // Configure Cloudinary
 // Note: These need to be added to .env
@@ -10,6 +11,9 @@ cloudinary.config({
 });
 
 export async function POST(request: NextRequest) {
+  const forbidden = requireAdmin(request);
+  if (forbidden) return forbidden;
+
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;

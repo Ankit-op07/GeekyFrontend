@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Company from '@/lib/models/Company';
 import Question from '@/lib/models/Question';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /**
  * GET /api/companies
@@ -70,6 +71,9 @@ export async function GET() {
  * Create a new company (admin)
  */
 export async function POST(req: NextRequest) {
+    const forbidden = requireAdmin(req);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
         const { name, logo, color } = await req.json();

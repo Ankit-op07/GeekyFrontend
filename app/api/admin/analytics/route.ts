@@ -1,8 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Order from '@/lib/models/Order';
+import { requireAdmin } from '@/lib/admin-auth';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         await connectToDatabase();
 

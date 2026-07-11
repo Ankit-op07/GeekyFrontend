@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import nodemailer from 'nodemailer';
+import { requireAdmin } from '@/lib/admin-auth';
 
 export async function POST(request: NextRequest) {
+  const forbidden = requireAdmin(request);
+  if (forbidden) return forbidden;
+
   try {
     await connectToDatabase();
 

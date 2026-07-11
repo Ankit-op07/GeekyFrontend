@@ -4,6 +4,8 @@ import nodemailer from 'nodemailer';
 import connectToDatabase from '@/lib/db';
 import Order from '@/lib/models/Order';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
+import { requireAdmin } from '@/lib/admin-auth';
+import { escapeRegex } from '@/lib/escape-regex';
 
 // ─────────────────────────────────────────────
 // Email transporter
@@ -285,6 +287,9 @@ async function processOneEmail({
 // GET — list kits with buyer counts from Orders
 // ─────────────────────────────────────────────
 export async function GET(request: NextRequest) {
+  const forbidden = requireAdmin(request);
+  if (forbidden) return forbidden;
+
   try {
     console.log('[kit-onboarding GET] Fetching kit stats…');
     await connectToDatabase();
@@ -309,7 +314,7 @@ export async function GET(request: NextRequest) {
       console.log(`[kit-onboarding GET] Fetching buyers for kit: "${kitName}"`);
       const orders = await Order.find({
         status: 'email_sent',
-        planName: { $regex: kitName, $options: 'i' },
+        planName: { $regex: escapeRegex(kitName), $options: 'i' },
       }).select('email').lean() as Array<{ email: string }>;
 
       const uniqueEmails = [...new Set(orders.map((o) => o.email))];
@@ -356,6 +361,9 @@ export async function GET(request: NextRequest) {
 // Supports: testEmails (array), testEmail (single), or bulk
 // ─────────────────────────────────────────────
 export async function POST(request: NextRequest) {
+  const forbidden = requireAdmin(request);
+  if (forbidden) return forbidden;
+
   try {
     const body = await request.json();
     const {
@@ -444,7 +452,7 @@ export async function POST(request: NextRequest) {
     // Find all unique buyers of this kit
     const orders = await Order.find({
       status: 'email_sent',
-      planName: { $regex: kitName, $options: 'i' },
+      planName: { $regex: escapeRegex(kitName), $options: 'i' },
     })
       .sort({ createdAt: -1 })
       .select('email planName')

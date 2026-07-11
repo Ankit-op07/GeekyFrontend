@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
+import { requireAdmin } from '@/lib/admin-auth';
 
 const razorpay = new Razorpay({
     key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
@@ -7,6 +8,9 @@ const razorpay = new Razorpay({
 });
 
 export async function GET(request: NextRequest) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         const { searchParams } = new URL(request.url);
         const count = parseInt(searchParams.get('count') || '100');

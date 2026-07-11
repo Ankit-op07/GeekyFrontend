@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /**
  * POST /api/admin/format-content
@@ -8,6 +9,9 @@ import { NextRequest, NextResponse } from 'next/server';
  *   - 'full': Full rewrite with proper structure
  */
 export async function POST(request: NextRequest) {
+    const forbidden = requireAdmin(request);
+    if (forbidden) return forbidden;
+
     try {
         const { content, mode = 'fix' } = await request.json();
 

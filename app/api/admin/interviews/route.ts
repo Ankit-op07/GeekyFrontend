@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import InterviewRequest from '@/lib/models/InterviewRequest';
-import { extractSessionFromRequest } from '@/lib/session';
+import { getAdminSession } from '@/lib/admin-auth';
 
-const ADMIN_EMAIL = 'geekyfrontend@gmail.com';
 const VALID_STATUSES = new Set(['pending', 'approved', 'rejected', 'completed', 'cancelled']);
 
 function isAdmin(request: NextRequest) {
-    const session = extractSessionFromRequest(request);
-    return session?.email?.toLowerCase() === ADMIN_EMAIL ? session : null;
+    return getAdminSession(request);
 }
 
 export async function GET(request: NextRequest) {
