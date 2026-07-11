@@ -1,24 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { google } from 'googleapis';
+import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import Razorpay from 'razorpay';
 import connectToDatabase from '@/lib/db';
 import Order from '@/lib/models/Order';
+import { recordPurchase } from '@/lib/purchase';
 
 // ============================================================
 // CONFIGURATION
 // ============================================================
-
-const auth = new google.auth.GoogleAuth({
-  credentials: {
-    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  },
-  scopes: ['https://www.googleapis.com/auth/drive'],
-});
-
-const drive = google.drive({ version: 'v3', auth });
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -33,15 +24,6 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET!,
 });
 
-const FOLDER_IDS: Record<string, string> = {
-  'JS Interview Preparation Kit': process.env.JS_KIT_FOLDER_ID!,
-  'Complete Frontend Interview Preparation Kit': process.env.COMPLETE_KIT_FOLDER_ID!,
-  'Frontend Interview Experiences Kit': process.env.EXPERIENCES_KIT_FOLDER_ID!,
-  'Reactjs Interview Preparation Kit': process.env.REACT_KIT_FOLDER_ID!,
-  'Node.js Interview Preparation Kit': process.env.NODEJS_KIT_FOLDER_ID!,
-  'Ultimate Campus Placement Kit': process.env.PLACEMENT_KIT_FOLDER_ID!,
-};
-
 // ============================================================
 // HELPER FUNCTIONS
 // ============================================================
@@ -51,95 +33,90 @@ function verifySignature(body: string, signature: string, secret: string): boole
   return expected === signature;
 }
 
-async function grantFolderAccess(folderId: string, userEmail: string) {
-  try {
-    // Public link access
-    await drive.permissions.create({
-      fileId: folderId,
-      requestBody: { role: 'reader', type: 'anyone', allowFileDiscovery: false },
-    });
-
-    // User-specific access (may fail for non-Gmail users)
-    try {
-      await drive.permissions.create({
-        fileId: folderId,
-        requestBody: { role: 'reader', type: 'user', emailAddress: userEmail },
-        sendNotificationEmail: false,
-      });
-    } catch {
-      // Ignore - user might already have access or non-Gmail
-    }
-
-    const file = await drive.files.get({ fileId: folderId, fields: 'name,webViewLink' });
-    return { success: true, folderLink: file.data.webViewLink, folderName: file.data.name };
-  } catch (error: any) {
-    console.error('Drive access error:', error.message);
-    return { success: false, error: error.message };
-  }
-}
-
-function buildEmailHtml(planName: string, userEmail: string, folderLink: string, orderId: string, paymentId: string) {
+/* ── Onboarding Email — same template used across the app ─────── */
+function buildOnboardingEmail(opts: {
+  userName: string;
+  kitName: string;
+  email: string;
+  setPasswordUrl?: string;
+  dashboardUrl: string;
+  loginUrl: string;
+  hasPassword?: boolean;
+}): string {
+  const showPasswordStep = !opts.hasPassword && opts.setPasswordUrl;
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f4f4f4;">
-  <table align="center" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
     <tr>
-      <td style="padding:40px 30px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);text-align:center;">
-        <h1 style="color:white;margin:0;font-size:28px;">Welcome to Geeky Frontend! 🎉</h1>
+      <td style="padding: 40px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to Geeky Frontend! 🎉</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Your account is ready</p>
       </td>
     </tr>
     <tr>
-      <td style="padding:40px 30px;background:white;">
-        <p style="color:#333;font-size:16px;line-height:1.6;margin:0 0 20px;">Dear Developer,</p>
-        <p style="color:#333;font-size:16px;line-height:1.6;margin:0 0 20px;">
-          Thank you for purchasing the <strong>${planName}</strong>!
+      <td style="padding: 40px 30px; background-color: white;">
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+          Hi <strong>${opts.userName}</strong>! 👋
         </p>
-        <p style="color:#333;font-size:16px;line-height:1.6;margin:0 0 30px;">
-          Your payment has been verified. You now have immediate access to all materials.
+
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+          Thank you for your purchase! You now have full access to the <strong>${opts.kitName}</strong>.${!opts.hasPassword ? ' An account has been created for you on Geeky Frontend.' : ''}
         </p>
-        <table width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td style="background:#f8f9fa;padding:20px;border-radius:8px;">
-              <h2 style="color:#333;font-size:18px;margin:0 0 15px;">📚 Access Your Course:</h2>
-              <table cellspacing="0" cellpadding="0">
-                <tr>
-                  <td style="border-radius:5px;background:#4F46E5;">
-                    <a href="${folderLink}" target="_blank" style="display:inline-block;padding:14px 30px;font-size:16px;color:white;text-decoration:none;">
-                      Open Course Materials →
-                    </a>
-                  </td>
-                </tr>
-              </table>
-              <p style="color:#999;font-size:12px;margin:20px 0 0;">
-                Or copy: <a href="${folderLink}" style="color:#4F46E5;">${folderLink}</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-        <div style="margin-top:30px;padding:20px;background:#fff3cd;border-radius:8px;border-left:4px solid #ffc107;">
-          <p style="color:#856404;font-size:14px;margin:0;"><strong>💡 Tips:</strong></p>
-          <ul style="color:#856404;font-size:14px;margin:10px 0 0;padding-left:20px;">
-            <li>Shared with: <strong>${userEmail}</strong></li>
-            <li>Find it in Google Drive → "Shared with me"</li>
+
+        ${showPasswordStep ? `
+        <!-- Step 1: Set Password -->
+        <div style="background: #f0f4ff; border: 2px solid #667eea; border-radius: 12px; padding: 25px; margin: 25px 0;">
+          <h2 style="color: #4338ca; font-size: 18px; margin: 0 0 10px 0;">🔐 Step 1: Set Your Password</h2>
+          <p style="color: #555; font-size: 14px; margin: 0 0 15px 0;">
+            First, set up a password for your account so you can log in anytime.
+          </p>
+          <table cellspacing="0" cellpadding="0">
+            <tr>
+              <td style="border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <a href="${opts.setPasswordUrl}" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 16px; color: white; text-decoration: none; font-weight: bold;">
+                  Set Your Password →
+                </a>
+              </td>
+            </tr>
+          </table>
+          <p style="color: #999; font-size: 12px; margin: 15px 0 0 0;">⏰ This link expires in 24 hours</p>
+        </div>
+        ` : ''}
+
+        <!-- ${showPasswordStep ? 'Step 2' : ''}: Access Course on Platform -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 25px; margin: 25px 0;">
+          <h2 style="color: white; font-size: 18px; margin: 0 0 10px 0;">📚 ${showPasswordStep ? 'Step 2: ' : ''}Access Your Course</h2>
+          <p style="color: rgba(255,255,255,0.85); font-size: 14px; margin: 0 0 15px 0;">
+            ${showPasswordStep ? 'After setting your password, access' : 'Access'} your course materials directly on your dashboard.
+          </p>
+          <a href="${opts.dashboardUrl}" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 16px; color: #667eea; background-color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+            Go To Dashboard
+          </a>
+        </div>
+
+        <!-- Quick Tips -->
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
+          <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">
+            <strong>💡 Quick Tips:</strong>
+          </p>
+          <ul style="color: #666; font-size: 14px; margin: 0; padding-left: 20px;">
+            <li>Your account email: <strong>${opts.email}</strong></li>
+            <li>Login anytime at: <a href="${opts.loginUrl}" style="color: #667eea;">geekyfrontend.in/login</a></li>
           </ul>
         </div>
-        <div style="margin-top:30px;padding-top:30px;border-top:1px solid #e0e0e0;">
-          <h3 style="color:#333;font-size:16px;margin:0 0 10px;">Payment Details:</h3>
-          <table style="color:#666;font-size:14px;">
-            <tr><td style="padding:5px 0;">Order ID:</td><td style="padding:5px 0 5px 20px;"><strong>${orderId}</strong></td></tr>
-            <tr><td style="padding:5px 0;">Payment ID:</td><td style="padding:5px 0 5px 20px;"><strong>${paymentId}</strong></td></tr>
-            <tr><td style="padding:5px 0;">Course:</td><td style="padding:5px 0 5px 20px;"><strong>${planName}</strong></td></tr>
-          </table>
-        </div>
-        <div style="margin-top:30px;">
-          <p style="color:#666;font-size:14px;margin:0;">Need help? Email: geekyfrontend@gmail.com</p>
-        </div>
       </td>
     </tr>
     <tr>
-      <td style="padding:30px;background:#f8f9fa;text-align:center;">
-        <p style="color:#999;font-size:12px;margin:0;">© 2025 Geeky Frontend. All rights reserved.</p>
+      <td style="padding: 25px; background-color: #f8f9fa; text-align: center;">
+        <p style="color: #999; font-size: 12px; margin: 0;">
+          Questions? Email us at geekyfrontend@gmail.com<br>
+          © ${new Date().getFullYear()} Geeky Frontend
+        </p>
       </td>
     </tr>
   </table>
@@ -234,7 +211,7 @@ export async function POST(request: NextRequest) {
     }
     console.log('✅ Signature verified');
 
-    // Connect to database (optional)
+    // Connect to database
     const dbConnected = await connectDB();
 
     // Parse event
@@ -259,23 +236,17 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: 'Email missing' });
       }
 
-      // Get plan name
-      let planName = payment.notes?.planName;
-      if (!planName && orderId) {
+      // Get plan name + user name (payment.notes, falling back to the order's notes)
+      let orderNotes: Record<string, any> = payment.notes || {};
+      if ((!orderNotes.planName || !orderNotes.userName) && orderId) {
         try {
           const order = await razorpay.orders.fetch(orderId);
-          planName = order.notes?.planName;
+          orderNotes = { ...order.notes, ...orderNotes };
         } catch { }
       }
-      planName = planName || 'Complete Frontend Interview Preparation Kit';
+      const planName = orderNotes.planName || 'Complete Frontend Interview Preparation Kit';
+      const userName: string | undefined = orderNotes.userName || undefined;
       console.log(`📋 Processing: ${userEmail} - ${planName}`);
-
-      // Get folder ID
-      const folderId = FOLDER_IDS[planName];
-      if (!folderId) {
-        console.error(`❌ No folder for plan: ${planName}`);
-        return NextResponse.json({ message: 'Invalid plan' });
-      }
 
       // Save order to DB
       if (!existingOrder) {
@@ -289,29 +260,73 @@ export async function POST(request: NextRequest) {
         }, dbConnected);
       }
 
-      // Grant folder access
-      const access = await grantFolderAccess(folderId, userEmail);
-      if (!access.success || !access.folderLink) {
-        console.error('❌ Drive access failed:', access.error);
-        await updateOrderStatus(orderId, 'failed', dbConnected, access.error);
-        return NextResponse.json({ message: 'Drive access failed' });
+      if (!dbConnected) {
+        console.error('❌ Database not connected - cannot record purchase or send email');
+        // Non-2xx so Razorpay retries this webhook later instead of treating
+        // it as delivered — a transient DB outage must not permanently drop
+        // the purchase/email for a user who already closed their browser.
+        return NextResponse.json({ message: 'Database unavailable' }, { status: 500 });
       }
-      console.log(`✅ Access granted: ${access.folderLink}`);
+
+      // Create/update the user record and assign the purchased kit
+      const { user } = await recordPurchase({
+        email: userEmail,
+        name: userName,
+        planName,
+        paymentId,
+        orderId,
+      });
+      console.log(`✅ Purchase recorded for ${userEmail}: ${planName}`);
+
+      // Build the onboarding email (Set Password step only for brand-new users)
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      const dashboardUrl = `${baseUrl}/dashboard`;
+      const loginUrl = `${baseUrl}/login`;
+      const userHasPassword = !!user.password;
+
+      let setPasswordUrl: string | undefined;
+      if (!userHasPassword) {
+        const jwtSecret = process.env.JWT_SECRET || 'secret_key';
+        const setPasswordToken = jwt.sign(
+          { id: user._id.toString(), type: 'set-password' },
+          jwtSecret,
+          { expiresIn: '24h' }
+        );
+        setPasswordUrl = `${baseUrl}/reset-password?token=${setPasswordToken}`;
+      }
+
+      const emailHtml = buildOnboardingEmail({
+        userName: userName || user.name || 'there',
+        kitName: planName,
+        email: userEmail,
+        setPasswordUrl,
+        dashboardUrl,
+        loginUrl,
+        hasPassword: userHasPassword,
+      });
 
       // Send email
-      const emailHtml = buildEmailHtml(planName, userEmail, access.folderLink, orderId, paymentId);
       const emailSent = await sendEmailWithRetry(
         userEmail,
-        `✅ Access Ready: ${planName} - Geeky Frontend`,
+        userHasPassword
+          ? `✅ Kit added — ${planName}`
+          : `🎉 Welcome to Geeky Frontend — Your ${planName} Access is Ready!`,
         emailHtml,
-        `Your course is ready! Access here: ${access.folderLink}`
+        `Access your course at: ${dashboardUrl}`
       );
 
-      // Update order status
+      // Update order + user status
       if (emailSent) {
+        user.lastOnboardingEmailSentAt = new Date();
+        await user.save();
         await updateOrderStatus(orderId, 'email_sent', dbConnected);
       } else {
         await updateOrderStatus(orderId, 'failed', dbConnected, 'Email sending failed');
+        // Non-2xx so Razorpay retries the webhook (with backoff, over the
+        // next several hours) instead of accepting this as delivered — the
+        // 3 in-process retries above can still lose to a transient outage,
+        // and the user has no other path to get this email.
+        return NextResponse.json({ message: 'Email sending failed' }, { status: 500 });
       }
     }
 
