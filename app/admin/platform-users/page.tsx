@@ -39,6 +39,7 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
+import { getPlanDisplayName } from '@/lib/appConstants';
 import { Label } from '@/components/ui/label';
 import { Search, Users, CheckCircle, XCircle, Loader2, AlertCircle, RefreshCw, Key, Trash2, Mail, Edit } from 'lucide-react';
 
@@ -372,7 +373,7 @@ export default function PlatformUsersPage() {
                                                     {user.purchasedKits && user.purchasedKits.length > 0 ? (
                                                         user.purchasedKits.map((kit, i) => (
                                                             <Badge key={i} variant="outline" className="bg-violet-50 text-violet-700 border-violet-200">
-                                                                {kit}
+                                                                {getPlanDisplayName(kit)}
                                                             </Badge>
                                                         ))
                                                     ) : (

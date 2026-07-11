@@ -6,6 +6,7 @@ import Razorpay from 'razorpay';
 import connectToDatabase from '@/lib/db';
 import Order from '@/lib/models/Order';
 import { recordPurchase } from '@/lib/purchase';
+import { getPlanDisplayName } from '@/lib/appConstants';
 
 // ============================================================
 // CONFIGURATION
@@ -244,8 +245,10 @@ export async function POST(request: NextRequest) {
           orderNotes = { ...order.notes, ...orderNotes };
         } catch { }
       }
-      const planName = orderNotes.planName || 'Complete Frontend Interview Preparation Kit';
+      const planName = orderNotes.planName || 'Frontend System Design Kit';
       const userName: string | undefined = orderNotes.userName || undefined;
+      // planName is the access key (stored verbatim); displayName is what the user reads.
+      const displayName = getPlanDisplayName(planName);
       console.log(`📋 Processing: ${userEmail} - ${planName}`);
 
       // Save order to DB
@@ -297,7 +300,7 @@ export async function POST(request: NextRequest) {
 
       const emailHtml = buildOnboardingEmail({
         userName: userName || user.name || 'there',
-        kitName: planName,
+        kitName: displayName,
         email: userEmail,
         setPasswordUrl,
         dashboardUrl,
@@ -309,8 +312,8 @@ export async function POST(request: NextRequest) {
       const emailSent = await sendEmailWithRetry(
         userEmail,
         userHasPassword
-          ? `✅ Kit added — ${planName}`
-          : `🎉 Welcome to Geeky Frontend — Your ${planName} Access is Ready!`,
+          ? `✅ Kit added — ${displayName}`
+          : `🎉 Welcome to Geeky Frontend — Your ${displayName} Access is Ready!`,
         emailHtml,
         `Access your course at: ${dashboardUrl}`
       );

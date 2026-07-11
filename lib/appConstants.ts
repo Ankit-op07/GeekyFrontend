@@ -87,6 +87,27 @@ export function getAllowedSlugs(purchasedKits: string[]): Set<string> {
     return slugs;
 }
 
+/**
+ * Legacy/stored plan name → the kit name currently shown to users.
+ *
+ * purchasedKits, Order.planName and the PLAN_TO_SLUGS keys still hold the
+ * ORIGINAL strings — those are access keys and must never be renamed. Use this
+ * ONLY for display (emails, admin UI, anywhere a human reads a kit name), so a
+ * user who bought under the old name still sees the current one.
+ *
+ * NOTE: distinct from getKitDisplayName(kitId) below — this takes a stored
+ * PLAN NAME (from purchasedKits / Order.planName), not a catalog id.
+ */
+const PLAN_DISPLAY_OVERRIDES: Record<string, string> = {
+    "Complete Frontend Interview Preparation Kit": "Frontend System Design Kit",
+    "Complete Frontend Kit": "Frontend System Design Kit",
+};
+
+export function getPlanDisplayName(planName: string): string {
+    if (!planName) return planName;
+    return PLAN_DISPLAY_OVERRIDES[planName] || planName;
+}
+
 export const KIT_CATALOG: Record<string, KitCatalogItem> = {
     'js-kit': {
         id: 'js-kit',
