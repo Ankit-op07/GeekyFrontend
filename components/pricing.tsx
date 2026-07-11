@@ -1,4 +1,9 @@
 // components/pricing.tsx
+//
+// ⚠️  NOT RENDERED ANYWHERE. The home page (app/page.tsx) uses <ProductsShowcase>
+// and <Features>, not this component. It is kept in sync with the catalog so it
+// doesn't rot, but if you change pricing you must edit product-showcase.tsx and
+// features.tsx — editing this file alone changes nothing a user can see.
 "use client"
 import { useState } from "react"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,7 +17,12 @@ import { Check, Star, Zap, Shield, Clock, Eye, ArrowRight, Sparkles, Crown, Rock
 
 export function Pricing() {
   const { js, complete, experiences, isLoading } = useDevicePricing();
-  const { js_kit_price, js_kit_original_price, discount_percentage, complete_kit_price, complete_kit_original_price } = appConstants();
+  const {
+    js_kit_price, js_kit_original_price, discount_percentage,
+    complete_kit_price, complete_kit_original_price,
+    react_kit_price, react_kit_original_price,
+    all_access_price, all_access_original_price,
+  } = appConstants();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   // Show loading state while detecting device
@@ -21,6 +31,38 @@ export function Pricing() {
   }
 
   const plans = [
+    /* ── THE BUNDLE — listed first so it anchors every other price ───────
+     *  ⚠️  Never describe this as "everything" or "all future kits". Node and
+     *  Experiences are visible as coming-soon and are NOT included. Scope every
+     *  string to the 3 kits it actually grants. PRD-001 §3.1.
+     * ─────────────────────────────────────────────────────────────────── */
+    {
+      kitId: 'complete-access-kit',
+      name: "Complete Kit",
+      fullName: "Complete Kit — All 3 Kits, One Price",
+      description: "JavaScript + React + Frontend System Design. All three kits, one price.",
+      priceINR: all_access_price,
+      originalPriceINR: all_access_original_price,
+      discountPercentage: Math.round(((all_access_original_price - all_access_price) / all_access_original_price) * 100),
+      popular: true,
+      icon: <Crown className="w-6 h-6" />,
+      color: "from-purple-500 to-pink-500",
+      bgGradient: "from-purple-50 via-pink-50/50 to-rose-50",
+      shadowColor: "shadow-purple-200",
+      badge: "BEST VALUE",
+      previewUrl: "/preview",
+      savings: all_access_original_price - all_access_price,
+      features: [
+        `JS Interview Preparation Kit (worth ₹${js_kit_price})`,
+        `React.js Interview Preparation Kit (worth ₹${react_kit_price})`,
+        `Frontend System Design Kit (worth ₹${complete_kit_price})`,
+        `Save ₹${all_access_original_price - all_access_price} vs buying all three separately`,
+        "Anything you've already spent is credited toward this",
+        "Regular updates to all three kits included",
+        "Lifetime access",
+      ],
+      highlights: ["All 3 Kits", `Worth ₹${all_access_original_price}`, "Lifetime"]
+    },
     {
       kitId: 'js-kit',
       name: "JS Interview Kit",
@@ -50,34 +92,64 @@ export function Pricing() {
       highlights: ["500+ Questions", "Quick Notes", "Weekly Updates"]
     },
     {
+      kitId: 'react-kit',
+      name: "React Kit",
+      fullName: "React.js Interview Preparation Kit",
+      description: "57 articles, 15 machine coding challenges, 10 structured modules",
+      priceINR: react_kit_price,
+      originalPriceINR: react_kit_original_price,
+      discountPercentage: discount_percentage,
+      popular: false,
+      icon: <Sparkles className="w-6 h-6" />,
+      color: "from-blue-400 to-cyan-500",
+      bgGradient: "from-blue-50 via-cyan-50/50 to-sky-50",
+      shadowColor: "shadow-blue-200",
+      previewUrl: "/preview",
+      badge: "BESTSELLER",
+      savings: react_kit_original_price - react_kit_price,
+      features: [
+        "57 in-depth articles across 10 modules",
+        "15 machine coding challenges with solutions",
+        "60+ output-based trick questions",
+        "Scripted interview answers for every concept",
+        "Design patterns, testing & performance",
+        "Scenario & behavioral round preparation",
+        "Lifetime updates included",
+        "Instant access after payment",
+      ],
+      highlights: ["57 Articles", "15 Challenges", "10 Modules"]
+    },
+    /* Renamed 2026-07 from "Complete Frontend Interview Preparation Kit".
+     * The description MUST lead with the full contents — the name promises
+     * system design, but system design is ~42 of 570+ items. PRD-001 §3.1a. */
+    {
       kitId: 'complete-kit',
-      name: "Complete Frontend Kit",
-      fullName: "Complete Frontend Interview Preparation Kit",
-      description: "25 chapters, 570+ items, and 127,000+ words from HTML basics to system design",
+      name: "Frontend System Design Kit",
+      fullName: "Frontend System Design Kit",
+      description: "42 system design walkthroughs — plus 180 DSA problems, 60 machine coding challenges and 91 articles",
       priceINR: complete_kit_price,
       originalPriceINR: complete_kit_original_price,
       discountPercentage: discount_percentage,
       previewUrl: "/preview",
-      popular: true,
-      icon: <Crown className="w-6 h-6" />,
-      color: "from-purple-500 to-pink-500",
-      bgGradient: "from-purple-50 via-pink-50/50 to-rose-50",
-      shadowColor: "shadow-purple-200",
-      badge: "BEST VALUE",
+      popular: false,
+      icon: <TrendingUp className="w-6 h-6" />,
+      color: "from-violet-500 to-indigo-600",
+      bgGradient: "from-violet-50 via-indigo-50/50 to-purple-50",
+      shadowColor: "shadow-violet-200",
+      badge: "ADVANCED",
       savings: complete_kit_original_price - complete_kit_price,
       features: [
+        "42 frontend system design walkthroughs (RADIO framework)",
         "25 structured chapters covering every frontend interview topic",
         "570+ questions, problems, and timed practice items",
-        "91 in-depth articles with code examples",
         "180 DSA problems with JavaScript solutions",
-        "42 frontend system design walkthroughs",
         "60 machine coding problems with edge cases",
         "35 JavaScript coding challenges from SDE1 to SDE3",
+        "91 in-depth articles with code examples",
         "30-day plans, salary scripts, and quick revision sheets",
-        "Regular updates included",
         "Lifetime access",
       ],
-      highlights: ["25 Chapters", "570+ Items", "127k+ Words"]
+      highlights: ["42 System Design", "180 DSA", "570+ Items"]
     },
     {
       kitId: 'experiences-kit',

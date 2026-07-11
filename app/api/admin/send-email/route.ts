@@ -312,7 +312,7 @@ export async function POST(request: NextRequest) {
                 const demoLink = `${baseUrl}/reset-password?token=${demoToken}`;
                 const html = buildPlatformOnboardingEmail(
                     testEmail,
-                    'Complete Frontend Interview Preparation Kit',
+                    'Frontend System Design Kit',
                     demoLink,
                     message || undefined
                 );

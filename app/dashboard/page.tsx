@@ -11,7 +11,7 @@ import {
     BarChart2, Flame, RefreshCw, ShoppingBag, Building2, ArrowRight,
     Trophy, Medal, Bot, Mic, MicOff, PlayCircle, RotateCcw,
     MessageSquare, Brain, Timer, Send, Sparkles, Video,
-    ClipboardCheck, FileText, Eye, ShoppingCart
+    ClipboardCheck, FileText, Eye, ShoppingCart, Shield
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -23,9 +23,12 @@ interface SessionUser {
     name: string
     profilePicture?: string
     purchasedKits?: string[]
+    isAdmin?: boolean
 }
 
 /** DB Kit shape from /api/learn/kits */
+import { BundleUpsell } from "@/components/bundle-upsell"
+
 interface DbKit {
     _id: string;
     name: string;
@@ -48,7 +51,8 @@ function getCheckoutPathForKit(kit: DbKit) {
     if (label.includes("complete")) return "/checkout/complete"
     if (label.includes("react")) return "/checkout/react"
     if (label.includes("javascript") || label.includes("js")) return "/checkout/javascript"
-    if (label.includes("placement")) return "/checkout/placement"
+    // Placement SKU retired — existing buyers keep access; others go to /pricing.
+    if (label.includes("placement")) return "/#pricing"
     return "/#products"
 }
 
@@ -283,6 +287,18 @@ export default function DashboardPage() {
                             </button>
                         )
                     })}
+
+                    {/* Admin — only rendered for the admin account (server-verified via /admin guard). */}
+                    {user.isAdmin && (
+                        <Link
+                            href="/admin/platform-users"
+                            onClick={() => setSidebarOpen(false)}
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-amber-300/90 hover:bg-amber-500/10 hover:text-amber-200 border border-amber-500/20"
+                        >
+                            <Shield className="w-4 h-4 flex-shrink-0" />
+                            Admin
+                        </Link>
+                    )}
                 </nav>
 
                 {/* Streak card */}
@@ -454,6 +470,9 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                     )
                 })}
             </div>
+
+            {/* Cross-sell: renders nothing if they already own the bundle. */}
+            <BundleUpsell tone="dark" />
 
             {/* ── Active Kits ── */}
             {ownedKits.length > 0 && (
@@ -1628,6 +1647,9 @@ function AvatarBubble({ row }: { row: LeaderboardRow }) {
 function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
     const [allKits, setAllKits] = useState<DbKit[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    // Name of a kit the user has finished, if any — drives the upsell eyebrow.
+    // Finishing a kit is the single highest-intent moment we have. PRD-001 §3.3.
+    const [finishedKitName, setFinishedKitName] = useState<string | null>(null);
 
     useEffect(() => {
         fetch("/api/learn/kits")
@@ -1636,6 +1658,28 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
             .catch(console.error)
             .finally(() => setIsLoading(false));
     }, []);
+
+    // Check the owned kits for a 100% completion.
+    useEffect(() => {
+        const owned = allKits.filter(k => k.hasAccess);
+        if (owned.length === 0) return;
+        let cancelled = false;
+
+        Promise.all(
+            owned.map(k =>
+                fetch(`/api/user/kit-progress?kitSlug=${encodeURIComponent(k.slug)}`)
+                    .then(r => (r.ok ? r.json() : null))
+                    .then(p => (p && p.progressPercent >= 100 ? k.name : null))
+                    .catch(() => null)
+            )
+        ).then(results => {
+            if (cancelled) return;
+            const done = results.find(Boolean);
+            if (done) setFinishedKitName(done as string);
+        });
+
+        return () => { cancelled = true; };
+    }, [allKits]);
 
     if (isLoading) {
         return (
@@ -1652,6 +1696,18 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
 
     return (
         <div className="space-y-8 max-w-6xl">
+            {/* Cross-sell at peak intent: renders nothing if they already own the bundle. */}
+            <BundleUpsell
+                tone="dark"
+                eyebrow={
+                    finishedKitName
+                        ? `You finished ${finishedKitName}. Here's the natural next step.`
+                        : lockedKits.length > 0
+                            ? "You're missing some kits."
+                            : undefined
+                }
+            />
+
             <section className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-950/60 via-slate-900 to-slate-950 p-6">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.22),transparent_36%)]" />
                 <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">

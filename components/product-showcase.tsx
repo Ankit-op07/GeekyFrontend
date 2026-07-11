@@ -3,10 +3,10 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowRight, Zap, TrendingUp, Clock, Flame, Code2, Atom } from "lucide-react"
+import { ArrowRight, Zap, TrendingUp, Clock, Flame, Code2, Atom, Layers, Sparkles } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { appConstants } from "@/lib/appConstants"
-const { js_kit_price, react_kit_price, complete_kit_price, js_kit_original_price, react_kit_original_price, complete_kit_original_price } = appConstants()
+const { js_kit_price, react_kit_price, complete_kit_price, js_kit_original_price, react_kit_original_price, complete_kit_original_price, all_access_price, all_access_original_price } = appConstants()
 export interface Product {
   id: string
   title: string
@@ -19,10 +19,14 @@ export interface Product {
   bgGradient: string
   iconBg: string
   popular?: boolean
+  /** The bundle. Gets the BEST VALUE treatment and a wider card. */
+  featured?: boolean
   comingSoon?: boolean
+  /** Omitted for new SKUs — we don't invent enrolment numbers. */
   studentsCount?: number
   discount: number
   tag: string
+  ctaLabel?: string
 }
 
 const products: Product[] = [
@@ -65,10 +69,13 @@ const products: Product[] = [
     discount: 90,
     tag: "Bestseller"
   },
+  /* Renamed 2026-07. `id` stays "complete" so /checkout/complete and any live
+   * ads or backlinks keep resolving. Only the display name changed — the kit's
+   * contents and access are exactly as before. PRD-001 §3.1a. */
   {
     id: "complete",
-    title: "Complete Frontend Interview Preparation Kit",
-    shortTitle: "Complete Frontend Interview Kit",
+    title: "Frontend System Design Kit",
+    shortTitle: "Frontend System Design Kit",
     price: {
       current: complete_kit_price,
       original: complete_kit_original_price
@@ -82,7 +89,33 @@ const products: Product[] = [
     iconBg: "bg-gradient-to-br from-purple-500 to-pink-500",
     studentsCount: 6812,
     discount: 90,
-    tag: "25 Chapters • 570+ Items"
+    tag: "42 System Design • 180 DSA"
+  },
+  /* ── THE BUNDLE ────────────────────────────────────────────────────────
+   *  Grants JS + React + Frontend System Design. Does NOT grant the
+   *  coming-soon kits (Node, Experiences) — never describe it as
+   *  "everything" or "all future kits". PRD-001 §3.1.
+   *  No studentsCount: this SKU is new. We don't fabricate enrolment numbers.
+   * ─────────────────────────────────────────────────────────────────────── */
+  {
+    id: "all-access",
+    title: "Complete Kit — All 3 Kits, One Price",
+    shortTitle: "Complete Kit — All 3 Kits",
+    price: {
+      current: all_access_price,
+      original: all_access_original_price
+    },
+    icon: (
+      <div className="w-14 h-14 bg-gradient-to-br from-purple-500 via-fuchsia-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
+        <Layers className="w-8 h-8 text-white drop-shadow" />
+      </div>
+    ),
+    bgGradient: "from-purple-50 via-white to-pink-50",
+    iconBg: "bg-gradient-to-br from-purple-600 to-pink-600",
+    featured: true,
+    discount: Math.round(((all_access_original_price - all_access_price) / all_access_original_price) * 100),
+    tag: "JS + React + System Design",
+    ctaLabel: "Get all 3 kits"
   },
   // Node.js kit is intentionally hidden from the home page for now.
 ]
@@ -104,7 +137,7 @@ export function ProductsShowcase() {
           <div className="inline-flex items-center gap-2 mb-4">
             <Badge className="bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 px-4 py-1.5 text-xs font-bold shadow-lg animate-pulse">
               <Flame className="w-4 h-4 mr-1.5" />
-              LIMITED TIME: 90% OFF
+              LIMITED TIME: UP TO 90% OFF
             </Badge>
           </div>
 
@@ -120,7 +153,7 @@ export function ProductsShowcase() {
         </div>
 
         {/* Premium grid with better spacing */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 max-w-6xl mx-auto">
           {products.map((product) => (
             <div
               key={product.id}
@@ -136,6 +169,7 @@ export function ProductsShowcase() {
                   : 'hover:-translate-y-1'
                 }
                 ${product.comingSoon ? 'opacity-85' : ''}
+                ${product.featured ? 'ring-2 ring-purple-500 ring-offset-2' : ''}
               `}
                 style={{
                   boxShadow: hoveredCard === product.id
@@ -145,6 +179,16 @@ export function ProductsShowcase() {
               >
                 {/* Subtle gradient background */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${product.bgGradient} opacity-40 rounded-2xl`} />
+
+                {/* Bundle badge */}
+                {product.featured && (
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
+                    <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 text-[10px] px-3 py-1 font-bold shadow-md whitespace-nowrap">
+                      <Sparkles className="w-3 h-3 mr-1" />
+                      BEST VALUE
+                    </Badge>
+                  </div>
+                )}
 
                 {/* Popular badge - Elegant placement */}
                 {product.popular && (
@@ -184,6 +228,15 @@ export function ProductsShowcase() {
                   <h3 className="font-bold text-xs sm:text-sm text-center text-gray-900 leading-tight mb-2 min-h-[2rem]">
                     {product.shortTitle}
                   </h3>
+
+                  {/* Bundle: show the real saving instead of an invented enrolment count */}
+                  {product.featured && (
+                    <div className="flex items-center justify-center mb-3">
+                      <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 border border-purple-100 rounded-full px-2 py-1">
+                        Save ₹{product.price.original - product.price.current} vs buying separately
+                      </span>
+                    </div>
+                  )}
 
                   {/* Students enrolled */}
                   {product.studentsCount && !product.comingSoon && (
@@ -237,7 +290,7 @@ export function ProductsShowcase() {
                         `}
                         disabled={product.comingSoon}
                       >
-                        {product.comingSoon ? 'Coming Soon' : 'Get Access'}
+                        {product.comingSoon ? 'Coming Soon' : (product.ctaLabel ?? 'Get Access')}
                         {!product.comingSoon && <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform" />}
                       </button>
                     </Link>

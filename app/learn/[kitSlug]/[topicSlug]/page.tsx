@@ -228,7 +228,8 @@ export default function TopicPage() {
       react: '/checkout/react',
       javascript: '/checkout/javascript',
       js: '/checkout/javascript',
-      placement: '/checkout/placement',
+      // Placement SKU retired — non-owners are sent to /pricing, not a dead checkout.
+      placement: '/#pricing',
     };
     const checkoutPath = Object.entries(checkoutMap).find(([k]) => kitSlug.toLowerCase().includes(k))?.[1] ?? '/#products';
 

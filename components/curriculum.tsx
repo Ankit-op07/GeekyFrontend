@@ -85,7 +85,7 @@ const kitsCurriculum: KitCurriculum[] = [
   },
   {
     id: "complete",
-    title: "Complete Frontend Kit",
+    title: "Frontend System Design Kit",
     subtitle: "25 Chapters • 570+ Items",
     icon: (
       <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-md">

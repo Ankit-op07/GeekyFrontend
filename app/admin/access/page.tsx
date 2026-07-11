@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 const courses = [
     'JS Interview Preparation Kit',
-    'Complete Frontend Interview Preparation Kit',
+    'Frontend System Design Kit',
     'Frontend Interview Experiences Kit',
     'Reactjs Interview Preparation Kit',
     'Node.js Interview Preparation Kit',

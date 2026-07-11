@@ -32,7 +32,7 @@ export default function TermsPage() {
             </p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>JavaScript Interview Preparation Kit</li>
-              <li>Complete Frontend Interview Preparation Kit</li>
+              <li>Frontend System Design Kit</li>
               <li>Frontend Interview Experiences Kit</li>
               <li>Related educational materials and resources</li>
             </ul>

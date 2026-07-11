@@ -6,6 +6,7 @@ import Order from '@/lib/models/Order';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import { requireAdmin } from '@/lib/admin-auth';
 import { escapeRegex } from '@/lib/escape-regex';
+import { getPlanDisplayName } from '@/lib/appConstants';
 
 // ─────────────────────────────────────────────
 // Email transporter
@@ -42,7 +43,7 @@ function buildKitOnboardingEmail({
       : kitName.toLowerCase().includes('node') ? '🟢'
         : kitName.toLowerCase().includes('dsa') || kitName.toLowerCase().includes('company') ? '🧮'
           : kitName.toLowerCase().includes('placement') ? '🎓'
-            : kitName.toLowerCase().includes('complete') ? '🏆'
+            : kitName.toLowerCase().includes('complete') || kitName.toLowerCase().includes('system design') ? '🏆'
               : '📚';
 
   return `<!DOCTYPE html>
@@ -252,11 +253,13 @@ async function processOneEmail({
     );
     const setPasswordLink = `${baseUrl}/reset-password?token=${token}`;
 
-    // 3️⃣ Send personalised onboarding email
+    // 3️⃣ Send personalised onboarding email — kitName is the stored access key;
+    //     show the current display name to the user.
+    const displayKitName = getPlanDisplayName(kitName);
     const html = buildKitOnboardingEmail({
       recipientEmail: cleanEmail,
       recipientName: user.name || nameFromEmail,
-      kitName,
+      kitName: displayKitName,
       setPasswordLink,
       personalNote,
     });
@@ -265,7 +268,7 @@ async function processOneEmail({
     await transporter.sendMail({
       from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
       to: cleanEmail,
-      subject: `${prefix}🎉 Welcome to Geeky Frontend — Your ${kitName} Access is Ready!`,
+      subject: `${prefix}🎉 Welcome to Geeky Frontend — Your ${displayKitName} Access is Ready!`,
       html,
     });
 

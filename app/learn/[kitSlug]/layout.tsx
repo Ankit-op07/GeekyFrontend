@@ -29,7 +29,8 @@ function getCheckoutPathForKit(kitSlug: string): string {
     if (slug.includes('complete')) return '/checkout/complete';
     if (slug.includes('react')) return '/checkout/react';
     if (slug.includes('javascript') || slug.includes('js')) return '/checkout/javascript';
-    if (slug.includes('placement')) return '/checkout/placement';
+    // Placement SKU retired — see lib/appConstants.ts. Existing buyers keep access.
+    if (slug.includes('placement')) return '/#pricing';
     return '/#products';
 }
 

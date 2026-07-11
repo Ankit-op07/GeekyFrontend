@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { appConstants } from "@/lib/appConstants"
 
-const { js_kit_price, react_kit_price, complete_kit_price } = appConstants()
+const { js_kit_price, react_kit_price, complete_kit_price, all_access_price, all_access_original_price } = appConstants()
 
 interface Kit {
   id: string
@@ -75,11 +75,37 @@ const kits: Kit[] = [
       { icon: <Rocket className="w-4 h-4" />, text: "System Design Questions" }
     ]
   },
+  /* ── THE BUNDLE ────────────────────────────────────────────────────────
+   *  JS + React + Frontend System Design. Does NOT include the coming-soon
+   *  kits — never call it "everything" or "all future kits". PRD-001 §3.1.
+   * ─────────────────────────────────────────────────────────────────────── */
+  {
+    id: "all-access",
+    title: "Complete Kit — All 3",
+    subtitle: `All 3 kits • Save ₹${all_access_original_price - all_access_price}`,
+    description: "JavaScript + React + Frontend System Design. Every kit we have today, one price, lifetime access. Anything you've already bought is credited toward it.",
+    icon: (
+      <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+        <Rocket className="w-7 h-7 text-white" />
+      </div>
+    ),
+    color: "text-purple-600",
+    bgGradient: "from-purple-50 to-pink-50",
+    borderColor: "border-purple-400 hover:border-purple-600",
+    price: all_access_price,
+    popular: true,
+    bestValue: true,
+    highlights: [
+      { icon: <BookOpen className="w-4 h-4" />, text: `JS Interview Kit (₹${js_kit_price})` },
+      { icon: <BookOpen className="w-4 h-4" />, text: `React Interview Kit (₹${react_kit_price})` },
+      { icon: <BookOpen className="w-4 h-4" />, text: `Frontend System Design Kit (₹${complete_kit_price})` },
+    ],
+  },
   {
     id: "complete",
-    title: "Complete Frontend",
-    subtitle: "25 Chapters • 127k+ Words",
-    description: "A complete interview system for 1-6 years frontend roles: theory, DSA, machine coding, system design, and revision.",
+    title: "Frontend System Design",
+    subtitle: "42 System Design • 180 DSA • 570+ Items",
+    description: "42 frontend system design walkthroughs (RADIO) — plus 180 DSA problems, 60 machine coding challenges, 35 JS challenges and 91 in-depth articles.",
     icon: (
       <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
         <Rocket className="w-7 h-7 text-white" />
@@ -89,8 +115,8 @@ const kits: Kit[] = [
     bgGradient: "from-purple-50 to-pink-50",
     borderColor: "border-purple-300 hover:border-purple-500",
     price: complete_kit_price,
-    popular: true,
-    bestValue: true,
+    popular: false,
+    bestValue: false,
     highlights: [
       { icon: <BookOpen className="w-4 h-4" />, text: "570+ Questions & Problems" },
       { icon: <Target className="w-4 h-4" />, text: "180 DSA Problems in JS" },

@@ -7,6 +7,7 @@ import {
     Sparkles, ShieldCheck, AlertTriangle, Plus, X, Trash2,
     Lock, Unlock, RotateCcw,
 } from 'lucide-react';
+import { getPlanDisplayName } from '@/lib/appConstants';
 
 /* ─── Types ──────────────────────────────────────────────────────── */
 interface KitStat {
@@ -39,7 +40,7 @@ const KIT_OPTIONS = [
     { label: '⚛️ React.js Interview Preparation Kit', value: 'Reactjs Interview Preparation Kit' },
     { label: '🟨 JS Interview Preparation Kit', value: 'JS Interview Preparation Kit' },
     { label: '🟨 JavaScript Interview Mastery Kit', value: 'JavaScript Interview Mastery Kit' },
-    { label: '🏆 Complete Frontend Interview Preparation Kit', value: 'Complete Frontend Interview Preparation Kit' },
+    { label: '🏆 Frontend System Design Kit', value: 'Frontend System Design Kit' },
     { label: '💼 Frontend Interview Experiences Kit', value: 'Frontend Interview Experiences Kit' },
     { label: '🟢 Node.js Interview Preparation Kit', value: 'Node.js Interview Preparation Kit' },
     { label: '🟢 Node.js Backend Mastery Kit', value: 'Node.js Backend Mastery Kit' },
@@ -56,7 +57,7 @@ const kitEmoji = (name: string) =>
             : name.toLowerCase().includes('js') || name.toLowerCase().includes('javascript') ? '🟨'
                 : name.toLowerCase().includes('dsa') || name.toLowerCase().includes('company') ? '🧮'
                     : name.toLowerCase().includes('placement') ? '🎓'
-                        : name.toLowerCase().includes('complete') ? '🏆'
+                        : name.toLowerCase().includes('complete') || name.toLowerCase().includes('system design') ? '🏆'
                             : name.toLowerCase().includes('experience') ? '💼'
                                 : '📚';
 
@@ -355,7 +356,7 @@ export default function KitOnboardingPage() {
                                             }`}
                                     >
                                         <div className="text-2xl mb-2">{kitEmoji(k.kitName)}</div>
-                                        <p className="text-white text-sm font-semibold leading-snug mb-2 line-clamp-2">{k.kitName}</p>
+                                        <p className="text-white text-sm font-semibold leading-snug mb-2 line-clamp-2">{getPlanDisplayName(k.kitName)}</p>
                                         <div className="flex items-center gap-3 text-xs">
                                             <span className="text-violet-300 bg-violet-500/15 px-2 py-0.5 rounded-full font-medium">
                                                 {k.uniqueEmails} buyers
@@ -383,7 +384,7 @@ export default function KitOnboardingPage() {
                     {selectedKit && (
                         <div className="mt-3 flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 max-w-lg">
                             <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                            Selected: <strong>{selectedKit}</strong>
+                            Selected: <strong>{getPlanDisplayName(selectedKit)}</strong>
                         </div>
                     )}
                 </section>

@@ -27,7 +27,8 @@ function getCheckoutPathForKit(kit: Kit): string {
     if (label.includes('complete')) return '/checkout/complete';
     if (label.includes('react')) return '/checkout/react';
     if (label.includes('javascript') || label.includes('js')) return '/checkout/javascript';
-    if (label.includes('placement')) return '/checkout/placement';
+    // Placement SKU retired — existing buyers keep access; others go to /pricing.
+    if (label.includes('placement')) return '/#pricing';
     return '/#products';
 }
 

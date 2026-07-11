@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import connectToDatabase from '@/lib/db';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import { requireAdmin } from '@/lib/admin-auth';
+import { getPlanDisplayName } from '@/lib/appConstants';
 
 // Email transporter
 const transporter = nodemailer.createTransport({
@@ -143,13 +144,14 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const setPasswordLink = `${baseUrl}/reset-password?token=${setPasswordToken}`;
 
-    // 3. Send onboarding email
-    const emailHtml = buildOnboardingEmail(course, email, setPasswordLink);
+    // 3. Send onboarding email — `course` is the stored access key; show the current name.
+    const courseDisplay = getPlanDisplayName(course);
+    const emailHtml = buildOnboardingEmail(courseDisplay, email, setPasswordLink);
 
     await transporter.sendMail({
       from: `"Geeky Frontend" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: `🎉 Welcome to Geeky Frontend — Your ${course} Access is Ready!`,
+      subject: `🎉 Welcome to Geeky Frontend — Your ${courseDisplay} Access is Ready!`,
       html: emailHtml,
       text: `Welcome to Geeky Frontend! Your account has been created. Set your password here: ${setPasswordLink} — Access your course dashboard at ${baseUrl}/dashboard`,
     });
