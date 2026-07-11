@@ -176,7 +176,7 @@ export function SiteHeader() {
                 <Button size="sm" variant="outline"
                   className="hidden sm:flex items-center gap-2 border-violet-200 text-violet-700 hover:bg-violet-50 h-10"
                   asChild>
-                  <Link href={`/login?redirect=${encodeURIComponent(pathname || "/dashboard")}`}>
+                  <Link href="/login">
                     <User className="w-4 h-4" />
                     Login
                   </Link>
