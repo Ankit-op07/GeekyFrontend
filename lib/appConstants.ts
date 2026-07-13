@@ -66,11 +66,11 @@ export const PLAN_TO_SLUGS: Record<string, string[]> = {
 /** The bundle SKU id — the only kit that grants multiple slugs. */
 export const BUNDLE_KIT_ID = 'complete-access-kit';
 
-/**
- * Minimum chargeable amount on an upgrade, in ₹.
- * Razorpay rejects ₹0 orders, so a fully-credited user still pays this floor.
+/*
+ * The old UPGRADE_FLOOR (₹49) has been removed. Upgrade pricing now lives in
+ * lib/pricing-math.ts as MIN_TOPUP (₹149) — a credit CAP, not just a payment
+ * floor. See lib/pricing.ts.
  */
-export const UPGRADE_FLOOR = 49;
 
 /**
  * Given a user's purchasedKits array, return the set of slug substrings
@@ -273,3 +273,22 @@ export function getPurchasableKits(): KitCatalogItem[] {
  * Deliberately excludes comingSoon kits and the retired placement kit.
  */
 export const BUNDLE_SLUGS = PLAN_TO_SLUGS['Complete Kit All Access Bundle'];
+
+/**
+ * Plan names whose ENTIRE grant is contained in the bundle — i.e. the single
+ * live kits the bundle is built from (JS, React, Frontend System Design, and
+ * their legacy aliases). Only spend on THESE plans is credited toward a bundle
+ * upgrade.
+ *
+ * Deliberately EXCLUDES: the bundle itself, Node/Experiences/Placement (not in
+ * the bundle), and any company kit. Derived from PLAN_TO_SLUGS so a newly-added
+ * alias for a component kit is picked up automatically.
+ */
+export const BUNDLE_COMPONENT_PLANS: string[] = Object.entries(PLAN_TO_SLUGS)
+    .filter(
+        ([plan, slugs]) =>
+            plan !== 'Complete Kit All Access Bundle' &&
+            slugs.length > 0 &&
+            slugs.every((slug) => BUNDLE_SLUGS.includes(slug)),
+    )
+    .map(([plan]) => plan);
