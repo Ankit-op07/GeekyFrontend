@@ -4,23 +4,25 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Light palette — every foreground/background pair passes WCAG AA (4.5:1)
+     for body text. See PRD-006 §4.1. */
   --background: #ffffff;
-  --foreground: #374151;
+  --foreground: #111827; /* gray-900 — strong body text, 17.7:1 on bg */
 
-  --card: #fefefe;
-  --card-foreground: #374151;
+  --card: #ffffff;
+  --card-foreground: #111827;
 
   --popover: #ffffff;
-  --popover-foreground: #374151;
+  --popover-foreground: #111827;
 
   --primary: #164e63; /* cyan-800 */
   --primary-foreground: #ffffff;
 
   --secondary: #f59e0b; /* amber-500 (accent) */
-  --secondary-foreground: #374151;
+  --secondary-foreground: #111827;
 
-  --muted: #fefefe;
-  --muted-foreground: #374151;
+  --muted: #f3f4f6; /* gray-100 — a real muted surface, distinct from bg */
+  --muted-foreground: #6b7280; /* gray-500 — real secondary text, 4.9:1 on bg */
 
   --accent: #f59e0b;
   --accent-foreground: #164e63;
@@ -48,18 +50,58 @@
   --sidebar-accent-foreground: #374151;
   --sidebar-border: #e5e7eb;
   --sidebar-ring: rgba(22, 78, 99, 0.3);
+
+  /* Elevated glass surfaces / hairlines (LIGHT) — theme-flipping overlays
+     that replace the dashboard's bg-white/5, border-white/5 glass layers. */
+  --overlay: rgba(15, 23, 42, 0.04);
+  --overlay-strong: rgba(15, 23, 42, 0.07);
+  --hairline: rgba(15, 23, 42, 0.09);
+
+  /* ── Learn reader tokens (LIGHT) ──────────────────────────────
+     The reader keeps its own violet identity, distinct from the app's
+     cyan brand tokens. Every text/bg pair is WCAG AA (≥4.5:1). See
+     PRD-006 §4.1. Code blocks are theme-aware (light surface + light
+     highlight.js theme in light mode — see hljs overrides below). */
+  --reader-bg: #f7f7fa; /* page canvas */
+  --reader-surface: #ffffff; /* sidebar, cards, panels */
+  --reader-surface-hover: rgba(15, 23, 42, 0.045);
+  --reader-code-bg: #f4f4f8; /* code block surface */
+
+  --reader-text: #1e293b; /* slate-800 — body prose, 11:1 on canvas */
+  --reader-heading: #0f172a; /* slate-900 — h1/h2/strong */
+  --reader-heading-alt: #1e293b; /* h3/h4/th */
+  --reader-muted: #475569; /* slate-600 — meta/em, 7:1 */
+  --reader-faint: #5d6b82; /* tertiary labels, 5:1 */
+
+  --reader-border: rgba(15, 23, 42, 0.1);
+  --reader-border-faint: rgba(15, 23, 42, 0.06);
+
+  --reader-accent: #7c3aed; /* violet-600 — links, 5.7:1 */
+  --reader-accent-hover: #6d28d9; /* violet-700 */
+  --reader-accent-bullet: #7c3aed;
+  --reader-accent-soft: rgba(124, 58, 237, 0.1);
+  --reader-accent-soft-border: rgba(124, 58, 237, 0.2);
+
+  --reader-amber: #b45309; /* amber-700 — 5:1 on white */
+  --reader-amber-soft: rgba(180, 83, 9, 0.1);
+  --reader-amber-soft-border: rgba(180, 83, 9, 0.25);
+
+  --reader-success: #15803d; /* green-700 — 5:1 on white */
+  --reader-success-soft: rgba(21, 128, 61, 0.1);
+  --reader-success-soft-border: rgba(21, 128, 61, 0.25);
 }
 
 .dark {
-  /* Provide sensible dark tokens aligned to brief */
-  --background: #111827; /* gray-900 */
-  --foreground: #fefefe;
+  /* Dark palette — slate scale with a genuine surface hierarchy
+     (background < card/muted) and AA-passing muted text. PRD-006 §4.1. */
+  --background: #0f172a; /* slate-900 */
+  --foreground: #f8fafc; /* slate-50 */
 
-  --card: #0f172a; /* slate-900 for cards */
-  --card-foreground: #fefefe;
+  --card: #1e293b; /* slate-800 — distinct from background */
+  --card-foreground: #f8fafc;
 
-  --popover: #111827;
-  --popover-foreground: #fefefe;
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
 
   --primary: #22a0b6; /* lighter cyan for dark mode emphasis */
   --primary-foreground: #0b1220;
@@ -67,8 +109,8 @@
   --secondary: #f59e0b;
   --secondary-foreground: #111827;
 
-  --muted: #1f2937; /* gray-800 */
-  --muted-foreground: #e5e7eb;
+  --muted: #1e293b; /* slate-800 */
+  --muted-foreground: #94a3b8; /* slate-400 — actually muted, 7:1 on bg */
 
   --accent: #f59e0b;
   --accent-foreground: #0b1220;
@@ -76,8 +118,8 @@
   --destructive: #ef4444;
   --destructive-foreground: #111827;
 
-  --border: #1f2937;
-  --input: #111827;
+  --border: #334155; /* slate-700 — visible on dark surfaces */
+  --input: #1e293b;
   --ring: rgba(34, 160, 182, 0.35);
 
   --chart-1: #22a0b6;
@@ -94,6 +136,41 @@
   --sidebar-accent-foreground: #0b1220;
   --sidebar-border: #1f2937;
   --sidebar-ring: rgba(34, 160, 182, 0.35);
+
+  /* Elevated glass surfaces / hairlines (DARK) — preserve the dashboard's
+     translucent white glass look. */
+  --overlay: rgba(255, 255, 255, 0.05);
+  --overlay-strong: rgba(255, 255, 255, 0.1);
+  --hairline: rgba(255, 255, 255, 0.08);
+
+  /* ── Learn reader tokens (DARK) — the reader's original identity ── */
+  --reader-bg: #0a0a0f; /* near-black canvas */
+  --reader-surface: #0d0d14; /* sidebar, cards, panels */
+  --reader-surface-hover: rgba(255, 255, 255, 0.05);
+  --reader-code-bg: #0d0d1a; /* code block surface */
+
+  --reader-text: #cbd5e1; /* slate-300 — body prose */
+  --reader-heading: #ffffff; /* h1/h2/strong */
+  --reader-heading-alt: #e2e8f0; /* h3/h4/th */
+  --reader-muted: #94a3b8; /* slate-400 — meta/em, 7:1 */
+  --reader-faint: #64748b; /* slate-500 — tertiary labels */
+
+  --reader-border: rgba(255, 255, 255, 0.08);
+  --reader-border-faint: rgba(255, 255, 255, 0.04);
+
+  --reader-accent: #a78bfa; /* violet-400 — links, 7:1 */
+  --reader-accent-hover: #c4b5fd; /* violet-300 */
+  --reader-accent-bullet: #8b5cf6; /* violet-500 */
+  --reader-accent-soft: rgba(139, 92, 246, 0.14);
+  --reader-accent-soft-border: rgba(139, 92, 246, 0.2);
+
+  --reader-amber: #fbbf24; /* amber-400 */
+  --reader-amber-soft: rgba(245, 158, 11, 0.1);
+  --reader-amber-soft-border: rgba(245, 158, 11, 0.2);
+
+  --reader-success: #4ade80; /* green-400 */
+  --reader-success-soft: rgba(34, 197, 94, 0.15);
+  --reader-success-soft-border: rgba(34, 197, 94, 0.2);
 }
 
 @theme inline {
@@ -138,6 +215,35 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Glass overlay utilities — bg-overlay, bg-overlay-strong, border-hairline */
+  --color-overlay: var(--overlay);
+  --color-overlay-strong: var(--overlay-strong);
+  --color-hairline: var(--hairline);
+
+  /* Learn reader utilities — bg-reader-*, text-reader-*, border-reader-* */
+  --color-reader-bg: var(--reader-bg);
+  --color-reader-surface: var(--reader-surface);
+  --color-reader-surface-hover: var(--reader-surface-hover);
+  --color-reader-code: var(--reader-code-bg);
+  --color-reader-text: var(--reader-text);
+  --color-reader-heading: var(--reader-heading);
+  --color-reader-heading-alt: var(--reader-heading-alt);
+  --color-reader-muted: var(--reader-muted);
+  --color-reader-faint: var(--reader-faint);
+  --color-reader-border: var(--reader-border);
+  --color-reader-border-faint: var(--reader-border-faint);
+  --color-reader-accent: var(--reader-accent);
+  --color-reader-accent-hover: var(--reader-accent-hover);
+  --color-reader-accent-bullet: var(--reader-accent-bullet);
+  --color-reader-accent-soft: var(--reader-accent-soft);
+  --color-reader-accent-soft-border: var(--reader-accent-soft-border);
+  --color-reader-amber: var(--reader-amber);
+  --color-reader-amber-soft: var(--reader-amber-soft);
+  --color-reader-amber-soft-border: var(--reader-amber-soft-border);
+  --color-reader-success: var(--reader-success);
+  --color-reader-success-soft: var(--reader-success-soft);
+  --color-reader-success-soft-border: var(--reader-success-soft-border);
 }
 
 @layer base {
@@ -178,4 +284,74 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ── Theme-aware syntax highlighting ──────────────────────────────
+   The Learn reader imports `highlight.js/styles/atom-one-dark.css`
+   (dark by default). In LIGHT mode we override the token colours with
+   the atom-one-light palette. `:root:not(.dark) .hljs-*` (specificity
+   0,3,0) outranks the imported theme's `.hljs-*` (0,1,0) regardless of
+   load order, so no import juggling is needed. */
+:root:not(.dark) .hljs {
+  color: #383a42;
+  background: transparent;
+}
+:root:not(.dark) .hljs-comment,
+:root:not(.dark) .hljs-quote {
+  color: #a0a1a7;
+  font-style: italic;
+}
+:root:not(.dark) .hljs-doctag,
+:root:not(.dark) .hljs-keyword,
+:root:not(.dark) .hljs-formula {
+  color: #a626a4;
+}
+:root:not(.dark) .hljs-section,
+:root:not(.dark) .hljs-name,
+:root:not(.dark) .hljs-selector-tag,
+:root:not(.dark) .hljs-deletion,
+:root:not(.dark) .hljs-subst {
+  color: #e45649;
+}
+:root:not(.dark) .hljs-literal {
+  color: #0184bb;
+}
+:root:not(.dark) .hljs-string,
+:root:not(.dark) .hljs-regexp,
+:root:not(.dark) .hljs-addition,
+:root:not(.dark) .hljs-attribute,
+:root:not(.dark) .hljs-meta .hljs-string {
+  color: #50a14f;
+}
+:root:not(.dark) .hljs-attr,
+:root:not(.dark) .hljs-variable,
+:root:not(.dark) .hljs-template-variable,
+:root:not(.dark) .hljs-type,
+:root:not(.dark) .hljs-selector-class,
+:root:not(.dark) .hljs-selector-attr,
+:root:not(.dark) .hljs-selector-pseudo,
+:root:not(.dark) .hljs-number {
+  color: #986801;
+}
+:root:not(.dark) .hljs-symbol,
+:root:not(.dark) .hljs-bullet,
+:root:not(.dark) .hljs-link,
+:root:not(.dark) .hljs-meta,
+:root:not(.dark) .hljs-selector-id,
+:root:not(.dark) .hljs-title {
+  color: #4078f2;
+}
+:root:not(.dark) .hljs-built_in,
+:root:not(.dark) .hljs-title.class_,
+:root:not(.dark) .hljs-class .hljs-title {
+  color: #c18401;
+}
+:root:not(.dark) .hljs-emphasis {
+  font-style: italic;
+}
+:root:not(.dark) .hljs-strong {
+  font-weight: bold;
+}
+:root:not(.dark) .hljs-link {
+  text-decoration: underline;
 }

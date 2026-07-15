@@ -75,18 +75,18 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
   };
 
   return (
-    <div className="relative group my-4 rounded-xl overflow-hidden border border-white/8 bg-[#0d0d1a] max-w-full w-full">
+    <div className="relative group my-4 rounded-xl overflow-hidden border border-reader-border bg-reader-code max-w-full w-full">
       {/* Language label + Copy button */}
-      <div className="flex items-center justify-between px-4 py-2 bg-white/[0.03] border-b border-white/5">
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+      <div className="flex items-center justify-between px-4 py-2 bg-reader-surface-hover border-b border-reader-border">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-reader-faint">
           {detectedLang}
         </span>
         <button
           onClick={handleCopy}
           className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all duration-200 ${
             copied
-              ? "bg-green-500/15 text-green-400"
-              : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200"
+              ? "bg-green-500/15 text-reader-success"
+              : "bg-reader-surface-hover text-reader-muted hover:bg-reader-surface hover:text-reader-heading"
           }`}
           title="Copy to clipboard"
         >

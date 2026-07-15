@@ -59,9 +59,12 @@ export function BundleUpsell({ eyebrow, tone = "light", className }: BundleUpsel
   const shell = dark
     ? "border-violet-500/25 bg-gradient-to-br from-violet-950/60 via-slate-900 to-slate-950"
     : "border-purple-200 bg-gradient-to-br from-purple-50 via-white to-pink-50"
-  const muted = dark ? "text-slate-400" : "text-muted-foreground"
+  // The "dark" tone shell is a hardcoded dark violet gradient in BOTH themes, so
+  // its text must stay light literals (theme tokens would go dark in light mode
+  // and vanish on the dark card). "light" tone inherits the themed card colours.
+  const muted = dark ? "text-slate-300" : "text-muted-foreground"
   const heading = dark ? "text-white" : ""
-  const strike = dark ? "text-slate-500" : "text-muted-foreground"
+  const strike = dark ? "text-slate-400" : "text-muted-foreground"
   const creditText = dark ? "text-emerald-400" : "text-green-700"
 
   return (

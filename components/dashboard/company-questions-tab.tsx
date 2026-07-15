@@ -48,7 +48,7 @@ function CompanyLogo({ logo, color, size = 48, className = "" }: {
 }) {
     if (isImageUrl(logo)) {
         return (
-            <div className={`flex-shrink-0 overflow-hidden rounded-xl bg-white/10 ${className}`}
+            <div className={`flex-shrink-0 overflow-hidden rounded-xl bg-overlay-strong ${className}`}
                 style={{ width: size, height: size }}>
                 <Image src={logo} alt="logo" width={size} height={size}
                     className="w-full h-full object-cover" unoptimized />
@@ -75,7 +75,7 @@ const PLATFORM_INFO: Record<string, { label: string; icon: string; bg: string }>
 
 function PlatformIcon({ platform, size = 20 }: { platform: string; size?: number }) {
     const info = PLATFORM_INFO[platform]
-    if (!info) return <span className="text-xs text-slate-500">{platform}</span>
+    if (!info) return <span className="text-xs text-muted-foreground">{platform}</span>
     return (
         <div className={`inline-flex items-center justify-center rounded-md ${info.bg} p-1`}
             title={info.label} style={{ width: size + 8, height: size + 8 }}>
@@ -87,9 +87,9 @@ function PlatformIcon({ platform, size = 20 }: { platform: string; size?: number
 // ─── Constants ───────────────────────────────────────────
 
 const DIFF_COLOR: Record<string, { bg: string; text: string; border: string }> = {
-    Easy: { bg: "bg-green-500/10", text: "text-green-400", border: "border-green-500/20" },
-    Medium: { bg: "bg-yellow-500/10", text: "text-yellow-400", border: "border-yellow-500/20" },
-    Hard: { bg: "bg-red-500/10", text: "text-red-400", border: "border-red-500/20" },
+    Easy: { bg: "bg-green-500/10", text: "text-green-700 dark:text-green-400", border: "border-green-500/20" },
+    Medium: { bg: "bg-yellow-500/10", text: "text-yellow-700 dark:text-yellow-400", border: "border-yellow-500/20" },
+    Hard: { bg: "bg-red-500/10", text: "text-red-700 dark:text-red-400", border: "border-red-500/20" },
 }
 
 const POP_COLOR: Record<string, { bg: string; text: string }> = {
@@ -129,7 +129,7 @@ export function CompanyQuestionsTab({
     if (loading) {
         return (
             <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-violet-700 dark:text-violet-400" />
             </div>
         )
     }
@@ -177,17 +177,17 @@ function CompanyListView({ companies, onCompanySelect }: {
     return (
         <div className="space-y-6 max-w-5xl">
             <div>
-                <h2 className="text-xl font-bold text-white mb-1">Company-Wise Questions</h2>
-                <p className="text-slate-400 text-sm">Practice questions most frequently asked at top companies</p>
+                <h2 className="text-xl font-bold text-foreground mb-1">Company-Wise Questions</h2>
+                <p className="text-muted-foreground text-sm">Practice questions most frequently asked at top companies</p>
             </div>
 
             <div className="relative max-w-md">
-                <Search className="absolute left-3 top-3 w-4 h-4 text-slate-500" />
+                <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                 <Input
                     placeholder="Search company..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="pl-9 h-11 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus-visible:ring-violet-500"
+                    className="pl-9 h-11 bg-overlay border-hairline text-foreground placeholder:text-muted-foreground focus-visible:ring-violet-500"
                 />
             </div>
 
@@ -196,29 +196,29 @@ function CompanyListView({ companies, onCompanySelect }: {
                     <button
                         key={company._id}
                         onClick={() => onCompanySelect(company._id)}
-                        className="group relative bg-slate-900/80 border border-white/5 rounded-2xl p-5 hover:border-violet-500/30 hover:bg-slate-800/50 transition-all text-left"
+                        className="group relative bg-card border border-hairline rounded-2xl p-5 hover:border-violet-500/30 hover:bg-muted transition-all text-left"
                     >
                         <div className="flex items-start gap-3 mb-4">
                             <CompanyLogo logo={company.logo} color={company.color} size={48}
                                 className="group-hover:scale-105 transition-transform" />
                             <div className="flex-1 min-w-0">
-                                <p className="text-white font-semibold truncate group-hover:text-violet-300 transition-colors">{company.name}</p>
-                                <p className="text-slate-500 text-xs mt-0.5">{company.totalQuestions} questions</p>
+                                <p className="text-foreground font-semibold truncate group-hover:text-violet-700 dark:group-hover:text-violet-300 transition-colors">{company.name}</p>
+                                <p className="text-muted-foreground text-xs mt-0.5">{company.totalQuestions} questions</p>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-violet-400 group-hover:translate-x-1 transition-all mt-1" />
+                            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-violet-700 dark:group-hover:text-violet-400 group-hover:translate-x-1 transition-all mt-1" />
                         </div>
 
                         <div className="flex gap-2 mb-3">
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">{company.difficulty.easy} Easy</span>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">{company.difficulty.medium} Med</span>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">{company.difficulty.hard} Hard</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20">{company.difficulty.easy} Easy</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border border-yellow-500/20">{company.difficulty.medium} Med</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20">{company.difficulty.hard} Hard</span>
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-slate-800 rounded-full h-1.5">
+                            <div className="flex-1 bg-muted rounded-full h-1.5">
                                 <div className={`h-1.5 rounded-full bg-gradient-to-r ${company.color} transition-all`} style={{ width: "0%" }} />
                             </div>
-                            <span className="text-xs text-slate-500 flex-shrink-0">0%</span>
+                            <span className="text-xs text-muted-foreground flex-shrink-0">0%</span>
                         </div>
                     </button>
                 ))}
@@ -226,7 +226,7 @@ function CompanyListView({ companies, onCompanySelect }: {
 
             {filtered.length === 0 && (
                 <div className="text-center py-12">
-                    <p className="text-slate-500 text-sm">No companies found</p>
+                    <p className="text-muted-foreground text-sm">No companies found</p>
                 </div>
             )}
         </div>
@@ -303,7 +303,7 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
     if (loading) {
         return (
             <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-violet-700 dark:text-violet-400" />
             </div>
         )
     }
@@ -312,32 +312,32 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
         <div className="space-y-6 max-w-6xl">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <button onClick={onBack} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
+                <button onClick={onBack} className="p-2 rounded-lg bg-overlay hover:bg-overlay-strong text-muted-foreground hover:text-foreground transition-colors">
                     <ArrowLeft className="w-5 h-5" />
                 </button>
                 <CompanyLogo logo={company.logo} color={company.color} size={48} />
                 <div className="flex-1 min-w-0">
-                    <h2 className="text-xl font-bold text-white">{company.name}</h2>
-                    <p className="text-slate-400 text-sm">{questions.length} questions · {doneCount} completed ({pct}%)</p>
+                    <h2 className="text-xl font-bold text-foreground">{company.name}</h2>
+                    <p className="text-muted-foreground text-sm">{questions.length} questions · {doneCount} completed ({pct}%)</p>
                 </div>
             </div>
 
             {/* Charts Row */}
             <div className="grid sm:grid-cols-2 gap-4">
                 {/* Interview Pattern Distribution */}
-                <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-5">
-                    <h3 className="text-white font-semibold mb-4 flex items-center gap-2 text-sm">
-                        <BarChart2 className="w-4 h-4 text-violet-400" />
+                <div className="bg-card border border-hairline rounded-2xl p-5">
+                    <h3 className="text-foreground font-semibold mb-4 flex items-center gap-2 text-sm">
+                        <BarChart2 className="w-4 h-4 text-violet-700 dark:text-violet-400" />
                         Interview Pattern Distribution
                     </h3>
                     <div className="space-y-3">
                         {(company.patterns || []).map(p => (
                             <div key={p.name}>
                                 <div className="flex items-center justify-between mb-1">
-                                    <span className="text-slate-300 text-xs">{p.name}</span>
-                                    <span className="text-slate-500 text-xs">{p.count}</span>
+                                    <span className="text-foreground text-xs">{p.name}</span>
+                                    <span className="text-muted-foreground text-xs">{p.count}</span>
                                 </div>
-                                <div className="w-full bg-slate-800 rounded-full h-2">
+                                <div className="w-full bg-muted rounded-full h-2">
                                     <div
                                         className="h-2 rounded-full bg-gradient-to-r from-violet-500 to-purple-400 transition-all duration-700"
                                         style={{ width: `${(p.count / maxPattern) * 100}%` }}
@@ -346,15 +346,15 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
                             </div>
                         ))}
                         {(!company.patterns || company.patterns.length === 0) && (
-                            <p className="text-slate-500 text-xs">No patterns data yet</p>
+                            <p className="text-muted-foreground text-xs">No patterns data yet</p>
                         )}
                     </div>
                 </div>
 
                 {/* Difficulty Distribution (Donut) */}
-                <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-5">
-                    <h3 className="text-white font-semibold mb-4 flex items-center gap-2 text-sm">
-                        <PieChart className="w-4 h-4 text-violet-400" />
+                <div className="bg-card border border-hairline rounded-2xl p-5">
+                    <h3 className="text-foreground font-semibold mb-4 flex items-center gap-2 text-sm">
+                        <PieChart className="w-4 h-4 text-violet-700 dark:text-violet-400" />
                         Difficulty-Wise Distribution
                     </h3>
                     <div className="flex items-center gap-6">
@@ -372,8 +372,8 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
                             </svg>
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="text-center">
-                                    <p className="text-white font-bold text-lg leading-none">{totalQ}</p>
-                                    <p className="text-slate-500 text-[10px]">Total</p>
+                                    <p className="text-foreground font-bold text-lg leading-none">{totalQ}</p>
+                                    <p className="text-muted-foreground text-[10px]">Total</p>
                                 </div>
                             </div>
                         </div>
@@ -381,9 +381,9 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
                             {diffColors.map(d => (
                                 <div key={d.key} className="flex items-center gap-3">
                                     <div className={`w-3 h-3 rounded-full ${d.bg}`} />
-                                    <span className="text-slate-300 text-sm flex-1">{d.key}</span>
-                                    <span className="text-white text-sm font-semibold">{d.count}</span>
-                                    <span className="text-slate-500 text-xs w-10 text-right">{Math.round((d.count / totalQ) * 100)}%</span>
+                                    <span className="text-foreground text-sm flex-1">{d.key}</span>
+                                    <span className="text-foreground text-sm font-semibold">{d.count}</span>
+                                    <span className="text-muted-foreground text-xs w-10 text-right">{Math.round((d.count / totalQ) * 100)}%</span>
                                 </div>
                             ))}
                         </div>
@@ -392,27 +392,27 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
             </div>
 
             {/* Filters */}
-            <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-4">
+            <div className="bg-card border border-hairline rounded-2xl p-4">
                 <div className="flex flex-wrap items-center gap-3">
                     <div className="relative flex-1 min-w-[200px]">
-                        <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
+                        <Search className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
                         <Input
                             placeholder="Search question..."
                             value={search}
                             onChange={e => setSearch(e.target.value)}
-                            className="pl-9 h-9 bg-white/5 border-white/10 text-white text-sm placeholder:text-slate-600 focus-visible:ring-violet-500"
+                            className="pl-9 h-9 bg-overlay border-hairline text-foreground text-sm placeholder:text-muted-foreground focus-visible:ring-violet-500"
                         />
                     </div>
                     <FilterDropdown label="Difficulty" value={diffFilter} options={["All", "Easy", "Medium", "Hard"]} onChange={setDiffFilter}
-                        colorMap={{ Easy: "text-green-400", Medium: "text-yellow-400", Hard: "text-red-400" }} />
+                        colorMap={{ Easy: "text-green-700 dark:text-green-400", Medium: "text-yellow-700 dark:text-yellow-400", Hard: "text-red-700 dark:text-red-400" }} />
                     <FilterDropdown label="Platforms" value={platFilter} options={["All", ...allPlatforms]} onChange={setPlatFilter} />
                     <FilterDropdown label="Topics" value={topicFilter} options={["All", ...allTags]} onChange={setTopicFilter} />
                     <FilterDropdown label="Popularity" value={popFilter} options={["All", "Very Hot", "Hot", "Warm"]} onChange={setPopFilter}
-                        colorMap={{ "Very Hot": "text-red-400", "Hot": "text-orange-400", "Warm": "text-yellow-400" }} />
+                        colorMap={{ "Very Hot": "text-red-700 dark:text-red-400", "Hot": "text-orange-700 dark:text-orange-400", "Warm": "text-yellow-700 dark:text-yellow-400" }} />
                     <button
                         onClick={() => setShowFavOnly(!showFavOnly)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all
-              ${showFavOnly ? "bg-yellow-500/15 border-yellow-500/30 text-yellow-400" : "bg-white/5 border-white/10 text-slate-400 hover:text-white"}`}
+              ${showFavOnly ? "bg-yellow-500/15 border-yellow-500/30 text-yellow-700 dark:text-yellow-400" : "bg-overlay border-hairline text-muted-foreground hover:text-foreground"}`}
                     >
                         <Star className={`w-3 h-3 ${showFavOnly ? "fill-yellow-400" : ""}`} />
                         Favourites
@@ -421,8 +421,8 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
             </div>
 
             {/* Question Table */}
-            <div className="bg-slate-900/80 border border-white/5 rounded-2xl overflow-hidden">
-                <div className="grid grid-cols-[40px_1fr_50px_80px_90px_1fr_90px] gap-2 px-5 py-3 border-b border-white/5 text-xs font-semibold text-slate-400 uppercase tracking-wide bg-slate-900/60 hidden md:grid">
+            <div className="bg-card border border-hairline rounded-2xl overflow-hidden">
+                <div className="grid grid-cols-[40px_1fr_50px_80px_90px_1fr_90px] gap-2 px-5 py-3 border-b border-hairline text-xs font-semibold text-muted-foreground uppercase tracking-wide bg-card hidden md:grid">
                     <div></div>
                     <div>Question</div>
                     <div className="text-center">Platform</div>
@@ -434,7 +434,7 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
 
                 {filtered.length === 0 ? (
                     <div className="text-center py-12">
-                        <p className="text-slate-500 text-sm">No questions match your filters</p>
+                        <p className="text-muted-foreground text-sm">No questions match your filters</p>
                     </div>
                 ) : (
                     filtered.map(q => {
@@ -446,19 +446,19 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
                         return (
                             <div
                                 key={q._id}
-                                className={`grid grid-cols-1 md:grid-cols-[40px_1fr_50px_80px_90px_1fr_90px] gap-2 md:gap-2 px-5 py-3.5 items-center border-b border-white/5 last:border-0 transition-colors ${isDone ? "bg-green-500/5" : "hover:bg-white/3"}`}
+                                className={`grid grid-cols-1 md:grid-cols-[40px_1fr_50px_80px_90px_1fr_90px] gap-2 md:gap-2 px-5 py-3.5 items-center border-b border-hairline last:border-0 transition-colors ${isDone ? "bg-green-500/5" : "hover:bg-overlay"}`}
                             >
                                 <button onClick={() => onToggleComplete(q._id)} className="flex-shrink-0">
-                                    {isDone ? <CheckCircle2 className="w-5 h-5 text-green-400" /> : <Circle className="w-5 h-5 text-slate-600 hover:text-slate-400 transition-colors" />}
+                                    {isDone ? <CheckCircle2 className="w-5 h-5 text-green-700 dark:text-green-400" /> : <Circle className="w-5 h-5 text-muted-foreground hover:text-muted-foreground transition-colors" />}
                                 </button>
 
                                 {/* Question title — clickable link if link exists */}
-                                <div className={`text-sm font-medium ${isDone ? "text-slate-500 line-through" : "text-white"}`}>
+                                <div className={`text-sm font-medium ${isDone ? "text-muted-foreground line-through" : "text-foreground"}`}>
                                     {q.link ? (
                                         <a href={q.link} target="_blank" rel="noopener noreferrer"
-                                            className="hover:text-violet-400 transition-colors inline-flex items-center gap-1.5 group/link">
+                                            className="hover:text-violet-700 dark:hover:text-violet-400 transition-colors inline-flex items-center gap-1.5 group/link">
                                             {q.title}
-                                            <ExternalLink className="w-3 h-3 text-violet-400/50 group-hover/link:text-violet-400 transition-colors" />
+                                            <ExternalLink className="w-3 h-3 text-violet-700 dark:text-violet-400/50 group-hover/link:text-violet-700 dark:group-hover/link:text-violet-400 transition-colors" />
                                         </a>
                                     ) : q.title}
                                 </div>
@@ -476,12 +476,12 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
                                 </div>
                                 <div className="flex-wrap gap-1 hidden md:flex">
                                     {q.tags.map(tag => (
-                                        <span key={tag} className="text-[11px] text-slate-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/5">{tag}</span>
+                                        <span key={tag} className="text-[11px] text-muted-foreground bg-overlay px-2 py-0.5 rounded-full border border-hairline">{tag}</span>
                                     ))}
                                 </div>
                                 <div className="flex items-center justify-center gap-2 hidden md:flex">
-                                    <button onClick={() => onToggleFavorite(q._id)} title="Favourite" className="text-slate-600 hover:text-yellow-400 transition-colors">
-                                        {isFav ? <Bookmark className="w-4 h-4 text-yellow-400 fill-yellow-400" /> : <BookmarkPlus className="w-4 h-4" />}
+                                    <button onClick={() => onToggleFavorite(q._id)} title="Favourite" className="text-muted-foreground hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors">
+                                        {isFav ? <Bookmark className="w-4 h-4 text-yellow-700 dark:text-yellow-400 fill-yellow-400" /> : <BookmarkPlus className="w-4 h-4" />}
                                     </button>
                                 </div>
 
@@ -491,10 +491,10 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
                                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${diff.bg} ${diff.text} ${diff.border} border`}>{q.difficulty}</span>
                                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${pop.bg} ${pop.text}`}>{q.popularity}</span>
                                     {q.tags.slice(0, 2).map(tag => (
-                                        <span key={tag} className="text-[10px] text-slate-400 bg-white/5 px-1.5 py-0.5 rounded-full">{tag}</span>
+                                        <span key={tag} className="text-[10px] text-muted-foreground bg-overlay px-1.5 py-0.5 rounded-full">{tag}</span>
                                     ))}
                                     <button onClick={() => onToggleFavorite(q._id)} className="ml-auto">
-                                        {isFav ? <Bookmark className="w-4 h-4 text-yellow-400 fill-yellow-400" /> : <BookmarkPlus className="w-4 h-4 text-slate-600" />}
+                                        {isFav ? <Bookmark className="w-4 h-4 text-yellow-700 dark:text-yellow-400 fill-yellow-400" /> : <BookmarkPlus className="w-4 h-4 text-muted-foreground" />}
                                     </button>
                                 </div>
                             </div>
@@ -502,9 +502,9 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
                     })
                 )}
 
-                <div className="px-5 py-3 bg-slate-900/60 border-t border-white/5 flex items-center justify-between">
-                    <p className="text-slate-500 text-xs">Showing {filtered.length} of {questions.length} questions</p>
-                    <p className="text-slate-500 text-xs">{doneCount}/{questions.length} completed</p>
+                <div className="px-5 py-3 bg-card border-t border-hairline flex items-center justify-between">
+                    <p className="text-muted-foreground text-xs">Showing {filtered.length} of {questions.length} questions</p>
+                    <p className="text-muted-foreground text-xs">{doneCount}/{questions.length} completed</p>
                 </div>
             </div>
         </div>
@@ -526,8 +526,8 @@ function FilterDropdown({ label, value, options, onChange, colorMap }: {
                 onClick={() => setOpen(!open)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all
           ${value !== "All"
-                        ? "bg-violet-500/15 border-violet-500/30 text-violet-300"
-                        : "bg-white/5 border-white/10 text-slate-400 hover:text-white"}`}
+                        ? "bg-violet-500/15 border-violet-500/30 text-violet-700 dark:text-violet-300"
+                        : "bg-overlay border-hairline text-muted-foreground hover:text-foreground"}`}
             >
                 {label}{value !== "All" ? `: ${value}` : ""}
                 <ChevronDown className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -535,12 +535,12 @@ function FilterDropdown({ label, value, options, onChange, colorMap }: {
             {open && (
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-                    <div className="absolute top-full mt-1 left-0 z-50 bg-slate-800 border border-white/10 rounded-xl shadow-2xl py-1 min-w-[140px] max-h-[250px] overflow-y-auto">
+                    <div className="absolute top-full mt-1 left-0 z-50 bg-muted border border-hairline rounded-xl shadow-2xl py-1 min-w-[140px] max-h-[250px] overflow-y-auto">
                         {options.map(opt => (
                             <button
                                 key={opt}
                                 onClick={() => { onChange(opt); setOpen(false) }}
-                                className={`w-full text-left px-3 py-2 text-xs hover:bg-white/5 transition-colors ${value === opt ? "text-violet-400 font-semibold" : colorMap?.[opt] || "text-slate-300"}`}
+                                className={`w-full text-left px-3 py-2 text-xs hover:bg-overlay transition-colors ${value === opt ? "text-violet-700 dark:text-violet-400 font-semibold" : colorMap?.[opt] || "text-foreground"}`}
                             >
                                 {opt}
                             </button>
