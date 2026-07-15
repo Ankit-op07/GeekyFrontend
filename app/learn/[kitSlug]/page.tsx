@@ -49,14 +49,14 @@ export default function KitIndexPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <BookOpen className="w-12 h-12 mx-auto mb-4 text-slate-600" />
-          <p className="text-slate-400 text-lg mb-2">No content yet</p>
-          <p className="text-slate-600 text-sm">
+          <BookOpen className="w-12 h-12 mx-auto mb-4 text-reader-faint" />
+          <p className="text-reader-muted text-lg mb-2">No content yet</p>
+          <p className="text-reader-faint text-sm">
             Topics will appear once added via the admin panel
           </p>
           <Link
             href="/dashboard?tab=kits"
-            className="mt-4 inline-block text-violet-400 text-sm hover:underline"
+            className="mt-4 inline-block text-reader-accent text-sm hover:underline"
           >
             ← Back to Dashboard
           </Link>
@@ -67,7 +67,7 @@ export default function KitIndexPage() {
 
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
+      <Loader2 className="w-6 h-6 animate-spin text-reader-accent" />
     </div>
   );
 }

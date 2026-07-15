@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { SidebarContext } from './sidebar-context';
 import type { SidebarChapter } from './sidebar-context';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 // ─── Types ───────────────────────────────────────────────
 
@@ -146,18 +147,18 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-violet-400" />
+            <div className="min-h-screen bg-reader-bg flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-reader-accent" />
             </div>
         );
     }
 
     if (!kit) {
         return (
-            <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+            <div className="min-h-screen bg-reader-bg flex items-center justify-center">
                 <div className="text-center">
-                    <p className="text-slate-400 text-lg mb-4">Kit not found</p>
-                    <Link href="/dashboard?tab=kits" className="text-violet-400 hover:text-violet-300 text-sm underline">
+                    <p className="text-reader-muted text-lg mb-4">Kit not found</p>
+                    <Link href="/dashboard?tab=kits" className="text-reader-accent hover:text-reader-accent-hover text-sm underline">
                         ← Back to Dashboard
                     </Link>
                 </div>
@@ -180,35 +181,35 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                     className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors group ${
                         isLocked
                             ? 'cursor-default opacity-50'
-                            : 'hover:bg-white/5'
+                            : 'hover:bg-reader-surface-hover'
                     }`}
                 >
                     {isLocked ? (
-                        <Lock className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
+                        <Lock className="w-3.5 h-3.5 text-reader-faint flex-shrink-0" />
                     ) : isExpanded ? (
-                        <ChevronDown className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                        <ChevronDown className="w-3.5 h-3.5 text-reader-faint flex-shrink-0" />
                     ) : (
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                        <ChevronRight className="w-3.5 h-3.5 text-reader-faint flex-shrink-0" />
                     )}
-                    <span className="text-slate-400 text-xs font-bold uppercase tracking-wider flex-shrink-0">
+                    <span className="text-reader-muted text-xs font-bold uppercase tracking-wider flex-shrink-0">
                         {String(ci + 1).padStart(2, '0')}
                     </span>
                     <span className={`text-sm font-medium truncate transition-colors ${
                         isLocked
-                            ? 'text-slate-600'
-                            : 'text-slate-300 group-hover:text-white'
+                            ? 'text-reader-faint'
+                            : 'text-reader-text group-hover:text-reader-heading'
                     }`}>
                         {ch.title}
                     </span>
                     {isLocked && (
-                        <span className="ml-auto flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/20 font-medium">
+                        <span className="ml-auto flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-reader-amber border border-amber-500/20 font-medium">
                             PRO
                         </span>
                     )}
                 </button>
 
                 {!isLocked && isExpanded && ch.topics.length > 0 && (
-                    <div className={`ml-5 pl-3 border-l border-white/5 space-y-0.5 mb-1`}>
+                    <div className={`ml-5 pl-3 border-l border-reader-border space-y-0.5 mb-1`}>
                         {ch.topics.map(t => {
                             const isActive = currentTopicSlug === t.slug;
                             return (
@@ -217,8 +218,8 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                                     href={`/learn/${kitSlug}/${t.slug}`}
                                     className={`block px-3 py-1.5 rounded-md text-sm transition-all ${
                                         isActive
-                                            ? 'bg-violet-500/15 text-violet-300 font-medium border-l-2 border-violet-400 -ml-[1px]'
-                                            : 'text-slate-500 hover:text-slate-300 hover:bg-white/3'
+                                            ? 'bg-reader-accent-soft text-reader-accent-hover font-medium border-l-2 border-reader-accent -ml-[1px]'
+                                            : 'text-reader-faint hover:text-reader-text hover:bg-reader-surface-hover'
                                     }`}
                                 >
                                     {t.title}
@@ -230,17 +231,17 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
 
                 {/* Locked chapter — show a preview of topic titles but non-clickable */}
                 {isLocked && ch.topics.length > 0 && (
-                    <div className="ml-5 pl-3 border-l border-white/[0.03] space-y-0.5 mb-1">
+                    <div className="ml-5 pl-3 border-l border-reader-border-faint space-y-0.5 mb-1">
                         {ch.topics.slice(0, 3).map(t => (
                             <div
                                 key={t._id}
-                                className="block px-3 py-1.5 rounded-md text-sm text-slate-700 select-none cursor-not-allowed"
+                                className="block px-3 py-1.5 rounded-md text-sm text-reader-faint opacity-70 select-none cursor-not-allowed"
                             >
                                 {t.title}
                             </div>
                         ))}
                         {ch.topics.length > 3 && (
-                            <div className="px-3 py-1 text-xs text-slate-700">
+                            <div className="px-3 py-1 text-xs text-reader-faint opacity-70">
                                 +{ch.topics.length - 3} more topics...
                             </div>
                         )}
@@ -252,25 +253,25 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
 
     return (
         <SidebarContext.Provider value={{ kit, sidebar, allTopics, isPreview, firstChapterId }}>
-            <div className="min-h-screen bg-[#0a0a0f] flex">
+            <div className="min-h-screen bg-reader-bg flex">
                 {/* ─── Sidebar (desktop) ─── */}
-                <aside className="hidden lg:flex flex-col w-72 border-r border-white/5 bg-[#0d0d14] fixed top-0 left-0 bottom-0 z-30">
-                    <Link href="/dashboard?tab=kits" className="flex items-center gap-3 px-5 py-4 border-b border-white/5 hover:bg-white/3 transition-colors group">
-                        <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-violet-400 transition-colors" />
+                <aside className="hidden lg:flex flex-col w-72 border-r border-reader-border bg-reader-surface fixed top-0 left-0 bottom-0 z-30">
+                    <Link href="/dashboard?tab=kits" className="flex items-center gap-3 px-5 py-4 border-b border-reader-border hover:bg-reader-surface-hover transition-colors group">
+                        <ArrowLeft className="w-4 h-4 text-reader-faint group-hover:text-reader-accent transition-colors" />
                         <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${kit.color} flex items-center justify-center text-base flex-shrink-0`}>
                             {kit.icon}
                         </div>
-                        <span className="text-white font-semibold text-sm truncate">{kit.name}</span>
+                        <span className="text-reader-heading font-semibold text-sm truncate">{kit.name}</span>
                     </Link>
 
                     {/* Preview mode banner */}
                     {isPreview && (
                         <div className="mx-3 mt-3 p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20">
                             <div className="flex items-center gap-2 mb-1.5">
-                                <Sparkles className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                                <p className="text-amber-300 text-xs font-semibold">Preview Mode</p>
+                                <Sparkles className="w-3.5 h-3.5 text-reader-amber flex-shrink-0" />
+                                <p className="text-reader-amber text-xs font-semibold">Preview Mode</p>
                             </div>
-                            <p className="text-slate-500 text-[11px] mb-2.5 leading-relaxed">
+                            <p className="text-reader-faint text-[11px] mb-2.5 leading-relaxed">
                                 Chapter 1 is unlocked. Purchase to access all chapters.
                             </p>
                             <Link
@@ -287,35 +288,44 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                         {sidebar.map((ch, ci) => renderSidebarChapter(ch, ci, false))}
 
                         {sidebar.length === 0 && (
-                            <div className="text-center py-8 text-slate-600 text-xs">
+                            <div className="text-center py-8 text-reader-faint text-xs">
                                 <FileText className="w-6 h-6 mx-auto mb-2 opacity-30" />
                                 No chapters yet
                             </div>
                         )}
                     </nav>
+
+                    {/* Sidebar footer — theme toggle */}
+                    <div className="flex items-center justify-between gap-2 px-4 py-3 border-t border-reader-border">
+                        <span className="text-reader-faint text-xs font-medium">Appearance</span>
+                        <ThemeToggle />
+                    </div>
                 </aside>
 
                 {/* ─── Mobile Top Bar ─── */}
-                <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[#0d0d14]/95 backdrop-blur border-b border-white/5">
+                <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-reader-surface/95 backdrop-blur border-b border-reader-border">
                     <div className="flex items-center justify-between px-4 py-3">
                         <div className="flex items-center gap-2">
-                            <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg hover:bg-white/5">
-                                <Menu className="w-5 h-5 text-slate-400" />
+                            <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg hover:bg-reader-surface-hover">
+                                <Menu className="w-5 h-5 text-reader-muted" />
                             </button>
                             <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${kit.color} flex items-center justify-center text-sm`}>
                                 {kit.icon}
                             </div>
-                            <span className="text-white font-semibold text-sm truncate max-w-[160px]">{kit.name}</span>
+                            <span className="text-reader-heading font-semibold text-sm truncate max-w-[160px]">{kit.name}</span>
                         </div>
-                        {isPreview && (
-                            <Link
-                                href={checkoutPath}
-                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold shadow-md"
-                            >
-                                <Lock className="w-3 h-3" />
-                                Unlock
-                            </Link>
-                        )}
+                        <div className="flex items-center gap-1">
+                            <ThemeToggle />
+                            {isPreview && (
+                                <Link
+                                    href={checkoutPath}
+                                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold shadow-md"
+                                >
+                                    <Lock className="w-3 h-3" />
+                                    Unlock
+                                </Link>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -323,11 +333,11 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                 {mobileOpen && (
                     <>
                         <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setMobileOpen(false)} />
-                        <aside className="fixed top-0 left-0 bottom-0 w-72 bg-[#0d0d14] border-r border-white/5 z-50 lg:hidden overflow-y-auto flex flex-col">
-                            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-                                <span className="text-white font-semibold text-sm">{kit.name}</span>
-                                <button onClick={() => setMobileOpen(false)} className="p-1 rounded hover:bg-white/5">
-                                    <X className="w-5 h-5 text-slate-400" />
+                        <aside className="fixed top-0 left-0 bottom-0 w-72 bg-reader-surface border-r border-reader-border z-50 lg:hidden overflow-y-auto flex flex-col">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-reader-border">
+                                <span className="text-reader-heading font-semibold text-sm">{kit.name}</span>
+                                <button onClick={() => setMobileOpen(false)} className="p-1 rounded hover:bg-reader-surface-hover">
+                                    <X className="w-5 h-5 text-reader-muted" />
                                 </button>
                             </div>
 
@@ -335,8 +345,8 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                             {isPreview && (
                                 <div className="mx-3 mt-3 p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                                        <p className="text-amber-300 text-xs font-semibold">Preview Mode — Chapter 1 only</p>
+                                        <Sparkles className="w-3.5 h-3.5 text-reader-amber" />
+                                        <p className="text-reader-amber text-xs font-semibold">Preview Mode — Chapter 1 only</p>
                                     </div>
                                     <Link
                                         href={checkoutPath}

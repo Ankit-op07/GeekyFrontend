@@ -6,16 +6,24 @@ import {
     PLAN_TO_SLUGS,
     getKitById,
     getAllowedSlugs,
-    UPGRADE_FLOOR,
     BUNDLE_KIT_ID,
+    BUNDLE_COMPONENT_PLANS,
 } from '@/lib/appConstants';
+import { quoteUpgradeMath } from '@/lib/pricing-math';
 
 /**
  * ─── Upgrade Credit ────────────────────────────────────────────────────────
  *
- *  Every rupee a user has already spent with us is credited against a larger
- *  purchase. Buying the JS Kit (₹149) then the Complete Kit (₹499) costs ₹350,
- *  not ₹499 — the user never pays twice for content they already own.
+ *  Money spent on the single kits the bundle is built from (JS, React, Frontend
+ *  System Design) is credited toward the all-access bundle — the user never pays
+ *  twice for content they already own. Buying the JS Kit (₹149) then the bundle
+ *  (₹499) costs ₹350, not ₹499.
+ *
+ *  TWO rules (see lib/pricing-math.ts):
+ *    1. Credit only flows toward the BUNDLE. Standalone kits are full price —
+ *       owning JS does not discount React.
+ *    2. Credit is capped so a bundle upgrade always costs at least MIN_TOPUP;
+ *       the last kit is never near-free.
  *
  *  ⚠️  SECURITY: this is the ONLY place a payable amount may be computed.
  *  It reads exclusively from the DB. The client may *display* a credit; it may
@@ -30,20 +38,22 @@ export interface PriceQuote {
     kitId: string;
     kitName: string;
     listPrice: number;
-    /** Total the user has previously paid us, in ₹. */
+    /** Credit applied toward this purchase, in ₹. credit + payable === listPrice. */
     credit: number;
-    /** What they actually pay now, in ₹. Never below UPGRADE_FLOOR. */
+    /** What they actually pay now, in ₹. For the bundle, never below MIN_TOPUP. */
     payable: number;
     /** True when the user already has access to this kit — block the sale. */
     alreadyOwned: boolean;
     /** Plan names the user has bought. */
     ownedPlans: string[];
-    /** True when credit was clamped by UPGRADE_FLOOR. */
+    /** True when prior spend exceeded the credit cap (credit was clamped). */
     floored: boolean;
 }
 
 /**
- * Sum of everything this email has ever successfully paid us.
+ * Sum of what this email has spent on the bundle's COMPONENT kits, in ₹.
+ * Only spend on {@link BUNDLE_COMPONENT_PLANS} counts — Node, Experiences,
+ * company kits and the bundle itself are excluded (Rule 1).
  *
  * ⚠️  We deliberately count orders of EVERY status.
  *
@@ -57,16 +67,22 @@ export interface PriceQuote {
  * Filtering to status:'email_sent' would therefore deny credit to a user who
  * genuinely paid but whose welcome email bounced. They paid; they get credit.
  */
-export async function getUserCredit(email: string): Promise<number> {
+export async function getBundleCredit(email: string): Promise<number> {
     await connectToDatabase();
     const normalizedEmail = email.toLowerCase().trim();
 
     const orders = await Order.find({
         email: normalizedEmail,
+        planName: { $in: BUNDLE_COMPONENT_PLANS }, // Rule 1: in-bundle spend only
         paymentId: { $exists: true, $nin: [null, ''] },
     }).select('amount').lean();
 
-    const total = orders.reduce((sum, o: any) => sum + (Number(o.amount) || 0), 0);
+    // Order.amount is stored in PAISE (the webhook writes Razorpay's
+    // payment.amount verbatim). Credit is denominated in ₹, so convert here.
+    // Without this, one ₹299 order reads as ₹29,900 of credit and every
+    // subsequent purchase collapses to the minimum charge.
+    const totalPaise = orders.reduce((sum, o: any) => sum + (Number(o.amount) || 0), 0);
+    const total = totalPaise / 100;
 
     // Defensive: never let a corrupt row produce a negative or absurd credit.
     if (!Number.isFinite(total) || total < 0) return 0;
@@ -112,45 +128,43 @@ export async function computeUpgradePrice(
     if (kit.comingSoon) throw new Error(`Kit is not available yet: ${kitId}`);
 
     const listPrice = kit.price;
+    // The bundle is the only superset SKU, so it is the only target credit
+    // flows toward (Rule 1). isBundle drives every branch below.
+    const isBundle = kit.isBundle === true || kitId === BUNDLE_KIT_ID;
 
     // Logged-out / unknown buyer → full price, no credit.
     if (!email) {
+        const math = quoteUpgradeMath(isBundle, listPrice, 0);
         return {
             kitId,
             kitName: kit.displayName ?? kit.name,
             listPrice,
-            credit: 0,
-            payable: listPrice,
+            credit: math.credit,
+            payable: math.payable,
             alreadyOwned: false,
             ownedPlans: [],
-            floored: false,
+            floored: math.floored,
         };
     }
 
-    const [credit, ownedPlans] = await Promise.all([
-        getUserCredit(email),
+    // Only pay for the credit query when it can actually apply (bundle target).
+    const [bundleCredit, ownedPlans] = await Promise.all([
+        isBundle ? getBundleCredit(email) : Promise.resolve(0),
         getOwnedPlans(email),
     ]);
 
     const alreadyOwned = ownsKitAlready(ownedPlans, kitId);
-
-    // Credit can exceed the list price (e.g. someone who bought several kits).
-    // Razorpay rejects ₹0 orders, so clamp to the floor rather than going free.
-    const rawPayable = listPrice - credit;
-    const payable = Math.max(rawPayable, UPGRADE_FLOOR);
-    const floored = rawPayable < UPGRADE_FLOOR;
+    const math = quoteUpgradeMath(isBundle, listPrice, bundleCredit);
 
     return {
         kitId,
         kitName: kit.displayName ?? kit.name,
         listPrice,
-        // Report the credit that was actually applied, so the UI never shows
-        // a ₹498 credit next to a ₹49 charge on a ₹499 kit and look broken.
-        credit: Math.min(credit, listPrice - payable),
-        payable,
+        credit: math.credit,
+        payable: math.payable,
         alreadyOwned,
         ownedPlans,
-        floored,
+        floored: math.floored,
     };
 }
 

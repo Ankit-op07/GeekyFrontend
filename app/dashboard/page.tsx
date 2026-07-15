@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { CompanyQuestionsTab } from "@/components/dashboard/company-questions-tab"
 
 interface SessionUser {
@@ -201,10 +202,10 @@ export default function DashboardPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-background via-purple-100 to-background dark:from-slate-950 dark:via-purple-950 dark:to-slate-950 flex items-center justify-center">
                 <div className="text-center space-y-4">
                     <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                    <p className="text-slate-400 text-sm">Loading your dashboard…</p>
+                    <p className="text-muted-foreground text-sm">Loading your dashboard…</p>
                 </div>
             </div>
         )
@@ -227,31 +228,31 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 flex">
+        <div className="min-h-screen bg-background flex">
 
             {/* ── Sidebar ── */}
             <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/95 backdrop-blur-xl border-r border-white/5 flex flex-col
+        fixed inset-y-0 left-0 z-50 w-64 bg-card/95 backdrop-blur-xl border-r border-hairline flex flex-col
         transition-transform duration-300
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
         lg:relative lg:translate-x-0
       `}>
                 {/* Logo */}
-                <div className="p-6 border-b border-white/5">
+                <div className="p-6 border-b border-hairline">
                     <Link href="/" className="flex items-center gap-3 group">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
                             <Zap className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                            <p className="text-white font-bold text-sm">Geeky Frontend</p>
-                            <p className="text-slate-500 text-xs">Interview Prep</p>
+                            <p className="text-foreground font-bold text-sm">Geeky Frontend</p>
+                            <p className="text-muted-foreground text-xs">Interview Prep</p>
                         </div>
                     </Link>
                 </div>
 
                 {/* User mini-card */}
-                <div className="px-4 py-4 border-b border-white/5">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+                <div className="px-4 py-4 border-b border-hairline">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-overlay">
                         {user.profilePicture ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={user.profilePicture} alt={user.name} className="w-9 h-9 rounded-full border-2 border-violet-400/30 object-cover" />
@@ -261,8 +262,8 @@ export default function DashboardPage() {
                             </div>
                         )}
                         <div className="flex-1 min-w-0">
-                            <p className="text-white text-sm font-medium truncate">{user.name}</p>
-                            <p className="text-slate-500 text-xs truncate">{user.email}</p>
+                            <p className="text-foreground text-sm font-medium truncate">{user.name}</p>
+                            <p className="text-muted-foreground text-xs truncate">{user.email}</p>
                         </div>
                     </div>
                 </div>
@@ -277,11 +278,11 @@ export default function DashboardPage() {
                                 key={item.id}
                                 onClick={() => { setActiveTab(item.id); setSidebarOpen(false) }}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
-                                    ? "bg-gradient-to-r from-violet-600/20 to-purple-600/20 text-violet-400 border border-violet-500/20 shadow"
-                                    : "text-slate-400 hover:bg-white/5 hover:text-white"
+                                    ? "bg-gradient-to-r from-violet-600/20 to-purple-600/20 text-violet-700 dark:text-violet-400 border border-violet-500/20 shadow"
+                                    : "text-muted-foreground hover:bg-overlay hover:text-foreground"
                                     }`}
                             >
-                                <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-violet-400" : ""}`} />
+                                <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-violet-700 dark:text-violet-400" : ""}`} />
                                 {item.label}
                                 {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-400" />}
                             </button>
@@ -293,7 +294,7 @@ export default function DashboardPage() {
                         <Link
                             href="/admin/platform-users"
                             onClick={() => setSidebarOpen(false)}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-amber-300/90 hover:bg-amber-500/10 hover:text-amber-200 border border-amber-500/20"
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-amber-700 dark:text-amber-300/90 hover:bg-amber-500/10 hover:text-amber-200 border border-amber-500/20"
                         >
                             <Shield className="w-4 h-4 flex-shrink-0" />
                             Admin
@@ -302,20 +303,20 @@ export default function DashboardPage() {
                 </nav>
 
                 {/* Streak card */}
-                <div className="px-4 py-3 border-t border-white/5">
+                <div className="px-4 py-3 border-t border-hairline">
                     <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20">
                         <div className="flex items-center gap-2 mb-1">
-                            <Flame className="w-4 h-4 text-orange-400" />
-                            <span className="text-orange-400 font-bold text-sm">{streak} day streak 🔥</span>
+                            <Flame className="w-4 h-4 text-orange-700 dark:text-orange-400" />
+                            <span className="text-orange-700 dark:text-orange-400 font-bold text-sm">{streak} day streak 🔥</span>
                         </div>
-                        <p className="text-slate-500 text-xs">Keep it up! Study today to maintain your streak.</p>
+                        <p className="text-muted-foreground text-xs">Keep it up! Study today to maintain your streak.</p>
                     </div>
                 </div>
 
                 {/* Logout */}
                 <div className="px-4 pb-6">
                     <button onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-colors">
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-700 dark:text-red-400 hover:bg-red-500/10 transition-colors">
                         <LogOut className="w-4 h-4" />
                         Log out
                     </button>
@@ -330,25 +331,26 @@ export default function DashboardPage() {
             {/* ── Main content ── */}
             <div className="flex-1 flex flex-col min-h-screen min-w-0">
                 {/* Top bar */}
-                <header className="sticky top-0 z-30 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 py-4">
+                <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-hairline px-4 sm:px-6 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400">
+                            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg bg-overlay hover:bg-overlay-strong text-muted-foreground">
                                 <Menu className="w-5 h-5" />
                             </button>
                             <div>
-                                <h1 className="text-white font-bold text-lg leading-none">
+                                <h1 className="text-foreground font-bold text-lg leading-none">
                                     {NAV.find(n => n.id === activeTab)?.label || "Dashboard"}
                                 </h1>
-                                <p className="text-slate-500 text-xs mt-0.5">
+                                <p className="text-muted-foreground text-xs mt-0.5">
                                     {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })}
                                 </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
+                            <ThemeToggle />
                             <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full">
-                                <Flame className="w-3.5 h-3.5 text-orange-400" />
-                                <span className="text-orange-400 text-xs font-semibold">{streak}d streak</span>
+                                <Flame className="w-3.5 h-3.5 text-orange-700 dark:text-orange-400" />
+                                <span className="text-orange-700 dark:text-orange-400 text-xs font-semibold">{streak}d streak</span>
                             </div>
                             <div className="relative">
                                 {user.profilePicture ? (
@@ -393,11 +395,9 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
 
     return (
         <div className="space-y-8 max-w-5xl">
-            {/* ── Welcome Banner ── */}
-            <div className="relative overflow-hidden rounded-3xl p-8 sm:p-10"
-                 style={{
-                     background: "linear-gradient(135deg, rgba(124,58,237,0.25) 0%, rgba(99,102,241,0.15) 40%, rgba(14,165,233,0.12) 70%, rgba(20,20,40,0.6) 100%)",
-                 }}>
+            {/* ── Welcome Banner ── (theme-aware gradient: light violet tint in
+                light mode, deep violet in dark — so text stays legible on both) */}
+            <div className="relative overflow-hidden rounded-3xl p-8 sm:p-10 bg-gradient-to-br from-violet-500/20 via-indigo-500/10 to-sky-500/10 dark:from-violet-700/40 dark:via-indigo-900/30 dark:to-slate-950/60">
                 {/* Animated shimmer overlay */}
                 <div className="absolute inset-0 opacity-30"
                      style={{
@@ -416,11 +416,11 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                      }} />
                 <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div>
-                        <p className="text-violet-300/80 text-sm font-medium tracking-wide uppercase">{greeting},</p>
-                        <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 tracking-tight">
+                        <p className="text-violet-700 dark:text-violet-300/80 text-sm font-medium tracking-wide uppercase">{greeting},</p>
+                        <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight">
                             {user.name.split(" ")[0]} <span className="inline-block animate-[wave_1.8s_ease-in-out_infinite]">👋</span>
                         </h2>
-                        <p className="text-slate-300/80 text-sm sm:text-base mt-3 max-w-md leading-relaxed">
+                        <p className="text-foreground text-sm sm:text-base mt-3 max-w-md leading-relaxed">
                             {ownedKits.length > 0
                                 ? `You have ${ownedKits.length} kit${ownedKits.length > 1 ? "s" : ""} active. Keep the momentum going!`
                                 : "Welcome to your dashboard! Preview any kit below or purchase one to unlock full access."}
@@ -429,10 +429,10 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                     <div className="flex items-center gap-3">
                         {streak > 0 && (
                             <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-gradient-to-br from-orange-500/15 to-red-500/10 border border-orange-400/20 backdrop-blur-sm">
-                                <Flame className="w-6 h-6 text-orange-400 animate-pulse" />
+                                <Flame className="w-6 h-6 text-orange-700 dark:text-orange-400 animate-pulse" />
                                 <div>
-                                    <p className="text-orange-300 font-bold text-lg leading-none">{streak}</p>
-                                    <p className="text-orange-400/60 text-[10px] font-medium uppercase tracking-wider mt-0.5">day streak</p>
+                                    <p className="text-orange-700 dark:text-orange-300 font-bold text-lg leading-none">{streak}</p>
+                                    <p className="text-orange-700 dark:text-orange-400/60 text-[10px] font-medium uppercase tracking-wider mt-0.5">day streak</p>
                                 </div>
                             </div>
                         )}
@@ -450,8 +450,8 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                     const Icon = stat.icon
                     return (
                         <div key={i}
-                             className="group relative overflow-hidden rounded-2xl p-5 border border-white/[0.06] hover:border-white/[0.12] transition-all duration-500 cursor-default"
-                             style={{ background: `linear-gradient(135deg, ${stat.bgGlow} 0%, rgba(15,23,42,0.9) 100%)` }}>
+                             className="group relative overflow-hidden rounded-2xl p-5 border border-hairline hover:border-hairline transition-all duration-500 cursor-default"
+                             style={{ background: `linear-gradient(135deg, ${stat.bgGlow} 0%, var(--card) 100%)` }}>
                             {/* Hover glow */}
                             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                                  style={{ background: `radial-gradient(circle at 50% 50%, ${stat.bgGlow} 0%, transparent 70%)` }} />
@@ -462,9 +462,9 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                                     </div>
                                     {stat.suffix && <span className="text-2xl">{stat.suffix}</span>}
                                 </div>
-                                <p className="text-3xl font-extrabold text-white tracking-tight">{stat.value}</p>
-                                <p className="text-slate-400 text-xs mt-1.5 font-medium">{stat.label}</p>
-                                <p className="text-slate-500/70 text-[11px] mt-0.5">{stat.description}</p>
+                                <p className="text-3xl font-extrabold text-foreground tracking-tight">{stat.value}</p>
+                                <p className="text-muted-foreground text-xs mt-1.5 font-medium">{stat.label}</p>
+                                <p className="text-muted-foreground text-[11px] mt-0.5">{stat.description}</p>
                             </div>
                         </div>
                     )
@@ -479,17 +479,17 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                 <div>
                     <div className="flex items-center gap-3 mb-5">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center border border-violet-500/10">
-                            <Package className="w-4 h-4 text-violet-400" />
+                            <Package className="w-4 h-4 text-violet-700 dark:text-violet-400" />
                         </div>
                         <div>
-                            <h3 className="text-white font-semibold text-base">Your Active Kits</h3>
-                            <p className="text-slate-500 text-xs">Continue learning where you left off</p>
+                            <h3 className="text-foreground font-semibold text-base">Your Active Kits</h3>
+                            <p className="text-muted-foreground text-xs">Continue learning where you left off</p>
                         </div>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                         {ownedKits.map(kit => (
                             <Link key={kit._id} href={`/learn/${kit.slug}`}
-                                className="group relative overflow-hidden bg-slate-900/60 border border-white/[0.06] rounded-2xl p-5 hover:border-violet-500/25 transition-all duration-500 block">
+                                className="group relative overflow-hidden bg-card border border-hairline rounded-2xl p-5 hover:border-violet-500/25 transition-all duration-500 block">
                                 {/* Subtle hover glow */}
                                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                                      style={{ background: "radial-gradient(ellipse at center, rgba(139,92,246,0.06) 0%, transparent 70%)" }} />
@@ -499,13 +499,13 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                                             {kit.icon}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-white text-sm font-semibold truncate group-hover:text-violet-200 transition-colors">{kit.name}</p>
-                                            <p className="text-slate-500 text-xs mt-0.5">{kit.chaptersCount} chapters · {kit.topicsCount} topics</p>
+                                            <p className="text-foreground text-sm font-semibold truncate group-hover:text-violet-700 dark:group-hover:text-violet-700 dark:group-hover:text-violet-200 transition-colors">{kit.name}</p>
+                                            <p className="text-muted-foreground text-xs mt-0.5">{kit.chaptersCount} chapters · {kit.topicsCount} topics</p>
                                         </div>
-                                        <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] px-2 py-0.5 h-5">Owned</Badge>
+                                        <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 text-[10px] px-2 py-0.5 h-5">Owned</Badge>
                                     </div>
-                                    <p className="text-slate-400 text-xs line-clamp-1 mb-3">{kit.description}</p>
-                                    <div className="flex items-center gap-2 text-violet-400/70 text-xs font-medium group-hover:text-violet-300 transition-colors">
+                                    <p className="text-muted-foreground text-xs line-clamp-1 mb-3">{kit.description}</p>
+                                    <div className="flex items-center gap-2 text-violet-700 dark:text-violet-400/70 text-xs font-medium group-hover:text-violet-700 dark:group-hover:text-violet-300 transition-colors">
                                         Continue learning
                                         <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-300" />
                                     </div>
@@ -522,34 +522,34 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                     <div className="flex items-center justify-between gap-3 mb-5">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/10">
-                                <Eye className="w-4 h-4 text-amber-400" />
+                                <Eye className="w-4 h-4 text-amber-700 dark:text-amber-400" />
                             </div>
                             <div>
-                                <h3 className="text-white font-semibold text-base">Explore More Kits</h3>
-                                <p className="text-slate-500 text-xs">Preview Chapter 1 free · Unlock all with purchase</p>
+                                <h3 className="text-foreground font-semibold text-base">Explore More Kits</h3>
+                                <p className="text-muted-foreground text-xs">Preview Chapter 1 free · Unlock all with purchase</p>
                             </div>
                         </div>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                         {previewKits.map(kit => (
                             <div key={kit._id}
-                                className="group relative overflow-hidden bg-slate-900/50 border border-white/[0.05] rounded-2xl p-5 hover:border-amber-500/20 hover:bg-slate-900/70 transition-all duration-400">
+                                className="group relative overflow-hidden bg-card border border-hairline rounded-2xl p-5 hover:border-amber-500/20 hover:bg-card transition-all duration-400">
                                 <div className="relative z-10">
                                     <div className="flex items-start gap-3.5 mb-3">
                                         <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-lg flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300 opacity-80 group-hover:opacity-100`}>
                                             {kit.icon}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-white text-sm font-semibold truncate group-hover:text-amber-200 transition-colors">{kit.name}</p>
-                                            <p className="text-slate-500 text-xs mt-0.5">{kit.chaptersCount} chapters · {kit.topicsCount} topics</p>
+                                            <p className="text-foreground text-sm font-semibold truncate group-hover:text-amber-700 dark:group-hover:text-amber-200 transition-colors">{kit.name}</p>
+                                            <p className="text-muted-foreground text-xs mt-0.5">{kit.chaptersCount} chapters · {kit.topicsCount} topics</p>
                                         </div>
-                                        <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px] px-2 py-0.5 h-5 flex items-center gap-1">
+                                        <Badge className="bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20 text-[10px] px-2 py-0.5 h-5 flex items-center gap-1">
                                             <Sparkles className="w-2.5 h-2.5" /> Preview
                                         </Badge>
                                     </div>
-                                    <p className="text-slate-500 text-xs line-clamp-1 mb-4">{kit.description}</p>
+                                    <p className="text-muted-foreground text-xs line-clamp-1 mb-4">{kit.description}</p>
                                     <div className="grid grid-cols-2 gap-2">
-                                        <Button size="sm" className="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-white/10 text-xs" asChild>
+                                        <Button size="sm" className="bg-muted hover:bg-muted text-muted-foreground hover:text-foreground border border-hairline text-xs transition-colors" asChild>
                                             <Link href={`/learn/${kit.slug}`}>
                                                 <Eye className="w-3.5 h-3.5 mr-1.5" />
                                                 Preview
@@ -571,8 +571,7 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
 
             {/* ── Empty state (no kits at all) ── */}
             {visibleKits.length === 0 && (
-                <div className="relative overflow-hidden text-center py-16 px-8 rounded-3xl border border-dashed border-white/10"
-                     style={{ background: "linear-gradient(135deg, rgba(30,20,50,0.5) 0%, rgba(15,23,42,0.5) 100%)" }}>
+                <div className="relative overflow-hidden text-center py-16 px-8 rounded-3xl border border-dashed border-hairline bg-muted dark:bg-gradient-to-br dark:from-violet-950/40 dark:to-slate-900/50">
                     <div className="absolute inset-0 opacity-[0.03]"
                          style={{
                              backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)",
@@ -580,8 +579,8 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                          }} />
                     <div className="relative z-10">
                         <div className="text-5xl mb-5">📦</div>
-                        <h3 className="text-white font-bold text-lg mb-2">No kits yet</h3>
-                        <p className="text-slate-400 text-sm mb-8 max-w-sm mx-auto">Browse our interview preparation kits and start your journey toward your dream frontend role.</p>
+                        <h3 className="text-foreground font-bold text-lg mb-2">No kits yet</h3>
+                        <p className="text-muted-foreground text-sm mb-8 max-w-sm mx-auto">Browse our interview preparation kits and start your journey toward your dream frontend role.</p>
                         <Button className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg shadow-violet-500/20 hover:shadow-violet-500/30 transition-all duration-300 px-6 py-2.5" asChild>
                             <Link href="/#pricing">Browse Kits <ChevronRight className="w-4 h-4 ml-1" /></Link>
                         </Button>
@@ -691,26 +690,26 @@ function TeamInterviewTab() {
 
     return (
         <div className="space-y-6 max-w-5xl">
-            <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-emerald-900/35 via-slate-900/90 to-cyan-900/35 border border-emerald-500/20">
+            <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-emerald-50 via-card to-cyan-50 dark:from-emerald-900/35 dark:via-slate-900/90 dark:to-cyan-900/35 border border-emerald-500/20">
                 <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-5">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold mb-3">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-semibold mb-3">
                             <Video className="w-3.5 h-3.5" />
                             Human-Led Interview
                         </div>
-                        <h2 className="text-2xl font-bold text-white">Schedule a React interview with our team</h2>
-                        <p className="text-slate-400 text-sm mt-2 max-w-2xl">
+                        <h2 className="text-2xl font-bold text-foreground">Schedule a React interview with our team</h2>
+                        <p className="text-muted-foreground text-sm mt-2 max-w-2xl">
                             Pick your preferred slot and duration. After admin approval, the confirmed schedule and interview link will appear here.
                         </p>
                     </div>
                     <div className="grid grid-cols-2 gap-3 min-w-[220px]">
-                        <div className="rounded-xl bg-white/5 border border-white/10 p-4">
-                            <p className="text-2xl font-bold text-white">30-60</p>
-                            <p className="text-slate-500 text-xs mt-1">Minutes</p>
+                        <div className="rounded-xl bg-overlay border border-hairline p-4">
+                            <p className="text-2xl font-bold text-foreground">30-60</p>
+                            <p className="text-muted-foreground text-xs mt-1">Minutes</p>
                         </div>
-                        <div className="rounded-xl bg-white/5 border border-white/10 p-4">
-                            <p className="text-2xl font-bold text-white">{completedInterviews.length}</p>
-                            <p className="text-slate-500 text-xs mt-1">Reports</p>
+                        <div className="rounded-xl bg-overlay border border-hairline p-4">
+                            <p className="text-2xl font-bold text-foreground">{completedInterviews.length}</p>
+                            <p className="text-muted-foreground text-xs mt-1">Reports</p>
                         </div>
                     </div>
                 </div>
@@ -724,17 +723,17 @@ function TeamInterviewTab() {
                         <div className="flex items-start gap-3">
                             <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${activeInterview.status === "approved" ? "bg-emerald-500/15" : "bg-yellow-500/15"}`}>
                                 {activeInterview.status === "approved"
-                                    ? <CheckCircle2 className="w-5 h-5 text-emerald-300" />
-                                    : <Clock className="w-5 h-5 text-yellow-300" />}
+                                    ? <CheckCircle2 className="w-5 h-5 text-emerald-700 dark:text-emerald-300" />
+                                    : <Clock className="w-5 h-5 text-yellow-700 dark:text-yellow-300" />}
                             </div>
                             <div>
-                                <p className="text-white font-semibold">
+                                <p className="text-foreground font-semibold">
                                     {activeInterview.status === "approved" ? "Interview scheduled" : "Interview request pending"}
                                 </p>
-                                <p className="text-slate-300 text-sm mt-1">
+                                <p className="text-foreground text-sm mt-1">
                                     {formatInterviewDate(activeInterview.preferredTime)} · {activeInterview.durationMinutes} minutes · {activeInterview.interviewType}
                                 </p>
-                                {activeInterview.adminNotes && <p className="text-slate-500 text-xs mt-2">{activeInterview.adminNotes}</p>}
+                                {activeInterview.adminNotes && <p className="text-muted-foreground text-xs mt-2">{activeInterview.adminNotes}</p>}
                             </div>
                         </div>
                         {activeInterview.meetingLink && (
@@ -750,18 +749,18 @@ function TeamInterviewTab() {
             )}
 
             <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-6">
-                <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-5">
-                    <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-emerald-300" />
+                <div className="bg-card border border-hairline rounded-2xl p-5">
+                    <h3 className="text-foreground font-semibold mb-4 flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
                         Request a Slot
                     </h3>
                     <div className="space-y-4">
                         <div>
-                            <label className="text-xs text-slate-500 mb-1.5 block">Interview Type</label>
+                            <label className="text-xs text-muted-foreground mb-1.5 block">Interview Type</label>
                             <select
                                 value={interviewType}
                                 onChange={event => setInterviewType(event.target.value)}
-                                className="w-full h-11 rounded-xl bg-white/5 border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                                className="w-full h-11 rounded-xl bg-overlay border border-hairline px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
                             >
                                 <option value="React Interview">React Interview</option>
                                 <option value="React + JavaScript Interview">React + JavaScript Interview</option>
@@ -770,25 +769,25 @@ function TeamInterviewTab() {
                             </select>
                         </div>
                         <div>
-                            <label className="text-xs text-slate-500 mb-1.5 block">Preferred Date & Time</label>
+                            <label className="text-xs text-muted-foreground mb-1.5 block">Preferred Date & Time</label>
                             <input
                                 type="datetime-local"
                                 value={preferredTime}
                                 onChange={event => setPreferredTime(event.target.value)}
-                                className="w-full h-11 rounded-xl bg-white/5 border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                                className="w-full h-11 rounded-xl bg-overlay border border-hairline px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
                             />
-                            <p className="text-slate-600 text-xs mt-1.5">Choose a time at least 30 minutes from now.</p>
+                            <p className="text-muted-foreground text-xs mt-1.5">Choose a time at least 30 minutes from now.</p>
                         </div>
                         <div>
-                            <label className="text-xs text-slate-500 mb-1.5 block">Duration</label>
+                            <label className="text-xs text-muted-foreground mb-1.5 block">Duration</label>
                             <div className="grid grid-cols-3 gap-2">
                                 {[30, 45, 60].map(duration => (
                                     <button
                                         key={duration}
                                         onClick={() => setDurationMinutes(duration as 30 | 45 | 60)}
                                         className={`h-10 rounded-xl border text-sm font-medium transition-all ${durationMinutes === duration
-                                            ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
-                                            : "bg-white/5 border-white/10 text-slate-400 hover:text-white"}`}
+                                            ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
+                                            : "bg-overlay border-hairline text-muted-foreground hover:text-foreground"}`}
                                     >
                                         {duration} min
                                     </button>
@@ -796,16 +795,16 @@ function TeamInterviewTab() {
                             </div>
                         </div>
                         <div>
-                            <label className="text-xs text-slate-500 mb-1.5 block">Anything you want us to focus on?</label>
+                            <label className="text-xs text-muted-foreground mb-1.5 block">Anything you want us to focus on?</label>
                             <textarea
                                 value={note}
                                 onChange={event => setNote(event.target.value)}
                                 placeholder="Example: hooks, machine coding, project explanation, performance..."
-                                className="w-full min-h-[90px] resize-none rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                                className="w-full min-h-[90px] resize-none rounded-xl bg-overlay border border-hairline px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
                             />
                         </div>
-                        {error && <p className="text-red-300 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2">{error}</p>}
-                        {success && <p className="text-emerald-300 text-sm bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-2">{success}</p>}
+                        {error && <p className="text-red-700 dark:text-red-300 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2">{error}</p>}
+                        {success && <p className="text-emerald-700 dark:text-emerald-300 text-sm bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-2">{success}</p>}
                         <Button
                             onClick={submitRequest}
                             disabled={submitting || !preferredTime || Boolean(activeInterview)}
@@ -817,54 +816,54 @@ function TeamInterviewTab() {
                     </div>
                 </div>
 
-                <div className="bg-slate-900/80 border border-white/5 rounded-2xl overflow-hidden">
-                    <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
-                        <h3 className="text-white font-semibold flex items-center gap-2">
-                            <ClipboardCheck className="w-4 h-4 text-emerald-300" />
+                <div className="bg-card border border-hairline rounded-2xl overflow-hidden">
+                    <div className="px-5 py-4 border-b border-hairline flex items-center justify-between">
+                        <h3 className="text-foreground font-semibold flex items-center gap-2">
+                            <ClipboardCheck className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
                             Your Interviews
                         </h3>
-                        <button onClick={fetchInterviews} className="text-slate-500 hover:text-white transition-colors">
+                        <button onClick={fetchInterviews} className="text-muted-foreground hover:text-foreground transition-colors">
                             <RefreshCw className="w-4 h-4" />
                         </button>
                     </div>
                     {loading ? (
                         <div className="py-16 flex justify-center">
-                            <RefreshCw className="w-7 h-7 animate-spin text-slate-600" />
+                            <RefreshCw className="w-7 h-7 animate-spin text-muted-foreground" />
                         </div>
                     ) : interviews.length === 0 ? (
                         <div className="text-center py-16 px-6">
-                            <Video className="w-11 h-11 text-slate-700 mx-auto mb-3" />
-                            <p className="text-white font-semibold">No interview requests yet</p>
-                            <p className="text-slate-500 text-sm mt-1">Request your first team interview from the form.</p>
+                            <Video className="w-11 h-11 text-muted-foreground mx-auto mb-3" />
+                            <p className="text-foreground font-semibold">No interview requests yet</p>
+                            <p className="text-muted-foreground text-sm mt-1">Request your first team interview from the form.</p>
                         </div>
                     ) : (
-                        <div className="divide-y divide-white/5">
+                        <div className="divide-y divide-hairline">
                             {interviews.map(interview => (
                                 <div key={interview._id} className="p-5">
                                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                                         <div>
                                             <div className="flex items-center gap-2 mb-1">
-                                                <p className="text-white font-medium">{interview.interviewType}</p>
+                                                <p className="text-foreground font-medium">{interview.interviewType}</p>
                                                 <InterviewStatusBadge status={interview.status} />
                                             </div>
-                                            <p className="text-slate-400 text-sm">{formatInterviewDate(interview.preferredTime)} · {interview.durationMinutes} min</p>
+                                            <p className="text-muted-foreground text-sm">{formatInterviewDate(interview.preferredTime)} · {interview.durationMinutes} min</p>
                                             {interview.meetingLink && interview.status === "approved" && (
-                                                <a href={interview.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-emerald-300 text-xs mt-2 hover:underline">
+                                                <a href={interview.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-300 text-xs mt-2 hover:underline">
                                                     Meeting link <ArrowRight className="w-3 h-3" />
                                                 </a>
                                             )}
                                         </div>
                                     </div>
                                     {interview.report && (
-                                        <div className="mt-4 rounded-xl bg-white/5 border border-white/5 p-4">
+                                        <div className="mt-4 rounded-xl bg-overlay border border-hairline p-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <p className="text-white font-semibold flex items-center gap-2">
-                                                    <FileText className="w-4 h-4 text-violet-300" />
+                                                <p className="text-foreground font-semibold flex items-center gap-2">
+                                                    <FileText className="w-4 h-4 text-violet-700 dark:text-violet-300" />
                                                     Review Report
                                                 </p>
-                                                {interview.report.rating && <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20">{interview.report.rating}/10</Badge>}
+                                                {interview.report.rating && <Badge className="bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20">{interview.report.rating}/10</Badge>}
                                             </div>
-                                            {interview.report.summary && <p className="text-slate-300 text-sm mb-3">{interview.report.summary}</p>}
+                                            {interview.report.summary && <p className="text-foreground text-sm mb-3">{interview.report.summary}</p>}
                                             <div className="grid sm:grid-cols-2 gap-3">
                                                 {interview.report.strengths && <ReportBlock title="Strengths" value={interview.report.strengths} />}
                                                 {interview.report.improvements && <ReportBlock title="Improve" value={interview.report.improvements} />}
@@ -885,11 +884,11 @@ function TeamInterviewTab() {
 
 function InterviewStatusBadge({ status }: { status: TeamInterview["status"] }) {
     const styles: Record<TeamInterview["status"], string> = {
-        pending: "bg-yellow-500/10 text-yellow-300 border-yellow-500/20",
-        approved: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
-        rejected: "bg-red-500/10 text-red-300 border-red-500/20",
-        completed: "bg-violet-500/10 text-violet-300 border-violet-500/20",
-        cancelled: "bg-slate-500/10 text-slate-300 border-slate-500/20",
+        pending: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 border-yellow-500/20",
+        approved: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
+        rejected: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/20",
+        completed: "bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20",
+        cancelled: "bg-muted text-foreground border-border",
     };
 
     return <Badge className={`${styles[status]} capitalize`}>{status}</Badge>;
@@ -897,9 +896,9 @@ function InterviewStatusBadge({ status }: { status: TeamInterview["status"] }) {
 
 function ReportBlock({ title, value }: { title: string; value: string }) {
     return (
-        <div className="rounded-lg bg-slate-950/40 border border-white/5 p-3">
-            <p className="text-slate-500 text-xs font-semibold mb-1">{title}</p>
-            <p className="text-slate-300 text-sm whitespace-pre-wrap">{value}</p>
+        <div className="rounded-lg bg-background border border-hairline p-3">
+            <p className="text-muted-foreground text-xs font-semibold mb-1">{title}</p>
+            <p className="text-foreground text-sm whitespace-pre-wrap">{value}</p>
         </div>
     );
 }
@@ -1142,19 +1141,19 @@ function LiveAIInterviewTab({ user }: { user: SessionUser }) {
     if (phase === "summary") {
         return (
             <div className="space-y-6 max-w-5xl">
-                <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-900/30 via-slate-900/90 to-cyan-900/30 p-6">
+                <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-50 via-card to-cyan-50 dark:from-emerald-900/30 dark:via-slate-900/90 dark:to-cyan-900/30 p-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
                         <div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold mb-3">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-semibold mb-3">
                                 <Sparkles className="w-3.5 h-3.5" />
                                 Interview complete
                             </div>
-                            <h2 className="text-2xl font-bold text-white">{selectedRound.title} report</h2>
-                            <p className="text-slate-400 text-sm mt-2">Nice work, {user.name.split(" ")[0]}. Review the feedback, then retry the weak answers.</p>
+                            <h2 className="text-2xl font-bold text-foreground">{selectedRound.title} report</h2>
+                            <p className="text-muted-foreground text-sm mt-2">Nice work, {user.name.split(" ")[0]}. Review the feedback, then retry the weak answers.</p>
                         </div>
                         <div className="text-center md:text-right">
-                            <p className="text-5xl font-black text-white">{averageScore}</p>
-                            <p className="text-slate-500 text-xs">average score</p>
+                            <p className="text-5xl font-black text-foreground">{averageScore}</p>
+                            <p className="text-muted-foreground text-xs">average score</p>
                         </div>
                     </div>
                 </div>
@@ -1165,44 +1164,44 @@ function LiveAIInterviewTab({ user }: { user: SessionUser }) {
                     <InterviewScoreCard label="Retry focus" value={getRetryFocus(answers)} icon={Target} />
                 </div>
 
-                <div className="bg-slate-900/80 border border-white/5 rounded-2xl overflow-hidden">
-                    <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
-                        <h3 className="text-white font-semibold">AI Feedback</h3>
-                        <Button size="sm" variant="outline" className="border-white/10 text-slate-300 hover:bg-white/5" onClick={() => resetInterview()}>
+                <div className="bg-card border border-hairline rounded-2xl overflow-hidden">
+                    <div className="px-5 py-4 border-b border-hairline flex items-center justify-between">
+                        <h3 className="text-foreground font-semibold">AI Feedback</h3>
+                        <Button size="sm" variant="outline" className="border-hairline text-foreground hover:bg-overlay" onClick={() => resetInterview()}>
                             <RotateCcw className="w-4 h-4 mr-1" />
                             Practice Again
                         </Button>
                     </div>
-                    <div className="divide-y divide-white/5">
+                    <div className="divide-y divide-hairline">
                         {answers.map((item, index) => (
                             <div key={index} className="p-5">
                                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
                                     <div>
-                                        <p className="text-xs text-slate-500 mb-1">Question {index + 1}</p>
-                                        <p className="text-white font-medium">{item.question}</p>
+                                        <p className="text-xs text-muted-foreground mb-1">Question {index + 1}</p>
+                                        <p className="text-foreground font-medium">{item.question}</p>
                                     </div>
-                                    <Badge className={`${item.score >= 75 ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20" : item.score >= 50 ? "bg-yellow-500/10 text-yellow-300 border-yellow-500/20" : "bg-red-500/10 text-red-300 border-red-500/20"}`}>
+                                    <Badge className={`${item.score >= 75 ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20" : item.score >= 50 ? "bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 border-yellow-500/20" : "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/20"}`}>
                                         {item.score}/100
                                     </Badge>
                                 </div>
                                 <div className="grid md:grid-cols-2 gap-4">
-                                    <div className="rounded-xl bg-white/5 border border-white/5 p-4">
-                                        <p className="text-slate-400 text-xs font-semibold mb-2">Feedback</p>
+                                    <div className="rounded-xl bg-overlay border border-hairline p-4">
+                                        <p className="text-muted-foreground text-xs font-semibold mb-2">Feedback</p>
                                         <ul className="space-y-1.5">
                                             {item.feedback.map(point => (
-                                                <li key={point} className="text-sm text-slate-300 flex gap-2">
-                                                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                                                <li key={point} className="text-sm text-foreground flex gap-2">
+                                                    <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
                                                     <span>{point}</span>
                                                 </li>
                                             ))}
                                         </ul>
                                     </div>
-                                    <div className="rounded-xl bg-white/5 border border-white/5 p-4">
-                                        <p className="text-slate-400 text-xs font-semibold mb-2">Missing Signals</p>
+                                    <div className="rounded-xl bg-overlay border border-hairline p-4">
+                                        <p className="text-muted-foreground text-xs font-semibold mb-2">Missing Signals</p>
                                         <div className="flex flex-wrap gap-2">
                                             {item.missingKeywords.length > 0 ? item.missingKeywords.map(keyword => (
-                                                <span key={keyword} className="text-xs px-2 py-1 rounded-full bg-red-500/10 text-red-300 border border-red-500/20">{keyword}</span>
-                                            )) : <span className="text-sm text-slate-500">You covered the important signals.</span>}
+                                                <span key={keyword} className="text-xs px-2 py-1 rounded-full bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20">{keyword}</span>
+                                            )) : <span className="text-sm text-muted-foreground">You covered the important signals.</span>}
                                         </div>
                                     </div>
                                 </div>
@@ -1216,33 +1215,33 @@ function LiveAIInterviewTab({ user }: { user: SessionUser }) {
 
     return (
         <div className="space-y-6 max-w-6xl">
-            <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-violet-900/40 via-slate-900/90 to-cyan-900/40 border border-violet-500/20">
+            <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-violet-50 via-card to-cyan-50 dark:from-violet-900/40 dark:via-slate-900/90 dark:to-cyan-900/40 border border-violet-500/20">
                 <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 text-xs font-semibold mb-3">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-semibold mb-3">
                             <Bot className="w-3.5 h-3.5" />
                             Live AI Interview
                         </div>
-                        <h2 className="text-2xl font-bold text-white">Practice like a real interview</h2>
-                        <p className="text-slate-400 text-sm mt-2 max-w-2xl">
+                        <h2 className="text-2xl font-bold text-foreground">Practice like a real interview</h2>
+                        <p className="text-muted-foreground text-sm mt-2 max-w-2xl">
                             Answer timed questions, use voice input if your browser supports it, and get instant scoring with improvement points.
                         </p>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
-                        <div className="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
-                            <Timer className="w-5 h-5 text-cyan-300 mx-auto mb-2" />
-                            <p className="text-white font-bold">{minutes}:{seconds}</p>
-                            <p className="text-slate-500 text-[10px]">Time left</p>
+                        <div className="rounded-xl bg-overlay border border-hairline p-4 text-center">
+                            <Timer className="w-5 h-5 text-cyan-700 dark:text-cyan-300 mx-auto mb-2" />
+                            <p className="text-foreground font-bold">{minutes}:{seconds}</p>
+                            <p className="text-muted-foreground text-[10px]">Time left</p>
                         </div>
-                        <div className="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
-                            <MessageSquare className="w-5 h-5 text-violet-300 mx-auto mb-2" />
-                            <p className="text-white font-bold">{phase === "live" ? questionIndex + 1 : 0}/{selectedRound.questions.length}</p>
-                            <p className="text-slate-500 text-[10px]">Questions</p>
+                        <div className="rounded-xl bg-overlay border border-hairline p-4 text-center">
+                            <MessageSquare className="w-5 h-5 text-violet-700 dark:text-violet-300 mx-auto mb-2" />
+                            <p className="text-foreground font-bold">{phase === "live" ? questionIndex + 1 : 0}/{selectedRound.questions.length}</p>
+                            <p className="text-muted-foreground text-[10px]">Questions</p>
                         </div>
-                        <div className="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
-                            <Brain className="w-5 h-5 text-emerald-300 mx-auto mb-2" />
-                            <p className="text-white font-bold">AI</p>
-                            <p className="text-slate-500 text-[10px]">Feedback</p>
+                        <div className="rounded-xl bg-overlay border border-hairline p-4 text-center">
+                            <Brain className="w-5 h-5 text-emerald-700 dark:text-emerald-300 mx-auto mb-2" />
+                            <p className="text-foreground font-bold">AI</p>
+                            <p className="text-muted-foreground text-[10px]">Feedback</p>
                         </div>
                     </div>
                 </div>
@@ -1250,8 +1249,8 @@ function LiveAIInterviewTab({ user }: { user: SessionUser }) {
 
             {phase === "setup" ? (
                 <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-6">
-                    <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-5">
-                        <h3 className="text-white font-semibold mb-4">Choose Interview Round</h3>
+                    <div className="bg-card border border-hairline rounded-2xl p-5">
+                        <h3 className="text-foreground font-semibold mb-4">Choose Interview Round</h3>
                         <div className="grid sm:grid-cols-2 gap-4">
                             {INTERVIEW_ROUNDS.map(round => (
                                 <button
@@ -1259,28 +1258,28 @@ function LiveAIInterviewTab({ user }: { user: SessionUser }) {
                                     onClick={() => { setSelectedRoundId(round.id); resetInterview(round); }}
                                     className={`text-left rounded-2xl border p-5 transition-all ${selectedRoundId === round.id
                                         ? "bg-violet-500/10 border-violet-500/30"
-                                        : "bg-white/3 border-white/5 hover:bg-white/5 hover:border-white/10"}`}
+                                        : "bg-overlay border-hairline hover:bg-overlay hover:border-hairline"}`}
                                 >
                                     <div className="flex items-start justify-between mb-4">
                                         <span className="text-3xl">{round.icon}</span>
-                                        <Badge className="bg-white/5 text-slate-400 border-white/10">{round.duration} min</Badge>
+                                        <Badge className="bg-overlay text-muted-foreground border-hairline">{round.duration} min</Badge>
                                     </div>
-                                    <p className="text-white font-semibold">{round.title}</p>
-                                    <p className="text-slate-500 text-sm mt-1">{round.description}</p>
+                                    <p className="text-foreground font-semibold">{round.title}</p>
+                                    <p className="text-muted-foreground text-sm mt-1">{round.description}</p>
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-5">
-                        <h3 className="text-white font-semibold mb-4">Session Preview</h3>
+                    <div className="bg-card border border-hairline rounded-2xl p-5">
+                        <h3 className="text-foreground font-semibold mb-4">Session Preview</h3>
                         <div className="space-y-4">
                             {selectedRound.questions.map((question, index) => (
                                 <div key={question.prompt} className="flex gap-3">
-                                    <div className="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-300 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                                    <div className="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-700 dark:text-violet-300 text-xs font-bold flex items-center justify-center flex-shrink-0">
                                         {index + 1}
                                     </div>
-                                    <p className="text-slate-300 text-sm">{question.prompt}</p>
+                                    <p className="text-foreground text-sm">{question.prompt}</p>
                                 </div>
                             ))}
                         </div>
@@ -1292,25 +1291,25 @@ function LiveAIInterviewTab({ user }: { user: SessionUser }) {
                 </div>
             ) : (
                 <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-6">
-                    <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-5">
+                    <div className="bg-card border border-hairline rounded-2xl p-5">
                         <div className="flex items-center justify-between mb-5">
-                            <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20">{selectedRound.title}</Badge>
-                            <span className="text-slate-500 text-xs">Question {questionIndex + 1} of {selectedRound.questions.length}</span>
+                            <Badge className="bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20">{selectedRound.title}</Badge>
+                            <span className="text-muted-foreground text-xs">Question {questionIndex + 1} of {selectedRound.questions.length}</span>
                         </div>
                         <div className="min-h-[260px] flex flex-col justify-between">
                             <div>
                                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center mb-4">
                                     <Bot className="w-6 h-6 text-white" />
                                 </div>
-                                <h3 className="text-white text-xl font-bold leading-snug">{currentQuestion.prompt}</h3>
-                                <p className="text-slate-400 text-sm mt-4 border-l-2 border-cyan-500/40 pl-3">{currentQuestion.followUp}</p>
+                                <h3 className="text-foreground text-xl font-bold leading-snug">{currentQuestion.prompt}</h3>
+                                <p className="text-muted-foreground text-sm mt-4 border-l-2 border-cyan-500/40 pl-3">{currentQuestion.followUp}</p>
                             </div>
                             <div className="flex gap-3 mt-6">
-                                <Button variant="outline" className="border-white/10 text-slate-300 hover:bg-white/5" onClick={() => speakQuestion(currentQuestion.prompt)}>
+                                <Button variant="outline" className="border-hairline text-foreground hover:bg-overlay" onClick={() => speakQuestion(currentQuestion.prompt)}>
                                     <Bot className="w-4 h-4 mr-2" />
                                     Repeat
                                 </Button>
-                                <Button variant="outline" className="border-white/10 text-slate-300 hover:bg-white/5" onClick={() => resetInterview()}>
+                                <Button variant="outline" className="border-hairline text-foreground hover:bg-overlay" onClick={() => resetInterview()}>
                                     <RotateCcw className="w-4 h-4 mr-2" />
                                     Reset
                                 </Button>
@@ -1318,14 +1317,14 @@ function LiveAIInterviewTab({ user }: { user: SessionUser }) {
                         </div>
                     </div>
 
-                    <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-5">
+                    <div className="bg-card border border-hairline rounded-2xl p-5">
                         <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-white font-semibold">Your Answer</h3>
+                            <h3 className="text-foreground font-semibold">Your Answer</h3>
                             <button
                                 onClick={toggleVoiceInput}
                                 className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${listening
-                                    ? "bg-red-500/10 border-red-500/20 text-red-300"
-                                    : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"}`}
+                                    ? "bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-300"
+                                    : "bg-overlay border-hairline text-foreground hover:bg-overlay-strong"}`}
                             >
                                 {listening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
                                 {listening ? "Listening" : "Voice"}
@@ -1335,10 +1334,10 @@ function LiveAIInterviewTab({ user }: { user: SessionUser }) {
                             value={answer}
                             onChange={event => setAnswer(event.target.value)}
                             placeholder="Speak or type your answer. Try to explain the concept, tradeoffs, edge cases, and one real example."
-                            className="w-full min-h-[260px] resize-none rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+                            className="w-full min-h-[260px] resize-none rounded-xl bg-overlay border border-hairline px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-violet-500/50"
                         />
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4">
-                            <p className="text-xs text-slate-500">{answer.trim().split(/\s+/).filter(Boolean).length} words · aim for 80+ words</p>
+                            <p className="text-xs text-muted-foreground">{answer.trim().split(/\s+/).filter(Boolean).length} words · aim for 80+ words</p>
                             <Button onClick={submitAnswer} disabled={answer.trim().length < 20} className="bg-violet-600 hover:bg-violet-500 text-white disabled:opacity-40">
                                 {questionIndex >= selectedRound.questions.length - 1 ? "Finish Interview" : "Submit Answer"}
                                 <Send className="w-4 h-4 ml-2" />
@@ -1353,10 +1352,10 @@ function LiveAIInterviewTab({ user }: { user: SessionUser }) {
 
 function InterviewScoreCard({ label, value, icon: Icon }: { label: string; value: string; icon: any }) {
     return (
-        <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-5">
-            <Icon className="w-5 h-5 text-violet-300 mb-3" />
-            <p className="text-2xl font-bold text-white">{value}</p>
-            <p className="text-slate-500 text-xs mt-1">{label}</p>
+        <div className="bg-card border border-hairline rounded-2xl p-5">
+            <Icon className="w-5 h-5 text-violet-700 dark:text-violet-300 mb-3" />
+            <p className="text-2xl font-bold text-foreground">{value}</p>
+            <p className="text-muted-foreground text-xs mt-1">{label}</p>
         </div>
     );
 }
@@ -1460,58 +1459,58 @@ function LeaderboardTab() {
     if (loading) {
         return (
             <div className="flex justify-center py-12">
-                <RefreshCw className="w-8 h-8 animate-spin text-slate-500" />
+                <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
             </div>
         );
     }
 
     return (
         <div className="space-y-6 max-w-5xl">
-            <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-cyan-900/40 via-slate-900/80 to-violet-900/40 border border-cyan-500/20">
+            <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-cyan-50 via-card to-violet-50 dark:from-cyan-900/40 dark:via-slate-900/80 dark:to-violet-900/40 border border-cyan-500/20">
                 <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-5">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-semibold mb-3">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-700 dark:text-cyan-300 text-xs font-semibold mb-3">
                             <Trophy className="w-3.5 h-3.5" />
                             React Kit Leaderboard
                         </div>
-                        <h2 className="text-2xl font-bold text-white">Climb with consistent progress</h2>
-                        <p className="text-slate-400 text-sm mt-2 max-w-2xl">
+                        <h2 className="text-2xl font-bold text-foreground">Climb with consistent progress</h2>
+                        <p className="text-muted-foreground text-sm mt-2 max-w-2xl">
                             Rankings are based on React kit topics completed, with streaks used to break close ties.
                         </p>
                     </div>
                     <div className="grid grid-cols-2 gap-3 min-w-[220px]">
-                        <div className="rounded-xl bg-white/5 border border-white/10 p-4">
-                            <p className="text-2xl font-bold text-white">{participantsCount}</p>
-                            <p className="text-slate-500 text-xs mt-1">Students ranked</p>
+                        <div className="rounded-xl bg-overlay border border-hairline p-4">
+                            <p className="text-2xl font-bold text-foreground">{participantsCount}</p>
+                            <p className="text-muted-foreground text-xs mt-1">Students ranked</p>
                         </div>
-                        <div className="rounded-xl bg-white/5 border border-white/10 p-4">
-                            <p className="text-2xl font-bold text-white">{totalTopics}</p>
-                            <p className="text-slate-500 text-xs mt-1">React topics</p>
+                        <div className="rounded-xl bg-overlay border border-hairline p-4">
+                            <p className="text-2xl font-bold text-foreground">{totalTopics}</p>
+                            <p className="text-muted-foreground text-xs mt-1">React topics</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             {currentUser && (
-                <div className="bg-slate-900/80 border border-violet-500/20 rounded-2xl p-5">
+                <div className="bg-card border border-violet-500/20 rounded-2xl p-5">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold">
                                 #{currentUser.rank}
                             </div>
                             <div>
-                                <p className="text-white font-semibold">Your React rank</p>
-                                <p className="text-slate-500 text-sm">
+                                <p className="text-foreground font-semibold">Your React rank</p>
+                                <p className="text-muted-foreground text-sm">
                                     {currentUser.completedCount}/{currentUser.totalTopics} topics completed · {currentUser.currentStreak} day streak
                                 </p>
                             </div>
                         </div>
                         <div className="sm:w-56">
                             <div className="flex items-center justify-between text-xs mb-1">
-                                <span className="text-slate-500">Progress</span>
-                                <span className="text-cyan-300 font-semibold">{currentUser.progressPercent}%</span>
+                                <span className="text-muted-foreground">Progress</span>
+                                <span className="text-cyan-700 dark:text-cyan-300 font-semibold">{currentUser.progressPercent}%</span>
                             </div>
-                            <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                            <div className="h-2 rounded-full bg-muted overflow-hidden">
                                 <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${currentUser.progressPercent}%` }} />
                             </div>
                         </div>
@@ -1527,26 +1526,26 @@ function LeaderboardTab() {
                 </div>
             )}
 
-            <div className="bg-slate-900/80 border border-white/5 rounded-2xl overflow-hidden">
-                <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
-                    <h3 className="text-white font-semibold flex items-center gap-2">
-                        <Medal className="w-4 h-4 text-amber-400" />
+            <div className="bg-card border border-hairline rounded-2xl overflow-hidden">
+                <div className="px-5 py-4 border-b border-hairline flex items-center justify-between">
+                    <h3 className="text-foreground font-semibold flex items-center gap-2">
+                        <Medal className="w-4 h-4 text-amber-700 dark:text-amber-400" />
                         React Rankings
                     </h3>
-                    <span className="text-xs text-slate-500">Top 25 students</span>
+                    <span className="text-xs text-muted-foreground">Top 25 students</span>
                 </div>
 
                 {rows.length === 0 ? (
                     <div className="text-center py-14 px-6">
-                        <Trophy className="w-12 h-12 mx-auto mb-4 text-slate-700" />
-                        <p className="text-white font-semibold mb-1">No React progress yet</p>
-                        <p className="text-slate-500 text-sm mb-5">Complete your first React topic to appear on the leaderboard.</p>
+                        <Trophy className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                        <p className="text-foreground font-semibold mb-1">No React progress yet</p>
+                        <p className="text-muted-foreground text-sm mb-5">Complete your first React topic to appear on the leaderboard.</p>
                         <Button className="bg-cyan-600 hover:bg-cyan-500 text-white" asChild>
                             <Link href="/learn/react-interview-kit">Start React Kit</Link>
                         </Button>
                     </div>
                 ) : (
-                    <div className="divide-y divide-white/5">
+                    <div className="divide-y divide-hairline">
                         {rows.map(row => (
                             <LeaderboardListRow key={row.userId} row={row} />
                         ))}
@@ -1565,26 +1564,26 @@ function LeaderboardCard({ row }: { row: LeaderboardRow }) {
             : "from-orange-400 to-amber-700";
 
     return (
-        <div className={`bg-slate-900/80 border rounded-2xl p-5 ${row.isCurrentUser ? "border-violet-500/30" : "border-white/5"}`}>
+        <div className={`bg-card border rounded-2xl p-5 ${row.isCurrentUser ? "border-violet-500/30" : "border-hairline"}`}>
             <div className="flex items-start justify-between mb-4">
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${medalClass} flex items-center justify-center text-white font-bold shadow-lg`}>
                     #{row.rank}
                 </div>
-                {row.isCurrentUser && <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20">You</Badge>}
+                {row.isCurrentUser && <Badge className="bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20">You</Badge>}
             </div>
             <div className="flex items-center gap-3 mb-4">
                 <AvatarBubble row={row} />
                 <div className="min-w-0">
-                    <p className="text-white font-semibold truncate">{row.name}</p>
-                    <p className="text-slate-500 text-xs">{row.currentStreak} day streak</p>
+                    <p className="text-foreground font-semibold truncate">{row.name}</p>
+                    <p className="text-muted-foreground text-xs">{row.currentStreak} day streak</p>
                 </div>
             </div>
             <div>
                 <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-slate-500">{row.completedCount}/{row.totalTopics} topics</span>
-                    <span className="text-cyan-300 font-semibold">{row.progressPercent}%</span>
+                    <span className="text-muted-foreground">{row.completedCount}/{row.totalTopics} topics</span>
+                    <span className="text-cyan-700 dark:text-cyan-300 font-semibold">{row.progressPercent}%</span>
                 </div>
-                <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                <div className="h-2 rounded-full bg-muted overflow-hidden">
                     <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${row.progressPercent}%` }} />
                 </div>
             </div>
@@ -1594,34 +1593,34 @@ function LeaderboardCard({ row }: { row: LeaderboardRow }) {
 
 function LeaderboardListRow({ row }: { row: LeaderboardRow }) {
     return (
-        <div className={`px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4 ${row.isCurrentUser ? "bg-violet-500/10" : "hover:bg-white/3"}`}>
+        <div className={`px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4 ${row.isCurrentUser ? "bg-violet-500/10" : "hover:bg-overlay"}`}>
             <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 text-sm font-bold flex-shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-overlay border border-hairline flex items-center justify-center text-foreground text-sm font-bold flex-shrink-0">
                     {row.rank}
                 </div>
                 <AvatarBubble row={row} />
                 <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                        <p className="text-white font-medium truncate">{row.name}</p>
-                        {row.isCurrentUser && <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20 text-[10px] px-1.5 py-0 h-4">You</Badge>}
+                        <p className="text-foreground font-medium truncate">{row.name}</p>
+                        {row.isCurrentUser && <Badge className="bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20 text-[10px] px-1.5 py-0 h-4">You</Badge>}
                     </div>
-                    <p className="text-slate-500 text-xs">{row.completedCount}/{row.totalTopics} React topics completed</p>
+                    <p className="text-muted-foreground text-xs">{row.completedCount}/{row.totalTopics} React topics completed</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[160px_90px_90px] items-center gap-3 sm:gap-4">
                 <div>
-                    <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                    <div className="h-2 rounded-full bg-muted overflow-hidden">
                         <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${row.progressPercent}%` }} />
                     </div>
                 </div>
                 <div className="text-right">
-                    <p className="text-white text-sm font-semibold">{row.progressPercent}%</p>
-                    <p className="text-slate-600 text-[10px]">Progress</p>
+                    <p className="text-foreground text-sm font-semibold">{row.progressPercent}%</p>
+                    <p className="text-muted-foreground text-[10px]">Progress</p>
                 </div>
                 <div className="text-right hidden sm:block">
-                    <p className="text-orange-400 text-sm font-semibold">{row.currentStreak}d</p>
-                    <p className="text-slate-600 text-[10px]">Streak</p>
+                    <p className="text-orange-700 dark:text-orange-400 text-sm font-semibold">{row.currentStreak}d</p>
+                    <p className="text-muted-foreground text-[10px]">Streak</p>
                 </div>
             </div>
         </div>
@@ -1632,7 +1631,7 @@ function AvatarBubble({ row }: { row: LeaderboardRow }) {
     if (row.profilePicture) {
         return (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={row.profilePicture} alt={row.name} className="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" />
+            <img src={row.profilePicture} alt={row.name} className="w-10 h-10 rounded-full object-cover border border-hairline flex-shrink-0" />
         );
     }
 
@@ -1684,7 +1683,7 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
     if (isLoading) {
         return (
             <div className="flex justify-center py-12">
-                <RefreshCw className="w-8 h-8 animate-spin text-slate-500" />
+                <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
             </div>
         );
     }
@@ -1708,17 +1707,17 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                 }
             />
 
-            <section className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-950/60 via-slate-900 to-slate-950 p-6">
+            <section className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-50 via-card to-background dark:from-violet-950/60 dark:via-slate-900 dark:to-slate-950 p-6">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.22),transparent_36%)]" />
                 <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div className="max-w-2xl">
-                        <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20 mb-3">
+                        <Badge className="bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20 mb-3">
                             Your learning library
                         </Badge>
-                        <h2 className="text-2xl md:text-3xl font-bold text-white">
+                        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
                             {featuredOwnedKit ? "Continue with your active kit" : "Choose a kit and start preparing"}
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-muted-foreground text-sm mt-2">
                             {featuredOwnedKit
                                 ? `${featuredOwnedKit.name} is ready with ${featuredOwnedKit.chaptersCount} chapters and ${featuredOwnedKit.topicsCount} topics.`
                                 : "Pick the kit that matches your next interview goal. Your purchased kits will appear here instantly after checkout."}
@@ -1747,13 +1746,13 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                 <section>
                     <div className="flex items-end justify-between gap-4 mb-4">
                         <div>
-                            <h2 className="text-white font-bold text-lg flex items-center gap-2">
-                                <CheckCircle2 className="w-5 h-5 text-green-400" />
+                            <h2 className="text-foreground font-bold text-lg flex items-center gap-2">
+                                <CheckCircle2 className="w-5 h-5 text-green-700 dark:text-green-400" />
                                 Purchased Kits
                             </h2>
-                            <p className="text-slate-500 text-sm mt-1">Your active interview prep content.</p>
+                            <p className="text-muted-foreground text-sm mt-1">Your active interview prep content.</p>
                         </div>
-                        <Badge className="bg-green-500/10 text-green-300 border-green-500/20">
+                        <Badge className="bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/20">
                             {ownedKits.length} active
                         </Badge>
                     </div>
@@ -1761,7 +1760,7 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                     <div className="grid md:grid-cols-2 gap-4">
                         {ownedKits.map(kit => (
                             <Link key={kit._id} href={`/learn/${kit.slug}`}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/80 p-5 hover:border-violet-400/40 hover:bg-slate-900 transition-all">
+                                className="group relative overflow-hidden rounded-2xl border border-hairline bg-card p-5 hover:border-violet-400/40 hover:bg-card transition-all">
                                 <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-green-400 via-violet-400 to-cyan-400" />
                                 <div className="flex items-start gap-4">
                                     <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl flex-shrink-0 shadow-lg`}>
@@ -1769,34 +1768,34 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex flex-wrap items-center gap-2 mb-1">
-                                            <Badge className="bg-green-500/10 text-green-300 border-green-500/20 text-[10px] px-2 py-0.5">
+                                            <Badge className="bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/20 text-[10px] px-2 py-0.5">
                                                 Owned
                                             </Badge>
-                                            <Badge variant="outline" className="border-white/10 text-slate-400 text-[10px] px-2 py-0.5">
+                                            <Badge variant="outline" className="border-hairline text-muted-foreground text-[10px] px-2 py-0.5">
                                                 Lifetime access
                                             </Badge>
                                         </div>
-                                        <p className="text-white font-semibold group-hover:text-violet-200 transition-colors">
+                                        <p className="text-foreground font-semibold group-hover:text-violet-700 dark:group-hover:text-violet-200 transition-colors">
                                             {kit.name}
                                         </p>
-                                        <p className="text-slate-500 text-xs mt-1 line-clamp-2">{kit.description}</p>
+                                        <p className="text-muted-foreground text-xs mt-1 line-clamp-2">{kit.description}</p>
                                     </div>
                                 </div>
 
                                 <div className="mt-5 grid grid-cols-2 gap-3">
-                                    <div className="rounded-xl bg-white/[0.04] border border-white/5 p-3">
-                                        <p className="text-lg font-bold text-white">{kit.chaptersCount}</p>
-                                        <p className="text-[11px] text-slate-500">Chapters</p>
+                                    <div className="rounded-xl bg-overlay border border-hairline p-3">
+                                        <p className="text-lg font-bold text-foreground">{kit.chaptersCount}</p>
+                                        <p className="text-[11px] text-muted-foreground">Chapters</p>
                                     </div>
-                                    <div className="rounded-xl bg-white/[0.04] border border-white/5 p-3">
-                                        <p className="text-lg font-bold text-white">{kit.topicsCount}</p>
-                                        <p className="text-[11px] text-slate-500">Topics</p>
+                                    <div className="rounded-xl bg-overlay border border-hairline p-3">
+                                        <p className="text-lg font-bold text-foreground">{kit.topicsCount}</p>
+                                        <p className="text-[11px] text-muted-foreground">Topics</p>
                                     </div>
                                 </div>
 
                                 <div className="mt-5 flex items-center justify-between text-sm">
-                                    <span className="text-violet-300 font-medium">Start learning</span>
-                                    <ArrowRight className="w-4 h-4 text-violet-300 group-hover:translate-x-1 transition-transform" />
+                                    <span className="text-violet-700 dark:text-violet-300 font-medium">Start learning</span>
+                                    <ArrowRight className="w-4 h-4 text-violet-700 dark:text-violet-300 group-hover:translate-x-1 transition-transform" />
                                 </div>
                             </Link>
                         ))}
@@ -1808,41 +1807,41 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                 <section>
                     <div className="flex items-end justify-between gap-4 mb-4">
                         <div>
-                            <h2 className="text-white font-bold text-lg flex items-center gap-2">
-                                <ShoppingBag className="w-5 h-5 text-violet-300" />
+                            <h2 className="text-foreground font-bold text-lg flex items-center gap-2">
+                                <ShoppingBag className="w-5 h-5 text-violet-700 dark:text-violet-300" />
                                 Recommended Next Kits
                             </h2>
-                            <p className="text-slate-500 text-sm mt-1">Add focused prep for the rounds you still want to strengthen.</p>
+                            <p className="text-muted-foreground text-sm mt-1">Add focused prep for the rounds you still want to strengthen.</p>
                         </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
                         {lockedKits.map(kit => (
-                            <div key={kit._id} className="group rounded-2xl border border-white/5 bg-slate-900/70 p-5 hover:border-violet-400/40 hover:bg-slate-900 transition-all">
+                            <div key={kit._id} className="group rounded-2xl border border-hairline bg-card p-5 hover:border-violet-400/40 hover:bg-card transition-all">
                                 <div className="flex items-start justify-between gap-3 mb-4">
                                     <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl shadow-lg`}>
                                         {kit.icon}
                                     </div>
-                                    <Badge className="bg-white/5 text-slate-400 border-white/10 text-[10px] px-2 py-0.5">
+                                    <Badge className="bg-overlay text-muted-foreground border-hairline text-[10px] px-2 py-0.5">
                                         <Lock className="w-2.5 h-2.5 mr-1" />
                                         Locked
                                     </Badge>
                                 </div>
 
-                                <h3 className="text-white font-semibold leading-snug group-hover:text-violet-200 transition-colors">{kit.name}</h3>
-                                <p className="text-slate-500 text-xs mt-2 line-clamp-2 min-h-[2rem]">{kit.description}</p>
+                                <h3 className="text-foreground font-semibold leading-snug group-hover:text-violet-700 dark:group-hover:text-violet-200 transition-colors">{kit.name}</h3>
+                                <p className="text-muted-foreground text-xs mt-2 line-clamp-2 min-h-[2rem]">{kit.description}</p>
 
                                 <div className="mt-4 flex flex-wrap gap-2">
-                                    <Badge variant="outline" className="border-white/10 text-slate-400 text-[10px]">
+                                    <Badge variant="outline" className="border-hairline text-muted-foreground text-[10px]">
                                         {kit.chaptersCount} chapters
                                     </Badge>
-                                    <Badge variant="outline" className="border-white/10 text-slate-400 text-[10px]">
+                                    <Badge variant="outline" className="border-hairline text-muted-foreground text-[10px]">
                                         {kit.topicsCount} topics
                                     </Badge>
                                 </div>
 
                                 <div className="mt-5 grid grid-cols-2 gap-2">
-                                    <Button size="sm" className="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-white/10 text-xs" asChild>
+                                    <Button size="sm" className="bg-muted hover:bg-muted text-foreground hover:text-foreground border border-hairline text-xs" asChild>
                                         <Link href={`/learn/${kit.slug}`}>
                                             <Eye className="w-3.5 h-3.5 mr-1.5" />
                                             Preview
@@ -1863,9 +1862,9 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
 
             {/* Empty state */}
             {visibleKits.length === 0 && (
-                <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-xl">
-                    <BookOpen className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-                    <p className="text-slate-400">No kits available right now.</p>
+                <div className="py-12 text-center border-2 border-dashed border-hairline rounded-xl">
+                    <BookOpen className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground">No kits available right now.</p>
                 </div>
             )}
         </div>
@@ -1896,11 +1895,11 @@ function ProgressTab({ purchasedKits, topicsStudied, hoursSpent }: { purchasedKi
                     const Icon = s.icon
                     const pct = Math.round((typeof s.value === 'number' ? s.value : 0) / s.max * 100)
                     return (
-                        <div key={i} className="bg-slate-900/80 border border-white/5 rounded-2xl p-5">
+                        <div key={i} className="bg-card border border-hairline rounded-2xl p-5">
                             <Icon className={`w-5 h-5 text-${s.color}-400 mb-3`} />
-                            <p className="text-2xl font-bold text-white">{s.value}</p>
-                            <p className="text-slate-500 text-xs mb-3">{s.label}</p>
-                            <div className="w-full bg-slate-800 rounded-full h-1.5">
+                            <p className="text-2xl font-bold text-foreground">{s.value}</p>
+                            <p className="text-muted-foreground text-xs mb-3">{s.label}</p>
+                            <div className="w-full bg-muted rounded-full h-1.5">
                                 <div className={`h-1.5 rounded-full bg-${s.color}-500`} style={{ width: `${Math.min(pct, 100)}%` }} />
                             </div>
                         </div>
@@ -1909,9 +1908,9 @@ function ProgressTab({ purchasedKits, topicsStudied, hoursSpent }: { purchasedKi
             </div>
 
             {/* Weekly activity */}
-            <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-6">
-                <h3 className="text-white font-semibold mb-6 flex items-center gap-2">
-                    <BarChart2 className="w-4 h-4 text-violet-400" />
+            <div className="bg-card border border-hairline rounded-2xl p-6">
+                <h3 className="text-foreground font-semibold mb-6 flex items-center gap-2">
+                    <BarChart2 className="w-4 h-4 text-violet-700 dark:text-violet-400" />
                     This Week's Activity
                 </h3>
                 <div className="flex items-end gap-3 h-32">
@@ -1924,12 +1923,12 @@ function ProgressTab({ purchasedKits, topicsStudied, hoursSpent }: { purchasedKi
                                     <div
                                         className={`w-full rounded-t-lg transition-all duration-500 ${isToday
                                             ? "bg-gradient-to-t from-violet-600 to-purple-400"
-                                            : "bg-slate-700 hover:bg-slate-600"
+                                            : "bg-muted hover:bg-muted"
                                             }`}
                                         style={{ height: `${height}%`, minHeight: 4 }}
                                     />
                                 </div>
-                                <span className={`text-xs ${isToday ? "text-violet-400 font-semibold" : "text-slate-600"}`}>{day}</span>
+                                <span className={`text-xs ${isToday ? "text-violet-700 dark:text-violet-400 font-semibold" : "text-muted-foreground"}`}>{day}</span>
                             </div>
                         )
                     })}
@@ -1938,21 +1937,21 @@ function ProgressTab({ purchasedKits, topicsStudied, hoursSpent }: { purchasedKi
 
             {/* Per-kit progress */}
             {ownedKits.length > 0 && (
-                <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-6">
-                    <h3 className="text-white font-semibold mb-5 flex items-center gap-2">
-                        <Target className="w-4 h-4 text-violet-400" />
+                <div className="bg-card border border-hairline rounded-2xl p-6">
+                    <h3 className="text-foreground font-semibold mb-5 flex items-center gap-2">
+                        <Target className="w-4 h-4 text-violet-700 dark:text-violet-400" />
                         Kit Progress
                     </h3>
                     <div className="space-y-5">
                         {ownedKits.map(kit => (
                             <div key={kit._id}>
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-slate-300 text-sm font-medium flex items-center gap-2">
+                                    <span className="text-foreground text-sm font-medium flex items-center gap-2">
                                         <span>{kit.icon}</span> {kit.name}
                                     </span>
-                                    <span className="text-slate-500 text-xs">{kit.chaptersCount} chapters · {kit.topicsCount} topics</span>
+                                    <span className="text-muted-foreground text-xs">{kit.chaptersCount} chapters · {kit.topicsCount} topics</span>
                                 </div>
-                                <div className="w-full bg-slate-800 rounded-full h-2">
+                                <div className="w-full bg-muted rounded-full h-2">
                                     <div className={`h-2 rounded-full bg-gradient-to-r ${kit.color} transition-all duration-700`} style={{ width: '0%' }} />
                                 </div>
                             </div>
@@ -1979,32 +1978,32 @@ function AchievementsTab({ purchasedKits, streak, topicsStudied }: { purchasedKi
 
     return (
         <div className="space-y-6 max-w-3xl">
-            <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-6">
-                <h3 className="text-white font-semibold mb-2">Your Achievements</h3>
-                <p className="text-slate-500 text-sm mb-6">{badges.filter(b => b.unlocked).length} of {badges.length} unlocked</p>
+            <div className="bg-card border border-hairline rounded-2xl p-6">
+                <h3 className="text-foreground font-semibold mb-2">Your Achievements</h3>
+                <p className="text-muted-foreground text-sm mb-6">{badges.filter(b => b.unlocked).length} of {badges.length} unlocked</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {badges.map((b, i) => (
                         <div key={i} className={`relative flex flex-col items-center text-center p-4 rounded-2xl border transition-all ${b.unlocked
-                            ? "bg-gradient-to-b from-violet-900/30 to-slate-900/50 border-violet-500/30"
-                            : "bg-slate-900/30 border-white/5 opacity-40 grayscale"}`}>
+                            ? "bg-gradient-to-b from-violet-100 to-violet-50 dark:from-violet-900/30 dark:to-slate-900/50 border-violet-500/30"
+                            : "bg-card border-hairline opacity-40 grayscale"}`}>
                             <div className={`text-4xl mb-2 ${b.unlocked ? "" : "opacity-50"}`}>{b.emoji}</div>
-                            <p className={`text-xs font-semibold mb-1 ${b.unlocked ? "text-violet-300" : "text-slate-500"}`}>{b.title}</p>
-                            <p className="text-xs text-slate-600">{b.desc}</p>
+                            <p className={`text-xs font-semibold mb-1 ${b.unlocked ? "text-violet-700 dark:text-violet-300" : "text-muted-foreground"}`}>{b.title}</p>
+                            <p className="text-xs text-muted-foreground">{b.desc}</p>
                             {b.unlocked && <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-400" />}
                         </div>
                     ))}
                 </div>
             </div>
 
-            <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-6">
-                <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                    <Star className="w-4 h-4 text-yellow-400" />
+            <div className="bg-card border border-hairline rounded-2xl p-6">
+                <h3 className="text-foreground font-semibold mb-4 flex items-center gap-2">
+                    <Star className="w-4 h-4 text-yellow-700 dark:text-yellow-400" />
                     Leaderboard Position
                 </h3>
                 <div className="text-center py-8">
-                    <p className="text-5xl font-black text-white">#142</p>
-                    <p className="text-slate-400 text-sm mt-2">out of 12,450+ students</p>
-                    <p className="text-violet-400 text-xs mt-1">Top 2% 🎉</p>
+                    <p className="text-5xl font-black text-foreground">#142</p>
+                    <p className="text-muted-foreground text-sm mt-2">out of 12,450+ students</p>
+                    <p className="text-violet-700 dark:text-violet-400 text-xs mt-1">Top 2% 🎉</p>
                 </div>
             </div>
         </div>
@@ -2019,22 +2018,22 @@ function ProfileTab({ user }: { user: SessionUser }) {
     return (
         <div className="space-y-6 max-w-2xl">
             {/* Profile card */}
-            <div className="bg-slate-900/80 border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-hairline rounded-2xl overflow-hidden">
                 <div className="h-24 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600" />
                 <div className="px-6 pb-6 -mt-12">
                     <div className="flex items-end gap-4 mb-4">
                         {user.profilePicture ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={user.profilePicture} alt={user.name}
-                                className="w-20 h-20 rounded-2xl border-4 border-slate-900 object-cover" />
+                                className="w-20 h-20 rounded-2xl border-4 border-border object-cover" />
                         ) : (
-                            <div className="w-20 h-20 rounded-2xl border-4 border-slate-900 bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
+                            <div className="w-20 h-20 rounded-2xl border-4 border-border bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
                                 {initials}
                             </div>
                         )}
                         <div className="pb-1">
-                            <h2 className="text-white text-xl font-bold">{user.name}</h2>
-                            <p className="text-slate-400 text-sm">Member since {joinDate}</p>
+                            <h2 className="text-foreground text-xl font-bold">{user.name}</h2>
+                            <p className="text-muted-foreground text-sm">Member since {joinDate}</p>
                         </div>
                     </div>
 
@@ -2047,13 +2046,13 @@ function ProfileTab({ user }: { user: SessionUser }) {
                         ].map((row, i) => {
                             const Icon = row.icon
                             return (
-                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
+                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-overlay border border-hairline">
                                     <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center flex-shrink-0">
-                                        <Icon className="w-4 h-4 text-violet-400" />
+                                        <Icon className="w-4 h-4 text-violet-700 dark:text-violet-400" />
                                     </div>
                                     <div>
-                                        <p className="text-slate-500 text-xs">{row.label}</p>
-                                        <p className="text-white text-sm font-medium">{row.value}</p>
+                                        <p className="text-muted-foreground text-xs">{row.label}</p>
+                                        <p className="text-foreground text-sm font-medium">{row.value}</p>
                                     </div>
                                 </div>
                             )
@@ -2063,26 +2062,26 @@ function ProfileTab({ user }: { user: SessionUser }) {
             </div>
 
             {/* Preferences / settings */}
-            <div className="bg-slate-900/80 border border-white/5 rounded-2xl p-6">
-                <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                    <Settings className="w-4 h-4 text-slate-400" />
+            <div className="bg-card border border-hairline rounded-2xl p-6">
+                <h3 className="text-foreground font-semibold mb-4 flex items-center gap-2">
+                    <Settings className="w-4 h-4 text-muted-foreground" />
                     Account
                 </h3>
                 <div className="space-y-2">
                     <Link href="/contact"
-                        className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors text-slate-300 hover:text-white group">
+                        className="flex items-center justify-between p-3 rounded-xl hover:bg-overlay transition-colors text-foreground hover:text-foreground group">
                         <span className="text-sm">Contact Support</span>
-                        <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-white" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
                     </Link>
                     <Link href="/privacy"
-                        className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors text-slate-300 hover:text-white group">
+                        className="flex items-center justify-between p-3 rounded-xl hover:bg-overlay transition-colors text-foreground hover:text-foreground group">
                         <span className="text-sm">Privacy Policy</span>
-                        <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-white" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
                     </Link>
                     <Link href="/terms"
-                        className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors text-slate-300 hover:text-white group">
+                        className="flex items-center justify-between p-3 rounded-xl hover:bg-overlay transition-colors text-foreground hover:text-foreground group">
                         <span className="text-sm">Terms of Service</span>
-                        <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-white" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
                     </Link>
                 </div>
             </div>
