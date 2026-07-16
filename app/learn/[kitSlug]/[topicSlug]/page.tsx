@@ -20,7 +20,7 @@ import { useSidebarContext } from "../sidebar-context";
 import parse, { Element, domToReact, type DOMNode } from "html-react-parser";
 import { marked } from "marked";
 import { CodeBlock } from "@/components/learn/code-block";
-import { PredictOutputQuiz } from "@/components/learn/predict-output-quiz";
+import { TopicQuiz } from "@/components/learn/topic-quiz";
 import "highlight.js/styles/atom-one-dark.css";
 
 // ── localStorage helpers for progress tracking ──
@@ -427,11 +427,10 @@ export default function TopicPage() {
           )}
         </article>
 
-        {/* PRD-005 Phase 0 — inline predict-output self-check (renders nothing
-            unless the topic matches seed questions) */}
-        {topic && !lockedPreview && (
-          <PredictOutputQuiz kitSlug={kitSlug} topicSlug={topicSlug} />
-        )}
+        {/* PRD-005 Phase 0 — end-of-topic self-check. Renders nothing when the
+            topic has no live questions. The API enforces access independently;
+            this check only avoids a pointless fetch behind a preview wall. */}
+        {topic && !lockedPreview && <TopicQuiz kitSlug={kitSlug} topicSlug={topicSlug} />}
 
         {/* Prev / Next */}
         <div className="mt-16 pt-6 border-t border-reader-border grid grid-cols-1 sm:grid-cols-2 gap-4">

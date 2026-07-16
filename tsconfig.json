@@ -10,6 +10,11 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    // Node's --experimental-strip-types executes .ts directly but requires the
+    // explicit ".ts" extension on relative imports (ESM does no extension
+    // guessing). Needed by lib/quiz/*.test.ts and scripts/quiz-reverify.ts.
+    // Safe alongside noEmit — tsc only typechecks, it never rewrites these paths.
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
