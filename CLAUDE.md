@@ -70,6 +70,56 @@ no exceptions unless the user explicitly says "skip review".
 - Global semantic tokens (`--foreground`, `--muted-foreground`, `--card`, …) were contrast-fixed to
   pass WCAG AA in both themes — keep new pairs AA-compliant.
 
+## Content — read `docs/CONTENT-MAP.md` first
+Before answering anything about what the kits teach ("is there a topic on X?", "would an exercise fit
+here?", "how big is the React kit?"), read **`docs/CONTENT-MAP.md`**. It is a generated inventory of
+all 4 kits / 39 chapters / 146 topics with a one-line summary of every lesson — ~12k tokens, versus
+~425k tokens for the lessons themselves. Only open a topic's actual `content` when you need exact
+wording or code, and then read that one topic rather than sweeping the collection.
+
+Two facts from it that change decisions, so they are repeated here: **only ~6% of the catalogue is
+runnable plain JS** (React/Node/HTML lessons cannot be graded by executing a snippet — that is the
+content, not a tooling gap), and **`nodejs-backend-kit` is a stub** (6 topics, ~800 chars each).
+
+## Quiz (PRD-005 Phase 0 — end-of-topic self-check)
+
+An MCQ renders at the foot of each topic in the Learn reader (`components/learn/topic-quiz.tsx`).
+The answer key never reaches the browser: `/api/quiz/questions` strips it, `/api/quiz/attempt`
+grades server-side. Phase 0 has **no code execution on the learner side** — it exists only to
+measure whether learners want to practise (the ≥30% attempt-rate gate).
+
+- **Access**: any surface over topic content MUST gate through `resolveTopicAccess()`
+  (`lib/learn-access.ts`) — never re-derive the rule. It is the single source of truth for
+  "purchased → any topic; preview → first chapter only", and it returns `hasFullAccess` so callers
+  can record buyer-vs-preview. The quiz APIs originally checked only for a session and leaked paid
+  questions to free signups; that is the mistake this helper exists to prevent.
+- **Two question types** (`lib/models/QuizQuestion.ts`, PRD §3 Seam 2 — adding a type is additive):
+  `predict-output` (a runnable JS snippet) and `concept` (prose from the lesson, `code` is `""`).
+  Only ~10-20 of 146 topics are runnable-JS; the catalogue is overwhelmingly `concept`.
+- **`verified` is not one thing** — check `verifiedBy`. `'vm'` means the snippet was *executed* and
+  its real output matched the key (proof). `'peer'` means a second author answered it blind from the
+  lesson and agreed (corroboration, not proof). Don't collapse them.
+- **The `vm` gate** (`lib/quiz/verify-output.ts`) has two non-obvious constraints. Errors thrown
+  inside a `vm` context belong to *that realm*, so `e instanceof Error` is **false** — read `.name`
+  directly. And **never pass host intrinsics** (`Object`, `Array`, `Promise`…) into the sandbox:
+  a contextified object has its own realm-native ones, and injecting ours shadows them, making
+  `({}) instanceof Object` false inside the gate. Both bugs shipped, and between them blinded the
+  gate to every error and prototype question. `npm run test:quiz` pins both.
+- **Publication rule**: a `mismatch` verdict (execution *disproved* the answer) can never go live —
+  `/api/admin/content/questions` refuses it with a 409. `inconclusive` is a human call.
+- **Scripts** (dry-run by default, `--apply` to write, run with `node --experimental-strip-types`):
+  `quiz-insert-authored.ts` (the only writer of authored questions; decides live-vs-draft),
+  `quiz-reverify.ts` (re-grade everything after a gate change), `quiz-archive-wallpaper.ts`.
+- **Seeding is a bootstrap, not a content source.** `getQuestionsForTopic()` matches title+slug
+  **only** — never lesson body text. It once matched full content, which fanned 8 questions into 186
+  near-duplicate live rows across 62 topics. The seed route also skips any topic that already has
+  questions.
+- **The metric**: `/api/admin/quiz/metrics` + the panel on `/admin/quiz`. The buyer attempt rate is
+  real; the **preview rate is not computable** — `app/api/learn/.../[topicSlug]` only writes
+  `lastActiveDate` when `hasAccess` is true, so non-buyers leave no activity record and there is no
+  denominator. PRD §15 says that is the population the gate actually depends on, so treat the buyer
+  rate as health, not go/no-go, until a preview-side activity signal exists.
+
 ## Known weak spots (from graphify analysis — see `graphify-out/GRAPH_REPORT.md`)
 - `Dashboard Page` and `Ui Sidebar` communities have low cohesion (~0.05) — their pieces are loosely
   related; if touching dashboard code, don't assume nodes in the same community are actually coupled.

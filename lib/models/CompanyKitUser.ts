@@ -15,6 +15,11 @@ export interface ICompanyKitUser extends Document {
     currentStreak: number;
     longestStreak: number;
     lastActiveDate?: Date;
+    // Real-time presence (admin Live Users view). Distinct from lastActiveDate,
+    // which is a coarse once-per-day streak signal for buyers only. lastSeenAt
+    // is bumped on every page view / heartbeat for any logged-in user.
+    lastSeenAt?: Date;
+    currentPath?: string;
     subscriptionStatus: 'active' | 'expired' | 'cancelled' | 'none';
     subscriptionStartDate?: Date;
     subscriptionEndDate?: Date;
@@ -55,6 +60,8 @@ const CompanyKitUserSchema = new Schema<ICompanyKitUser>({
     currentStreak: { type: Number, default: 0 },
     longestStreak: { type: Number, default: 0 },
     lastActiveDate: { type: Date },
+    lastSeenAt: { type: Date, index: true },
+    currentPath: { type: String },
     subscriptionStatus: {
         type: String,
         enum: ['active', 'expired', 'cancelled', 'none'],

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { extractSessionFromRequest } from '@/lib/session';
+import { extractSessionFromRequest, clearPresenceHintCookieString } from '@/lib/session';
 import connectToDatabase from '@/lib/db';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import { ADMIN_EMAIL } from '@/lib/admin-auth';
@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
             // User was deleted — clear stale session
             const response = NextResponse.json({ user: null });
             response.headers.set('Set-Cookie', 'gf_session=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax');
+            response.headers.append('Set-Cookie', clearPresenceHintCookieString());
             return response;
         }
 
@@ -53,5 +54,6 @@ export async function GET(request: NextRequest) {
 export async function DELETE() {
     const response = NextResponse.json({ success: true });
     response.headers.set('Set-Cookie', 'gf_session=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax');
+    response.headers.append('Set-Cookie', clearPresenceHintCookieString());
     return response;
 }

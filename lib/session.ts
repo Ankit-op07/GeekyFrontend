@@ -59,6 +59,23 @@ export function clearSessionCookieString(): string {
     return `${SESSION_COOKIE}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax`;
 }
 
+/**
+ * Non-HttpOnly companion flag set alongside the session. The gf_session cookie
+ * is HttpOnly (client JS can't read it), so this readable flag lets the client
+ * PresenceTracker tell whether it's worth pinging /api/presence at all —
+ * keeping signed-out visitors from invoking the endpoint sitewide. It carries
+ * no identity or signature; the server still verifies gf_session on every hit.
+ */
+const PRESENCE_HINT_COOKIE = 'gf_online';
+
+export function getPresenceHintCookieString(): string {
+    return `${PRESENCE_HINT_COOKIE}=1; Path=/; Max-Age=${SESSION_MAX_AGE}; SameSite=Lax${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`;
+}
+
+export function clearPresenceHintCookieString(): string {
+    return `${PRESENCE_HINT_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`;
+}
+
 export function extractSessionFromRequest(request: Request): SessionPayload | null {
     const cookieHeader = request.headers.get('cookie') || '';
     const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${SESSION_COOKIE}=([^;]+)`));

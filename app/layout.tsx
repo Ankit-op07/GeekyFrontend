@@ -11,6 +11,7 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { PurchaseNotifications } from "@/components/purchase-notification"
 import { NextAuthProvider } from "@/components/providers/next-auth-provider"
+import { PresenceTracker } from "@/components/presence-tracker"
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -58,6 +59,7 @@ export default function RootLayout({
           <Analytics />
           <Toaster />
           <PurchaseNotifications />
+          <PresenceTracker />
         </NextAuthProvider>
       </body>
     </html>
