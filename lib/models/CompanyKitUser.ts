@@ -28,6 +28,17 @@ export interface ICompanyKitUser extends Document {
     purchasedKits: string[];
     completedQuestions: string[];
     favoriteQuestions: string[];
+    // Topics the user saved for later, keyed by (kitSlug, topicSlug) — the only
+    // pair that uniquely identifies a topic (slugs are unique per kit, not
+    // global). title/chapterTitle are denormalized so the dashboard renders the
+    // Bookmarks list from a single fetch, without N topic lookups.
+    bookmarkedTopics: {
+        kitSlug: string;
+        topicSlug: string;
+        title: string;
+        chapterTitle?: string;
+        createdAt: Date;
+    }[];
     kitProgress: {
         kitSlug: string;
         completedTopics: string[];
@@ -74,6 +85,13 @@ const CompanyKitUserSchema = new Schema<ICompanyKitUser>({
     purchasedKits: [{ type: String }],
     completedQuestions: [{ type: String }],
     favoriteQuestions: [{ type: String }],
+    bookmarkedTopics: [{
+        kitSlug: { type: String, required: true },
+        topicSlug: { type: String, required: true },
+        title: { type: String, default: '' },
+        chapterTitle: { type: String },
+        createdAt: { type: Date, default: Date.now },
+    }],
     kitProgress: [{
         kitSlug: { type: String, required: true, index: true },
         completedTopics: [{ type: String }],

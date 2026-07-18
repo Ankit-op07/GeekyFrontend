@@ -34,10 +34,15 @@ interface SidebarContextType {
     isPreview: boolean;
     /** The _id (string) of the first chapter, used to gate topic access */
     firstChapterId: string | null;
+    /** Bookmarked topic slugs in THIS kit (the layout hydrates + owns this). */
+    bookmarks: Set<string>;
+    /** Optimistically toggle a bookmark for a topic in this kit and persist it. */
+    toggleBookmark: (topicSlug: string, title: string, chapterTitle?: string) => void;
 }
 
 export const SidebarContext = createContext<SidebarContextType>({
     kit: null, sidebar: [], allTopics: [], isPreview: false, firstChapterId: null,
+    bookmarks: new Set(), toggleBookmark: () => {},
 });
 
 export const useSidebarContext = () => useContext(SidebarContext);

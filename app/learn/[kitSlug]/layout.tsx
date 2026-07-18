@@ -1,12 +1,12 @@
 // app/learn/[kitSlug]/layout.tsx
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
     ChevronDown, ChevronRight, Menu, X, ArrowLeft,
-    FileText, Loader2, Lock, Sparkles, ShoppingCart
+    FileText, Loader2, Lock, Sparkles, ShoppingCart, Bookmark
 } from 'lucide-react';
 import { SidebarContext } from './sidebar-context';
 import type { SidebarChapter } from './sidebar-context';
@@ -51,6 +51,12 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
     const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set());
     const [isPreview, setIsPreview] = useState(false);
     const [firstChapterId, setFirstChapterId] = useState<string | null>(null);
+    // Bookmarked topic slugs in THIS kit — hydrated once, shared with the topic
+    // header + every sidebar row via SidebarContext so there's one source of truth.
+    const [bookmarks, setBookmarks] = useState<Set<string>>(new Set());
+    // Once the user has toggled a bookmark, a late-arriving hydration GET must not
+    // clobber their optimistic state — the toggle response is authoritative.
+    const bookmarksTouched = useRef(false);
 
     // Auth guard — check session first
     useEffect(() => {
@@ -108,6 +114,45 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         setMobileOpen(false);
     }, [pathname]);
+
+    // Hydrate this kit's bookmarks once auth is confirmed — but never overwrite
+    // state the user has already changed optimistically (the GET may resolve
+    // after an in-flight toggle).
+    useEffect(() => {
+        if (!authChecked) return;
+        fetch('/api/user/bookmarks')
+            .then(r => (r.ok ? r.json() : null))
+            .then(d => {
+                if (!d?.bookmarks || bookmarksTouched.current) return;
+                setBookmarks(new Set(
+                    d.bookmarks
+                        .filter((b: { kitSlug: string }) => b.kitSlug === kitSlug)
+                        .map((b: { topicSlug: string }) => b.topicSlug)
+                ));
+            })
+            .catch(() => { /* bookmarks are non-critical */ });
+    }, [authChecked, kitSlug]);
+
+    // Optimistic bookmark toggle for a topic in this kit. Sends an EXPLICIT
+    // add/remove based on the displayed state (idempotent on the server), so a
+    // click made before hydration can't silently invert a saved bookmark.
+    const toggleBookmark = useCallback((topicSlug: string, title: string, chapterTitle?: string) => {
+        bookmarksTouched.current = true;
+        const willAdd = !bookmarks.has(topicSlug);
+        const apply = (add: boolean) => setBookmarks(prev => {
+            const next = new Set(prev);
+            if (add) next.add(topicSlug); else next.delete(topicSlug);
+            return next;
+        });
+        apply(willAdd); // optimistic
+        fetch('/api/user/bookmarks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ kitSlug, topicSlug, title, chapterTitle, action: willAdd ? 'add' : 'remove' }),
+        })
+            .then(r => { if (!r.ok) apply(!willAdd); })   // revert on failure (e.g. 403 locked)
+            .catch(() => apply(!willAdd));
+    }, [kitSlug, bookmarks]);
 
     // Keep only the chapter containing the active topic open when navigation
     // happens outside the sidebar, such as the bottom Previous / Next controls.
@@ -212,18 +257,33 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                     <div className={`ml-5 pl-3 border-l border-reader-border space-y-0.5 mb-1`}>
                         {ch.topics.map(t => {
                             const isActive = currentTopicSlug === t.slug;
+                            const isBookmarked = bookmarks.has(t.slug);
                             return (
-                                <Link
-                                    key={t._id}
-                                    href={`/learn/${kitSlug}/${t.slug}`}
-                                    className={`block px-3 py-1.5 rounded-md text-sm transition-all ${
-                                        isActive
-                                            ? 'bg-reader-accent-soft text-reader-accent-hover font-medium border-l-2 border-reader-accent -ml-[1px]'
-                                            : 'text-reader-faint hover:text-reader-text hover:bg-reader-surface-hover'
-                                    }`}
-                                >
-                                    {t.title}
-                                </Link>
+                                <div key={t._id} className="group/row flex items-center gap-1">
+                                    <Link
+                                        href={`/learn/${kitSlug}/${t.slug}`}
+                                        className={`flex-1 min-w-0 truncate block px-3 py-1.5 rounded-md text-sm transition-all ${
+                                            isActive
+                                                ? 'bg-reader-accent-soft text-reader-accent-hover font-medium border-l-2 border-reader-accent -ml-[1px]'
+                                                : 'text-reader-faint hover:text-reader-text hover:bg-reader-surface-hover'
+                                        }`}
+                                    >
+                                        {t.title}
+                                    </Link>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleBookmark(t.slug, t.title, ch.title); }}
+                                        title={isBookmarked ? 'Remove bookmark' : 'Bookmark this topic'}
+                                        aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark this topic'}
+                                        className={`flex-shrink-0 p-1 rounded-md transition-all ${
+                                            isBookmarked
+                                                ? 'text-reader-amber'
+                                                : 'text-reader-faint opacity-0 group-hover/row:opacity-100 hover:text-reader-text'
+                                        }`}
+                                    >
+                                        <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
+                                    </button>
+                                </div>
                             );
                         })}
                     </div>
@@ -252,7 +312,7 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <SidebarContext.Provider value={{ kit, sidebar, allTopics, isPreview, firstChapterId }}>
+        <SidebarContext.Provider value={{ kit, sidebar, allTopics, isPreview, firstChapterId, bookmarks, toggleBookmark }}>
             <div className="min-h-screen bg-reader-bg flex">
                 {/* ─── Sidebar (desktop) ─── */}
                 <aside className="hidden lg:flex flex-col w-72 border-r border-reader-border bg-reader-surface fixed top-0 left-0 bottom-0 z-30">

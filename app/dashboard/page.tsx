@@ -11,12 +11,13 @@ import {
     BarChart2, Flame, RefreshCw, ShoppingBag, Building2, ArrowRight,
     Trophy, Medal, Bot, Mic, MicOff, PlayCircle, RotateCcw,
     MessageSquare, Brain, Timer, Send, Sparkles, Video,
-    ClipboardCheck, FileText, Eye, ShoppingCart, Shield
+    ClipboardCheck, FileText, Eye, ShoppingCart, Shield, Bookmark
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { CompanyQuestionsTab } from "@/components/dashboard/company-questions-tab"
+import { BookmarksTab, BookmarksPreview } from "@/components/dashboard/bookmarks-tab"
 
 interface SessionUser {
     id: string
@@ -47,6 +48,21 @@ function isNodeKit(kit: DbKit) {
     return label.includes("node")
 }
 
+/**
+ * Deep-link "Continue learning" straight to the topic the user last read in
+ * this kit, falling back to the kit landing. Uses the `gf-last-topic-${slug}`
+ * localStorage key the reader already writes — same client-only source the
+ * dashboard uses for its "topics studied" count. These cards only render after
+ * a client fetch, so reading localStorage here is safe (no SSR/hydration path).
+ */
+function getResumeHref(slug: string): string {
+    if (typeof window !== "undefined") {
+        const last = localStorage.getItem(`gf-last-topic-${slug}`)
+        if (last) return `/learn/${slug}/${last}`
+    }
+    return `/learn/${slug}`
+}
+
 function getCheckoutPathForKit(kit: DbKit) {
     const label = `${kit.name} ${kit.slug}`.toLowerCase()
     if (label.includes("complete")) return "/checkout/complete"
@@ -60,6 +76,7 @@ function getCheckoutPathForKit(kit: DbKit) {
 const NAV = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "kits", label: "My Kits", icon: Package },
+    { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
     // { id: "team-interview", label: "Team Interview", icon: Video },
     // { id: "ai-interview", label: "AI Interview", icon: Bot },
     // { id: "leaderboard", label: "Leaderboard", icon: Trophy },
@@ -219,6 +236,7 @@ export default function DashboardPage() {
         switch (activeTab) {
             case "overview": return <OverviewTab user={user} purchasedKits={purchasedKits} streak={streak} topicsStudied={topicsStudied} />
             case "kits": return <KitsTab purchasedKits={purchasedKits} />
+            case "bookmarks": return <BookmarksTab />
             case "team-interview": return <TeamInterviewTab />
             case "ai-interview": return <LiveAIInterviewTab user={user} />
             case "leaderboard": return <LeaderboardTab />
@@ -488,7 +506,7 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                         {ownedKits.map(kit => (
-                            <Link key={kit._id} href={`/learn/${kit.slug}`}
+                            <Link key={kit._id} href={getResumeHref(kit.slug)}
                                 className="group relative overflow-hidden bg-card border border-hairline rounded-2xl p-5 hover:border-violet-500/25 transition-all duration-500 block">
                                 {/* Subtle hover glow */}
                                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -515,6 +533,9 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                     </div>
                 </div>
             )}
+
+            {/* ── Bookmarked topics (compact preview) ── */}
+            <BookmarksPreview kits={dbKits} />
 
             {/* ── Explore / Preview Kits ── */}
             {previewKits.length > 0 && (
@@ -1726,7 +1747,7 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
 
                     {featuredOwnedKit ? (
                         <Button className="bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-950/40" asChild>
-                            <Link href={`/learn/${featuredOwnedKit.slug}`}>
+                            <Link href={getResumeHref(featuredOwnedKit.slug)}>
                                 Resume Learning
                                 <ArrowRight className="w-4 h-4 ml-2" />
                             </Link>
@@ -1759,7 +1780,7 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
 
                     <div className="grid md:grid-cols-2 gap-4">
                         {ownedKits.map(kit => (
-                            <Link key={kit._id} href={`/learn/${kit.slug}`}
+                            <Link key={kit._id} href={getResumeHref(kit.slug)}
                                 className="group relative overflow-hidden rounded-2xl border border-hairline bg-card p-5 hover:border-violet-400/40 hover:bg-card transition-all">
                                 <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-green-400 via-violet-400 to-cyan-400" />
                                 <div className="flex items-start gap-4">

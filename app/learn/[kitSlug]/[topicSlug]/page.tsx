@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Loader2,
@@ -15,6 +15,7 @@ import {
   Sparkles,
   ShoppingCart,
   ArrowRight,
+  Bookmark,
 } from "lucide-react";
 import { useSidebarContext } from "../sidebar-context";
 import parse, { Element, domToReact, type DOMNode } from "html-react-parser";
@@ -51,11 +52,25 @@ function saveCompletedTopics(kitSlug: string, completed: Set<string>) {
   }
 }
 
+// Bounces a dead topic slug to the kit landing (which resolves to the first
+// topic). Rendered instead of a "Topic not found" dead-end.
+function TopicNotFoundRedirect({ kitSlug }: { kitSlug: string }) {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace(`/learn/${kitSlug}`);
+  }, [kitSlug, router]);
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <Loader2 className="w-6 h-6 animate-spin text-reader-accent" />
+    </div>
+  );
+}
+
 export default function TopicPage() {
   const params = useParams();
   const kitSlug = params.kitSlug as string;
   const topicSlug = params.topicSlug as string;
-  const { allTopics, isPreview } = useSidebarContext();
+  const { allTopics, isPreview, bookmarks, toggleBookmark } = useSidebarContext();
 
   const [topic, setTopic] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -298,19 +313,10 @@ export default function TopicPage() {
   }
 
   if (!topic) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <p className="text-reader-muted text-lg mb-2">Topic not found</p>
-          <Link
-            href={`/learn/${kitSlug}`}
-            className="text-reader-accent text-sm hover:underline"
-          >
-            ← Back
-          </Link>
-        </div>
-      </div>
-    );
+    // The slug doesn't resolve to a topic (e.g. a stale bookmark or a resume
+    // deep-link to a renamed/deleted topic). Self-heal by bouncing to the kit
+    // landing, which redirects to the first available topic.
+    return <TopicNotFoundRedirect kitSlug={kitSlug} />;
   }
 
   return (
@@ -366,18 +372,39 @@ export default function TopicPage() {
               </span>
             </div>
 
-            <button
-              onClick={toggleCompleted}
-              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
-                completed.has(topicSlug)
-                  ? "bg-green-500/15 text-reader-success border border-green-500/20"
-                  : "bg-reader-surface-hover text-reader-faint border border-reader-border hover:bg-reader-surface hover:text-reader-text"
-              }`}
-              title={completed.has(topicSlug) ? "Mark as incomplete" : "Mark as completed"}
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              {completed.has(topicSlug) ? "Completed" : "Mark done"}
-            </button>
+            <div className="flex-shrink-0 flex items-center gap-2">
+              <button
+                onClick={() =>
+                  toggleBookmark(
+                    topicSlug,
+                    topic.title,
+                    allTopics.find((t) => t.slug === topicSlug)?.chapterTitle
+                  )
+                }
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                  bookmarks.has(topicSlug)
+                    ? "bg-amber-500/15 text-reader-amber border border-amber-500/20"
+                    : "bg-reader-surface-hover text-reader-faint border border-reader-border hover:bg-reader-surface hover:text-reader-text"
+                }`}
+                title={bookmarks.has(topicSlug) ? "Remove bookmark" : "Bookmark this topic"}
+              >
+                <Bookmark className={`w-3.5 h-3.5 ${bookmarks.has(topicSlug) ? "fill-current" : ""}`} />
+                {bookmarks.has(topicSlug) ? "Bookmarked" : "Bookmark"}
+              </button>
+
+              <button
+                onClick={toggleCompleted}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                  completed.has(topicSlug)
+                    ? "bg-green-500/15 text-reader-success border border-green-500/20"
+                    : "bg-reader-surface-hover text-reader-faint border border-reader-border hover:bg-reader-surface hover:text-reader-text"
+                }`}
+                title={completed.has(topicSlug) ? "Mark as incomplete" : "Mark as completed"}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                {completed.has(topicSlug) ? "Completed" : "Mark done"}
+              </button>
+            </div>
           </div>
         </div>
 
