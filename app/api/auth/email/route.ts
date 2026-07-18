@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
-import { createSessionToken, getSessionCookieString } from '@/lib/session';
+import { createSessionToken, getSessionCookieString, getPresenceHintCookieString } from '@/lib/session';
 
 export async function POST(request: NextRequest) {
     try {
@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
         });
 
         response.headers.set('Set-Cookie', getSessionCookieString(sessionToken));
+        response.headers.append('Set-Cookie', getPresenceHintCookieString());
         return response;
 
     } catch (error) {

@@ -5,6 +5,7 @@ import QuizAttempt from '@/lib/models/QuizAttempt';
 import QuizQuestion from '@/lib/models/QuizQuestion';
 import { extractSessionFromRequest } from '@/lib/session';
 import { resolveTopicAccess } from '@/lib/learn-access';
+import { logActivity } from '@/lib/activity';
 
 /**
  * POST /api/quiz/attempt
@@ -78,6 +79,7 @@ export async function POST(request: NextRequest) {
         // A duplicate key here is the EXPECTED path for a re-answer — the first
         // attempt is the one that counts (see QuizAttempt) — so it is success,
         // not an error to report.
+        let firstAttempt = false;
         try {
             await QuizAttempt.create({
                 userId: session.id,
@@ -89,10 +91,23 @@ export async function POST(request: NextRequest) {
                 correct,
                 hadAccess: access.hasFullAccess,
             });
+            firstAttempt = true;
         } catch (e: any) {
             if (e?.code !== 11000) {
                 /* signal loss is acceptable; grading still returns */
             }
+        }
+
+        // Behaviour log for the admin Live Users view (best-effort, non-blocking).
+        // Only on the FIRST attempt — mirror QuizAttempt's dedupe so re-answers
+        // don't flood the behaviour timeline with repeat rows.
+        if (firstAttempt) {
+            await logActivity({
+                session,
+                event: 'quiz_attempt',
+                path: `/learn/${kitSlug}/${topicSlug}`,
+                meta: { kitSlug, topicSlug, correct },
+            });
         }
 
         return NextResponse.json({

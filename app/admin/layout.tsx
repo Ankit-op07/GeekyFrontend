@@ -6,12 +6,13 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import {
     BookOpen, Building2, Users, ShieldCheck, Menu, X,
-    LayoutDashboard, ChevronRight, Loader2, Lock, Mail, Video, ListChecks
+    LayoutDashboard, ChevronRight, Loader2, Lock, Mail, Video, ListChecks, Radio
 } from 'lucide-react';
 
 const ADMIN_EMAIL = 'geekyfrontend@gmail.com';
 
 const ADMIN_NAV = [
+    { href: '/admin/live-users', label: 'Live Users', icon: Radio, desc: 'Real-time online users & behaviour' },
     { href: '/admin/platform-users', label: 'Platform Users', icon: Users, desc: 'Registered platform users' },
     { href: '/admin/content', label: 'Content', icon: BookOpen, desc: 'Manage kits & topics' },
     { href: '/admin/quiz', label: 'Quiz', icon: ListChecks, desc: 'Practice quiz questions (MCQ)' },

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { createSessionToken, getSessionCookieString } from '@/lib/session';
+import { createSessionToken, getSessionCookieString, getPresenceHintCookieString } from '@/lib/session';
 import { recordPurchase } from '@/lib/purchase';
+import { logActivity } from '@/lib/activity';
 
 /**
  * POST /api/payment/verify
@@ -61,6 +62,17 @@ export async function POST(request: NextRequest) {
     });
     console.log(`✅ Purchase recorded for ${userEmail}: ${planName}`);
 
+    // Behaviour log for the admin Live Users view. Awaited (one small insert)
+    // but non-fatal: logActivity swallows its own errors, and the purchase is
+    // already durably recorded by recordPurchase above, so a failed log only
+    // loses the timeline row — never the sale or the login.
+    await logActivity({
+      session: { id: user._id.toString(), email: user.email, name: user.name },
+      event: 'purchase',
+      path: '/checkout',
+      meta: { planName, paymentId: razorpay_payment_id },
+    });
+
     // --- Create session cookie ---
     const sessionToken = createSessionToken({
       id: user._id.toString(),
@@ -78,6 +90,7 @@ export async function POST(request: NextRequest) {
     });
 
     response.headers.set('Set-Cookie', cookieString);
+    response.headers.append('Set-Cookie', getPresenceHintCookieString());
     return response;
 
   } catch (error: any) {
