@@ -426,7 +426,7 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                 )}
 
                 {/* ─── Main Content ─── */}
-                <main className="flex-1 lg:ml-72 pt-14 lg:pt-0 min-h-screen max-w-full overflow-x-hidden">
+                <main className="flex-1 lg:ml-72 pt-14 lg:pt-0 min-h-screen max-w-full overflow-x-clip">
                     {children}
                 </main>
             </div>

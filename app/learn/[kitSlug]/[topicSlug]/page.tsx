@@ -22,6 +22,7 @@ import parse, { Element, domToReact, type DOMNode } from "html-react-parser";
 import { marked } from "marked";
 import { CodeBlock } from "@/components/learn/code-block";
 import { TopicQuiz } from "@/components/learn/topic-quiz";
+import { TopicReferences } from "@/components/learn/topic-references";
 import "highlight.js/styles/atom-one-dark.css";
 
 // ── localStorage helpers for progress tracking ──
@@ -70,7 +71,7 @@ export default function TopicPage() {
   const params = useParams();
   const kitSlug = params.kitSlug as string;
   const topicSlug = params.topicSlug as string;
-  const { allTopics, isPreview, bookmarks, toggleBookmark } = useSidebarContext();
+  const { allTopics, isPreview, bookmarks, toggleBookmark, kit } = useSidebarContext();
 
   const [topic, setTopic] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -331,7 +332,8 @@ export default function TopicPage() {
         </div>
       </div>
 
-      <div ref={articleRef} className="max-w-3xl mx-auto px-6 py-10 lg:py-12">
+      <div className="mx-auto flex max-w-[1500px] justify-center gap-6 xl:gap-10">
+        <div ref={articleRef} className="w-full max-w-3xl px-6 py-10 lg:py-12">
         {/* Kit progress bar */}
         <div className="mb-6 flex items-center gap-3">
           <div className="flex-1 h-1.5 rounded-full bg-reader-surface-hover overflow-hidden">
@@ -490,6 +492,11 @@ export default function TopicPage() {
               </p>
             </Link>
           )}
+        </div>
+
+        {/* References — mobile / narrow screens (rail is hidden below xl) */}
+        <div className="xl:hidden mt-12 pt-8 border-t border-reader-border">
+          <TopicReferences slug={topicSlug} title={topic.title} kitName={kit?.name} />
         </div>
 
         {/* Reader Styles — colours reference theme-responsive reader tokens
@@ -714,6 +721,14 @@ export default function TopicPage() {
             padding: 0 !important;
           }
         `}</style>
+        </div>
+
+        {/* References rail — desktop (xl and up) */}
+        <aside className="hidden xl:block w-72 shrink-0 py-10 lg:py-12">
+          <div className="sticky top-6">
+            <TopicReferences slug={topicSlug} title={topic.title} kitName={kit?.name} />
+          </div>
+        </aside>
       </div>
     </>
   );
