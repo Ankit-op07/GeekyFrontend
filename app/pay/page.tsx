@@ -34,6 +34,18 @@ function PayContent() {
     const [error, setError] = useState("")
     const [emailConflict, setEmailConflict] = useState(false)
 
+    /* ── Personalised price quote (upgrade credit applied) ────────
+     * DISPLAY ONLY. The amount actually charged is recomputed server-side in
+     * /api/payment/create-order and never trusts this. Without it the page
+     * would show the full list price (e.g. ₹499) even for a user whose owned
+     * kits credit the bundle down to ₹200. */
+    const [quote, setQuote] = useState<{
+        listPrice: number
+        credit: number
+        payable: number
+        alreadyOwned: boolean
+    } | null>(null)
+
     /* ── Check session on mount ───────────────────────────────── */
     useEffect(() => {
         (async () => {
@@ -56,6 +68,21 @@ function PayContent() {
         }
     }, [sessionUser])
 
+    /* ── Fetch the user's personalised quote (credit applied) ──
+     * Uses the signed session cookie server-side, so re-fetch when the
+     * logged-in identity resolves/changes to reflect their credit. */
+    useEffect(() => {
+        if (!kitId) return
+        let active = true
+        fetch(`/api/payment/quote?kit=${encodeURIComponent(kitId)}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((q) => {
+                if (active && q && typeof q.payable === "number") setQuote(q)
+            })
+            .catch(() => { /* fall back to list price */ })
+        return () => { active = false }
+    }, [kitId, sessionUser?.email])
+
     /* ── Load Razorpay SDK ────────────────────────────────────── */
     useEffect(() => {
         const s = document.createElement("script")
@@ -77,7 +104,12 @@ function PayContent() {
         )
     }
 
-    const discount = Math.round(((kit.originalPrice - kit.price) / kit.originalPrice) * 100)
+    /* ── Effective, personalised pricing (falls back to list price) ── */
+    const listPrice = quote?.listPrice ?? kit.price
+    const credit = quote?.credit ?? 0
+    const payable = quote?.payable ?? kit.price
+    const alreadyOwned = quote?.alreadyOwned ?? false
+    const discount = Math.round(((kit.originalPrice - listPrice) / kit.originalPrice) * 100)
 
     /* ── Resolve user details (from session or form) ──────────── */
     const resolvedEmail = sessionUser?.email || email
@@ -159,7 +191,7 @@ function PayContent() {
                             phone: mobile ? `91${mobile}` : undefined,
                             firstName: nameParts[0],
                             lastName: nameParts.slice(1).join(' ') || undefined,
-                            value: kit.price,
+                            value: orderData.payable ?? payable,
                             currency: orderData.currency || 'INR',
                             contentName: kit.name,
                             contentIds: [kitId],
@@ -358,16 +390,24 @@ function PayContent() {
                             <span className="ml-auto text-xs text-gray-400 font-medium">UPI · Cards · Netbanking</span>
                         </div>
 
+                        {/* Already owns this kit — block the sale (matches create-order's 409) */}
+                        {alreadyOwned && (
+                            <div className="mb-4 px-4 py-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-sm flex items-start gap-2.5">
+                                <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-blue-600" />
+                                <span>You already own this — no need to buy it again. <Link href="/dashboard" className="font-semibold underline">Go to your dashboard</Link>.</span>
+                            </div>
+                        )}
+
                         {/* Pay button */}
                         <button
                             onClick={handlePayment}
-                            disabled={isLoading || emailConflict}
+                            disabled={isLoading || emailConflict || alreadyOwned}
                             className="w-full h-14 rounded-xl font-bold text-[16px] text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 active:scale-[0.99] transition-all shadow-lg shadow-violet-500/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {isLoading ? (
                                 <><Loader2 className="w-5 h-5 animate-spin" /> Processing...</>
                             ) : (
-                                <>Pay ₹{kit.price}</>
+                                <>Pay ₹{payable.toLocaleString("en-IN")}</>
                             )}
                         </button>
 
@@ -469,7 +509,15 @@ function PayContent() {
                                     <div className="flex justify-between text-sm">
                                         <span className="text-green-600 font-medium">Discount ({discount}% off)</span>
                                         <span className="text-green-600 font-medium">
-                                            -₹{(kit.originalPrice - kit.price).toLocaleString("en-IN")}
+                                            -₹{(kit.originalPrice - listPrice).toLocaleString("en-IN")}
+                                        </span>
+                                    </div>
+                                )}
+                                {credit > 0 && (
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-green-600 font-medium">Credit for kits you own</span>
+                                        <span className="text-green-600 font-medium">
+                                            -₹{credit.toLocaleString("en-IN")}
                                         </span>
                                     </div>
                                 )}
@@ -477,7 +525,7 @@ function PayContent() {
                                     <span className="text-base font-bold text-gray-900">Total</span>
                                     <div className="text-right">
                                         <span className="text-xs text-gray-400 mr-1.5">INR</span>
-                                        <span className="text-2xl font-extrabold text-gray-900">₹{kit.price.toLocaleString("en-IN")}</span>
+                                        <span className="text-2xl font-extrabold text-gray-900">₹{payable.toLocaleString("en-IN")}</span>
                                     </div>
                                 </div>
                             </div>
