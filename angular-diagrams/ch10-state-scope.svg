@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="380" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Three Scopes of State</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">Cost and reach grow left to right</text>
+
+  <!-- Local -->
+  <rect x="40" y="96" width="230" height="230" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="155" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="#15803d">Local component</text>
+  <text x="155" y="150" text-anchor="middle" font-size="12" fill="#166534">signal() / computed()</text>
+  <text x="155" y="176" text-anchor="middle" font-size="12" fill="#334155">Reach: one view</text>
+  <text x="155" y="200" text-anchor="middle" font-size="12" fill="#334155">Setup: none</text>
+  <text x="155" y="224" text-anchor="middle" font-size="12" fill="#334155">Dies with component</text>
+  <text x="155" y="256" text-anchor="middle" font-size="11" fill="#64748b">form toggles, tabs,</text>
+  <text x="155" y="272" text-anchor="middle" font-size="11" fill="#64748b">expanded rows</text>
+
+  <!-- Service signals -->
+  <rect x="295" y="96" width="230" height="230" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="410" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="#7e22ce">Service / SignalStore</text>
+  <text x="410" y="150" text-anchor="middle" font-size="12" fill="#7e22ce">signals in a provider</text>
+  <text x="410" y="176" text-anchor="middle" font-size="12" fill="#334155">Reach: injectors</text>
+  <text x="410" y="200" text-anchor="middle" font-size="12" fill="#334155">Setup: light</text>
+  <text x="410" y="224" text-anchor="middle" font-size="12" fill="#334155">Lives as long as scope</text>
+  <text x="410" y="256" text-anchor="middle" font-size="11" fill="#64748b">cart, user, feature</text>
+  <text x="410" y="272" text-anchor="middle" font-size="11" fill="#64748b">state, wizards</text>
+
+  <!-- NgRx store -->
+  <rect x="550" y="96" width="230" height="230" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="665" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="#b91c1c">NgRx Store</text>
+  <text x="665" y="150" text-anchor="middle" font-size="12" fill="#b91c1c">actions + reducers</text>
+  <text x="665" y="176" text-anchor="middle" font-size="12" fill="#334155">Reach: whole app</text>
+  <text x="665" y="200" text-anchor="middle" font-size="12" fill="#334155">Setup: heavy</text>
+  <text x="665" y="224" text-anchor="middle" font-size="12" fill="#334155">Full audit trail</text>
+  <text x="665" y="256" text-anchor="middle" font-size="11" fill="#64748b">large apps, many</text>
+  <text x="665" y="272" text-anchor="middle" font-size="11" fill="#64748b">teams, side effects</text>
+
+  <line x1="40" y1="352" x2="780" y2="352" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="410" y="345" text-anchor="middle" font-size="11" fill="#64748b">more ceremony, more traceability</text>
+
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+</svg>

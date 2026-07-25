@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Bookmark, ArrowRight, X, Loader2, BookOpen } from 'lucide-react';
+import { KitLogo, getKitLogo } from '@/components/kit-logo';
 
 interface BookmarkItem {
     kitSlug: string;
@@ -112,9 +113,15 @@ function BookmarkCard({ b, kit, onRemove }: { b: BookmarkItem; kit?: KitMeta; on
             </button>
             <Link href={`/learn/${b.kitSlug}/${b.topicSlug}`} className="block">
                 <div className="flex items-start gap-3">
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${kit?.color || 'from-violet-500 to-purple-600'} flex items-center justify-center text-base flex-shrink-0`}>
-                        {kit?.icon || '📘'}
-                    </div>
+                    {getKitLogo(b.kitSlug) ? (
+                        <div className="w-10 h-10 rounded-xl bg-overlay border border-hairline flex items-center justify-center flex-shrink-0">
+                            <KitLogo nameKey={b.kitSlug} alt={kit?.name || b.kitSlug} imgClassName="w-6 h-6 object-contain" />
+                        </div>
+                    ) : (
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${kit?.color || 'from-violet-500 to-purple-600'} flex items-center justify-center text-base flex-shrink-0`}>
+                            {kit?.icon || '📘'}
+                        </div>
+                    )}
                     <div className="flex-1 min-w-0 pr-5">
                         <p className="text-foreground text-sm font-semibold line-clamp-2">{b.title}</p>
                         <p className="text-muted-foreground text-xs mt-0.5 truncate">

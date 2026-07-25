@@ -11,6 +11,7 @@ import {
 import { SidebarContext } from './sidebar-context';
 import type { SidebarChapter } from './sidebar-context';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { KitLogo, getKitLogo } from '@/components/kit-logo';
 
 // ─── Types ───────────────────────────────────────────────
 
@@ -318,9 +319,15 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                 <aside className="hidden lg:flex flex-col w-72 border-r border-reader-border bg-reader-surface fixed top-0 left-0 bottom-0 z-30">
                     <Link href="/dashboard?tab=kits" className="flex items-center gap-3 px-5 py-4 border-b border-reader-border hover:bg-reader-surface-hover transition-colors group">
                         <ArrowLeft className="w-4 h-4 text-reader-faint group-hover:text-reader-accent transition-colors" />
-                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${kit.color} flex items-center justify-center text-base flex-shrink-0`}>
-                            {kit.icon}
-                        </div>
+                        {getKitLogo(kit.slug || kit.name) ? (
+                            <div className="w-8 h-8 rounded-lg bg-white border border-reader-border flex items-center justify-center flex-shrink-0">
+                                <KitLogo nameKey={kit.slug || kit.name} alt={kit.name} imgClassName="w-5 h-5 object-contain" />
+                            </div>
+                        ) : (
+                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${kit.color} flex items-center justify-center text-base flex-shrink-0`}>
+                                {kit.icon}
+                            </div>
+                        )}
                         <span className="text-reader-heading font-semibold text-sm truncate">{kit.name}</span>
                     </Link>
 
@@ -369,9 +376,15 @@ export default function KitLayout({ children }: { children: React.ReactNode }) {
                             <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg hover:bg-reader-surface-hover">
                                 <Menu className="w-5 h-5 text-reader-muted" />
                             </button>
-                            <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${kit.color} flex items-center justify-center text-sm`}>
-                                {kit.icon}
-                            </div>
+                            {getKitLogo(kit.slug || kit.name) ? (
+                                <div className="w-7 h-7 rounded-lg bg-white border border-reader-border flex items-center justify-center">
+                                    <KitLogo nameKey={kit.slug || kit.name} alt={kit.name} imgClassName="w-4 h-4 object-contain" />
+                                </div>
+                            ) : (
+                                <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${kit.color} flex items-center justify-center text-sm`}>
+                                    {kit.icon}
+                                </div>
+                            )}
                             <span className="text-reader-heading font-semibold text-sm truncate max-w-[160px]">{kit.name}</span>
                         </div>
                         <div className="flex items-center gap-1">

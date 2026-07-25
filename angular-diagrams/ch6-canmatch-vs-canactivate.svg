@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="380" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">CanActivate vs CanMatch on a lazy route</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Why role-gating an admin area belongs in CanMatch</text>
+
+  <!-- CanActivate column -->
+  <rect x="40" y="100" width="350" height="250" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="215" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#1d4ed8">CanActivate</text>
+  <rect x="70" y="146" width="290" height="40" rx="8" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="215" y="171" text-anchor="middle" font-size="13" fill="#334155">1. Route is matched</text>
+  <rect x="70" y="194" width="290" height="40" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="215" y="219" text-anchor="middle" font-size="13" fill="#b91c1c">2. Lazy chunk MAY download</text>
+  <rect x="70" y="242" width="290" height="40" rx="8" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="215" y="267" text-anchor="middle" font-size="13" fill="#334155">3. Guard blocks activation only</text>
+  <text x="215" y="316" text-anchor="middle" font-size="13" fill="#64748b">Admin code can still ship to</text>
+  <text x="215" y="334" text-anchor="middle" font-size="13" fill="#64748b">an unauthorised user</text>
+
+  <!-- CanMatch column -->
+  <rect x="430" y="100" width="350" height="250" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="605" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#15803d">CanMatch</text>
+  <rect x="460" y="146" width="290" height="40" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="605" y="171" text-anchor="middle" font-size="13" fill="#334155">1. Runs DURING matching</text>
+  <rect x="460" y="194" width="290" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="605" y="219" text-anchor="middle" font-size="13" fill="#15803d">2. false to route is skipped</text>
+  <rect x="460" y="242" width="290" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="605" y="267" text-anchor="middle" font-size="13" fill="#15803d">3. Chunk is NEVER fetched</text>
+  <text x="605" y="316" text-anchor="middle" font-size="13" fill="#64748b">Same path can also resolve to</text>
+  <text x="605" y="334" text-anchor="middle" font-size="13" fill="#64748b">different components by role</text>
+</svg>

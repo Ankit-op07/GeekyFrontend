@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="440" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Interceptor Chain (nested onion)</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Request flows down the array; response flows back up in reverse</text>
+  <defs>
+    <marker id="ar7i" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <!-- down column -->
+  <text x="235" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Request (outbound)</text>
+  <rect x="120" y="112" width="230" height="46" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="235" y="140" text-anchor="middle" font-size="13" fill="#1d4ed8">loggingInterceptor</text>
+  <line x1="235" y1="158" x2="235" y2="184" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar7i)"/>
+  <rect x="120" y="188" width="230" height="46" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="235" y="216" text-anchor="middle" font-size="13" fill="#7e22ce">authInterceptor</text>
+  <line x1="235" y1="234" x2="235" y2="260" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar7i)"/>
+  <rect x="120" y="264" width="230" height="46" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="235" y="292" text-anchor="middle" font-size="13" fill="#15803d">cachingInterceptor</text>
+  <line x1="235" y1="310" x2="235" y2="336" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar7i)"/>
+  <rect x="120" y="340" width="230" height="46" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="235" y="368" text-anchor="middle" font-size="13" fill="#b91c1c">Backend handler</text>
+
+  <!-- up column -->
+  <text x="585" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Response (inbound)</text>
+  <rect x="470" y="112" width="230" height="46" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="585" y="140" text-anchor="middle" font-size="13" fill="#1d4ed8">loggingInterceptor</text>
+  <line x1="585" y1="184" x2="585" y2="158" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar7i)"/>
+  <rect x="470" y="188" width="230" height="46" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="585" y="216" text-anchor="middle" font-size="13" fill="#7e22ce">authInterceptor</text>
+  <line x1="585" y1="260" x2="585" y2="234" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar7i)"/>
+  <rect x="470" y="264" width="230" height="46" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="585" y="292" text-anchor="middle" font-size="13" fill="#15803d">cachingInterceptor</text>
+  <line x1="585" y1="336" x2="585" y2="310" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar7i)"/>
+  <rect x="470" y="340" width="230" height="46" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="585" y="368" text-anchor="middle" font-size="13" fill="#b91c1c">Backend handler</text>
+
+  <text x="410" y="415" text-anchor="middle" font-size="12.5" fill="#64748b">Registration order = outbound order. Each calls next(req); logic after next() runs on the way back.</text>
+</svg>

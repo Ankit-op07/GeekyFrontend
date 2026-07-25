@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="360" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">How * Desugars to &lt;ng-template&gt;</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">The asterisk is pure syntax sugar</text>
+
+  <defs>
+    <marker id="arrowP" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#9333ea"/>
+    </marker>
+  </defs>
+
+  <!-- You write -->
+  <rect x="60" y="110" width="330" height="80" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="225" y="136" text-anchor="middle" font-size="13" font-weight="700" fill="#7e22ce">You write</text>
+  <text x="225" y="164" text-anchor="middle" font-size="13" fill="#334155">&lt;div *ngIf="ok"&gt;Hi&lt;/div&gt;</text>
+
+  <!-- arrow -->
+  <line x1="395" y1="150" x2="425" y2="150" stroke="#9333ea" stroke-width="2.5" marker-end="url(#arrowP)"/>
+
+  <!-- Angular expands -->
+  <rect x="430" y="110" width="330" height="80" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="595" y="136" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Compiler expands to</text>
+  <text x="595" y="164" text-anchor="middle" font-size="12" fill="#334155">&lt;ng-template [ngIf]="ok"&gt;</text>
+
+  <!-- expanded detail -->
+  <rect x="60" y="220" width="700" height="110" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="90" y="250" font-size="13" fill="#64748b">&lt;ng-template [ngIf]="ok"&gt;</text>
+  <text x="120" y="276" font-size="13" fill="#334155">&lt;div&gt;Hi&lt;/div&gt;</text>
+  <text x="90" y="302" font-size="13" fill="#64748b">&lt;/ng-template&gt;</text>
+  <text x="470" y="285" font-size="13" font-style="italic" fill="#9333ea">host element moves inside the template</text>
+</svg>

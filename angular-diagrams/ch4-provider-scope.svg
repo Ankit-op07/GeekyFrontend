@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="420" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Where a Provider Lives</text>
+
+  <!-- root -->
+  <rect x="40" y="80" width="360" height="300" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="220" y="112" text-anchor="middle" font-size="16" font-weight="700" fill="#15803d">providedIn: 'root'</text>
+  <text x="220" y="138" text-anchor="middle" font-size="12.5" fill="#334155">One instance for the whole app</text>
+  <text x="220" y="158" text-anchor="middle" font-size="12.5" fill="#334155">(app-wide singleton)</text>
+
+  <rect x="80" y="180" width="280" height="46" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="220" y="208" text-anchor="middle" font-size="12.5" fill="#334155">Tree-shakable: dropped if unused</text>
+
+  <rect x="80" y="240" width="280" height="46" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="220" y="268" text-anchor="middle" font-size="12.5" fill="#334155">Shared state across components</text>
+
+  <text x="220" y="322" text-anchor="middle" font-size="12.5" fill="#15803d">Use for: stateless, cache, app state</text>
+  <text x="220" y="350" text-anchor="middle" font-size="12" fill="#64748b">Default choice for 90% of services</text>
+
+  <!-- component -->
+  <rect x="420" y="80" width="360" height="300" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="600" y="112" text-anchor="middle" font-size="16" font-weight="700" fill="#7e22ce">providers: [Svc]</text>
+  <text x="600" y="138" text-anchor="middle" font-size="12.5" fill="#334155">One instance per component</text>
+  <text x="600" y="158" text-anchor="middle" font-size="12.5" fill="#334155">(and its children)</text>
+
+  <rect x="460" y="180" width="280" height="46" rx="10" fill="#ffffff" stroke="#9333ea" stroke-width="1.5"/>
+  <text x="600" y="208" text-anchor="middle" font-size="12.5" fill="#334155">New copy each time rendered</text>
+
+  <rect x="460" y="240" width="280" height="46" rx="10" fill="#ffffff" stroke="#9333ea" stroke-width="1.5"/>
+  <text x="600" y="268" text-anchor="middle" font-size="12.5" fill="#334155">Destroyed with the component</text>
+
+  <text x="600" y="322" text-anchor="middle" font-size="12.5" fill="#7e22ce">Use for: per-widget local state</text>
+  <text x="600" y="350" text-anchor="middle" font-size="12" fill="#64748b">e.g. a form's own draft store</text>
+</svg>

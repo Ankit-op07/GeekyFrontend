@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 340" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="340" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Memoized Selectors</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">Recompute only when the inputs they depend on change</text>
+
+  <!-- input selectors -->
+  <rect x="50" y="110" width="180" height="52" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="140" y="133" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">selectItems</text>
+  <text x="140" y="150" text-anchor="middle" font-size="11" fill="#64748b">input slice</text>
+
+  <rect x="50" y="190" width="180" height="52" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="140" y="213" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">selectFilter</text>
+  <text x="140" y="230" text-anchor="middle" font-size="11" fill="#64748b">input slice</text>
+
+  <!-- combiner -->
+  <rect x="320" y="150" width="200" height="60" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="420" y="176" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">createSelector</text>
+  <text x="420" y="194" text-anchor="middle" font-size="11" fill="#166534">projector combines inputs</text>
+
+  <!-- cache -->
+  <rect x="600" y="110" width="180" height="52" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="690" y="133" text-anchor="middle" font-size="13" font-weight="700" fill="#7e22ce">cached result</text>
+  <text x="690" y="150" text-anchor="middle" font-size="11" fill="#7e22ce">returned if inputs same</text>
+
+  <!-- recompute -->
+  <rect x="600" y="190" width="180" height="52" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="690" y="213" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">recompute</text>
+  <text x="690" y="230" text-anchor="middle" font-size="11" fill="#b91c1c">only if an input changed</text>
+
+  <!-- arrows -->
+  <line x1="230" y1="136" x2="318" y2="168" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="230" y1="216" x2="318" y2="192" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="520" y1="170" x2="598" y2="140" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="520" y1="190" x2="598" y2="216" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+
+  <text x="410" y="290" text-anchor="middle" font-size="12" fill="#64748b">Reference-equal inputs return the last computed value with zero work —</text>
+  <text x="410" y="312" text-anchor="middle" font-size="12" fill="#64748b">which is why immutable reducers make selectors fast.</text>
+
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+</svg>

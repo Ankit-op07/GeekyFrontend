@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Destructive vs Non-Destructive Hydration</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">provideClientHydration() reuses the server DOM instead of throwing it away</text>
+
+  <!-- Destructive -->
+  <rect x="30" y="92" width="360" height="272" rx="16" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="210" y="120" text-anchor="middle" font-size="16" font-weight="700" fill="#b91c1c">Destructive (old / no hydration)</text>
+  <rect x="60" y="138" width="300" height="34" rx="9" fill="#ffffff" stroke="#fca5a5"/>
+  <text x="210" y="160" text-anchor="middle" font-size="11.5" fill="#334155">Server HTML painted</text>
+  <line x1="210" y1="172" x2="210" y2="190" stroke="#94a3b8" stroke-width="2" marker-end="url(#hf)"/>
+  <rect x="60" y="192" width="300" height="34" rx="9" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="210" y="214" text-anchor="middle" font-size="11.5" fill="#b91c1c">Angular DESTROYS the DOM</text>
+  <line x1="210" y1="226" x2="210" y2="244" stroke="#94a3b8" stroke-width="2" marker-end="url(#hf)"/>
+  <rect x="60" y="246" width="300" height="34" rx="9" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="210" y="268" text-anchor="middle" font-size="11.5" fill="#b91c1c">Re-renders from scratch</text>
+  <text x="210" y="308" text-anchor="middle" font-size="11" fill="#b91c1c">Visible flicker, layout shift</text>
+  <text x="210" y="330" text-anchor="middle" font-size="11" fill="#64748b">wasted work, worse CLS</text>
+
+  <!-- Non-destructive -->
+  <rect x="430" y="92" width="360" height="272" rx="16" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.5"/>
+  <text x="610" y="120" text-anchor="middle" font-size="16" font-weight="700" fill="#15803d">Non-destructive (v17+)</text>
+  <rect x="460" y="138" width="300" height="34" rx="9" fill="#ffffff" stroke="#86efac"/>
+  <text x="610" y="160" text-anchor="middle" font-size="11.5" fill="#334155">Server HTML painted</text>
+  <line x1="610" y1="172" x2="610" y2="190" stroke="#16a34a" stroke-width="2" marker-end="url(#hfg)"/>
+  <rect x="460" y="192" width="300" height="34" rx="9" fill="#f0fdf4" stroke="#16a34a"/>
+  <text x="610" y="214" text-anchor="middle" font-size="11.5" fill="#15803d">Angular WALKS existing DOM</text>
+  <line x1="610" y1="226" x2="610" y2="244" stroke="#16a34a" stroke-width="2" marker-end="url(#hfg)"/>
+  <rect x="460" y="246" width="300" height="34" rx="9" fill="#f0fdf4" stroke="#16a34a"/>
+  <text x="610" y="268" text-anchor="middle" font-size="11.5" fill="#15803d">Attaches listeners, replays events</text>
+  <text x="610" y="308" text-anchor="middle" font-size="11" fill="#15803d">No flicker, no re-render</text>
+  <text x="610" y="330" text-anchor="middle" font-size="11" fill="#64748b">better CLS, less CPU</text>
+
+  <defs>
+    <marker id="hf" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+    <marker id="hfg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#16a34a"/></marker>
+  </defs>
+</svg>

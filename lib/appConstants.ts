@@ -34,6 +34,8 @@ export const PLAN_TO_SLUGS: Record<string, string[]> = {
     // React kit
     "Reactjs Interview Preparation Kit": ["react"],
     "React.js Interview Preparation Kit": ["react"],
+    // Angular kit — fragment matches the DB Kit.slug "angular-interview-kit"
+    "Angular Interview Preparation Kit": ["angular"],
     // Node kit
     "Node.js Interview Preparation Kit": ["node"],
     "Node.js Backend Mastery Kit": ["node"],
@@ -65,6 +67,28 @@ export const PLAN_TO_SLUGS: Record<string, string[]> = {
 
 /** The bundle SKU id — the only kit that grants multiple slugs. */
 export const BUNDLE_KIT_ID = 'complete-access-kit';
+
+/**
+ * AI Interview (turn-based, Gemini Flash). MODEL matches the existing admin
+ * Gemini routes. DAILY_LIMIT caps interviews started per user per day (cost
+ * control); QUESTION_COUNT is how many questions one interview asks before the
+ * graded report.
+ */
+export const AI_INTERVIEW = {
+    // Asking the next question needs no deep reasoning → cheapest lite model.
+    // Grading benefits from a stronger model. Both use "-latest" aliases so a
+    // Google model retirement (e.g. gemini-2.0-flash) doesn't break us, and both
+    // run with thinking DISABLED (see lib/gemini.ts) to kill the token cost.
+    QUESTION_MODEL: 'gemini-flash-lite-latest',
+    GRADE_MODEL: 'gemini-flash-latest',
+    DAILY_LIMIT: 3,
+    QUESTION_COUNT: 4,
+    // Live voice mode (Gemini Live native audio). Far pricier than text (audio
+    // tokens), so it has its OWN daily counter and a hard per-session length cap.
+    LIVE_MODEL: 'gemini-2.5-flash-native-audio-latest',
+    VOICE_DAILY_LIMIT: 2,
+    VOICE_MAX_SECONDS: 300,
+} as const;
 
 /*
  * The old UPGRADE_FLOOR (₹49) has been removed. Upgrade pricing now lives in
@@ -190,6 +214,25 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
             'Instant access after payment',
         ],
     },
+    'angular-kit': {
+        id: 'angular-kit',
+        name: 'Angular Interview Preparation Kit',
+        tagline: '8 modules · 40 in-depth topics · 63 diagrams — components, DI, RxJS, signals & change detection.',
+        price: 199,
+        originalPrice: 1999,
+        duration: 'Lifetime',
+        badge: 'NEW',
+        features: [
+            '40 in-depth topics across 8 structured modules',
+            '63 explanatory diagrams (RxJS marbles, DI injector tree, change detection & more)',
+            'Deep dives: components, directives, pipes, DI, RxJS, routing, forms, change detection',
+            'Modern Angular (v17+): standalone, signals, @if/@for, functional guards & interceptors',
+            '150+ interview questions with model answers and common traps',
+            'Common mistakes, gotchas & best practices for every topic',
+            'Last-minute revision cheat-cards',
+            'Lifetime updates included',
+        ],
+    },
     /* ── THE BUNDLE ──────────────────────────────────────────────
      *  Grants the 3 LIVE kits. Does NOT grant nodejs-kit or experiences-kit.
      *  ⚠️  Never market this as "everything" / "all future kits" — Node and
@@ -219,12 +262,21 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
     'nodejs-kit': {
         id: 'nodejs-kit',
         name: 'Node.js Backend Mastery Kit',
-        tagline: 'Master Node.js for backend interviews',
+        tagline: '15 modules · 70 in-depth topics · 100+ diagrams — event loop, async, streams, Express, REST, databases, auth & security, testing, scaling and production.',
         price: 299,
-        originalPrice: 1499,
+        originalPrice: 2999,
         duration: 'Lifetime',
-        comingSoon: true,
-        features: ['System Design', 'Database Modeling', 'API Security', 'Performance Scaling', 'Lifetime access'],
+        badge: 'BACKEND',
+        features: [
+            '70 in-depth topics across 15 structured modules',
+            '100+ explanatory diagrams (event loop, streams, DB, auth flows & more)',
+            'Deep dives: event loop, async patterns, streams, HTTP, Express, REST, databases',
+            'Auth & security, error handling, testing, scaling, production & advanced backend',
+            '200+ interview questions with model answers and common traps',
+            'Common mistakes, gotchas & best practices for every topic',
+            'Last-minute revision cheat-cards',
+            'Lifetime updates included',
+        ],
     },
 };
 
@@ -244,6 +296,12 @@ export function appConstants() {
         complete_kit_price: KIT_CATALOG['complete-kit'].price,
         experiences_kit_price: KIT_CATALOG['experiences-kit'].price,
         react_kit_price: KIT_CATALOG['react-kit'].price,
+        angular_kit_price: KIT_CATALOG['angular-kit'].price,
+        angular_kit_original_price: KIT_CATALOG['angular-kit'].originalPrice,
+        angular_kit_plan_name: KIT_CATALOG['angular-kit'].name,
+        nodejs_kit_price: KIT_CATALOG['nodejs-kit'].price,
+        nodejs_kit_original_price: KIT_CATALOG['nodejs-kit'].originalPrice,
+        nodejs_kit_plan_name: KIT_CATALOG['nodejs-kit'].name,
         js_kit_original_price: KIT_CATALOG['js-kit'].originalPrice,
         complete_kit_original_price: KIT_CATALOG['complete-kit'].originalPrice,
         experiences_kit_original_price: KIT_CATALOG['experiences-kit'].originalPrice,

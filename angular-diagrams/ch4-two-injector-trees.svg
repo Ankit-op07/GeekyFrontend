@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="470" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Two Parallel Injector Trees</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Element lookups fall through to the Environment tree</text>
+
+  <!-- Environment tree -->
+  <rect x="40" y="96" width="340" height="340" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="210" y="126" text-anchor="middle" font-size="15" font-weight="700" fill="#15803d">EnvironmentInjector</text>
+
+  <rect x="110" y="146" width="200" height="48" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="210" y="175" text-anchor="middle" font-size="12.5" fill="#334155">Platform / NullInjector</text>
+  <line x1="210" y1="194" x2="210" y2="222" stroke="#94a3b8" stroke-width="2" marker-end="url(#d)"/>
+
+  <rect x="110" y="224" width="200" height="48" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="210" y="253" text-anchor="middle" font-size="12.5" fill="#334155">Root (providedIn root)</text>
+  <line x1="210" y1="272" x2="210" y2="300" stroke="#94a3b8" stroke-width="2" marker-end="url(#d)"/>
+
+  <rect x="110" y="302" width="200" height="48" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="210" y="331" text-anchor="middle" font-size="12.5" fill="#334155">Route / lazy injector</text>
+  <text x="210" y="382" text-anchor="middle" font-size="12" fill="#15803d">Made by bootstrap, routes,</text>
+  <text x="210" y="402" text-anchor="middle" font-size="12" fill="#15803d">createEnvironmentInjector</text>
+
+  <!-- Element tree -->
+  <rect x="440" y="96" width="340" height="340" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="610" y="126" text-anchor="middle" font-size="15" font-weight="700" fill="#1d4ed8">ElementInjector</text>
+
+  <rect x="510" y="146" width="200" height="48" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="610" y="175" text-anchor="middle" font-size="12.5" fill="#334155">Host component providers</text>
+  <line x1="610" y1="194" x2="610" y2="222" stroke="#94a3b8" stroke-width="2" marker-end="url(#d)"/>
+
+  <rect x="510" y="224" width="200" height="48" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="610" y="253" text-anchor="middle" font-size="12.5" fill="#334155">Child component providers</text>
+  <line x1="610" y1="272" x2="610" y2="300" stroke="#94a3b8" stroke-width="2" marker-end="url(#d)"/>
+
+  <rect x="510" y="302" width="200" height="48" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="610" y="331" text-anchor="middle" font-size="12.5" fill="#334155">Directive on element</text>
+  <text x="610" y="382" text-anchor="middle" font-size="12" fill="#1d4ed8">Made by the template /</text>
+  <text x="610" y="402" text-anchor="middle" font-size="12" fill="#1d4ed8">component providers array</text>
+
+  <!-- fall-through arrow -->
+  <line x1="505" y1="170" x2="315" y2="240" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#r)"/>
+  <text x="410" y="452" text-anchor="middle" font-size="12.5" fill="#b91c1c">If the Element tree misses, resolution continues in the Environment tree.</text>
+
+  <defs>
+    <marker id="d" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+    <marker id="r" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"/></marker>
+  </defs>
+</svg>

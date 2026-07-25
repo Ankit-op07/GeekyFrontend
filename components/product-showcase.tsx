@@ -3,10 +3,10 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowRight, Zap, TrendingUp, Clock, Flame, Code2, Atom, Layers, Sparkles } from "lucide-react"
+import { ArrowRight, Zap, TrendingUp, Clock, Flame, Code2, Layers, Sparkles } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { appConstants } from "@/lib/appConstants"
-const { js_kit_price, react_kit_price, complete_kit_price, js_kit_original_price, react_kit_original_price, complete_kit_original_price, all_access_price, all_access_original_price } = appConstants()
+const { js_kit_price, react_kit_price, complete_kit_price, js_kit_original_price, react_kit_original_price, complete_kit_original_price, all_access_price, all_access_original_price, angular_kit_price, angular_kit_original_price, nodejs_kit_price, nodejs_kit_original_price } = appConstants()
 export interface Product {
   id: string
   title: string
@@ -19,6 +19,8 @@ export interface Product {
   bgGradient: string
   iconBg: string
   popular?: boolean
+  /** Brand-new kit — shows a "NEW" badge; no enrolment/rating numbers yet. */
+  isNew?: boolean
   /** The bundle. Gets the BEST VALUE treatment and a wider card. */
   featured?: boolean
   comingSoon?: boolean
@@ -39,8 +41,8 @@ const products: Product[] = [
       original: js_kit_original_price
     },
     icon: (
-      <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 via-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
-        <span className="font-black text-2xl text-white drop-shadow">JS</span>
+      <div className="w-14 h-14 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-lg">
+        <img src="/Kit%20logos/JavaScript.svg" alt="JavaScript" className="w-9 h-9 object-contain" />
       </div>
     ),
     bgGradient: "from-yellow-50 via-white to-amber-50",
@@ -58,8 +60,8 @@ const products: Product[] = [
       original: react_kit_original_price
     },
     icon: (
-      <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 via-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-        <Atom className="w-8 h-8 text-white drop-shadow animate-spin-slow" />
+      <div className="w-14 h-14 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-lg">
+        <img src="/Kit%20logos/React.png" alt="React" className="w-9 h-9 object-contain" />
       </div>
     ),
     bgGradient: "from-blue-50 via-white to-cyan-50",
@@ -68,6 +70,25 @@ const products: Product[] = [
     studentsCount: 11340,
     discount: 90,
     tag: "Bestseller"
+  },
+  {
+    id: "angular",
+    title: "Angular Interview Preparation Kit",
+    shortTitle: "Angular Interview Kit",
+    price: {
+      current: angular_kit_price,
+      original: angular_kit_original_price
+    },
+    icon: (
+      <div className="w-14 h-14 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-lg">
+        <img src="/Kit%20logos/angular.png" alt="Angular" className="w-9 h-9 object-contain" />
+      </div>
+    ),
+    bgGradient: "from-red-50 via-white to-rose-50",
+    iconBg: "bg-gradient-to-br from-red-500 to-rose-600",
+    isNew: true,
+    discount: 90,
+    tag: "8 Modules • 40 Topics"
   },
   /* Renamed 2026-07. `id` stays "complete" so /checkout/complete and any live
    * ads or backlinks keep resolving. Only the display name changed — the kit's
@@ -90,6 +111,25 @@ const products: Product[] = [
     studentsCount: 6812,
     discount: 90,
     tag: "42 System Design • 180 DSA"
+  },
+  {
+    id: "nodejs",
+    title: "Node.js Backend Mastery Kit",
+    shortTitle: "Node.js Backend Kit",
+    price: {
+      current: nodejs_kit_price,
+      original: nodejs_kit_original_price
+    },
+    icon: (
+      <div className="w-14 h-14 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-lg">
+        <img src="/Kit%20logos/nodejs.svg" alt="Node.js" className="w-9 h-9 object-contain" />
+      </div>
+    ),
+    bgGradient: "from-green-50 via-white to-emerald-50",
+    iconBg: "bg-gradient-to-br from-green-500 to-emerald-600",
+    isNew: true,
+    discount: 90,
+    tag: "15 Modules • 70 Topics"
   },
   /* ── THE BUNDLE ────────────────────────────────────────────────────────
    *  Grants JS + React + Frontend System Design. Does NOT grant the
@@ -117,7 +157,6 @@ const products: Product[] = [
     tag: "JS + React + System Design",
     ctaLabel: "Get all 3 kits"
   },
-  // Node.js kit is intentionally hidden from the home page for now.
 ]
 
 export function ProductsShowcase() {
@@ -195,6 +234,15 @@ export function ProductsShowcase() {
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
                     <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0 text-[10px] px-3 py-1 font-bold shadow-md">
                       ⭐ BESTSELLER
+                    </Badge>
+                  </div>
+                )}
+
+                {/* NEW badge for freshly-launched kits */}
+                {product.isNew && (
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
+                    <Badge className="bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0 text-[10px] px-3 py-1 font-bold shadow-md">
+                      ✨ NEW
                     </Badge>
                   </div>
                 )}

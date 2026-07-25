@@ -15,6 +15,11 @@ export interface ICompanyKitUser extends Document {
     currentStreak: number;
     longestStreak: number;
     lastActiveDate?: Date;
+    // Daily AI-interview usage counter (cost cap). `date` is an IST YYYY-MM-DD
+    // string; `count` resets when the date rolls over. See app/api/interview/start.
+    interviewUsage?: { date: string; count: number };
+    // Separate daily counter for the (pricier) live voice interview.
+    voiceUsage?: { date: string; count: number };
     // Real-time presence (admin Live Users view). Distinct from lastActiveDate,
     // which is a coarse once-per-day streak signal for buyers only. lastSeenAt
     // is bumped on every page view / heartbeat for any logged-in user.
@@ -71,6 +76,14 @@ const CompanyKitUserSchema = new Schema<ICompanyKitUser>({
     currentStreak: { type: Number, default: 0 },
     longestStreak: { type: Number, default: 0 },
     lastActiveDate: { type: Date },
+    interviewUsage: {
+        date: { type: String },
+        count: { type: Number, default: 0 },
+    },
+    voiceUsage: {
+        date: { type: String },
+        count: { type: Number, default: 0 },
+    },
     lastSeenAt: { type: Date, index: true },
     currentPath: { type: String },
     subscriptionStatus: {

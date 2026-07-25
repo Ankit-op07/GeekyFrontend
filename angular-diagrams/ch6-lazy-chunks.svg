@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="420" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Eager bundle vs lazy chunks</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">A dynamic import splits code out of the main entry graph</text>
+
+  <!-- eager -->
+  <rect x="40" y="100" width="350" height="280" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="215" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#b91c1c">Eager: component: Admin</text>
+  <rect x="70" y="146" width="290" height="200" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="215" y="172" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">main.js (one big bundle)</text>
+  <text x="215" y="200" text-anchor="middle" font-size="13" fill="#64748b">Home + Profile + Admin + ...</text>
+  <text x="215" y="228" text-anchor="middle" font-size="13" fill="#64748b">Downloaded, parsed, executed</text>
+  <text x="215" y="248" text-anchor="middle" font-size="13" fill="#64748b">before the app is interactive</text>
+  <rect x="90" y="272" width="250" height="52" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="215" y="303" text-anchor="middle" font-size="14" fill="#b91c1c">Slow first paint / high TTI</text>
+
+  <!-- lazy -->
+  <rect x="430" y="100" width="350" height="280" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="605" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#15803d">Lazy: loadComponent import()</text>
+  <rect x="460" y="146" width="290" height="60" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="605" y="172" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">main.js (small)</text>
+  <text x="605" y="192" text-anchor="middle" font-size="13" fill="#64748b">Home only — ships immediately</text>
+  <rect x="460" y="218" width="135" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="527" y="244" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">profile.chunk.js</text>
+  <text x="527" y="264" text-anchor="middle" font-size="12" fill="#64748b">on nav</text>
+  <rect x="615" y="218" width="135" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="682" y="244" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">admin.chunk.js</text>
+  <text x="682" y="264" text-anchor="middle" font-size="12" fill="#64748b">on nav</text>
+  <rect x="480" y="300" width="250" height="52" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="605" y="331" text-anchor="middle" font-size="14" fill="#15803d">Fast first paint / low TTI</text>
+</svg>

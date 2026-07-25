@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="380" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">How a Stored XSS Attack Lands</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Untrusted input becomes executable script in another user's page</text>
+  <defs>
+    <marker id="arxa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <rect x="40" y="110" width="220" height="70" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="150" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">1. Attacker</text>
+  <text x="150" y="160" text-anchor="middle" font-size="12" fill="#334155">posts a comment with</text>
+  <text x="150" y="176" text-anchor="middle" font-size="12" fill="#334155">&lt;img onerror=steal()&gt;</text>
+
+  <line x1="260" y1="145" x2="300" y2="145" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arxa)"/>
+
+  <rect x="300" y="110" width="220" height="70" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="410" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">2. Server stores it</text>
+  <text x="410" y="160" text-anchor="middle" font-size="12" fill="#334155">saved raw in the DB,</text>
+  <text x="410" y="176" text-anchor="middle" font-size="12" fill="#334155">no encoding applied</text>
+
+  <line x1="520" y1="145" x2="560" y2="145" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arxa)"/>
+
+  <rect x="560" y="110" width="220" height="70" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="670" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#7e22ce">3. Victim loads page</text>
+  <text x="670" y="160" text-anchor="middle" font-size="12" fill="#334155">comment injected into</text>
+  <text x="670" y="176" text-anchor="middle" font-size="12" fill="#334155">the DOM as HTML</text>
+
+  <line x1="670" y1="180" x2="670" y2="230" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arxa)"/>
+
+  <rect x="490" y="234" width="290" height="66" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="635" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">4. Script runs as the victim</text>
+  <text x="635" y="284" text-anchor="middle" font-size="12" fill="#334155">reads cookies / tokens, acts on their behalf</text>
+
+  <rect x="40" y="234" width="410" height="66" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="245" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">Angular's defence</text>
+  <text x="245" y="284" text-anchor="middle" font-size="12" fill="#334155">Interpolation and binding encode/strip it before render</text>
+
+  <text x="410" y="340" text-anchor="middle" font-size="12.5" fill="#64748b">XSS = the browser cannot tell attacker data from developer code. Encoding restores that boundary.</text>
+</svg>

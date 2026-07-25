@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="420" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">TestBed: Configure, Compile, Assert</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">TestBed builds a mini-module; the fixture drives CD and the DOM</text>
+
+  <rect x="40" y="96" width="220" height="230" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="150" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">TestBed</text>
+  <rect x="60" y="136" width="180" height="40" rx="9" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="150" y="161" text-anchor="middle" font-size="11" fill="#334155">configureTestingModule</text>
+  <rect x="60" y="182" width="180" height="40" rx="9" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="150" y="207" text-anchor="middle" font-size="11" fill="#334155">provide mocks / stubs</text>
+  <rect x="60" y="228" width="180" height="40" rx="9" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="150" y="253" text-anchor="middle" font-size="11" fill="#334155">createComponent()</text>
+  <text x="150" y="298" text-anchor="middle" font-size="11" fill="#64748b">builds an isolated DI tree</text>
+
+  <line x1="260" y1="200" x2="308" y2="200" stroke="#94a3b8" stroke-width="2" marker-end="url(#tb)"/>
+
+  <rect x="310" y="96" width="220" height="230" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="420" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#15803d">ComponentFixture</text>
+  <rect x="330" y="136" width="180" height="40" rx="9" fill="#ffffff" stroke="#86efac"/>
+  <text x="420" y="161" text-anchor="middle" font-size="11" fill="#334155">fixture.componentInstance</text>
+  <rect x="330" y="182" width="180" height="40" rx="9" fill="#ffffff" stroke="#86efac"/>
+  <text x="420" y="207" text-anchor="middle" font-size="11" fill="#334155">detectChanges() → CD</text>
+  <rect x="330" y="228" width="180" height="40" rx="9" fill="#ffffff" stroke="#86efac"/>
+  <text x="420" y="253" text-anchor="middle" font-size="11" fill="#334155">nativeElement / query</text>
+  <text x="420" y="298" text-anchor="middle" font-size="11" fill="#166534">renders + drives the DOM</text>
+
+  <line x1="530" y1="200" x2="578" y2="200" stroke="#94a3b8" stroke-width="2" marker-end="url(#tb)"/>
+
+  <rect x="580" y="96" width="200" height="230" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="680" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#7e22ce">Assertions</text>
+  <rect x="598" y="136" width="164" height="40" rx="9" fill="#ffffff" stroke="#d8b4fe"/>
+  <text x="680" y="161" text-anchor="middle" font-size="11" fill="#334155">expect(text).toBe(..)</text>
+  <rect x="598" y="182" width="164" height="40" rx="9" fill="#ffffff" stroke="#d8b4fe"/>
+  <text x="680" y="207" text-anchor="middle" font-size="11" fill="#334155">HttpTestingMock</text>
+  <rect x="598" y="228" width="164" height="40" rx="9" fill="#ffffff" stroke="#d8b4fe"/>
+  <text x="680" y="253" text-anchor="middle" font-size="11" fill="#334155">verify() no open reqs</text>
+  <text x="680" y="298" text-anchor="middle" font-size="11" fill="#7e22ce">state + DOM verified</text>
+
+  <text x="410" y="368" text-anchor="middle" font-size="12" fill="#64748b">HttpTestingController flushes fake responses; expectOne asserts the request shape.</text>
+  <text x="410" y="392" text-anchor="middle" font-size="12" fill="#64748b">No real network, no real timers — deterministic, fast unit tests.</text>
+
+  <defs>
+    <marker id="tb" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+</svg>

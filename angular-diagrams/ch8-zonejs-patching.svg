@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="440" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">How Zone.js Triggers Change Detection</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">Zone.js monkey-patches async APIs to notify Angular when a task finishes</text>
+
+  <!-- Step 1: patched APIs -->
+  <rect x="40" y="96" width="230" height="150" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="155" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">Patched browser APIs</text>
+  <rect x="60" y="136" width="190" height="26" rx="7" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="155" y="154" text-anchor="middle" font-size="11" fill="#334155">addEventListener</text>
+  <rect x="60" y="166" width="190" height="26" rx="7" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="155" y="184" text-anchor="middle" font-size="11" fill="#334155">setTimeout / setInterval</text>
+  <rect x="60" y="196" width="190" height="26" rx="7" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="155" y="214" text-anchor="middle" font-size="11" fill="#334155">Promise / XHR / fetch</text>
+
+  <line x1="270" y1="171" x2="318" y2="171" stroke="#94a3b8" stroke-width="2" marker-end="url(#az)"/>
+
+  <!-- Step 2: NgZone -->
+  <rect x="320" y="118" width="180" height="106" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="410" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#15803d">NgZone</text>
+  <text x="410" y="168" text-anchor="middle" font-size="11" fill="#166534">tracks pending tasks</text>
+  <text x="410" y="188" text-anchor="middle" font-size="11" fill="#166534">microtask queue drains</text>
+  <text x="410" y="208" text-anchor="middle" font-size="11" fill="#166534">emits onMicrotaskEmpty</text>
+
+  <line x1="500" y1="171" x2="548" y2="171" stroke="#94a3b8" stroke-width="2" marker-end="url(#az)"/>
+
+  <!-- Step 3: tick -->
+  <rect x="550" y="118" width="230" height="106" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="665" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#7e22ce">ApplicationRef.tick()</text>
+  <text x="665" y="168" text-anchor="middle" font-size="11" fill="#7e22ce">runs change detection</text>
+  <text x="665" y="188" text-anchor="middle" font-size="11" fill="#7e22ce">from the root down</text>
+  <text x="665" y="208" text-anchor="middle" font-size="11" fill="#7e22ce">DOM re-synced</text>
+
+  <!-- runOutsideAngular escape hatch -->
+  <rect x="150" y="286" width="520" height="66" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="410" y="312" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">ngZone.runOutsideAngular( )</text>
+  <text x="410" y="334" text-anchor="middle" font-size="11" fill="#b91c1c">work runs OUTSIDE the zone → no tick fires → no wasted CD</text>
+
+  <text x="410" y="384" text-anchor="middle" font-size="12" fill="#64748b">Zone.js does not know WHAT changed — only that an async task ran.</text>
+  <text x="410" y="404" text-anchor="middle" font-size="12" fill="#64748b">So Angular checks everything, which is why OnPush + signals matter.</text>
+
+  <defs>
+    <marker id="az" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+</svg>

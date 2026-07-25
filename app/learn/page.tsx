@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
+import { KitLogo, getKitLogo } from '@/components/kit-logo';
 import {
     BookOpen, Loader2, ChevronRight, FileText, Layers,
     Lock, Eye, CheckCircle2, Sparkles, ShoppingCart
@@ -24,6 +25,9 @@ interface Kit {
 
 function getCheckoutPathForKit(kit: Kit): string {
     const label = `${kit.name} ${kit.slug}`.toLowerCase();
+    // Order matters: check "node"/"angular" before "js" — "node.js" contains "js".
+    if (label.includes('angular')) return '/checkout/angular';
+    if (label.includes('node')) return '/checkout/nodejs';
     if (label.includes('complete')) return '/checkout/complete';
     if (label.includes('react')) return '/checkout/react';
     if (label.includes('javascript') || label.includes('js')) return '/checkout/javascript';
@@ -119,9 +123,15 @@ export default function LearnPage() {
                                             {/* Top access bar */}
                                             <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl bg-gradient-to-r from-green-400 via-violet-400 to-cyan-400" />
 
-                                            <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                                                {kit.icon}
-                                            </div>
+                                            {getKitLogo(kit.slug || kit.name) ? (
+                                                <div className="w-14 h-14 rounded-xl bg-white border border-reader-border flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform">
+                                                    <KitLogo nameKey={kit.slug || kit.name} alt={kit.name} imgClassName="w-9 h-9 object-contain" />
+                                                </div>
+                                            ) : (
+                                                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
+                                                    {kit.icon}
+                                                </div>
+                                            )}
 
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-reader-success text-[10px] font-semibold">
@@ -175,9 +185,15 @@ export default function LearnPage() {
                                             key={kit._id}
                                             className="group relative bg-reader-surface border border-reader-border rounded-2xl p-6 hover:border-reader-amber-soft-border hover:bg-reader-surface-hover transition-all"
                                         >
-                                            <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl mb-4 shadow-lg group-hover:scale-105 transition-transform`}>
-                                                {kit.icon}
-                                            </div>
+                                            {getKitLogo(kit.slug || kit.name) ? (
+                                                <div className="w-14 h-14 rounded-xl bg-white border border-reader-border flex items-center justify-center mb-4 shadow-lg group-hover:scale-105 transition-transform">
+                                                    <KitLogo nameKey={kit.slug || kit.name} alt={kit.name} imgClassName="w-9 h-9 object-contain" />
+                                                </div>
+                                            ) : (
+                                                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl mb-4 shadow-lg group-hover:scale-105 transition-transform`}>
+                                                    {kit.icon}
+                                                </div>
+                                            )}
 
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-reader-amber text-[10px] font-semibold">

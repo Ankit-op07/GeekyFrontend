@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">What the async Pipe Does For You</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Subscribe, render, mark dirty, and clean up</text>
+
+  <defs>
+    <marker id="arrowA" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#9333ea"/>
+    </marker>
+  </defs>
+
+  <rect x="60" y="110" width="220" height="70" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="170" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Observable / Promise</text>
+  <text x="170" y="162" text-anchor="middle" font-size="12" fill="#64748b">data$ | async</text>
+
+  <line x1="282" y1="145" x2="332" y2="145" stroke="#9333ea" stroke-width="2.5" marker-end="url(#arrowA)"/>
+
+  <rect x="335" y="100" width="290" height="90" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="480" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#7e22ce">AsyncPipe (impure)</text>
+  <text x="480" y="150" text-anchor="middle" font-size="11" fill="#64748b">1. subscribe on first use</text>
+  <text x="480" y="168" text-anchor="middle" font-size="11" fill="#64748b">2. markForCheck on each emit</text>
+
+  <line x1="627" y1="145" x2="677" y2="145" stroke="#9333ea" stroke-width="2.5" marker-end="url(#arrowA)"/>
+
+  <rect x="600" y="110" width="180" height="70" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="690" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">Rendered value</text>
+  <text x="690" y="162" text-anchor="middle" font-size="11" fill="#64748b">latest emission</text>
+
+  <rect x="60" y="230" width="720" height="60" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="410" y="256" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">On ngOnDestroy → unsubscribe automatically</text>
+  <text x="410" y="278" text-anchor="middle" font-size="12" fill="#64748b">No manual subscribe(), no memory leak, no takeUntil boilerplate</text>
+
+  <rect x="60" y="310" width="720" height="60" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="410" y="336" text-anchor="middle" font-size="13" fill="#334155">Works with OnPush — the pipe calls markForCheck so the view updates</text>
+  <text x="410" y="358" text-anchor="middle" font-size="12" fill="#64748b">Pair with @if (data$ | async; as data) to unwrap once</text>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="420" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="44" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">ViewChild vs ContentChild</text>
+  <text x="410" y="70" text-anchor="middle" font-size="14" fill="#64748b">View = my own template. Content = projected in through ng-content.</text>
+
+  <!-- ViewChild side -->
+  <rect x="40" y="96" width="350" height="290" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="215" y="124" text-anchor="middle" font-size="16" font-weight="700" fill="#1d4ed8">viewChild()</text>
+  <text x="215" y="146" text-anchor="middle" font-size="12" fill="#64748b">queries the component's own template</text>
+
+  <rect x="70" y="164" width="290" height="200" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-dasharray="5 4"/>
+  <text x="215" y="186" text-anchor="middle" font-size="12" fill="#64748b">my-panel template</text>
+  <rect x="98" y="204" width="234" height="42" rx="8" fill="#eff6ff" stroke="#3b82f6"/>
+  <text x="215" y="230" text-anchor="middle" font-size="13" fill="#1d4ed8">&lt;input #box&gt;</text>
+  <rect x="98" y="262" width="234" height="42" rx="8" fill="#eff6ff" stroke="#3b82f6"/>
+  <text x="215" y="288" text-anchor="middle" font-size="13" fill="#1d4ed8">&lt;app-chart&gt;</text>
+  <text x="215" y="342" text-anchor="middle" font-size="12" fill="#64748b">ready in ngAfterViewInit</text>
+
+  <!-- ContentChild side -->
+  <rect x="430" y="96" width="350" height="290" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="605" y="124" text-anchor="middle" font-size="16" font-weight="700" fill="#15803d">contentChild()</text>
+  <text x="605" y="146" text-anchor="middle" font-size="12" fill="#64748b">queries what the parent projected in</text>
+
+  <rect x="460" y="164" width="290" height="200" rx="10" fill="#ffffff" stroke="#86efac" stroke-dasharray="5 4"/>
+  <text x="605" y="186" text-anchor="middle" font-size="12" fill="#64748b">&lt;ng-content&gt; slot</text>
+  <rect x="488" y="204" width="234" height="42" rx="8" fill="#f0fdf4" stroke="#16a34a"/>
+  <text x="605" y="230" text-anchor="middle" font-size="13" fill="#15803d">projected by parent</text>
+  <rect x="488" y="262" width="234" height="42" rx="8" fill="#f0fdf4" stroke="#16a34a"/>
+  <text x="605" y="288" text-anchor="middle" font-size="13" fill="#15803d">&lt;app-tab&gt; from outside</text>
+  <text x="605" y="342" text-anchor="middle" font-size="12" fill="#64748b">ready in ngAfterContentInit</text>
+</svg>

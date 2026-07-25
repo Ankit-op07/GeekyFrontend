@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Defence in Depth for an Angular App</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Each layer catches what the one above it missed</text>
+
+  <rect x="120" y="96" width="580" height="52" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="410" y="120" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">1. Angular auto-sanitization</text>
+  <text x="410" y="138" text-anchor="middle" font-size="12" fill="#334155">Encodes bindings by default (first line)</text>
+
+  <rect x="150" y="160" width="520" height="52" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="410" y="184" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">2. Content Security Policy header</text>
+  <text x="410" y="202" text-anchor="middle" font-size="12" fill="#334155">Browser blocks unlisted scripts even if injected</text>
+
+  <rect x="180" y="224" width="460" height="52" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="410" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#7e22ce">3. Trusted Types</text>
+  <text x="410" y="266" text-anchor="middle" font-size="12" fill="#334155">Locks the DOM sink APIs (innerHTML, etc.)</text>
+
+  <rect x="210" y="288" width="400" height="52" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+  <text x="410" y="312" text-anchor="middle" font-size="13" font-weight="700" fill="#b45309">4. Supply-chain hygiene</text>
+  <text x="410" y="330" text-anchor="middle" font-size="12" fill="#334155">Audit deps, lockfiles, SRI (last line)</text>
+
+  <text x="410" y="376" text-anchor="middle" font-size="12.5" fill="#64748b">No single layer is enough. CSP and Trusted Types assume sanitization can still fail.</text>
+</svg>

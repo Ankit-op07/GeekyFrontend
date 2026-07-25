@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 460" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="460" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">mergeMap vs concatMap</text>
+  <text x="410" y="68" text-anchor="middle" font-size="14" fill="#64748b">merge: concurrent, order not guaranteed. concat: queued, order preserved.</text>
+
+  <!-- source shared -->
+  <text x="60" y="112" font-size="13" font-weight="700" fill="#334155">source</text>
+  <line x1="140" y1="114" x2="740" y2="114" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="220" cy="114" r="10" fill="#0f172a"/><text x="220" y="119" text-anchor="middle" font-size="11" fill="#fff">a</text>
+  <circle cx="300" cy="114" r="10" fill="#0f172a"/><text x="300" y="119" text-anchor="middle" font-size="11" fill="#fff">b</text>
+
+  <!-- mergeMap -->
+  <rect x="40" y="140" width="740" height="130" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="60" y="164" font-size="15" font-weight="700" fill="#15803d">mergeMap (each inner takes time)</text>
+  <line x1="140" y1="220" x2="740" y2="220" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="360" cy="220" r="9" fill="#16a34a"/><text x="360" y="225" text-anchor="middle" font-size="10" fill="#fff">b1</text>
+  <circle cx="440" cy="220" r="9" fill="#16a34a"/><text x="440" y="225" text-anchor="middle" font-size="10" fill="#fff">a1</text>
+  <text x="500" y="200" font-size="11" fill="#15803d">b1 can arrive before a1 (interleaved)</text>
+
+  <!-- concatMap -->
+  <rect x="40" y="288" width="740" height="150" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="60" y="312" font-size="15" font-weight="700" fill="#1d4ed8">concatMap (same timing)</text>
+  <line x1="140" y1="378" x2="740" y2="378" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="300" cy="378" r="9" fill="#3b82f6"/><text x="300" y="383" text-anchor="middle" font-size="10" fill="#fff">a1</text>
+  <circle cx="480" cy="378" r="9" fill="#3b82f6"/><text x="480" y="383" text-anchor="middle" font-size="10" fill="#fff">b1</text>
+  <text x="300" y="410" text-anchor="middle" font-size="11" fill="#1d4ed8">a completes first</text>
+  <text x="520" y="358" font-size="11" fill="#1d4ed8">b waits in queue until a done</text>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="10" y="10" width="800" height="410" rx="20" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="bold" fill="#0f172a">What is inside the Node.js runtime?</text>
+
+  <rect x="60" y="80" width="700" height="70" rx="12" fill="#f0fdf4" stroke="#16a34a"/>
+  <text x="410" y="112" text-anchor="middle" font-size="17" font-weight="bold" fill="#0f172a">Your JavaScript code</text>
+  <text x="410" y="135" text-anchor="middle" font-size="13" fill="#64748b">app.js, server.js, scripts</text>
+
+  <rect x="60" y="170" width="340" height="80" rx="12" fill="#eff6ff" stroke="#3b82f6"/>
+  <text x="230" y="200" text-anchor="middle" font-size="16" font-weight="bold" fill="#0f172a">Node.js APIs</text>
+  <text x="230" y="222" text-anchor="middle" font-size="12" fill="#64748b">fs, http, path, crypto,</text>
+  <text x="230" y="239" text-anchor="middle" font-size="12" fill="#64748b">os, stream, process</text>
+
+  <rect x="420" y="170" width="340" height="80" rx="12" fill="#faf5ff" stroke="#9333ea"/>
+  <text x="590" y="200" text-anchor="middle" font-size="16" font-weight="bold" fill="#0f172a">C++ bindings</text>
+  <text x="590" y="222" text-anchor="middle" font-size="12" fill="#64748b">bridge JS to the</text>
+  <text x="590" y="239" text-anchor="middle" font-size="12" fill="#64748b">operating system</text>
+
+  <rect x="60" y="270" width="340" height="90" rx="12" fill="#f0fdf4" stroke="#16a34a"/>
+  <text x="230" y="302" text-anchor="middle" font-size="16" font-weight="bold" fill="#0f172a">V8 engine</text>
+  <text x="230" y="324" text-anchor="middle" font-size="12" fill="#64748b">compiles &amp; runs the</text>
+  <text x="230" y="341" text-anchor="middle" font-size="12" fill="#64748b">JavaScript (from Chrome)</text>
+
+  <rect x="420" y="270" width="340" height="90" rx="12" fill="#fff7ed" stroke="#ea580c"/>
+  <text x="590" y="302" text-anchor="middle" font-size="16" font-weight="bold" fill="#0f172a">libuv</text>
+  <text x="590" y="324" text-anchor="middle" font-size="12" fill="#64748b">event loop, async I/O,</text>
+  <text x="590" y="341" text-anchor="middle" font-size="12" fill="#64748b">thread pool</text>
+
+  <rect x="60" y="378" width="700" height="34" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="410" y="400" text-anchor="middle" font-size="13" fill="#334155">Operating system &amp; hardware (files, network, CPU)</text>
+</svg>

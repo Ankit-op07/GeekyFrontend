@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Service-with-Signals Store</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">A providedIn root service is a shared, reactive singleton</text>
+
+  <!-- Service -->
+  <rect x="280" y="92" width="260" height="150" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="410" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#7e22ce">CartService (root)</text>
+  <rect x="304" y="134" width="212" height="34" rx="8" fill="#ffffff" stroke="#d8b4fe"/>
+  <text x="410" y="156" text-anchor="middle" font-size="11" fill="#334155">#items = signal([])  private</text>
+  <rect x="304" y="176" width="212" height="34" rx="8" fill="#ffffff" stroke="#d8b4fe"/>
+  <text x="410" y="198" text-anchor="middle" font-size="11" fill="#334155">total = computed(...)  public</text>
+  <rect x="304" y="212" width="212" height="26" rx="8" fill="#ffffff" stroke="#d8b4fe"/>
+  <text x="410" y="230" text-anchor="middle" font-size="11" fill="#334155">add() / remove() methods</text>
+
+  <!-- Consumers -->
+  <rect x="60" y="290" width="200" height="60" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="160" y="316" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Header badge</text>
+  <text x="160" y="334" text-anchor="middle" font-size="11" fill="#64748b">reads total()</text>
+
+  <rect x="310" y="290" width="200" height="60" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="410" y="316" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Cart page</text>
+  <text x="410" y="334" text-anchor="middle" font-size="11" fill="#64748b">reads items(), calls add()</text>
+
+  <rect x="560" y="290" width="200" height="60" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="660" y="316" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Checkout</text>
+  <text x="660" y="334" text-anchor="middle" font-size="11" fill="#64748b">reads total()</text>
+
+  <!-- arrows: inject -->
+  <line x1="330" y1="242" x2="180" y2="288" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="410" y1="242" x2="410" y2="288" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="490" y1="242" x2="640" y2="288" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="410" y="268" text-anchor="middle" font-size="11" font-weight="700" fill="#9333ea">inject(CartService) — same instance</text>
+
+  <text x="410" y="384" text-anchor="middle" font-size="12" fill="#64748b">Expose read-only signals, mutate only through methods. No library, full OnPush compatibility.</text>
+
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+</svg>

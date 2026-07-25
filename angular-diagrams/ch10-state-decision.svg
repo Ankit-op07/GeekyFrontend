@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="470" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Choosing Where State Lives</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">Scale up only when the cheaper option stops fitting</text>
+
+  <!-- Question 1 -->
+  <rect x="290" y="90" width="240" height="46" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="410" y="112" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Used outside this view?</text>
+  <text x="410" y="128" text-anchor="middle" font-size="11" fill="#64748b">shared across routes / components</text>
+
+  <!-- No path -> local -->
+  <line x1="290" y1="113" x2="150" y2="180" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="205" y="150" text-anchor="middle" font-size="12" font-weight="700" fill="#16a34a">No</text>
+  <rect x="60" y="182" width="200" height="60" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="160" y="206" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">Local signals</text>
+  <text x="160" y="224" text-anchor="middle" font-size="11" fill="#166534">signal() in the component</text>
+
+  <!-- Yes path -->
+  <line x1="530" y1="113" x2="660" y2="180" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="615" y="150" text-anchor="middle" font-size="12" font-weight="700" fill="#3b82f6">Yes</text>
+
+  <!-- Question 2 -->
+  <rect x="540" y="182" width="240" height="60" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="660" y="206" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Complex flows?</text>
+  <text x="660" y="224" text-anchor="middle" font-size="11" fill="#64748b">many actions, effects, teams</text>
+
+  <!-- Q2 No -> service signals -->
+  <line x1="600" y1="242" x2="440" y2="300" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="500" y="272" text-anchor="middle" font-size="12" font-weight="700" fill="#9333ea">No</text>
+  <rect x="300" y="302" width="230" height="60" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="415" y="326" text-anchor="middle" font-size="13" font-weight="700" fill="#7e22ce">Service or SignalStore</text>
+  <text x="415" y="344" text-anchor="middle" font-size="11" fill="#7e22ce">signals held in a service</text>
+
+  <!-- Q2 Yes -> NgRx -->
+  <line x1="700" y1="242" x2="700" y2="300" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="730" y="275" text-anchor="middle" font-size="12" font-weight="700" fill="#dc2626">Yes</text>
+  <rect x="580" y="302" width="200" height="60" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="680" y="326" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">NgRx Store</text>
+  <text x="680" y="344" text-anchor="middle" font-size="11" fill="#b91c1c">actions + reducers + effects</text>
+
+  <text x="410" y="404" text-anchor="middle" font-size="12" fill="#64748b">Most state is local. Lift it only when sharing or complexity forces you to.</text>
+  <text x="410" y="428" text-anchor="middle" font-size="12" fill="#64748b">A global store is a cost you pay for traceability, not a default.</text>
+
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+</svg>

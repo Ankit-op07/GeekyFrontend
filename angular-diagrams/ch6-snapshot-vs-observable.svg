@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="440" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">snapshot vs paramMap on /users/1 to /users/2</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Same component is reused, so ngOnInit does not re-run</text>
+
+  <!-- navigation event -->
+  <rect x="290" y="94" width="240" height="44" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <text x="410" y="122" text-anchor="middle" font-size="14" font-family="monospace" fill="#334155">nav: /users/1 to /users/2</text>
+
+  <!-- snapshot path -->
+  <line x1="360" y1="138" x2="230" y2="176" stroke="#dc2626" stroke-width="2" marker-end="url(#a1)"/>
+  <rect x="40" y="180" width="350" height="210" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="60" y="208" font-size="16" font-weight="700" fill="#b91c1c">snapshot (frozen)</text>
+  <text x="60" y="232" font-size="13" fill="#334155">Read once at construction time</text>
+  <text x="60" y="254" font-size="13" font-family="monospace" fill="#334155">route.snapshot.paramMap.get('id')</text>
+  <rect x="60" y="272" width="310" height="42" rx="8" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="75" y="298" font-size="14" fill="#b91c1c">Still shows user 1 — STALE</text>
+  <text x="60" y="340" font-size="13" fill="#64748b">Instance not recreated, so the value</text>
+  <text x="60" y="360" font-size="13" fill="#64748b">captured earlier is never refreshed</text>
+
+  <!-- observable path -->
+  <line x1="460" y1="138" x2="590" y2="176" stroke="#16a34a" stroke-width="2" marker-end="url(#a2)"/>
+  <rect x="430" y="180" width="350" height="210" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="450" y="208" font-size="16" font-weight="700" fill="#15803d">paramMap (live stream)</text>
+  <text x="450" y="232" font-size="13" fill="#334155">Emits on every param change</text>
+  <text x="450" y="254" font-size="13" font-family="monospace" fill="#334155">route.paramMap.pipe(switchMap(...))</text>
+  <rect x="450" y="272" width="310" height="42" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="465" y="298" font-size="14" fill="#15803d">Re-fetches user 2 — CORRECT</text>
+  <text x="450" y="340" font-size="13" fill="#64748b">BehaviorSubject-backed, replays the</text>
+  <text x="450" y="360" font-size="13" fill="#64748b">current value to new subscribers</text>
+
+  <defs>
+    <marker id="a1" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+    <marker id="a2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+</svg>

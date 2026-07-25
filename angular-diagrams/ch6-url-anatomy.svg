@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Anatomy of an Angular URL</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Where route params and query params live, and how you read each one</text>
+
+  <!-- URL bar -->
+  <rect x="60" y="98" width="700" height="52" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <text x="80" y="131" font-size="18" font-family="monospace" fill="#334155">/users/<tspan fill="#1d4ed8" font-weight="700">42</tspan>?<tspan fill="#9333ea" font-weight="700">sort=name&amp;page=2</tspan></text>
+
+  <!-- route param box -->
+  <line x1="205" y1="150" x2="205" y2="196" stroke="#3b82f6" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="60" y="200" width="330" height="150" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="80" y="228" font-size="16" font-weight="700" fill="#1d4ed8">Route (path) param</text>
+  <text x="80" y="252" font-size="13" fill="#334155">Declared in the route: path 'users/:id'</text>
+  <text x="80" y="274" font-size="13" fill="#334155">Part of the match — usually required</text>
+  <text x="80" y="296" font-size="13" fill="#334155">Identifies WHICH resource</text>
+  <text x="80" y="326" font-size="13" font-family="monospace" fill="#1d4ed8">route.paramMap.get('id')</text>
+
+  <!-- query param box -->
+  <line x1="470" y1="150" x2="580" y2="196" stroke="#9333ea" stroke-width="2" marker-end="url(#ap)"/>
+  <rect x="430" y="200" width="330" height="150" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="450" y="228" font-size="16" font-weight="700" fill="#7e22ce">Query param</text>
+  <text x="450" y="252" font-size="13" fill="#334155">Freeform, always optional</text>
+  <text x="450" y="274" font-size="13" fill="#334155">Order-independent, can repeat</text>
+  <text x="450" y="296" font-size="13" fill="#334155">Filter / sort / paginate / UI state</text>
+  <text x="450" y="326" font-size="13" font-family="monospace" fill="#7e22ce">route.queryParamMap.get('sort')</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="ap" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9333ea"/>
+    </marker>
+  </defs>
+</svg>

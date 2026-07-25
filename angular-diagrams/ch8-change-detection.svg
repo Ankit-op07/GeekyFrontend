@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 500" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="500" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">Change Detection: Default vs OnPush</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">OnPush skips a component unless something meaningful changed</text>
+
+  <!-- Default column -->
+  <rect x="40" y="100" width="360" height="360" rx="16" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <text x="220" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#475569">Default</text>
+  <text x="220" y="152" text-anchor="middle" font-size="12" fill="#64748b">checks EVERY component every cycle</text>
+
+  <rect x="70" y="172" width="300" height="40" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="220" y="197" text-anchor="middle" font-size="13" fill="#334155">Any event fires anywhere</text>
+  <line x1="220" y1="212" x2="220" y2="234" stroke="#94a3b8" stroke-width="2" marker-end="url(#a2)"/>
+  <rect x="70" y="234" width="300" height="40" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="220" y="259" text-anchor="middle" font-size="13" fill="#334155">Whole tree re-checked</text>
+  <line x1="220" y1="274" x2="220" y2="296" stroke="#94a3b8" stroke-width="2" marker-end="url(#a2)"/>
+  <rect x="70" y="296" width="300" height="40" rx="9" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="220" y="321" text-anchor="middle" font-size="13" fill="#b91c1c">Simple, but can be wasteful</text>
+
+  <text x="70" y="368" font-size="12" fill="#64748b">✔ Just works, no rules to follow</text>
+  <text x="70" y="392" font-size="12" fill="#64748b">✘ Re-checks components that didn't change</text>
+  <text x="70" y="416" font-size="12" fill="#64748b">✘ Can hurt perf in large trees</text>
+
+  <!-- OnPush column -->
+  <rect x="420" y="100" width="360" height="360" rx="16" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.5"/>
+  <text x="600" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#15803d">OnPush</text>
+  <text x="600" y="152" text-anchor="middle" font-size="12" fill="#166534">checks ONLY when a trigger fires</text>
+
+  <text x="600" y="180" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">Re-checks only if:</text>
+  <rect x="450" y="192" width="300" height="34" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="600" y="214" text-anchor="middle" font-size="12" fill="#334155">@Input reference changes (new object)</text>
+  <rect x="450" y="232" width="300" height="34" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="600" y="254" text-anchor="middle" font-size="12" fill="#334155">an event fires in the component</text>
+  <rect x="450" y="272" width="300" height="34" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="600" y="294" text-anchor="middle" font-size="12" fill="#334155">async pipe / signal emits</text>
+  <rect x="450" y="312" width="300" height="34" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="600" y="334" text-anchor="middle" font-size="12" fill="#334155">markForCheck() is called</text>
+
+  <text x="450" y="372" font-size="12" fill="#15803d">✔ Skips unchanged subtrees → faster</text>
+  <text x="450" y="396" font-size="12" fill="#15803d">✔ Encourages immutable data + signals</text>
+  <text x="450" y="420" font-size="12" fill="#166534">⚠ Mutating an object in place won't update</text>
+
+  <defs>
+    <marker id="a2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+</svg>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="430" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Framework vs Library</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">What you get out of the box</text>
+
+  <!-- Left: Library (React) -->
+  <rect x="40" y="100" width="360" height="300" rx="16" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="220" y="132" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a">Library (e.g. React)</text>
+  <text x="220" y="156" text-anchor="middle" font-size="13" fill="#334155">Ships the view layer</text>
+
+  <rect x="70" y="176" width="300" height="40" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="220" y="201" text-anchor="middle" font-size="13" fill="#1e3a8a">Components + rendering</text>
+
+  <rect x="70" y="226" width="300" height="150" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="220" y="252" text-anchor="middle" font-size="12" fill="#64748b">You choose &amp; wire yourself:</text>
+  <text x="220" y="278" text-anchor="middle" font-size="13" fill="#334155">Router</text>
+  <text x="220" y="302" text-anchor="middle" font-size="13" fill="#334155">State management</text>
+  <text x="220" y="326" text-anchor="middle" font-size="13" fill="#334155">HTTP / data layer</text>
+  <text x="220" y="350" text-anchor="middle" font-size="13" fill="#334155">Forms, testing setup</text>
+
+  <!-- Right: Framework (Angular) -->
+  <rect x="420" y="100" width="360" height="300" rx="16" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="600" y="132" text-anchor="middle" font-size="17" font-weight="700" fill="#991b1b">Framework (Angular)</text>
+  <text x="600" y="156" text-anchor="middle" font-size="13" fill="#334155">Everything integrated</text>
+
+  <rect x="450" y="176" width="140" height="40" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="520" y="201" text-anchor="middle" font-size="13" fill="#991b1b">Components</text>
+  <rect x="610" y="176" width="140" height="40" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="680" y="201" text-anchor="middle" font-size="13" fill="#991b1b">Router</text>
+
+  <rect x="450" y="226" width="140" height="40" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="520" y="251" text-anchor="middle" font-size="13" fill="#991b1b">Forms</text>
+  <rect x="610" y="226" width="140" height="40" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="680" y="251" text-anchor="middle" font-size="13" fill="#991b1b">HttpClient</text>
+
+  <rect x="450" y="276" width="140" height="40" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="520" y="301" text-anchor="middle" font-size="13" fill="#991b1b">DI system</text>
+  <rect x="610" y="276" width="140" height="40" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="680" y="301" text-anchor="middle" font-size="13" fill="#991b1b">Testing</text>
+
+  <rect x="450" y="326" width="300" height="40" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="600" y="351" text-anchor="middle" font-size="13" fill="#991b1b">CLI + build (one version)</text>
+</svg>

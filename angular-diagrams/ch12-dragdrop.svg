@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">CdkDropList drag-and-drop transfer</text>
+  <text x="410" y="68" text-anchor="middle" font-size="14" fill="#64748b">Connected lists move data; you mutate the arrays in the drop handler</text>
+  <defs>
+    <marker id="a12dd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#9333ea"/>
+    </marker>
+  </defs>
+  <g font-size="13">
+    <rect x="60" y="100" width="300" height="200" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="80" y="126" font-size="15" font-weight="700" fill="#1d4ed8">cdkDropList: To do</text>
+    <rect x="80" y="140" width="260" height="34" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="98" y="162" fill="#334155">cdkDrag  Task A</text>
+    <rect x="80" y="182" width="260" height="34" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="98" y="204" fill="#64748b">placeholder (drop preview)</text>
+    <rect x="80" y="224" width="260" height="34" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="98" y="246" fill="#334155">cdkDrag  Task C</text>
+
+    <rect x="460" y="100" width="300" height="200" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="480" y="126" font-size="15" font-weight="700" fill="#15803d">cdkDropList: Done</text>
+    <rect x="480" y="140" width="260" height="34" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="498" y="162" fill="#334155">Task X</text>
+
+    <path d="M340 157 C 400 157, 400 157, 478 157" fill="none" stroke="#9333ea" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#a12dd)"/>
+    <text x="410" y="140" text-anchor="middle" fill="#7e22ce" font-size="12">drag across</text>
+
+    <rect x="60" y="322" width="700" height="62" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="80" y="348" font-size="14" font-weight="700" fill="#b45309">(cdkDropListDropped)</text>
+    <text x="80" y="370" fill="#334155">same list → moveItemInArray · across lists → transferArrayItem. CDK does NOT mutate your data.</text>
+  </g>
+</svg>

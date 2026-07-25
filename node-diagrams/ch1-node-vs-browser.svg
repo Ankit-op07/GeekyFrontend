@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="10" y="10" width="800" height="450" rx="20" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="bold" fill="#0f172a">Same language, two different homes</text>
+
+  <rect x="45" y="75" width="340" height="360" rx="14" fill="#eff6ff" stroke="#3b82f6"/>
+  <text x="215" y="108" text-anchor="middle" font-size="18" font-weight="bold" fill="#0f172a">Browser JavaScript</text>
+
+  <rect x="70" y="128" width="290" height="50" rx="9" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="215" y="150" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Global object: window</text>
+  <text x="215" y="169" text-anchor="middle" font-size="11" fill="#64748b">document, location, alert</text>
+
+  <rect x="70" y="188" width="290" height="50" rx="9" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="215" y="210" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Has a DOM</text>
+  <text x="215" y="229" text-anchor="middle" font-size="11" fill="#64748b">HTML elements, events, CSS</text>
+
+  <rect x="70" y="248" width="290" height="50" rx="9" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="215" y="270" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Web APIs</text>
+  <text x="215" y="289" text-anchor="middle" font-size="11" fill="#64748b">fetch, localStorage, cookies</text>
+
+  <rect x="70" y="308" width="290" height="50" rx="9" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="215" y="330" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Sandboxed</text>
+  <text x="215" y="349" text-anchor="middle" font-size="11" fill="#64748b">no file system, no OS access</text>
+
+  <rect x="70" y="368" width="290" height="50" rx="9" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="215" y="390" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Modules: ES modules</text>
+  <text x="215" y="409" text-anchor="middle" font-size="11" fill="#64748b">import / export, script tags</text>
+
+  <rect x="435" y="75" width="340" height="360" rx="14" fill="#f0fdf4" stroke="#16a34a"/>
+  <text x="605" y="108" text-anchor="middle" font-size="18" font-weight="bold" fill="#0f172a">Node.js JavaScript</text>
+
+  <rect x="460" y="128" width="290" height="50" rx="9" fill="#ffffff" stroke="#16a34a"/>
+  <text x="605" y="150" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Global object: global</text>
+  <text x="605" y="169" text-anchor="middle" font-size="11" fill="#64748b">process, Buffer, globalThis</text>
+
+  <rect x="460" y="188" width="290" height="50" rx="9" fill="#ffffff" stroke="#16a34a"/>
+  <text x="605" y="210" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">No DOM</text>
+  <text x="605" y="229" text-anchor="middle" font-size="11" fill="#64748b">no document, no window</text>
+
+  <rect x="460" y="248" width="290" height="50" rx="9" fill="#ffffff" stroke="#16a34a"/>
+  <text x="605" y="270" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Node core APIs</text>
+  <text x="605" y="289" text-anchor="middle" font-size="11" fill="#64748b">fs, http, path, os, crypto</text>
+
+  <rect x="460" y="308" width="290" height="50" rx="9" fill="#ffffff" stroke="#16a34a"/>
+  <text x="605" y="330" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Full OS access</text>
+  <text x="605" y="349" text-anchor="middle" font-size="11" fill="#64748b">files, network, env vars</text>
+
+  <rect x="460" y="368" width="290" height="50" rx="9" fill="#ffffff" stroke="#16a34a"/>
+  <text x="605" y="390" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Modules: CJS + ESM</text>
+  <text x="605" y="409" text-anchor="middle" font-size="11" fill="#64748b">require / module.exports</text>
+</svg>

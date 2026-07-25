@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="360" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">How Trusted Types Guard DOM Sinks</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">A raw string can no longer reach innerHTML</text>
+  <defs>
+    <marker id="artt" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <rect x="50" y="120" width="200" height="70" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="150" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">Raw string</text>
+  <text x="150" y="172" text-anchor="middle" font-size="12" fill="#334155">"&lt;img onerror=...&gt;"</text>
+
+  <line x1="250" y1="155" x2="300" y2="155" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#artt)"/>
+
+  <rect x="300" y="120" width="220" height="70" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="410" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#7e22ce">TT policy</text>
+  <text x="410" y="172" text-anchor="middle" font-size="12" fill="#334155">createHTML() must run</text>
+
+  <line x1="520" y1="155" x2="570" y2="155" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#artt)"/>
+
+  <rect x="570" y="120" width="200" height="70" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="670" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">DOM sink</text>
+  <text x="670" y="172" text-anchor="middle" font-size="12" fill="#334155">el.innerHTML = ...</text>
+
+  <line x1="150" y1="190" x2="150" y2="250" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#artt)"/>
+  <rect x="40" y="254" width="480" height="66" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="280" y="282" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">Direct string assignment is BLOCKED</text>
+  <text x="280" y="304" text-anchor="middle" font-size="12" fill="#334155">Browser throws a TypeError with TT enforced</text>
+
+  <rect x="540" y="254" width="230" height="66" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="655" y="282" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">Only TrustedHTML</text>
+  <text x="655" y="304" text-anchor="middle" font-size="12" fill="#334155">passes the sink</text>
+</svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 540" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="540" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">Flattening Operators at a Glance</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">How each one handles a new value while a previous inner stream is still running</text>
+
+  <g font-size="13">
+    <!-- switchMap -->
+    <rect x="40" y="100" width="740" height="96" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text x="60" y="126" font-size="16" font-weight="700" fill="#b91c1c">switchMap</text>
+    <text x="60" y="148" fill="#334155">Cancels the previous inner observable, switches to the newest.</text>
+    <text x="60" y="170" fill="#64748b">Use for: typeahead / search — you only care about the latest request.</text>
+    <text x="600" y="150" font-size="12" fill="#b91c1c" font-family="monospace">--a--b--c|  → keep only c</text>
+
+    <!-- mergeMap -->
+    <rect x="40" y="206" width="740" height="96" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="60" y="232" font-size="16" font-weight="700" fill="#15803d">mergeMap</text>
+    <text x="60" y="254" fill="#334155">Runs all inner observables concurrently, merges results as they arrive.</text>
+    <text x="60" y="276" fill="#64748b">Use for: independent parallel work — order doesn't matter.</text>
+    <text x="600" y="256" font-size="12" fill="#15803d" font-family="monospace">all run in parallel</text>
+
+    <!-- concatMap -->
+    <rect x="40" y="312" width="740" height="96" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="60" y="338" font-size="16" font-weight="700" fill="#1d4ed8">concatMap</text>
+    <text x="60" y="360" fill="#334155">Queues — waits for each inner observable to complete before the next.</text>
+    <text x="60" y="382" fill="#64748b">Use for: ordered writes — sequence must be preserved.</text>
+    <text x="600" y="362" font-size="12" fill="#1d4ed8" font-family="monospace">a→then→b→then→c</text>
+
+    <!-- exhaustMap -->
+    <rect x="40" y="418" width="740" height="96" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="60" y="444" font-size="16" font-weight="700" fill="#7e22ce">exhaustMap</text>
+    <text x="60" y="466" fill="#334155">Ignores new values while an inner observable is still running.</text>
+    <text x="60" y="488" fill="#64748b">Use for: login / submit buttons — ignore spam clicks until done.</text>
+    <text x="600" y="468" font-size="12" fill="#7e22ce" font-family="monospace">a runs, b/c dropped</text>
+  </g>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="440" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Cold vs Hot Observables</text>
+  <text x="410" y="68" text-anchor="middle" font-size="14" fill="#64748b">Cold: each subscriber gets its own producer. Hot: one producer shared by all.</text>
+
+  <!-- Cold -->
+  <rect x="40" y="92" width="740" height="150" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="60" y="118" font-size="16" font-weight="700" fill="#15803d">Cold (unicast) — e.g. HttpClient, of, interval</text>
+  <text x="60" y="140" font-size="13" fill="#334155">Two subscribers = two independent runs (two HTTP calls).</text>
+  <text x="60" y="172" font-size="12" fill="#15803d">Sub A</text>
+  <line x1="120" y1="172" x2="740" y2="172" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="200" cy="172" r="7" fill="#16a34a"/><circle cx="320" cy="172" r="7" fill="#16a34a"/><circle cx="440" cy="172" r="7" fill="#16a34a"/>
+  <text x="60" y="212" font-size="12" fill="#15803d">Sub B</text>
+  <line x1="120" y1="212" x2="740" y2="212" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="300" cy="212" r="7" fill="#16a34a"/><circle cx="420" cy="212" r="7" fill="#16a34a"/><circle cx="540" cy="212" r="7" fill="#16a34a"/>
+  <text x="620" y="150" font-size="12" fill="#64748b">separate producers</text>
+
+  <!-- Hot -->
+  <rect x="40" y="252" width="740" height="160" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="60" y="278" font-size="16" font-weight="700" fill="#7e22ce">Hot (multicast) — e.g. Subject, fromEvent, share()</text>
+  <text x="60" y="300" font-size="13" fill="#334155">One producer. Late subscriber B misses earlier values.</text>
+  <text x="60" y="332" font-size="12" fill="#7e22ce">Source</text>
+  <line x1="120" y1="332" x2="740" y2="332" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="200" cy="332" r="7" fill="#9333ea"/><circle cx="320" cy="332" r="7" fill="#9333ea"/><circle cx="440" cy="332" r="7" fill="#9333ea"/><circle cx="560" cy="332" r="7" fill="#9333ea"/>
+  <line x1="180" y1="316" x2="180" y2="392" stroke="#16a34a" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="180" y="386" text-anchor="middle" font-size="11" fill="#16a34a">A joins</text>
+  <line x1="380" y1="316" x2="380" y2="392" stroke="#dc2626" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="380" y="386" text-anchor="middle" font-size="11" fill="#dc2626">B joins (misses 1st two)</text>
+</svg>

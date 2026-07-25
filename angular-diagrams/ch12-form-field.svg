@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Anatomy of mat-form-field</text>
+  <text x="410" y="68" text-anchor="middle" font-size="14" fill="#64748b">A wrapper that coordinates label, control, hints and errors</text>
+  <g font-size="13">
+    <rect x="60" y="96" width="700" height="230" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="80" y="122" font-size="15" font-weight="700" fill="#1d4ed8">&lt;mat-form-field&gt;</text>
+
+    <rect x="90" y="140" width="640" height="42" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="110" y="166" fill="#7e22ce" font-weight="700">mat-label</text>
+    <text x="300" y="166" fill="#64748b">floats above the control when filled/focused</text>
+
+    <rect x="90" y="190" width="640" height="42" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="110" y="216" fill="#15803d" font-weight="700">matInput / matSelect</text>
+    <text x="300" y="216" fill="#64748b">the actual form control directive</text>
+
+    <rect x="90" y="240" width="310" height="42" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="110" y="266" fill="#b45309" font-weight="700">mat-hint</text>
+    <text x="230" y="266" fill="#64748b">helper text</text>
+
+    <rect x="420" y="240" width="310" height="42" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text x="440" y="266" fill="#b91c1c" font-weight="700">mat-error</text>
+    <text x="560" y="266" fill="#64748b">shown when invalid</text>
+
+    <text x="80" y="308" fill="#334155">appearance: "fill" (default) or "outline" · subscriptSizing reserves error space</text>
+
+    <rect x="60" y="344" width="700" height="42" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <text x="80" y="370" fill="#334155">Wraps native a11y wiring: label, aria-describedby (hint+error), aria-invalid.</text>
+  </g>
+</svg>

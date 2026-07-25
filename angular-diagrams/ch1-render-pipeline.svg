@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 340" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="340" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Bootstrap to First Paint</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">What bootstrapApplication triggers</text>
+
+  <defs>
+    <marker id="rp-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect x="30" y="110" width="150" height="80" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="105" y="140" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">main.ts runs</text>
+  <text x="105" y="162" text-anchor="middle" font-size="12" fill="#334155">bootstrap</text>
+  <text x="105" y="178" text-anchor="middle" font-size="12" fill="#334155">Application()</text>
+
+  <rect x="215" y="110" width="150" height="80" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="290" y="140" text-anchor="middle" font-size="14" font-weight="700" fill="#6b21a8">Root injector</text>
+  <text x="290" y="162" text-anchor="middle" font-size="12" fill="#334155">providers built</text>
+  <text x="290" y="178" text-anchor="middle" font-size="12" fill="#334155">from config</text>
+
+  <rect x="400" y="110" width="150" height="80" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="475" y="140" text-anchor="middle" font-size="14" font-weight="700" fill="#991b1b">Root component</text>
+  <text x="475" y="162" text-anchor="middle" font-size="12" fill="#334155">created +</text>
+  <text x="475" y="178" text-anchor="middle" font-size="12" fill="#334155">mounted</text>
+
+  <rect x="585" y="110" width="150" height="80" rx="14" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+  <text x="660" y="140" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Template</text>
+  <text x="660" y="162" text-anchor="middle" font-size="12" fill="#334155">rendered into</text>
+  <text x="660" y="178" text-anchor="middle" font-size="12" fill="#334155">the DOM</text>
+
+  <rect x="310" y="240" width="200" height="60" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="410" y="268" text-anchor="middle" font-size="14" font-weight="700" fill="#166534">First change detection</text>
+  <text x="410" y="288" text-anchor="middle" font-size="12" fill="#334155">bindings resolved, view live</text>
+
+  <line x1="180" y1="150" x2="211" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#rp-arrow)"/>
+  <line x1="365" y1="150" x2="396" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#rp-arrow)"/>
+  <line x1="550" y1="150" x2="581" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#rp-arrow)"/>
+  <line x1="620" y1="190" x2="470" y2="236" stroke="#64748b" stroke-width="2" marker-end="url(#rp-arrow)"/>
+</svg>

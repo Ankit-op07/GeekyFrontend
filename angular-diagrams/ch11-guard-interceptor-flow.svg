@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="440" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Auth: Guard Gates Routes, Interceptor Attaches Token</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Two separate responsibilities in the request lifecycle</text>
+  <defs>
+    <marker id="argi" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <text x="410" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">User navigates to /dashboard</text>
+  <line x1="410" y1="110" x2="410" y2="134" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#argi)"/>
+
+  <rect x="260" y="138" width="300" height="60" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="410" y="164" text-anchor="middle" font-size="13" font-weight="700" fill="#7e22ce">canActivate guard (functional)</text>
+  <text x="410" y="184" text-anchor="middle" font-size="12" fill="#334155">logged in? role allowed?</text>
+
+  <line x1="410" y1="198" x2="230" y2="234" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#argi)"/>
+  <line x1="410" y1="198" x2="590" y2="234" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#argi)"/>
+  <text x="285" y="224" text-anchor="middle" font-size="12" font-weight="700" fill="#dc2626">No</text>
+  <text x="545" y="224" text-anchor="middle" font-size="12" font-weight="700" fill="#16a34a">Yes</text>
+
+  <rect x="60" y="238" width="270" height="54" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="195" y="262" text-anchor="middle" font-size="12" font-weight="700" fill="#b91c1c">redirect to /login</text>
+  <text x="195" y="281" text-anchor="middle" font-size="12" fill="#334155">return a UrlTree</text>
+
+  <rect x="490" y="238" width="270" height="54" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="625" y="262" text-anchor="middle" font-size="12" font-weight="700" fill="#15803d">component loads</text>
+  <text x="625" y="281" text-anchor="middle" font-size="12" fill="#334155">it calls the API</text>
+
+  <line x1="625" y1="292" x2="625" y2="320" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#argi)"/>
+
+  <rect x="470" y="324" width="310" height="60" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="625" y="350" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">HTTP interceptor (functional)</text>
+  <text x="625" y="370" text-anchor="middle" font-size="12" fill="#334155">clone req, add Bearer token</text>
+
+  <rect x="40" y="324" width="360" height="60" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+  <text x="220" y="350" text-anchor="middle" font-size="13" font-weight="700" fill="#b45309">Guard = can you enter?</text>
+  <text x="220" y="370" text-anchor="middle" font-size="12" fill="#334155">Interceptor = prove it to the API</text>
+
+  <text x="410" y="418" text-anchor="middle" font-size="12.5" fill="#64748b">Guards are UX (never security). The server must re-check every token on every request.</text>
+</svg>

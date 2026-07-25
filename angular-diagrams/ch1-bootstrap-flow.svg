@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="420" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">How an Angular App Bootstraps</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">From index.html to a rendered view</text>
+
+  <!-- Steps -->
+  <g>
+    <rect x="40" y="110" width="220" height="86" rx="14" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+    <text x="150" y="140" text-anchor="middle" font-size="15" font-weight="700" fill="#b91c1c">index.html</text>
+    <text x="150" y="164" text-anchor="middle" font-size="12" fill="#64748b">&lt;app-root&gt;&lt;/app-root&gt;</text>
+    <text x="150" y="182" text-anchor="middle" font-size="12" fill="#64748b">loads the JS bundle</text>
+  </g>
+
+  <line x1="260" y1="153" x2="300" y2="153" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="300" y="110" width="220" height="86" rx="14" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+    <text x="410" y="140" text-anchor="middle" font-size="15" font-weight="700" fill="#b91c1c">main.ts</text>
+    <text x="410" y="164" text-anchor="middle" font-size="12" fill="#64748b">bootstrapApplication(App)</text>
+    <text x="410" y="182" text-anchor="middle" font-size="12" fill="#64748b">— the entry point</text>
+  </g>
+
+  <line x1="520" y1="153" x2="560" y2="153" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="560" y="110" width="220" height="86" rx="14" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+    <text x="670" y="140" text-anchor="middle" font-size="15" font-weight="700" fill="#b91c1c">Root Component</text>
+    <text x="670" y="164" text-anchor="middle" font-size="12" fill="#64748b">AppComponent instantiated</text>
+    <text x="670" y="182" text-anchor="middle" font-size="12" fill="#64748b">providers resolved</text>
+  </g>
+
+  <!-- down arrow -->
+  <line x1="670" y1="196" x2="670" y2="250" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="300" y="250" width="480" height="70" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="540" y="280" text-anchor="middle" font-size="15" font-weight="700" fill="#15803d">Template rendered &#8594; DOM</text>
+    <text x="540" y="302" text-anchor="middle" font-size="12" fill="#166534">First change-detection pass paints the initial view</text>
+  </g>
+
+  <line x1="300" y1="285" x2="270" y2="285" stroke="#16a34a" stroke-width="2.5" marker-end="url(#ag)"/>
+
+  <g>
+    <rect x="40" y="250" width="230" height="70" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="155" y="280" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">Zone.js starts watching</text>
+    <text x="155" y="302" text-anchor="middle" font-size="12" fill="#64748b">events trigger re-render</text>
+  </g>
+
+  <text x="410" y="368" text-anchor="middle" font-size="13" fill="#64748b">Modern Angular uses standalone <tspan font-weight="600" fill="#334155">bootstrapApplication()</tspan>; older apps used <tspan font-weight="600" fill="#334155">platformBrowserDynamic().bootstrapModule(AppModule)</tspan>.</text>
+
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+    <marker id="ag" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#16a34a"/></marker>
+  </defs>
+</svg>

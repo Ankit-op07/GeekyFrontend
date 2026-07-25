@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="380" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Incremental Hydration</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">@defer (hydrate ...) hydrates regions lazily, on a trigger, not all at once</text>
+
+  <!-- page frame -->
+  <rect x="60" y="92" width="700" height="248" rx="14" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="410" y="116" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Rendered page (server HTML on screen)</text>
+
+  <!-- hydrated header -->
+  <rect x="90" y="132" width="640" height="40" rx="9" fill="#f0fdf4" stroke="#16a34a"/>
+  <text x="410" y="157" text-anchor="middle" font-size="12" fill="#15803d">Header &#8212; hydrated immediately (eager)</text>
+
+  <!-- deferred region viewport -->
+  <rect x="90" y="182" width="310" height="80" rx="9" fill="#faf5ff" stroke="#9333ea"/>
+  <text x="245" y="210" text-anchor="middle" font-size="12" fill="#7e22ce">Comments block</text>
+  <text x="245" y="230" text-anchor="middle" font-size="10.5" fill="#7e22ce">@defer (hydrate on viewport)</text>
+  <text x="245" y="248" text-anchor="middle" font-size="10.5" fill="#64748b">dormant until scrolled into view</text>
+
+  <!-- deferred region interaction -->
+  <rect x="420" y="182" width="310" height="80" rx="9" fill="#faf5ff" stroke="#9333ea"/>
+  <text x="575" y="210" text-anchor="middle" font-size="12" fill="#7e22ce">Chat widget</text>
+  <text x="575" y="230" text-anchor="middle" font-size="10.5" fill="#7e22ce">@defer (hydrate on interaction)</text>
+  <text x="575" y="248" text-anchor="middle" font-size="10.5" fill="#64748b">dormant until clicked</text>
+
+  <!-- footer -->
+  <rect x="90" y="272" width="640" height="40" rx="9" fill="#eff6ff" stroke="#3b82f6"/>
+  <text x="410" y="297" text-anchor="middle" font-size="12" fill="#1d4ed8">Footer &#8212; content shown, JS not yet loaded</text>
+
+  <text x="410" y="360" text-anchor="middle" font-size="11.5" fill="#64748b">Less JS runs up front &#8594; faster TTI; regions wake only when needed</text>
+</svg>

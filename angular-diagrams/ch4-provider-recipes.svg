@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="420" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">The Four Provider Recipes</text>
+
+  <!-- useClass -->
+  <rect x="40" y="80" width="360" height="140" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="60" y="112" font-size="15" font-weight="700" fill="#1d4ed8">useClass</text>
+  <text x="60" y="138" font-size="12.5" fill="#334155">Instantiate a class with new.</text>
+  <text x="60" y="160" font-size="12.5" fill="#334155">Its own deps get injected too.</text>
+  <text x="60" y="188" font-size="12" fill="#64748b">{ provide: Api, useClass: RealApi }</text>
+  <text x="60" y="208" font-size="12" fill="#64748b">Use for: swapping implementations.</text>
+
+  <!-- useValue -->
+  <rect x="420" y="80" width="360" height="140" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="440" y="112" font-size="15" font-weight="700" fill="#15803d">useValue</text>
+  <text x="440" y="138" font-size="12.5" fill="#334155">Provide a ready-made object,</text>
+  <text x="440" y="160" font-size="12.5" fill="#334155">config, or constant as-is.</text>
+  <text x="440" y="188" font-size="12" fill="#64748b">{ provide: CFG, useValue: {url} }</text>
+  <text x="440" y="208" font-size="12" fill="#64748b">Use for: tokens, config, mocks.</text>
+
+  <!-- useFactory -->
+  <rect x="40" y="240" width="360" height="140" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="60" y="272" font-size="15" font-weight="700" fill="#7e22ce">useFactory</text>
+  <text x="60" y="298" font-size="12.5" fill="#334155">Run a function to build value.</text>
+  <text x="60" y="320" font-size="12.5" fill="#334155">deps: [] are passed as args.</text>
+  <text x="60" y="348" font-size="12" fill="#64748b">{ provide: X, useFactory: fn, deps }</text>
+  <text x="60" y="368" font-size="12" fill="#64748b">Use for: conditional / runtime setup.</text>
+
+  <!-- useExisting -->
+  <rect x="420" y="240" width="360" height="140" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="440" y="272" font-size="15" font-weight="700" fill="#b91c1c">useExisting</text>
+  <text x="440" y="298" font-size="12.5" fill="#334155">Alias to an already-provided</text>
+  <text x="440" y="320" font-size="12.5" fill="#334155">token. No new instance made.</text>
+  <text x="440" y="348" font-size="12" fill="#64748b">{ provide: Old, useExisting: New }</text>
+  <text x="440" y="368" font-size="12" fill="#64748b">Use for: narrow interface aliases.</text>
+</svg>

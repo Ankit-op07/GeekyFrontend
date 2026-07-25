@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 520" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="520" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">Component Lifecycle Hooks — Order</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">The sequence Angular calls them in</text>
+
+  <!-- vertical timeline -->
+  <line x1="120" y1="110" x2="120" y2="470" stroke="#cbd5e1" stroke-width="3"/>
+
+  <g font-size="14">
+    <!-- each step -->
+    <circle cx="120" cy="130" r="8" fill="#dc2626"/>
+    <rect x="150" y="112" width="620" height="36" rx="8" fill="#fef2f2" stroke="#fca5a5"/>
+    <text x="166" y="135" font-weight="700" fill="#b91c1c">constructor</text>
+    <text x="330" y="135" fill="#64748b">DI happens here — no inputs bound yet</text>
+
+    <circle cx="120" cy="180" r="8" fill="#3b82f6"/>
+    <rect x="150" y="162" width="620" height="36" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="166" y="185" font-weight="700" fill="#1d4ed8">ngOnChanges</text>
+    <text x="330" y="185" fill="#64748b">on every @Input change (before ngOnInit first time)</text>
+
+    <circle cx="120" cy="230" r="8" fill="#16a34a"/>
+    <rect x="150" y="212" width="620" height="36" rx="8" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="166" y="235" font-weight="700" fill="#15803d">ngOnInit</text>
+    <text x="330" y="235" fill="#64748b">once — inputs are set. Do your init here.</text>
+
+    <circle cx="120" cy="280" r="8" fill="#64748b"/>
+    <rect x="150" y="262" width="620" height="36" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="166" y="285" font-weight="700" fill="#334155">ngDoCheck</text>
+    <text x="330" y="285" fill="#64748b">every change-detection run (use sparingly)</text>
+
+    <circle cx="120" cy="330" r="8" fill="#9333ea"/>
+    <rect x="150" y="312" width="620" height="36" rx="8" fill="#faf5ff" stroke="#d8b4fe"/>
+    <text x="166" y="335" font-weight="700" fill="#7e22ce">ngAfterContentInit / Checked</text>
+    <text x="430" y="335" fill="#64748b">projected &lt;ng-content&gt; ready</text>
+
+    <circle cx="120" cy="380" r="8" fill="#ea580c"/>
+    <rect x="150" y="362" width="620" height="36" rx="8" fill="#fff7ed" stroke="#fdba74"/>
+    <text x="166" y="385" font-weight="700" fill="#c2410c">ngAfterViewInit / Checked</text>
+    <text x="430" y="385" fill="#64748b">@ViewChild elements available</text>
+
+    <circle cx="120" cy="440" r="8" fill="#0f172a"/>
+    <rect x="150" y="422" width="620" height="36" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+    <text x="166" y="445" font-weight="700" fill="#0f172a">ngOnDestroy</text>
+    <text x="330" y="445" fill="#64748b">cleanup — unsubscribe, clear timers here</text>
+  </g>
+</svg>

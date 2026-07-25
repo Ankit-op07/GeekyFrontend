@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 340" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="340" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Anatomy of an Action</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">Type + payload, created by createAction</text>
+
+  <!-- Action card -->
+  <rect x="60" y="96" width="320" height="200" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="220" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="#b91c1c">Action object</text>
+  <rect x="86" y="142" width="268" height="44" rx="8" fill="#ffffff" stroke="#fca5a5"/>
+  <text x="220" y="162" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">type</text>
+  <text x="220" y="178" text-anchor="middle" font-size="11" fill="#64748b">'[Cart] Add Item'</text>
+  <rect x="86" y="196" width="268" height="44" rx="8" fill="#ffffff" stroke="#fca5a5"/>
+  <text x="220" y="216" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">payload</text>
+  <text x="220" y="232" text-anchor="middle" font-size="11" fill="#64748b">{ productId, qty }</text>
+  <text x="220" y="270" text-anchor="middle" font-size="11" fill="#b91c1c">Good types read like an event log</text>
+
+  <!-- arrow -->
+  <line x1="380" y1="196" x2="450" y2="196" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- Reducer switch -->
+  <rect x="460" y="96" width="300" height="200" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="610" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="#15803d">Reducer picks a handler</text>
+  <rect x="486" y="142" width="248" height="36" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="610" y="165" text-anchor="middle" font-size="11" fill="#334155">on(addItem, (s, a) =&gt; ...)</text>
+  <rect x="486" y="186" width="248" height="36" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="610" y="209" text-anchor="middle" font-size="11" fill="#334155">on(removeItem, (s, a) =&gt; ...)</text>
+  <rect x="486" y="230" width="248" height="36" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="610" y="253" text-anchor="middle" font-size="11" fill="#334155">returns a new state object</text>
+  <text x="610" y="284" text-anchor="middle" font-size="11" fill="#15803d">One action can drive many reducers</text>
+
+  <text x="410" y="322" text-anchor="middle" font-size="12" fill="#64748b">Actions are events, not commands: name them by what happened, not what to do.</text>
+
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+</svg>

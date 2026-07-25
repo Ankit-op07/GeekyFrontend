@@ -18,6 +18,8 @@ import { Badge } from "@/components/ui/badge"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { CompanyQuestionsTab } from "@/components/dashboard/company-questions-tab"
 import { BookmarksTab, BookmarksPreview } from "@/components/dashboard/bookmarks-tab"
+import { AiInterviewTab } from "@/components/dashboard/ai-interview-tab"
+import { KitLogo, getKitLogo } from "@/components/kit-logo"
 
 interface SessionUser {
     id: string
@@ -43,11 +45,6 @@ interface DbKit {
     hasAccess: boolean;
 }
 
-function isNodeKit(kit: DbKit) {
-    const label = `${kit.name} ${kit.slug}`.toLowerCase()
-    return label.includes("node")
-}
-
 /**
  * Deep-link "Continue learning" straight to the topic the user last read in
  * this kit, falling back to the kit landing. Uses the `gf-last-topic-${slug}`
@@ -65,6 +62,9 @@ function getResumeHref(slug: string): string {
 
 function getCheckoutPathForKit(kit: DbKit) {
     const label = `${kit.name} ${kit.slug}`.toLowerCase()
+    // Order matters: check "node"/"angular" before "js" — "node.js" contains "js".
+    if (label.includes("angular")) return "/checkout/angular"
+    if (label.includes("node")) return "/checkout/nodejs"
     if (label.includes("complete")) return "/checkout/complete"
     if (label.includes("react")) return "/checkout/react"
     if (label.includes("javascript") || label.includes("js")) return "/checkout/javascript"
@@ -77,8 +77,9 @@ const NAV = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "kits", label: "My Kits", icon: Package },
     { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
-    // { id: "team-interview", label: "Team Interview", icon: Video },
+    // Hidden for now — feature kept in code, just not surfaced on the dashboard yet.
     // { id: "ai-interview", label: "AI Interview", icon: Bot },
+    // { id: "team-interview", label: "Team Interview", icon: Video },
     // { id: "leaderboard", label: "Leaderboard", icon: Trophy },
     { id: "profile", label: "Profile", icon: User },
 ]
@@ -238,7 +239,7 @@ export default function DashboardPage() {
             case "kits": return <KitsTab purchasedKits={purchasedKits} />
             case "bookmarks": return <BookmarksTab />
             case "team-interview": return <TeamInterviewTab />
-            case "ai-interview": return <LiveAIInterviewTab user={user} />
+            case "ai-interview": return <AiInterviewTab user={user} />
             case "leaderboard": return <LeaderboardTab />
             case "profile": return <ProfileTab user={user} />
             default: return <OverviewTab user={user} purchasedKits={purchasedKits} streak={streak} topicsStudied={topicsStudied} />
@@ -407,7 +408,7 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
         fetch("/api/learn/kits").then(r => r.json()).then(d => { if (d.kits) setDbKits(d.kits) }).catch(() => { })
     }, [])
 
-    const visibleKits = dbKits.filter(k => !isNodeKit(k))
+    const visibleKits = dbKits
     const ownedKits = visibleKits.filter(k => k.hasAccess)
     const previewKits = visibleKits.filter(k => !k.hasAccess)
 
@@ -513,9 +514,15 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                                      style={{ background: "radial-gradient(ellipse at center, rgba(139,92,246,0.06) 0%, transparent 70%)" }} />
                                 <div className="relative z-10">
                                     <div className="flex items-start gap-3.5 mb-3">
-                                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-lg flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300`}>
-                                            {kit.icon}
-                                        </div>
+                                        {getKitLogo(kit.slug || kit.name) ? (
+                                            <div className="w-11 h-11 rounded-xl bg-overlay border border-hairline flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300">
+                                                <KitLogo nameKey={kit.slug || kit.name} alt={kit.name} imgClassName="w-7 h-7 object-contain" />
+                                            </div>
+                                        ) : (
+                                            <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-lg flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300`}>
+                                                {kit.icon}
+                                            </div>
+                                        )}
                                         <div className="flex-1 min-w-0">
                                             <p className="text-foreground text-sm font-semibold truncate group-hover:text-violet-700 dark:group-hover:text-violet-700 dark:group-hover:text-violet-200 transition-colors">{kit.name}</p>
                                             <p className="text-muted-foreground text-xs mt-0.5">{kit.chaptersCount} chapters · {kit.topicsCount} topics</p>
@@ -557,9 +564,15 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                                 className="group relative overflow-hidden bg-card border border-hairline rounded-2xl p-5 hover:border-amber-500/20 hover:bg-card transition-all duration-400">
                                 <div className="relative z-10">
                                     <div className="flex items-start gap-3.5 mb-3">
-                                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-lg flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300 opacity-80 group-hover:opacity-100`}>
-                                            {kit.icon}
-                                        </div>
+                                        {getKitLogo(kit.slug || kit.name) ? (
+                                            <div className="w-11 h-11 rounded-xl bg-overlay border border-hairline flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300 opacity-80 group-hover:opacity-100">
+                                                <KitLogo nameKey={kit.slug || kit.name} alt={kit.name} imgClassName="w-7 h-7 object-contain" />
+                                            </div>
+                                        ) : (
+                                            <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-lg flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300 opacity-80 group-hover:opacity-100`}>
+                                                {kit.icon}
+                                            </div>
+                                        )}
                                         <div className="flex-1 min-w-0">
                                             <p className="text-foreground text-sm font-semibold truncate group-hover:text-amber-700 dark:group-hover:text-amber-200 transition-colors">{kit.name}</p>
                                             <p className="text-muted-foreground text-xs mt-0.5">{kit.chaptersCount} chapters · {kit.topicsCount} topics</p>
@@ -931,513 +944,6 @@ function formatInterviewDate(value: string) {
     });
 }
 
-// ─── Live AI Interview Tab ────────────────────────────────────
-type InterviewRoundId = "react" | "javascript" | "machine-coding" | "hr";
-type InterviewPhase = "setup" | "live" | "summary";
-
-interface InterviewQuestion {
-    prompt: string;
-    followUp: string;
-    keywords: string[];
-}
-
-interface InterviewRound {
-    id: InterviewRoundId;
-    title: string;
-    description: string;
-    duration: number;
-    icon: string;
-    questions: InterviewQuestion[];
-}
-
-interface InterviewAnswer {
-    question: string;
-    answer: string;
-    score: number;
-    feedback: string[];
-    missingKeywords: string[];
-}
-
-const INTERVIEW_ROUNDS: InterviewRound[] = [
-    {
-        id: "react",
-        title: "React Technical",
-        description: "Hooks, rendering, performance, state, and production patterns.",
-        duration: 12,
-        icon: "⚛️",
-        questions: [
-            {
-                prompt: "Explain how React reconciliation works and why keys matter in lists.",
-                followUp: "What can go wrong if you use array index as a key?",
-                keywords: ["virtual dom", "diff", "fiber", "key", "state", "re-render", "identity"],
-            },
-            {
-                prompt: "When would you use useMemo, useCallback, and React.memo?",
-                followUp: "How do you decide whether the optimization is worth it?",
-                keywords: ["memoization", "reference", "props", "expensive", "render", "profiler", "dependency"],
-            },
-            {
-                prompt: "Describe a safe way to fetch data inside useEffect.",
-                followUp: "How would you avoid race conditions or setting state after unmount?",
-                keywords: ["dependency", "cleanup", "abortcontroller", "loading", "error", "race", "async"],
-            },
-            {
-                prompt: "How would you structure state for a complex multi-step form?",
-                followUp: "What would you keep local versus global?",
-                keywords: ["useReducer", "validation", "controlled", "state", "context", "schema", "submit"],
-            },
-        ],
-    },
-    {
-        id: "javascript",
-        title: "JavaScript Deep Dive",
-        description: "Event loop, closures, promises, prototypes, and tricky output questions.",
-        duration: 10,
-        icon: "⚡",
-        questions: [
-            {
-                prompt: "Explain the event loop using microtasks and macrotasks.",
-                followUp: "Where do Promise callbacks and setTimeout callbacks run?",
-                keywords: ["call stack", "microtask", "macrotask", "promise", "queue", "settimeout", "async"],
-            },
-            {
-                prompt: "What is a closure, and where have you used one practically?",
-                followUp: "Can closures cause memory issues?",
-                keywords: ["lexical", "scope", "function", "private", "factory", "memory", "reference"],
-            },
-            {
-                prompt: "Compare Promise.all and Promise.allSettled.",
-                followUp: "Which one would you use for independent API calls?",
-                keywords: ["parallel", "reject", "fulfilled", "settled", "error", "array", "fail"],
-            },
-        ],
-    },
-    {
-        id: "machine-coding",
-        title: "Machine Coding",
-        description: "Frontend component design, edge cases, accessibility, and tradeoffs.",
-        duration: 15,
-        icon: "🧩",
-        questions: [
-            {
-                prompt: "Design an autocomplete component from scratch. Walk through state, API calls, keyboard behavior, and accessibility.",
-                followUp: "How would you handle slow responses and duplicate requests?",
-                keywords: ["debounce", "keyboard", "aria", "loading", "cache", "abort", "highlight"],
-            },
-            {
-                prompt: "Build a reusable modal component. What requirements would you cover?",
-                followUp: "How would you handle focus trap and body scroll locking?",
-                keywords: ["portal", "escape", "overlay", "focus", "scroll", "accessibility", "cleanup"],
-            },
-            {
-                prompt: "How would you implement an infinite scrolling feed?",
-                followUp: "What edge cases appear on mobile or slow networks?",
-                keywords: ["intersectionobserver", "pagination", "cursor", "loading", "error", "virtualization", "cache"],
-            },
-        ],
-    },
-    {
-        id: "hr",
-        title: "HR + Communication",
-        description: "Project explanation, behavioral answers, ownership, and clarity.",
-        duration: 8,
-        icon: "💬",
-        questions: [
-            {
-                prompt: "Tell me about yourself for a frontend interview.",
-                followUp: "Can you connect your answer to the role you are applying for?",
-                keywords: ["experience", "frontend", "project", "impact", "skills", "role", "learning"],
-            },
-            {
-                prompt: "Explain your best project like you would to an interviewer.",
-                followUp: "What was the hardest technical problem in that project?",
-                keywords: ["problem", "architecture", "tradeoff", "performance", "users", "challenge", "result"],
-            },
-            {
-                prompt: "Tell me about a time you received feedback and improved.",
-                followUp: "What changed in your process after that?",
-                keywords: ["feedback", "improved", "learned", "example", "action", "result", "reflection"],
-            },
-        ],
-    },
-];
-
-function LiveAIInterviewTab({ user }: { user: SessionUser }) {
-    const [selectedRoundId, setSelectedRoundId] = useState<InterviewRoundId>("react");
-    const [phase, setPhase] = useState<InterviewPhase>("setup");
-    const [questionIndex, setQuestionIndex] = useState(0);
-    const [answer, setAnswer] = useState("");
-    const [answers, setAnswers] = useState<InterviewAnswer[]>([]);
-    const [secondsLeft, setSecondsLeft] = useState(INTERVIEW_ROUNDS[0].duration * 60);
-    const [listening, setListening] = useState(false);
-
-    const selectedRound = useMemo(
-        () => INTERVIEW_ROUNDS.find(round => round.id === selectedRoundId) || INTERVIEW_ROUNDS[0],
-        [selectedRoundId]
-    );
-    const currentQuestion = selectedRound.questions[questionIndex];
-    const averageScore = answers.length
-        ? Math.round(answers.reduce((sum, item) => sum + item.score, 0) / answers.length)
-        : 0;
-
-    useEffect(() => {
-        if (phase !== "live") return;
-        if (secondsLeft <= 0) {
-            setPhase("summary");
-            return;
-        }
-
-        const timer = window.setInterval(() => setSecondsLeft(value => value - 1), 1000);
-        return () => window.clearInterval(timer);
-    }, [phase, secondsLeft]);
-
-    const resetInterview = useCallback((round = selectedRound) => {
-        setQuestionIndex(0);
-        setAnswer("");
-        setAnswers([]);
-        setSecondsLeft(round.duration * 60);
-        setPhase("setup");
-        setListening(false);
-    }, [selectedRound]);
-
-    const startInterview = () => {
-        setQuestionIndex(0);
-        setAnswer("");
-        setAnswers([]);
-        setSecondsLeft(selectedRound.duration * 60);
-        setPhase("live");
-        speakQuestion(selectedRound.questions[0].prompt);
-    };
-
-    const submitAnswer = () => {
-        if (!currentQuestion) return;
-
-        const evaluated = evaluateInterviewAnswer(currentQuestion, answer);
-        const nextAnswers = [...answers, evaluated];
-        setAnswers(nextAnswers);
-
-        if (questionIndex >= selectedRound.questions.length - 1) {
-            setPhase("summary");
-            saveInterviewAttempt(selectedRound.id, nextAnswers);
-            return;
-        }
-
-        const nextIndex = questionIndex + 1;
-        setQuestionIndex(nextIndex);
-        setAnswer("");
-        speakQuestion(selectedRound.questions[nextIndex].prompt);
-    };
-
-    const toggleVoiceInput = () => {
-        if (typeof window === "undefined") return;
-        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-        if (!SpeechRecognition) {
-            setAnswer(value => `${value}${value ? "\n\n" : ""}Voice input is not supported in this browser. You can type your answer here.`);
-            return;
-        }
-
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = "en-IN";
-
-        recognition.onstart = () => setListening(true);
-        recognition.onend = () => setListening(false);
-        recognition.onerror = () => setListening(false);
-        recognition.onresult = (event: any) => {
-            const transcript = Array.from(event.results)
-                .map((result: any) => result[0]?.transcript)
-                .filter(Boolean)
-                .join(" ");
-            setAnswer(value => `${value}${value ? " " : ""}${transcript}`);
-        };
-
-        recognition.start();
-    };
-
-    const minutes = Math.floor(secondsLeft / 60);
-    const seconds = String(secondsLeft % 60).padStart(2, "0");
-
-    if (phase === "summary") {
-        return (
-            <div className="space-y-6 max-w-5xl">
-                <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-50 via-card to-cyan-50 dark:from-emerald-900/30 dark:via-slate-900/90 dark:to-cyan-900/30 p-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-                        <div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-semibold mb-3">
-                                <Sparkles className="w-3.5 h-3.5" />
-                                Interview complete
-                            </div>
-                            <h2 className="text-2xl font-bold text-foreground">{selectedRound.title} report</h2>
-                            <p className="text-muted-foreground text-sm mt-2">Nice work, {user.name.split(" ")[0]}. Review the feedback, then retry the weak answers.</p>
-                        </div>
-                        <div className="text-center md:text-right">
-                            <p className="text-5xl font-black text-foreground">{averageScore}</p>
-                            <p className="text-muted-foreground text-xs">average score</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-4">
-                    <InterviewScoreCard label="Questions answered" value={`${answers.length}/${selectedRound.questions.length}`} icon={MessageSquare} />
-                    <InterviewScoreCard label="Strongest answer" value={`${Math.max(...answers.map(item => item.score), 0)}/100`} icon={Award} />
-                    <InterviewScoreCard label="Retry focus" value={getRetryFocus(answers)} icon={Target} />
-                </div>
-
-                <div className="bg-card border border-hairline rounded-2xl overflow-hidden">
-                    <div className="px-5 py-4 border-b border-hairline flex items-center justify-between">
-                        <h3 className="text-foreground font-semibold">AI Feedback</h3>
-                        <Button size="sm" variant="outline" className="border-hairline text-foreground hover:bg-overlay" onClick={() => resetInterview()}>
-                            <RotateCcw className="w-4 h-4 mr-1" />
-                            Practice Again
-                        </Button>
-                    </div>
-                    <div className="divide-y divide-hairline">
-                        {answers.map((item, index) => (
-                            <div key={index} className="p-5">
-                                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
-                                    <div>
-                                        <p className="text-xs text-muted-foreground mb-1">Question {index + 1}</p>
-                                        <p className="text-foreground font-medium">{item.question}</p>
-                                    </div>
-                                    <Badge className={`${item.score >= 75 ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20" : item.score >= 50 ? "bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 border-yellow-500/20" : "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/20"}`}>
-                                        {item.score}/100
-                                    </Badge>
-                                </div>
-                                <div className="grid md:grid-cols-2 gap-4">
-                                    <div className="rounded-xl bg-overlay border border-hairline p-4">
-                                        <p className="text-muted-foreground text-xs font-semibold mb-2">Feedback</p>
-                                        <ul className="space-y-1.5">
-                                            {item.feedback.map(point => (
-                                                <li key={point} className="text-sm text-foreground flex gap-2">
-                                                    <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
-                                                    <span>{point}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <div className="rounded-xl bg-overlay border border-hairline p-4">
-                                        <p className="text-muted-foreground text-xs font-semibold mb-2">Missing Signals</p>
-                                        <div className="flex flex-wrap gap-2">
-                                            {item.missingKeywords.length > 0 ? item.missingKeywords.map(keyword => (
-                                                <span key={keyword} className="text-xs px-2 py-1 rounded-full bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20">{keyword}</span>
-                                            )) : <span className="text-sm text-muted-foreground">You covered the important signals.</span>}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="space-y-6 max-w-6xl">
-            <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-violet-50 via-card to-cyan-50 dark:from-violet-900/40 dark:via-slate-900/90 dark:to-cyan-900/40 border border-violet-500/20">
-                <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-semibold mb-3">
-                            <Bot className="w-3.5 h-3.5" />
-                            Live AI Interview
-                        </div>
-                        <h2 className="text-2xl font-bold text-foreground">Practice like a real interview</h2>
-                        <p className="text-muted-foreground text-sm mt-2 max-w-2xl">
-                            Answer timed questions, use voice input if your browser supports it, and get instant scoring with improvement points.
-                        </p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                        <div className="rounded-xl bg-overlay border border-hairline p-4 text-center">
-                            <Timer className="w-5 h-5 text-cyan-700 dark:text-cyan-300 mx-auto mb-2" />
-                            <p className="text-foreground font-bold">{minutes}:{seconds}</p>
-                            <p className="text-muted-foreground text-[10px]">Time left</p>
-                        </div>
-                        <div className="rounded-xl bg-overlay border border-hairline p-4 text-center">
-                            <MessageSquare className="w-5 h-5 text-violet-700 dark:text-violet-300 mx-auto mb-2" />
-                            <p className="text-foreground font-bold">{phase === "live" ? questionIndex + 1 : 0}/{selectedRound.questions.length}</p>
-                            <p className="text-muted-foreground text-[10px]">Questions</p>
-                        </div>
-                        <div className="rounded-xl bg-overlay border border-hairline p-4 text-center">
-                            <Brain className="w-5 h-5 text-emerald-700 dark:text-emerald-300 mx-auto mb-2" />
-                            <p className="text-foreground font-bold">AI</p>
-                            <p className="text-muted-foreground text-[10px]">Feedback</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {phase === "setup" ? (
-                <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-6">
-                    <div className="bg-card border border-hairline rounded-2xl p-5">
-                        <h3 className="text-foreground font-semibold mb-4">Choose Interview Round</h3>
-                        <div className="grid sm:grid-cols-2 gap-4">
-                            {INTERVIEW_ROUNDS.map(round => (
-                                <button
-                                    key={round.id}
-                                    onClick={() => { setSelectedRoundId(round.id); resetInterview(round); }}
-                                    className={`text-left rounded-2xl border p-5 transition-all ${selectedRoundId === round.id
-                                        ? "bg-violet-500/10 border-violet-500/30"
-                                        : "bg-overlay border-hairline hover:bg-overlay hover:border-hairline"}`}
-                                >
-                                    <div className="flex items-start justify-between mb-4">
-                                        <span className="text-3xl">{round.icon}</span>
-                                        <Badge className="bg-overlay text-muted-foreground border-hairline">{round.duration} min</Badge>
-                                    </div>
-                                    <p className="text-foreground font-semibold">{round.title}</p>
-                                    <p className="text-muted-foreground text-sm mt-1">{round.description}</p>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="bg-card border border-hairline rounded-2xl p-5">
-                        <h3 className="text-foreground font-semibold mb-4">Session Preview</h3>
-                        <div className="space-y-4">
-                            {selectedRound.questions.map((question, index) => (
-                                <div key={question.prompt} className="flex gap-3">
-                                    <div className="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-700 dark:text-violet-300 text-xs font-bold flex items-center justify-center flex-shrink-0">
-                                        {index + 1}
-                                    </div>
-                                    <p className="text-foreground text-sm">{question.prompt}</p>
-                                </div>
-                            ))}
-                        </div>
-                        <Button onClick={startInterview} className="w-full mt-6 bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white">
-                            <PlayCircle className="w-4 h-4 mr-2" />
-                            Start Live Interview
-                        </Button>
-                    </div>
-                </div>
-            ) : (
-                <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-6">
-                    <div className="bg-card border border-hairline rounded-2xl p-5">
-                        <div className="flex items-center justify-between mb-5">
-                            <Badge className="bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20">{selectedRound.title}</Badge>
-                            <span className="text-muted-foreground text-xs">Question {questionIndex + 1} of {selectedRound.questions.length}</span>
-                        </div>
-                        <div className="min-h-[260px] flex flex-col justify-between">
-                            <div>
-                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center mb-4">
-                                    <Bot className="w-6 h-6 text-white" />
-                                </div>
-                                <h3 className="text-foreground text-xl font-bold leading-snug">{currentQuestion.prompt}</h3>
-                                <p className="text-muted-foreground text-sm mt-4 border-l-2 border-cyan-500/40 pl-3">{currentQuestion.followUp}</p>
-                            </div>
-                            <div className="flex gap-3 mt-6">
-                                <Button variant="outline" className="border-hairline text-foreground hover:bg-overlay" onClick={() => speakQuestion(currentQuestion.prompt)}>
-                                    <Bot className="w-4 h-4 mr-2" />
-                                    Repeat
-                                </Button>
-                                <Button variant="outline" className="border-hairline text-foreground hover:bg-overlay" onClick={() => resetInterview()}>
-                                    <RotateCcw className="w-4 h-4 mr-2" />
-                                    Reset
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-card border border-hairline rounded-2xl p-5">
-                        <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-foreground font-semibold">Your Answer</h3>
-                            <button
-                                onClick={toggleVoiceInput}
-                                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${listening
-                                    ? "bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-300"
-                                    : "bg-overlay border-hairline text-foreground hover:bg-overlay-strong"}`}
-                            >
-                                {listening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
-                                {listening ? "Listening" : "Voice"}
-                            </button>
-                        </div>
-                        <textarea
-                            value={answer}
-                            onChange={event => setAnswer(event.target.value)}
-                            placeholder="Speak or type your answer. Try to explain the concept, tradeoffs, edge cases, and one real example."
-                            className="w-full min-h-[260px] resize-none rounded-xl bg-overlay border border-hairline px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-violet-500/50"
-                        />
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4">
-                            <p className="text-xs text-muted-foreground">{answer.trim().split(/\s+/).filter(Boolean).length} words · aim for 80+ words</p>
-                            <Button onClick={submitAnswer} disabled={answer.trim().length < 20} className="bg-violet-600 hover:bg-violet-500 text-white disabled:opacity-40">
-                                {questionIndex >= selectedRound.questions.length - 1 ? "Finish Interview" : "Submit Answer"}
-                                <Send className="w-4 h-4 ml-2" />
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-}
-
-function InterviewScoreCard({ label, value, icon: Icon }: { label: string; value: string; icon: any }) {
-    return (
-        <div className="bg-card border border-hairline rounded-2xl p-5">
-            <Icon className="w-5 h-5 text-violet-700 dark:text-violet-300 mb-3" />
-            <p className="text-2xl font-bold text-foreground">{value}</p>
-            <p className="text-muted-foreground text-xs mt-1">{label}</p>
-        </div>
-    );
-}
-
-function evaluateInterviewAnswer(question: InterviewQuestion, answer: string): InterviewAnswer {
-    const normalized = answer.toLowerCase();
-    const words = answer.trim().split(/\s+/).filter(Boolean);
-    const coveredKeywords = question.keywords.filter(keyword => normalized.includes(keyword.toLowerCase()));
-    const missingKeywords = question.keywords.filter(keyword => !normalized.includes(keyword.toLowerCase())).slice(0, 5);
-    const hasExample = /example|for instance|in my project|i used|scenario|case/i.test(answer);
-    const hasTradeoff = /tradeoff|depends|however|but|cost|risk|pros|cons/i.test(answer);
-    const hasStructure = /first|second|third|because|therefore|finally|step/i.test(answer);
-
-    const lengthScore = Math.min(30, Math.round((words.length / 90) * 30));
-    const keywordScore = Math.round((coveredKeywords.length / Math.max(question.keywords.length, 1)) * 45);
-    const clarityScore = (hasExample ? 10 : 0) + (hasTradeoff ? 8 : 0) + (hasStructure ? 7 : 0);
-    const score = Math.min(100, Math.max(10, lengthScore + keywordScore + clarityScore));
-
-    const feedback = [
-        words.length >= 80 ? "Good depth for a spoken interview answer." : "Add more depth: define the concept, explain why it matters, and include a small example.",
-        coveredKeywords.length >= 3 ? "You covered several important technical signals." : "Mention more interview keywords so the answer sounds technically complete.",
-        hasExample ? "The answer includes practical context, which helps interviewers trust your experience." : "Add one concrete project or code example.",
-        hasTradeoff ? "Good: you mentioned tradeoffs or conditions." : "Add tradeoffs, edge cases, or when not to use this approach.",
-    ];
-
-    return {
-        question: question.prompt,
-        answer,
-        score,
-        feedback,
-        missingKeywords,
-    };
-}
-
-function getRetryFocus(answers: InterviewAnswer[]) {
-    if (!answers.length) return "Start";
-    const weakest = answers.reduce((low, item) => item.score < low.score ? item : low, answers[0]);
-    return weakest.missingKeywords[0] || "Clarity";
-}
-
-function saveInterviewAttempt(roundId: InterviewRoundId, answers: InterviewAnswer[]) {
-    if (typeof window === "undefined") return;
-    const attempts = JSON.parse(localStorage.getItem("gf-ai-interview-attempts") || "[]");
-    const averageScore = answers.length
-        ? Math.round(answers.reduce((sum, item) => sum + item.score, 0) / answers.length)
-        : 0;
-
-    localStorage.setItem("gf-ai-interview-attempts", JSON.stringify([
-        { roundId, averageScore, answersCount: answers.length, createdAt: new Date().toISOString() },
-        ...attempts,
-    ].slice(0, 20)));
-}
-
-function speakQuestion(text: string) {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
-    window.speechSynthesis.speak(utterance);
-}
 
 // ─── Leaderboard Tab ──────────────────────────────────────────
 interface LeaderboardRow {
@@ -1709,7 +1215,7 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
         );
     }
 
-    const visibleKits = allKits.filter(kit => !isNodeKit(kit));
+    const visibleKits = allKits;
     const ownedKits = visibleKits.filter(k => k.hasAccess);
     const lockedKits = visibleKits.filter(k => !k.hasAccess);
     const featuredOwnedKit = ownedKits[0];
@@ -1784,9 +1290,15 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                                 className="group relative overflow-hidden rounded-2xl border border-hairline bg-card p-5 hover:border-violet-400/40 hover:bg-card transition-all">
                                 <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-green-400 via-violet-400 to-cyan-400" />
                                 <div className="flex items-start gap-4">
-                                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl flex-shrink-0 shadow-lg`}>
-                                        {kit.icon}
-                                    </div>
+                                    {getKitLogo(kit.slug || kit.name) ? (
+                                        <div className="w-14 h-14 rounded-2xl bg-overlay border border-hairline flex items-center justify-center flex-shrink-0 shadow-lg">
+                                            <KitLogo nameKey={kit.slug || kit.name} alt={kit.name} imgClassName="w-9 h-9 object-contain" />
+                                        </div>
+                                    ) : (
+                                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl flex-shrink-0 shadow-lg`}>
+                                            {kit.icon}
+                                        </div>
+                                    )}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex flex-wrap items-center gap-2 mb-1">
                                             <Badge className="bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/20 text-[10px] px-2 py-0.5">
@@ -1840,9 +1352,15 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                         {lockedKits.map(kit => (
                             <div key={kit._id} className="group rounded-2xl border border-hairline bg-card p-5 hover:border-violet-400/40 hover:bg-card transition-all">
                                 <div className="flex items-start justify-between gap-3 mb-4">
-                                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl shadow-lg`}>
-                                        {kit.icon}
-                                    </div>
+                                    {getKitLogo(kit.slug || kit.name) ? (
+                                        <div className="w-12 h-12 rounded-2xl bg-overlay border border-hairline flex items-center justify-center shadow-lg">
+                                            <KitLogo nameKey={kit.slug || kit.name} alt={kit.name} imgClassName="w-8 h-8 object-contain" />
+                                        </div>
+                                    ) : (
+                                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center text-2xl shadow-lg`}>
+                                            {kit.icon}
+                                        </div>
+                                    )}
                                     <Badge className="bg-overlay text-muted-foreground border-hairline text-[10px] px-2 py-0.5">
                                         <Lock className="w-2.5 h-2.5 mr-1" />
                                         Locked
@@ -1968,7 +1486,7 @@ function ProgressTab({ purchasedKits, topicsStudied, hoursSpent }: { purchasedKi
                             <div key={kit._id}>
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="text-foreground text-sm font-medium flex items-center gap-2">
-                                        <span>{kit.icon}</span> {kit.name}
+                                        <KitLogo nameKey={kit.slug || kit.name} fallback={<span>{kit.icon}</span>} imgClassName="w-4 h-4 object-contain inline-block" alt={kit.name} /> {kit.name}
                                     </span>
                                     <span className="text-muted-foreground text-xs">{kit.chaptersCount} chapters · {kit.topicsCount} topics</span>
                                 </div>

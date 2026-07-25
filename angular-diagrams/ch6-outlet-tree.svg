@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="420" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">The router is a tree of outlets</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Child routes nest; named outlets render in parallel</text>
+
+  <!-- root -->
+  <rect x="330" y="96" width="160" height="50" rx="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="410" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">App shell</text>
+  <text x="410" y="138" text-anchor="middle" font-size="11" font-family="monospace" fill="#64748b">router-outlet</text>
+
+  <!-- inbox parent -->
+  <line x1="410" y1="146" x2="410" y2="176" stroke="#334155" stroke-width="2" marker-end="url(#o)"/>
+  <rect x="310" y="178" width="200" height="58" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="410" y="202" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">InboxComponent</text>
+  <text x="410" y="222" text-anchor="middle" font-size="11" fill="#64748b">stays mounted across child nav</text>
+
+  <!-- primary child -->
+  <line x1="360" y1="236" x2="230" y2="286" stroke="#3b82f6" stroke-width="2" marker-end="url(#o2)"/>
+  <rect x="90" y="288" width="280" height="90" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="230" y="314" text-anchor="middle" font-size="14" font-weight="700" fill="#15803d">Primary outlet</text>
+  <text x="230" y="336" text-anchor="middle" font-size="12" fill="#334155">MessageList — children: [...]</text>
+  <text x="230" y="358" text-anchor="middle" font-size="12" font-family="monospace" fill="#64748b">router-outlet</text>
+
+  <!-- named child -->
+  <line x1="460" y1="236" x2="590" y2="286" stroke="#9333ea" stroke-width="2" marker-end="url(#o3)"/>
+  <rect x="450" y="288" width="280" height="90" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="590" y="314" text-anchor="middle" font-size="14" font-weight="700" fill="#7e22ce">Named outlet 'preview'</text>
+  <text x="590" y="336" text-anchor="middle" font-size="12" fill="#334155">MessagePreview — outlet: 'preview'</text>
+  <text x="590" y="358" text-anchor="middle" font-size="12" font-family="monospace" fill="#64748b">/inbox(preview:message/42)</text>
+
+  <defs>
+    <marker id="o" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#334155"/></marker>
+    <marker id="o2" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#3b82f6"/></marker>
+    <marker id="o3" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#9333ea"/></marker>
+  </defs>
+</svg>

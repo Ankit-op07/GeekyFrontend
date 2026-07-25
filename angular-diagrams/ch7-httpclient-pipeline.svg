@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">The HttpClient Observable Pipeline</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Cold observable: nothing fires until you subscribe</text>
+  <defs>
+    <marker id="ar7h" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <rect x="40" y="104" width="150" height="70" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="115" y="134" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">subscribe()</text>
+  <text x="115" y="154" text-anchor="middle" font-size="11.5" fill="#64748b">or async pipe</text>
+
+  <line x1="190" y1="139" x2="234" y2="139" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar7h)"/>
+  <rect x="238" y="104" width="150" height="70" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="313" y="128" text-anchor="middle" font-size="13.5" font-weight="700" fill="#7e22ce">Interceptors</text>
+  <text x="313" y="147" text-anchor="middle" font-size="11.5" fill="#64748b">outbound order</text>
+  <text x="313" y="163" text-anchor="middle" font-size="11.5" fill="#64748b">headers, auth</text>
+
+  <line x1="388" y1="139" x2="432" y2="139" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar7h)"/>
+  <rect x="436" y="104" width="150" height="70" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="511" y="134" text-anchor="middle" font-size="14" font-weight="700" fill="#15803d">Backend</text>
+  <text x="511" y="154" text-anchor="middle" font-size="11.5" fill="#64748b">XHR / fetch</text>
+
+  <line x1="586" y1="139" x2="630" y2="139" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar7h)"/>
+  <rect x="634" y="104" width="146" height="70" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="707" y="128" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1d4ed8">Response</text>
+  <text x="707" y="147" text-anchor="middle" font-size="11.5" fill="#64748b">emits ONE value</text>
+  <text x="707" y="163" text-anchor="middle" font-size="11.5" fill="#64748b">then completes</text>
+
+  <!-- operator lane -->
+  <rect x="40" y="206" width="740" height="86" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="410" y="232" text-anchor="middle" font-size="14.5" font-weight="700" fill="#b91c1c">Operators you pipe onto the stream</text>
+  <text x="150" y="262" text-anchor="middle" font-size="12.5" fill="#334155">retry(2)</text>
+  <text x="150" y="280" text-anchor="middle" font-size="11" fill="#64748b">re-subscribe on error</text>
+  <text x="340" y="262" text-anchor="middle" font-size="12.5" fill="#334155">catchError</text>
+  <text x="340" y="280" text-anchor="middle" font-size="11" fill="#64748b">map to fallback / rethrow</text>
+  <text x="530" y="262" text-anchor="middle" font-size="12.5" fill="#334155">map</text>
+  <text x="530" y="280" text-anchor="middle" font-size="11" fill="#64748b">reshape body</text>
+  <text x="690" y="262" text-anchor="middle" font-size="12.5" fill="#334155">timeout</text>
+  <text x="690" y="280" text-anchor="middle" font-size="11" fill="#64748b">abort slow calls</text>
+
+  <text x="410" y="330" text-anchor="middle" font-size="13" fill="#334155">Each subscribe fires a NEW request. Errors arrive as HttpErrorResponse in the error callback.</text>
+  <text x="410" y="356" text-anchor="middle" font-size="12" fill="#64748b">Unsubscribe (or async pipe) cancels the in-flight XHR.</text>
+</svg>

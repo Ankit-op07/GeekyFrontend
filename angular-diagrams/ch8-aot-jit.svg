@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="430" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">AOT vs JIT Compilation Pipeline</text>
+  <text x="410" y="68" text-anchor="middle" font-size="13" fill="#64748b">AOT compiles templates at build time; JIT compiles in the browser</text>
+
+  <!-- AOT row -->
+  <text x="60" y="112" font-size="15" font-weight="700" fill="#15803d">AOT — build time (default for prod)</text>
+  <rect x="40" y="124" width="150" height="52" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="115" y="147" text-anchor="middle" font-size="12" fill="#334155">TS + HTML</text>
+  <text x="115" y="164" text-anchor="middle" font-size="11" fill="#64748b">templates</text>
+  <line x1="190" y1="150" x2="228" y2="150" stroke="#94a3b8" stroke-width="2" marker-end="url(#aj)"/>
+  <rect x="230" y="124" width="150" height="52" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="305" y="147" text-anchor="middle" font-size="12" fill="#334155">ngc / build</text>
+  <text x="305" y="164" text-anchor="middle" font-size="11" fill="#64748b">compiles ahead</text>
+  <line x1="380" y1="150" x2="418" y2="150" stroke="#94a3b8" stroke-width="2" marker-end="url(#aj)"/>
+  <rect x="420" y="124" width="160" height="52" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="500" y="147" text-anchor="middle" font-size="12" fill="#334155">Pre-compiled JS</text>
+  <text x="500" y="164" text-anchor="middle" font-size="11" fill="#64748b">no compiler shipped</text>
+  <line x1="580" y1="150" x2="618" y2="150" stroke="#16a34a" stroke-width="2" marker-end="url(#ag)"/>
+  <rect x="620" y="124" width="160" height="52" rx="10" fill="#ecfdf5" stroke="#16a34a" stroke-width="2.5"/>
+  <text x="700" y="147" text-anchor="middle" font-size="12" font-weight="700" fill="#15803d">Browser renders</text>
+  <text x="700" y="164" text-anchor="middle" font-size="11" fill="#166534">fast, small, safe</text>
+
+  <text x="60" y="204" font-size="11" fill="#166534">✔ smaller bundle (no compiler)  ✔ template errors caught at build  ✔ faster first render</text>
+
+  <!-- JIT row -->
+  <text x="60" y="256" font-size="15" font-weight="700" fill="#b45309">JIT — runtime (dev / legacy)</text>
+  <rect x="40" y="268" width="150" height="52" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+  <text x="115" y="291" text-anchor="middle" font-size="12" fill="#334155">TS + HTML</text>
+  <text x="115" y="308" text-anchor="middle" font-size="11" fill="#64748b">templates</text>
+  <line x1="190" y1="294" x2="228" y2="294" stroke="#94a3b8" stroke-width="2" marker-end="url(#aj)"/>
+  <rect x="230" y="268" width="150" height="52" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+  <text x="305" y="291" text-anchor="middle" font-size="12" fill="#334155">Ship raw + </text>
+  <text x="305" y="308" text-anchor="middle" font-size="11" fill="#64748b">compiler bundled</text>
+  <line x1="380" y1="294" x2="418" y2="294" stroke="#94a3b8" stroke-width="2" marker-end="url(#aj)"/>
+  <rect x="420" y="268" width="160" height="52" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+  <text x="500" y="291" text-anchor="middle" font-size="12" fill="#334155">Compile in browser</text>
+  <text x="500" y="308" text-anchor="middle" font-size="11" fill="#64748b">at page load</text>
+  <line x1="580" y1="294" x2="618" y2="294" stroke="#d97706" stroke-width="2" marker-end="url(#aw)"/>
+  <rect x="620" y="268" width="160" height="52" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+  <text x="700" y="291" text-anchor="middle" font-size="12" font-weight="700" fill="#b45309">Browser renders</text>
+  <text x="700" y="308" text-anchor="middle" font-size="11" fill="#92400e">slower start</text>
+
+  <text x="60" y="348" font-size="11" fill="#b45309">✘ larger bundle  ✘ compile cost on every load  ✘ template errors surface only at runtime</text>
+
+  <text x="410" y="392" text-anchor="middle" font-size="12" fill="#64748b">Ivy makes AOT the default; standalone builds ship pre-compiled component definitions.</text>
+
+  <defs>
+    <marker id="aj" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+    <marker id="ag" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#16a34a"/></marker>
+    <marker id="aw" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#d97706"/></marker>
+  </defs>
+</svg>

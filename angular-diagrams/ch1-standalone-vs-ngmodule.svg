@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="480" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">Standalone vs NgModule</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">The modern default vs the classic approach</text>
+
+  <!-- Left: NgModule -->
+  <rect x="40" y="100" width="360" height="340" rx="16" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <text x="220" y="132" text-anchor="middle" font-size="17" font-weight="700" fill="#475569">Classic: NgModule</text>
+
+  <rect x="70" y="150" width="300" height="60" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="220" y="176" text-anchor="middle" font-size="13" font-weight="600" fill="#334155">@NgModule({ declarations, imports })</text>
+  <text x="220" y="196" text-anchor="middle" font-size="12" fill="#64748b">a module registers its components</text>
+
+  <rect x="70" y="222" width="300" height="46" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="220" y="250" text-anchor="middle" font-size="13" fill="#334155">Component belongs to a module</text>
+
+  <rect x="70" y="280" width="300" height="46" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="220" y="308" text-anchor="middle" font-size="13" fill="#334155">Shared code &#8594; SharedModule</text>
+
+  <text x="70" y="356" font-size="12" fill="#64748b">&#8226; More boilerplate, indirection</text>
+  <text x="70" y="380" font-size="12" fill="#64748b">&#8226; Every component needs a module</text>
+  <text x="70" y="404" font-size="12" fill="#64748b">&#8226; Still valid; large legacy apps</text>
+
+  <!-- Right: Standalone -->
+  <rect x="420" y="100" width="360" height="340" rx="16" fill="#fef2f2" stroke="#dc2626" stroke-width="2.5"/>
+  <text x="600" y="132" text-anchor="middle" font-size="17" font-weight="700" fill="#b91c1c">Modern: Standalone (v15+)</text>
+
+  <rect x="450" y="150" width="300" height="60" rx="10" fill="#ffffff" stroke="#fca5a5"/>
+  <text x="600" y="176" text-anchor="middle" font-size="13" font-weight="600" fill="#0f172a">@Component({ standalone: true, imports })</text>
+  <text x="600" y="196" text-anchor="middle" font-size="12" fill="#64748b">the component declares its own deps</text>
+
+  <rect x="450" y="222" width="300" height="46" rx="10" fill="#ffffff" stroke="#fca5a5"/>
+  <text x="600" y="250" text-anchor="middle" font-size="13" fill="#0f172a">No NgModule needed</text>
+
+  <rect x="450" y="280" width="300" height="46" rx="10" fill="#ffffff" stroke="#fca5a5"/>
+  <text x="600" y="308" text-anchor="middle" font-size="13" fill="#0f172a">bootstrapApplication(App)</text>
+
+  <text x="450" y="356" font-size="12" fill="#166534">&#10003; Less boilerplate, clearer deps</text>
+  <text x="450" y="380" font-size="12" fill="#166534">&#10003; Easier lazy loading &amp; tree-shaking</text>
+  <text x="450" y="404" font-size="12" fill="#166534">&#10003; The recommended default today</text>
+</svg>

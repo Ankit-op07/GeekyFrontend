@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="420" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">The XSRF Token Round-Trip</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">Cookie set by server, echoed back in a header by Angular</text>
+  <defs>
+    <marker id="arxr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <rect x="70" y="100" width="240" height="46" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="190" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">Browser (Angular app)</text>
+
+  <rect x="510" y="100" width="240" height="46" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="630" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#15803d">Server</text>
+
+  <line x1="310" y1="170" x2="510" y2="170" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arxr)"/>
+  <text x="410" y="162" text-anchor="middle" font-size="12" fill="#334155">1. GET page / initial request</text>
+
+  <line x1="510" y1="212" x2="310" y2="212" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arxr)"/>
+  <text x="410" y="204" text-anchor="middle" font-size="12" fill="#334155">2. Set-Cookie: XSRF-TOKEN=abc</text>
+
+  <rect x="70" y="234" width="240" height="60" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="190" y="258" text-anchor="middle" font-size="12" font-weight="700" fill="#7e22ce">HttpClient reads cookie</text>
+  <text x="190" y="278" text-anchor="middle" font-size="12" fill="#334155">only for same-origin mutating</text>
+
+  <line x1="310" y1="320" x2="510" y2="320" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arxr)"/>
+  <text x="410" y="312" text-anchor="middle" font-size="12" fill="#334155">3. POST + X-XSRF-TOKEN: abc</text>
+
+  <rect x="510" y="336" width="240" height="60" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="630" y="360" text-anchor="middle" font-size="12" font-weight="700" fill="#15803d">Server compares</text>
+  <text x="630" y="380" text-anchor="middle" font-size="12" fill="#334155">header must equal cookie</text>
+
+  <rect x="70" y="336" width="240" height="60" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="190" y="360" text-anchor="middle" font-size="12" font-weight="700" fill="#b91c1c">Attacker site</text>
+  <text x="190" y="380" text-anchor="middle" font-size="12" fill="#334155">cannot read the cookie value</text>
+</svg>

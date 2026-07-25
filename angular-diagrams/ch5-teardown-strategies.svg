@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="380" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Ways to avoid subscription leaks</text>
+  <text x="410" y="68" text-anchor="middle" font-size="14" fill="#64748b">Prefer declarative teardown; manual unsubscribe is the last resort</text>
+
+  <g font-size="13">
+    <rect x="40" y="90" width="740" height="60" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="60" y="116" font-size="15" font-weight="700" fill="#15803d">async pipe</text>
+    <text x="230" y="116" fill="#334155">Template subscribes and unsubscribes for you. Best default.</text>
+    <text x="230" y="138" fill="#64748b">| async — no component code, no leak.</text>
+
+    <rect x="40" y="160" width="740" height="60" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="60" y="186" font-size="15" font-weight="700" fill="#1d4ed8">takeUntilDestroyed()</text>
+    <text x="290" y="186" fill="#334155">v16+. Ties the stream to the injection context / DestroyRef.</text>
+    <text x="290" y="208" fill="#64748b">Best for manual subscribes in a component.</text>
+
+    <rect x="40" y="230" width="740" height="60" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="60" y="256" font-size="15" font-weight="700" fill="#7e22ce">toSignal()</text>
+    <text x="230" y="256" fill="#334155">Converts to a signal; unsubscribes on destroy automatically.</text>
+    <text x="230" y="278" fill="#64748b">Great when the value feeds the template.</text>
+
+    <rect x="40" y="300" width="740" height="60" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text x="60" y="326" font-size="15" font-weight="700" fill="#b91c1c">manual unsubscribe</text>
+    <text x="290" y="326" fill="#334155">Store Subscription, call it in ngOnDestroy. Error-prone.</text>
+    <text x="290" y="348" fill="#64748b">Last resort — easy to forget one.</text>
+  </g>
+</svg>

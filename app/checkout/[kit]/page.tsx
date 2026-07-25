@@ -8,8 +8,8 @@ import Image from "next/image"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { PaymentButton } from '@/components/payment-button'
-import { NodejsCheckoutContent } from "@/components/nodejs-checkout-content"
 import { ReactCheckoutContent } from "@/components/react-checkout-content"
+import { getKitLogo } from "@/components/kit-logo"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -71,7 +71,7 @@ interface KitDetails {
   }[]
 }
 
-const { react_kit_price, react_kit_original_price, js_kit_price, js_kit_original_price, complete_kit_price, complete_kit_original_price, all_access_price, all_access_original_price } = appConstants()
+const { react_kit_price, react_kit_original_price, js_kit_price, js_kit_original_price, complete_kit_price, complete_kit_original_price, all_access_price, all_access_original_price, angular_kit_price, angular_kit_original_price, nodejs_kit_price, nodejs_kit_original_price } = appConstants()
 /* ---------- Custom Node SVG Icon (inline) ---------- */
 function NodeIcon({ size = 36 }: { size?: number }) {
   return (
@@ -94,6 +94,7 @@ function NodeIcon({ size = 36 }: { size?: number }) {
 const SLUG_TO_KIT_ID: Record<string, string> = {
   javascript: 'js-kit',
   react: 'react-kit',
+  angular: 'angular-kit',
   nodejs: 'nodejs-kit',
   // 'complete' is the LEGACY slug for the kit now named "Frontend System Design Kit".
   // Kept so existing ads/backlinks to /checkout/complete keep resolving.
@@ -112,6 +113,57 @@ function parseCurrencyValue(value?: string): number {
 }
 
 const kitsData: Record<string, KitDetails> = {
+  "angular": {
+    id: "angular",
+    name: "Angular Interview Preparation Kit",
+    tagline: "8 modules · 40 in-depth topics · 63 diagrams. Master components, DI, RxJS, signals and change detection — and the exact questions interviewers ask.",
+    price: angular_kit_price,
+    originalPrice: angular_kit_original_price,
+    discount: Math.round(((angular_kit_original_price - angular_kit_price) / angular_kit_original_price) * 100),
+    icon: <span className="font-black text-2xl text-white drop-shadow">A</span>,
+    color: "from-red-500 to-rose-600",
+    bgGradient: "from-red-50 via-white to-rose-50",
+    // NOTE: placeholder social proof — replace `students`/`rating`/`reviews` with
+    // real numbers before heavy promotion. Testimonials left empty (not fabricated).
+    students: 0,
+    rating: 5,
+    reviews: 0,
+    lastUpdated: "Updated for Angular v17+",
+    features: [
+      { icon: <BookOpen className="w-4 h-4" />, title: "40 deep-dive topics", description: "Every core Angular concept explained for both learning and interviews, ~1,700 words each." },
+      { icon: <Sparkles className="w-4 h-4" />, title: "63 diagrams", description: "RxJS marble diagrams, the DI injector tree, change-detection flow, lifecycle timeline and more." },
+      { icon: <Brain className="w-4 h-4" />, title: "Interview lens on every topic", description: "150+ real interview questions with model answers, follow-ups and the traps to avoid." },
+      { icon: <Code className="w-4 h-4" />, title: "Modern Angular (v17+)", description: "Standalone components, signals, @if/@for control flow, functional guards & interceptors, zoneless CD." },
+      { icon: <Target className="w-4 h-4" />, title: "Mistakes & best practices", description: "Common gotchas and the right patterns spelled out for each topic." },
+      { icon: <Zap className="w-4 h-4" />, title: "Revision cheat-cards", description: "A quick-recall summary at the end of every topic for last-minute prep." },
+    ],
+    curriculum: [
+      { module: "1 · Angular Fundamentals", topics: ["Angular vs AngularJS", "Architecture & building blocks", "CLI & project structure", "Bootstrap flow", "Standalone vs NgModules"], hours: 4 },
+      { module: "2 · Components & Templates", topics: ["Lifecycle hooks", "Data binding", "@Input / @Output & signals", "ViewChild / ContentChild", "View encapsulation"], hours: 5 },
+      { module: "3 · Directives & Pipes", topics: ["Structural vs attribute", "@if / @for / @switch", "Custom directives", "Pure vs impure pipes", "async pipe"], hours: 4 },
+      { module: "4 · Dependency Injection & Services", topics: ["What is DI", "Providers & injectors", "Provider scope", "Hierarchical injectors", "inject() function"], hours: 5 },
+      { module: "5 · RxJS & Reactive Programming", topics: ["Observables vs Promises", "switchMap / mergeMap / concatMap / exhaustMap", "Subjects", "Subscription management", "Signals vs RxJS"], hours: 6 },
+      { module: "6 · Routing & Navigation", topics: ["Route & query params", "Lazy loading", "Route guards", "Child routes & outlets"], hours: 4 },
+      { module: "7 · Forms & HTTP", topics: ["Template vs Reactive forms", "FormGroup / FormArray & validators", "HttpClient", "Interceptors", "Auth flow with interceptors"], hours: 5 },
+      { module: "8 · Change Detection & Performance", topics: ["Default vs OnPush", "Zone.js & zoneless", "trackBy & ChangeDetectorRef", "AOT vs JIT", "NgRx overview", "Testing"], hours: 6 },
+    ],
+    included: [
+      { icon: <BookOpen className="w-4 h-4" />, text: "40 in-depth topics", value: "8 modules" },
+      { icon: <Sparkles className="w-4 h-4" />, text: "63 explanatory diagrams", value: "Visual learning" },
+      { icon: <Code className="w-4 h-4" />, text: "150+ interview questions", value: "With model answers" },
+      { icon: <Target className="w-4 h-4" />, text: "Gotchas & best practices", value: "Every topic" },
+      { icon: <RefreshCw className="w-4 h-4" />, text: "Lifetime updates", value: "Forever free" },
+      { icon: <Download className="w-4 h-4" />, text: "Instant access", value: "Start in 2 mins" },
+    ],
+    testimonials: [],
+    faqs: [
+      { question: "What exactly do I get?", answer: "Full access to the Angular Interview Kit: 8 modules, 40 in-depth topics (~1,700 words each) with 63 diagrams, 150+ interview questions with model answers, plus gotchas, best practices and revision cheat-cards for every topic. Lifetime access with free updates." },
+      { question: "Is the content up to date with modern Angular?", answer: "Yes — everything is written for Angular v17+: standalone components, signals, the new @if/@for control flow, functional guards & interceptors, and zoneless change detection, with notes on legacy patterns where interviewers still ask about them." },
+      { question: "Is this for learning Angular or for interview prep?", answer: "Both. Each topic teaches the concept deeply with diagrams and code, then has an 'Interview lens' section with the exact questions asked, common traps and model answers — so it works whether you're learning or revising before an interview." },
+      { question: "Do I get lifetime access and updates?", answer: "Yes. One payment gives you lifetime access and all future updates to the kit for free." },
+      { question: "How do I access it after paying?", answer: "Instantly. After payment your account is unlocked and you can read every topic from your dashboard right away." },
+    ],
+  },
   /* ── THE BUNDLE ────────────────────────────────────────────────────────
    *  ⚠️  Never describe this as "everything" / "all future kits". Node and
    *  Experiences are visible on the site as coming-soon and are NOT granted.
@@ -827,214 +879,62 @@ const kitsData: Record<string, KitDetails> = {
   },
   nodejs: {
     id: "nodejs",
-    name: "Node.js Interview Preparation Kit",
-    tagline: "Complete Backend Mastery: From Zero to FAANG-Ready in 4 Weeks",
-    price: 299,
-    originalPrice: 2999,
-    discount: 90,
+    name: "Node.js Backend Mastery Kit",
+    tagline: "15 modules · 70 in-depth topics · 100+ diagrams. Master the event loop, async, streams, Express, REST, databases, auth & security, testing, scaling and production — and the exact questions interviewers ask.",
+    price: nodejs_kit_price,
+    originalPrice: nodejs_kit_original_price,
+    discount: Math.round(((nodejs_kit_original_price - nodejs_kit_price) / nodejs_kit_original_price) * 100),
     icon: <NodeIcon size={40} />,
-    color: "from-green-600 to-emerald-600",
-    bgGradient: "linear-gradient(135deg,#e6f8ea 0%,#ffffff 50%,#eaf7ef 100%)",
-    students: 6741,
-    rating: 4.9,
-    reviews: 2102,
-    lastUpdated: "Updated 2 days ago",
+    color: "from-green-500 to-emerald-600",
+    bgGradient: "from-green-50 via-white to-emerald-50",
+    // NOTE: placeholder social proof — replace `students`/`rating`/`reviews` with
+    // real numbers before heavy promotion. Testimonials left empty (not fabricated).
+    students: 0,
+    rating: 5,
+    reviews: 0,
+    lastUpdated: "Updated for Node.js v20/v22 LTS",
     features: [
-      {
-        icon: <BookOpen className="w-5 h-5" />,
-        title: "End-to-End Learning Path",
-        description: "Structured 4-week roadmap from Node.js basics to production deployment with daily tasks"
-      },
-      {
-        icon: <FileText className="w-5 h-5" />,
-        title: "6 Premium PDFs (250+ Pages)",
-        description: "Comprehensive guides covering Node.js, Express, MongoDB, REST APIs, Authentication & more"
-      },
-      {
-        icon: <Code className="w-5 h-5" />,
-        title: "200+ Interview Questions",
-        description: "Real questions from Amazon, Google, Microsoft, Swiggy, Zomato, PhonePe with detailed solutions"
-      },
-      {
-        icon: <Target className="w-5 h-5" />,
-        title: "Quick Revision Cheatsheets",
-        description: "One-page summaries for Event Loop, Express Middleware, MongoDB Queries & more"
-      },
-      {
-        icon: <Brain className="w-5 h-5" />,
-        title: "Scenario-Based Problems",
-        description: "Real-world challenges: Design Rate Limiter, Build Auth System, Handle File Uploads"
-      },
-      {
-        icon: <Rocket className="w-5 h-5" />,
-        title: "Production-Ready Projects",
-        description: "Build 4 complete projects with code: REST API, Auth System, File Streaming, Chat App"
-      },
+      { icon: <BookOpen className="w-4 h-4" />, title: "70 deep-dive topics", description: "Every core Node.js concept explained for learning and interviews, ~1,900 words each." },
+      { icon: <Sparkles className="w-4 h-4" />, title: "100+ diagrams", description: "The event loop, libuv thread pool, streams/backpressure, DB & auth flows, cluster/scaling and more." },
+      { icon: <Brain className="w-4 h-4" />, title: "Interview lens on every topic", description: "200+ real interview questions with model answers, follow-ups and the traps to avoid." },
+      { icon: <Code className="w-4 h-4" />, title: "Modern Node.js (v20/v22)", description: "node: imports, fs/promises, ESM, worker threads, functional patterns, current best practices." },
+      { icon: <Target className="w-4 h-4" />, title: "Mistakes & best practices", description: "Common gotchas and the right patterns spelled out for each topic." },
+      { icon: <Zap className="w-4 h-4" />, title: "Revision cheat-cards", description: "A quick-recall summary at the end of every topic for last-minute prep." },
     ],
     curriculum: [
-      {
-        module: "Week 1: Node.js Fundamentals",
-        topics: [
-          "What is Node.js & Why Backend?",
-          "Event Loop Deep Dive",
-          "Async Patterns (Callbacks, Promises, Async/Await)",
-          "Built-in Modules (fs, path, http, events)",
-          "NPM & Project Structure"
-        ],
-        hours: 10
-      },
-      {
-        module: "Week 2: Express.js Mastery",
-        topics: [
-          "Express Setup & Server Creation",
-          "Middleware Architecture (App vs Route-level)",
-          "Routing Patterns & Best Practices",
-          "Error Handling & Debugging",
-          "Template Engines (EJS)"
-        ],
-        hours: 10
-      },
-      {
-        module: "Week 3: MongoDB & REST APIs",
-        topics: [
-          "MongoDB Fundamentals & CRUD",
-          "Mongoose Schemas & Models",
-          "Data Validation & Relationships",
-          "REST API Design Principles",
-          "Authentication (JWT, Sessions, OAuth)"
-        ],
-        hours: 12
-      },
-      {
-        module: "Week 4: Advanced & Production",
-        topics: [
-          "Security (XSS, CSRF, SQL Injection)",
-          "Performance Optimization",
-          "Testing with Jest & Supertest",
-          "WebSocket & Real-time Apps",
-          "Production Deployment (Docker, PM2, AWS)"
-        ],
-        hours: 12
-      }
+      { module: "1 · Node.js Fundamentals", topics: ["What is Node.js", "Node vs browser", "V8 & libuv", "global/process/env", "REPL & running"], hours: 4 },
+      { module: "2 · Event Loop & Async Architecture", topics: ["Event loop phases", "libuv thread pool", "nextTick vs setImmediate", "microtasks vs macrotasks", "Blocking the loop"], hours: 5 },
+      { module: "3 · Modules & npm", topics: ["CommonJS", "ES Modules", "Module resolution", "package.json & semver", "npm & scripts"], hours: 4 },
+      { module: "4 · Asynchronous Patterns", topics: ["Callbacks", "Promises", "async/await", "Async error handling", "EventEmitter"], hours: 5 },
+      { module: "5 · Core Modules & File System", topics: ["fs", "path/os/url", "Buffer", "crypto", "timers"], hours: 5 },
+      { module: "6 · Streams & Buffers", topics: ["Streams overview", "Readable/Writable", "Transform/Duplex", "Backpressure & pipeline"], hours: 4 },
+      { module: "7 · HTTP & Web Servers", topics: ["http module", "Request/response", "Routing basics", "HTTP vs HTTPS/TLS"], hours: 4 },
+      { module: "8 · Express.js", topics: ["Express basics", "Routing", "Middleware", "Error handling", "req/res"], hours: 5 },
+      { module: "9 · REST API Design", topics: ["REST principles", "CRUD & status codes", "Validation & pagination", "Versioning"], hours: 4 },
+      { module: "10 · Databases", topics: ["MongoDB & Mongoose", "Schema design", "SQL basics", "Connection pooling", "Transactions"], hours: 5 },
+      { module: "11 · Authentication & Security", topics: ["Auth basics", "JWT", "Sessions & cookies", "Password hashing", "OWASP"], hours: 5 },
+      { module: "12 · Errors, Debugging & Logging", topics: ["Error patterns", "uncaught/unhandled", "Debugging", "Logging"], hours: 4 },
+      { module: "13 · Testing", topics: ["Testing fundamentals", "Unit testing", "Integration testing", "Mocking & coverage"], hours: 4 },
+      { module: "14 · Performance, Scaling & Production", topics: ["cluster", "worker threads", "child processes", "Caching/Redis", "PM2 & Docker", "Graceful shutdown"], hours: 6 },
+      { module: "15 · Advanced Backend", topics: ["WebSockets", "GraphQL", "Microservices", "Message queues"], hours: 4 },
     ],
     included: [
-      {
-        icon: <FileText className="w-4 h-4" />,
-        text: "6 Premium PDFs",
-        value: "250+ pages"
-      },
-      {
-        icon: <Code className="w-4 h-4" />,
-        text: "200+ Interview Questions",
-        value: "With solutions"
-      },
-      {
-        icon: <Target className="w-4 h-4" />,
-        text: "Cheatsheets & Revision Notes",
-        value: "Quick reference"
-      },
-      {
-        icon: <BookOpen className="w-4 h-4" />,
-        text: "4-Week Study Roadmap",
-        value: "Day-by-day plan"
-      },
-      {
-        icon: <Rocket className="w-4 h-4" />,
-        text: "4 Production Projects",
-        value: "With source code"
-      },
-      {
-        icon: <RefreshCw className="w-4 h-4" />,
-        text: "Lifetime Updates",
-        value: "Forever free"
-      },
-      {
-        icon: <HeartHandshake className="w-4 h-4" />,
-        text: "Priority Email Support",
-        value: "12hr response"
-      },
-      {
-        icon: <Download className="w-4 h-4" />,
-        text: "Instant Access",
-        value: "Start in 2 mins"
-      }
+      { icon: <BookOpen className="w-4 h-4" />, text: "70 in-depth topics", value: "15 modules" },
+      { icon: <Sparkles className="w-4 h-4" />, text: "100+ explanatory diagrams", value: "Visual learning" },
+      { icon: <Code className="w-4 h-4" />, text: "200+ interview questions", value: "With model answers" },
+      { icon: <Target className="w-4 h-4" />, text: "Gotchas & best practices", value: "Every topic" },
+      { icon: <RefreshCw className="w-4 h-4" />, text: "Lifetime updates", value: "Forever free" },
+      { icon: <Download className="w-4 h-4" />, text: "Instant access", value: "Start in 2 mins" },
     ],
-    testimonials: [
-      {
-        name: "Karan Verma",
-        role: "Backend Engineer",
-        company: "Zomato",
-        text: "The week-wise plan kept me on track. Event loop section alone helped me answer 5 questions confidently. Went from 8 LPA to 18 LPA!",
-        rating: 5
-      },
-      {
-        name: "Meera Joshi",
-        role: "Full Stack Developer",
-        company: "Swiggy",
-        text: "Visual diagrams for async programming and middleware flow made complex concepts crystal clear. Cracked my interview in first attempt!",
-        rating: 5
-      },
-      {
-        name: "Sandeep Rao",
-        role: "Senior Backend Developer",
-        company: "PhonePe",
-        text: "The cheatsheets saved me during last-minute revision. MongoDB and authentication sections are absolute gold. 200+ questions covered everything!",
-        rating: 5
-      },
-      {
-        name: "Priya Malhotra",
-        role: "Node.js Developer",
-        company: "Razorpay",
-        text: "From 6 LPA to 18 LPA! The Express middleware and REST API sections gave me confidence to discuss architecture decisions in interviews.",
-        rating: 5
-      }
-    ],
+    testimonials: [],
     faqs: [
-      {
-        question: "What exactly do I get in this kit?",
-        answer: "You get: (1) 6 comprehensive PDFs covering Node.js, Express, MongoDB, REST APIs, Authentication & Deployment (250+ pages), (2) 200+ real interview questions with detailed solutions, (3) Quick revision cheatsheets for all topics, (4) 4-week structured study roadmap with daily tasks, (5) 4 production-ready project codebases, (6) Lifetime updates & priority support."
-      },
-      {
-        question: "Is this suitable for beginners?",
-        answer: "Absolutely! Week 1 starts from 'What is Node.js?' and builds up systematically. The 4-week roadmap is designed to take you from zero to interview-ready. Experienced developers can skip Week 1 and jump to advanced topics."
-      },
-      {
-        question: "How is this different from free YouTube tutorials?",
-        answer: "Free resources are scattered and don't focus on interviews. This kit provides: (1) Curated 200+ questions actually asked in FAANG/product companies, (2) Structured 4-week roadmap with daily tasks, (3) Quick revision cheatsheets you can't find anywhere, (4) Visual diagrams explaining Event Loop, Middleware flow, etc., (5) Production-ready code examples."
-      },
-      {
-        question: "Are these real interview questions?",
-        answer: "Yes! All 200+ questions are collected from actual interviews at Amazon, Microsoft, Google, Swiggy, Zomato, PhonePe, Razorpay, and other top product companies. Each question includes detailed explanations with code examples."
-      },
-      {
-        question: "Will I get updates when new content is added?",
-        answer: "Yes! All updates are completely free for life. We update the content monthly based on latest interview trends and feedback from students who recently gave interviews."
-      },
-      {
-        question: "How long will it take to complete?",
-        answer: "The 4-week roadmap is designed for 2-3 hours daily study. You can complete faster or slower based on your schedule. You have lifetime access, so use it as a reference anytime."
-      }
+      { question: "What exactly do I get?", answer: "Full access to the Node.js Backend Kit: 15 modules, 70 in-depth topics (~1,900 words each) with 100+ diagrams, 200+ interview questions with model answers, plus gotchas, best practices and revision cheat-cards for every topic. Lifetime access with free updates." },
+      { question: "Is the content up to date?", answer: "Yes — everything targets current Node.js v20/v22 LTS: node: imports, fs/promises, ES modules, worker threads, modern Express patterns, and current security & production practices." },
+      { question: "Is this for learning Node.js or for interview prep?", answer: "Both. Each topic teaches the concept deeply with diagrams and code, then has an 'Interview lens' section with the exact questions asked, common traps and model answers — so it works whether you're learning or revising before an interview." },
+      { question: "Do I get lifetime access and updates?", answer: "Yes. One payment gives you lifetime access and all future updates to the kit for free." },
+      { question: "How do I access it after paying?", answer: "Instantly. After payment your account is unlocked and you can read every topic from your dashboard right away." },
     ],
-    bonuses: [
-      {
-        icon: <Gift className="w-5 h-5" />,
-        title: "Quick Revision Cheatsheets",
-        value: "₹1499",
-        description: "One-page summaries for Event Loop, Middleware, MongoDB Queries, JWT Auth & more"
-      },
-      {
-        icon: <Video className="w-5 h-5" />,
-        title: "Deployment Masterclass Guide",
-        value: "₹1999",
-        description: "Complete guide: Local to Production with Docker, PM2, AWS EC2 & Nginx"
-      },
-      {
-        icon: <Trophy className="w-5 h-5" />,
-        title: "Resume Templates",
-        value: "₹999",
-        description: "ATS-optimized resume templates specifically for Node.js/Backend developers"
-      }
-    ]
+    bonuses: []
   }
 }
 
@@ -1147,23 +1047,36 @@ export default function CheckoutPage() {
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6 lg:space-y-8 min-w-0">
             {/* Dedicated long-form content for specific kits */}
-            {kit.id === "nodejs" ? (
-              <NodejsCheckoutContent />
-            ) : kit.id === "react" ? (
+            {kit.id === "react" ? (
               <ReactCheckoutContent />
             ) : (
               <Card className={`p-4 md:p-6 bg-gradient-to-br ${kit.bgGradient || "from-gray-50 to-white"} border-0 overflow-hidden`}>
                 <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-5">
-                  <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center shadow-md flex-shrink-0`}>
-                    {kit.id === "nodejs" ? <NodeIcon size={42} /> : kit.icon}
-                  </div>
+                  {getKitLogo(kit.id) ? (
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-md flex-shrink-0">
+                      <img src={getKitLogo(kit.id)!} alt={kit.name} className="w-11 h-11 sm:w-14 sm:h-14 object-contain" />
+                    </div>
+                  ) : (
+                    <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${kit.color} flex items-center justify-center shadow-md flex-shrink-0`}>
+                      {kit.id === "nodejs" ? <NodeIcon size={42} /> : kit.icon}
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0 w-full">
                     <div className="flex items-start gap-2 mb-1">
                       <h1 className="text-lg md:text-2xl font-bold leading-tight break-words">{kit.name}</h1>
                     </div>
                     <p className="text-xs md:text-sm text-muted-foreground mb-2 break-words">{kit.tagline}</p>
 
-                    {/* Trust micro-row - IMPROVED WRAPPING */}
+                    {/* Trust micro-row. New kits (angular/nodejs) have no real
+                        enrolment/rating yet — show a "New" badge instead of 0s. */}
+                    {(kit.id === "angular" || kit.id === "nodejs") ? (
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge className="bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-xs font-semibold">
+                          ✨ New kit
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">Just launched · lifetime updates included</span>
+                      </div>
+                    ) : (
                     <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm">
                       <div className="flex items-center gap-1 flex-shrink-0">
                         <Users className="w-4 h-4 text-blue-500" />
@@ -1180,11 +1093,12 @@ export default function CheckoutPage() {
                         {/* <span className="text-green-600 font-medium text-xs">{kit.lastUpdated}</span> */}
                       </div>
                     </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Node hero sub-row - IMPROVED WRAPPING */}
-                {kit.id === "nodejs" && (
+                {false && (
                   <div className="mt-3 flex flex-wrap gap-2 text-xs">
                     <div className="flex items-center gap-2 bg-white/60 px-2 py-1 rounded-md shadow-sm">
                       <Shield className="w-4 h-4 text-green-700 flex-shrink-0" />
@@ -1220,7 +1134,7 @@ export default function CheckoutPage() {
             )}
 
             {/* Node.js Specific: 4-Week Roadmap Visual */}
-            {kit.id === "nodejs" && (
+            {false && (
               <Card className="p-4 md:p-6 overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
                 <h2 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
                   <Target className="w-5 h-5 text-green-600 flex-shrink-0" />
@@ -1261,7 +1175,7 @@ export default function CheckoutPage() {
             )}
 
             {/* Node.js Specific: What's Inside Preview */}
-            {kit.id === "nodejs" && (
+            {false && (
               <Card className="p-4 md:p-6 overflow-hidden">
                 <h2 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
                   <FileText className="w-5 h-5 text-purple-500 flex-shrink-0" />
@@ -1291,7 +1205,7 @@ export default function CheckoutPage() {
             )}
 
             {/* Node.js Specific: Cheatsheets Preview */}
-            {kit.id === "nodejs" && (
+            {false && (
               <Card className="p-4 md:p-6 overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
                 <h2 className="text-base md:text-lg font-bold mb-3 flex items-center gap-2">
                   <Zap className="w-5 h-5 text-purple-600 flex-shrink-0" />
@@ -1327,7 +1241,7 @@ export default function CheckoutPage() {
             )}
 
             {/* INTERACTIVE: Sample Interview Questions Preview */}
-            {kit.id === "nodejs" && (
+            {false && (
               <Card className="p-4 md:p-6 overflow-hidden border-2 border-green-200 bg-gradient-to-br from-green-50/50 to-white">
                 <h2 className="text-base md:text-lg font-bold mb-2 flex items-center gap-2">
                   <Brain className="w-5 h-5 text-green-600 flex-shrink-0" />
@@ -1398,7 +1312,7 @@ export default function CheckoutPage() {
             )}
 
             {/* INTERACTIVE: Before/After Skill Transformation */}
-            {kit.id === "nodejs" && (
+            {false && (
               <Card className="p-4 md:p-6 overflow-hidden">
                 <h2 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-blue-600 flex-shrink-0" />
@@ -1459,7 +1373,7 @@ export default function CheckoutPage() {
             )}
 
             {/* INTERACTIVE: Why This Kit vs Free Resources */}
-            {kit.id === "nodejs" && (
+            {false && (
               <Card className="p-4 md:p-6 overflow-hidden">
                 <h2 className="text-base md:text-lg font-bold mb-4 flex items-center gap-2">
                   <Award className="w-5 h-5 text-yellow-600 flex-shrink-0" />
@@ -1529,7 +1443,7 @@ export default function CheckoutPage() {
             )}
 
             {/* INTERACTIVE: Success Metrics */}
-            {kit.id === "nodejs" && (
+            {false && (
               <Card className="p-4 md:p-6 overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
                 <h2 className="text-base md:text-lg font-bold mb-4 text-center">
                   Our Students' Success
@@ -1809,11 +1723,13 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
+                  {!(kit.id === "angular" || kit.id === "nodejs") && (
                   <div className="p-2 rounded-lg bg-yellow-50 border border-yellow-200 text-center">
                     <p className="text-xs">
                       <span className="font-semibold">⚡ {Math.max(8, Math.floor(kit.students / 25))}</span> people viewing
                     </p>
                   </div>
+                  )}
 
                   {/* <div className="text-center">
                     <p className="text-xs text-muted-foreground break-words">
@@ -1833,9 +1749,15 @@ export default function CheckoutPage() {
               <div className="mx-3 rounded-lg shadow-lg overflow-hidden">
                 <div className="bg-white p-2 flex items-center justify-between gap-2 min-w-0">
                   <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div className={`w-10 h-10 rounded-md bg-gradient-to-br ${kit.color} flex items-center justify-center text-white flex-shrink-0`}>
-                      {kit.id === "nodejs" ? <NodeIcon size={28} /> : kit.icon}
-                    </div>
+                    {getKitLogo(kit.id) ? (
+                      <div className="w-10 h-10 rounded-md bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
+                        <img src={getKitLogo(kit.id)!} alt={kit.name} className="w-7 h-7 object-contain" />
+                      </div>
+                    ) : (
+                      <div className={`w-10 h-10 rounded-md bg-gradient-to-br ${kit.color} flex items-center justify-center text-white flex-shrink-0`}>
+                        {kit.id === "nodejs" ? <NodeIcon size={28} /> : kit.icon}
+                      </div>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="text-xs text-muted-foreground">Today's Price</p>
                       <div className="flex items-baseline gap-2 flex-wrap">
@@ -1935,8 +1857,8 @@ export default function CheckoutPage() {
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-2">
                   <Users className="w-5 h-5 text-white" />
                 </div>
-                <p className="font-semibold text-sm">{(kit.students + 5892).toLocaleString()}+ Students</p>
-                <p className="text-xs text-muted-foreground mt-1">Join our community</p>
+                <p className="font-semibold text-sm">{(kit.id === "angular" || kit.id === "nodejs") ? "New" : `${(kit.students + 5892).toLocaleString()}+ Students`}</p>
+                <p className="text-xs text-muted-foreground mt-1">{(kit.id === "angular" || kit.id === "nodejs") ? "Just launched" : "Join our community"}</p>
               </div>
               <div>
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -1956,9 +1878,15 @@ export default function CheckoutPage() {
       <div className="fixed left-0 right-0 bottom-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-200 py-3 px-3 sm:px-4 shadow-xl">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 min-w-0">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            <div className={`w-10 h-10 rounded-md bg-gradient-to-br ${kit.color} flex items-center justify-center text-white flex-shrink-0`}>
-              {kit.id === "nodejs" ? <NodeIcon size={24} /> : kit.icon}
-            </div>
+            {getKitLogo(kit.id) ? (
+              <div className="w-10 h-10 rounded-md bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
+                <img src={getKitLogo(kit.id)!} alt={kit.name} className="w-7 h-7 object-contain" />
+              </div>
+            ) : (
+              <div className={`w-10 h-10 rounded-md bg-gradient-to-br ${kit.color} flex items-center justify-center text-white flex-shrink-0`}>
+                {kit.id === "nodejs" ? <NodeIcon size={24} /> : kit.icon}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="text-xs text-muted-foreground">You pay</p>
               <div className="flex items-baseline gap-2 flex-wrap">

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="380" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Token to Provider to Instance</text>
+  <text x="410" y="72" text-anchor="middle" font-size="14" fill="#64748b">The injector is a runtime map from token to recipe</text>
+
+  <!-- Token -->
+  <rect x="50" y="140" width="200" height="90" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="150" y="176" text-anchor="middle" font-size="15" font-weight="700" fill="#1d4ed8">Token (key)</text>
+  <text x="150" y="200" text-anchor="middle" font-size="12" fill="#64748b">a class or</text>
+  <text x="150" y="218" text-anchor="middle" font-size="12" fill="#64748b">InjectionToken</text>
+
+  <line x1="250" y1="185" x2="308" y2="185" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- Provider -->
+  <rect x="310" y="140" width="200" height="90" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="410" y="170" text-anchor="middle" font-size="15" font-weight="700" fill="#7e22ce">Provider (recipe)</text>
+  <text x="410" y="192" text-anchor="middle" font-size="12" fill="#64748b">useClass / useValue</text>
+  <text x="410" y="210" text-anchor="middle" font-size="12" fill="#64748b">useFactory / useExisting</text>
+
+  <line x1="510" y1="185" x2="568" y2="185" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- Instance -->
+  <rect x="570" y="140" width="200" height="90" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="670" y="176" text-anchor="middle" font-size="15" font-weight="700" fill="#15803d">Instance (value)</text>
+  <text x="670" y="200" text-anchor="middle" font-size="12" fill="#64748b">cached per injector</text>
+  <text x="670" y="218" text-anchor="middle" font-size="12" fill="#64748b">returned to inject()</text>
+
+  <text x="410" y="300" text-anchor="middle" font-size="13" fill="#334155">inject(Token) asks the injector, which looks up the provider, runs the recipe once,</text>
+  <text x="410" y="322" text-anchor="middle" font-size="13" fill="#334155">caches the instance, and returns the same instance on every later call.</text>
+
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+</svg>

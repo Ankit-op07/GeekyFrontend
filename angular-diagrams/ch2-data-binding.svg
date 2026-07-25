@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="440" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="44" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">The Four Kinds of Data Binding</text>
+  <text x="410" y="70" text-anchor="middle" font-size="14" fill="#64748b">Which way the data flows between class and template</text>
+
+  <defs>
+    <marker id="arrR" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#334155"/>
+    </marker>
+    <marker id="arrL" markerWidth="10" markerHeight="10" refX="2" refY="3" orient="auto">
+      <path d="M8,0 L0,3 L8,6 Z" fill="#334155"/>
+    </marker>
+  </defs>
+
+  <!-- Class box -->
+  <rect x="40" y="110" width="180" height="290" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="130" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="#1d4ed8">Component class</text>
+  <text x="130" y="164" text-anchor="middle" font-size="13" fill="#64748b">properties + methods</text>
+
+  <!-- Template box -->
+  <rect x="600" y="110" width="180" height="290" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="690" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="#15803d">Template (DOM)</text>
+  <text x="690" y="164" text-anchor="middle" font-size="13" fill="#64748b">what the user sees</text>
+
+  <!-- Interpolation -->
+  <rect x="270" y="118" width="280" height="52" rx="9" fill="#faf5ff" stroke="#d8b4fe"/>
+  <text x="410" y="140" text-anchor="middle" font-size="14" font-weight="700" fill="#7e22ce">Interpolation  {{ value }}</text>
+  <text x="410" y="159" text-anchor="middle" font-size="12" fill="#64748b">class to view (text)</text>
+  <line x1="228" y1="144" x2="266" y2="144" stroke="#334155" stroke-width="2" marker-end="url(#arrR)"/>
+  <line x1="554" y1="144" x2="596" y2="144" stroke="#334155" stroke-width="2" marker-end="url(#arrR)"/>
+
+  <!-- Property binding -->
+  <rect x="270" y="182" width="280" height="52" rx="9" fill="#faf5ff" stroke="#d8b4fe"/>
+  <text x="410" y="204" text-anchor="middle" font-size="14" font-weight="700" fill="#7e22ce">Property  [prop]="value"</text>
+  <text x="410" y="223" text-anchor="middle" font-size="12" fill="#64748b">class to view (any DOM prop)</text>
+  <line x1="228" y1="208" x2="266" y2="208" stroke="#334155" stroke-width="2" marker-end="url(#arrR)"/>
+  <line x1="554" y1="208" x2="596" y2="208" stroke="#334155" stroke-width="2" marker-end="url(#arrR)"/>
+
+  <!-- Event binding -->
+  <rect x="270" y="246" width="280" height="52" rx="9" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="410" y="268" text-anchor="middle" font-size="14" font-weight="700" fill="#b91c1c">Event  (click)="fn()"</text>
+  <text x="410" y="287" text-anchor="middle" font-size="12" fill="#64748b">view to class (user action)</text>
+  <line x1="596" y1="272" x2="558" y2="272" stroke="#334155" stroke-width="2" marker-end="url(#arrL)"/>
+  <line x1="266" y1="272" x2="228" y2="272" stroke="#334155" stroke-width="2" marker-end="url(#arrL)"/>
+
+  <!-- Two-way -->
+  <rect x="270" y="310" width="280" height="60" rx="9" fill="#fff7ed" stroke="#fdba74"/>
+  <text x="410" y="333" text-anchor="middle" font-size="14" font-weight="700" fill="#c2410c">Two-way  [(ngModel)]="value"</text>
+  <text x="410" y="353" text-anchor="middle" font-size="12" fill="#64748b">both directions = [x] + (xChange)</text>
+  <line x1="228" y1="340" x2="266" y2="340" stroke="#334155" stroke-width="2" marker-end="url(#arrR)"/>
+  <line x1="596" y1="340" x2="558" y2="340" stroke="#334155" stroke-width="2" marker-end="url(#arrL)"/>
+
+  <text x="410" y="408" text-anchor="middle" font-size="13" fill="#64748b">Square brackets = into the view. Parentheses = out to the class.</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Flexible connected position strategy</text>
+  <text x="410" y="68" text-anchor="middle" font-size="14" fill="#64748b">Origin point on the trigger meets an overlay point on the panel</text>
+  <g font-size="13">
+    <rect x="120" y="120" width="220" height="60" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="140" y="156" font-size="15" font-weight="700" fill="#1d4ed8">Trigger (origin)</text>
+    <circle cx="340" cy="180" r="6" fill="#dc2626"/>
+    <text x="228" y="200" text-anchor="middle" font-size="11" fill="#b91c1c">originX:end originY:bottom</text>
+
+    <rect x="340" y="210" width="220" height="90" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="360" y="238" font-size="15" font-weight="700" fill="#7e22ce">Overlay panel</text>
+    <text x="360" y="262" fill="#334155">menu / dropdown</text>
+    <circle cx="340" cy="210" r="6" fill="#16a34a"/>
+    <text x="450" y="322" text-anchor="middle" font-size="11" fill="#15803d">overlayX:start overlayY:top</text>
+
+    <rect x="600" y="110" width="180" height="200" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="620" y="138" font-size="15" font-weight="700" fill="#b45309">Fallbacks</text>
+    <text x="620" y="164" fill="#334155">withPositions([...])</text>
+    <text x="620" y="188" fill="#64748b">tries in order</text>
+    <text x="620" y="216" fill="#334155">flips when it</text>
+    <text x="620" y="236" fill="#334155">would overflow</text>
+    <text x="620" y="262" fill="#64748b">withPush(true)</text>
+    <text x="620" y="286" fill="#64748b">keeps it on-screen</text>
+
+    <rect x="40" y="336" width="740" height="48" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="60" y="366" fill="#334155">Position pair = { originX/Y, overlayX/Y }. First that fits in the viewport wins.</text>
+  </g>
+</svg>

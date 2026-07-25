@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="400" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">CDK a11y: FocusTrap keeps Tab inside a dialog</text>
+  <text x="410" y="68" text-anchor="middle" font-size="14" fill="#64748b">Invisible anchors wrap the region and loop focus</text>
+  <defs>
+    <marker id="a12ft" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#9333ea"/>
+    </marker>
+  </defs>
+  <g font-size="13">
+    <rect x="200" y="100" width="420" height="230" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="410" y="126" text-anchor="middle" font-size="15" font-weight="700" fill="#7e22ce">cdkTrapFocus region</text>
+
+    <rect x="230" y="140" width="360" height="20" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1"/>
+    <text x="410" y="155" text-anchor="middle" font-size="11" fill="#64748b">start anchor (tabindex 0)</text>
+
+    <rect x="250" y="172" width="320" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="270" y="197" fill="#1d4ed8" font-weight="700">First field  (autofocus target)</text>
+
+    <rect x="250" y="222" width="320" height="40" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="270" y="247" fill="#15803d" font-weight="700">Confirm button</text>
+
+    <rect x="230" y="278" width="360" height="20" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1"/>
+    <text x="410" y="293" text-anchor="middle" font-size="11" fill="#64748b">end anchor (tabindex 0)</text>
+
+    <path d="M410 298 C 700 320, 700 150, 410 150" fill="none" stroke="#9333ea" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#a12ft)"/>
+    <text x="640" y="230" fill="#7e22ce" font-size="12">Tab past end</text>
+    <text x="640" y="248" fill="#7e22ce" font-size="12">loops to start</text>
+
+    <rect x="40" y="348" width="740" height="40" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="60" y="374" fill="#334155">Also: LiveAnnouncer.announce() for screen readers · FocusMonitor tracks focus origin (mouse/keyboard).</text>
+  </g>
+</svg>

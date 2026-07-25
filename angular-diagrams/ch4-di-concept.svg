@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="430" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="46" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Without DI vs With DI</text>
+
+  <!-- Left: without DI -->
+  <rect x="40" y="80" width="340" height="300" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="210" y="112" text-anchor="middle" font-size="16" font-weight="700" fill="#b91c1c">Without DI (new)</text>
+
+  <rect x="80" y="140" width="260" height="52" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="210" y="164" text-anchor="middle" font-size="13" font-weight="600" fill="#334155">OrderComponent</text>
+  <text x="210" y="182" text-anchor="middle" font-size="12" fill="#64748b">new HttpService()</text>
+
+  <line x1="210" y1="192" x2="210" y2="228" stroke="#dc2626" stroke-width="2" marker-end="url(#red)"/>
+
+  <rect x="80" y="230" width="260" height="52" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="210" y="254" text-anchor="middle" font-size="13" font-weight="600" fill="#334155">HttpService (hard-wired)</text>
+  <text x="210" y="272" text-anchor="middle" font-size="12" fill="#64748b">cannot swap or mock</text>
+
+  <text x="210" y="318" text-anchor="middle" font-size="12" fill="#b91c1c">Tight coupling</text>
+  <text x="210" y="340" text-anchor="middle" font-size="12" fill="#b91c1c">Hard to test</text>
+  <text x="210" y="362" text-anchor="middle" font-size="12" fill="#b91c1c">Duplicate instances</text>
+
+  <!-- Right: with DI -->
+  <rect x="440" y="80" width="340" height="300" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="610" y="112" text-anchor="middle" font-size="16" font-weight="700" fill="#15803d">With DI (inject)</text>
+
+  <rect x="480" y="140" width="260" height="52" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="610" y="164" text-anchor="middle" font-size="13" font-weight="600" fill="#334155">OrderComponent</text>
+  <text x="610" y="182" text-anchor="middle" font-size="12" fill="#64748b">inject(HttpService)</text>
+
+  <line x1="610" y1="192" x2="610" y2="228" stroke="#16a34a" stroke-width="2" marker-end="url(#green)"/>
+
+  <rect x="480" y="230" width="260" height="52" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="610" y="254" text-anchor="middle" font-size="13" font-weight="600" fill="#334155">Injector supplies instance</text>
+  <text x="610" y="272" text-anchor="middle" font-size="12" fill="#64748b">swappable + shared</text>
+
+  <text x="610" y="318" text-anchor="middle" font-size="12" fill="#15803d">Loose coupling</text>
+  <text x="610" y="340" text-anchor="middle" font-size="12" fill="#15803d">Easy to mock in tests</text>
+  <text x="610" y="362" text-anchor="middle" font-size="12" fill="#15803d">Single shared singleton</text>
+
+  <defs>
+    <marker id="red" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"/></marker>
+    <marker id="green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#16a34a"/></marker>
+  </defs>
+</svg>

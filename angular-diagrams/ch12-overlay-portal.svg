@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="440" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">CDK Overlay + Portal</text>
+  <text x="410" y="68" text-anchor="middle" font-size="14" fill="#64748b">Content escapes its container into a top-level overlay layer</text>
+  <defs>
+    <marker id="a12op" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <g font-size="13">
+    <rect x="40" y="96" width="330" height="230" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="60" y="122" font-size="15" font-weight="700" fill="#1d4ed8">Your component tree</text>
+    <rect x="70" y="140" width="270" height="50" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="90" y="170" fill="#334155">Portal (component or template)</text>
+    <text x="70" y="220" fill="#64748b">overlay-clipping: parent overflow,</text>
+    <text x="70" y="240" fill="#64748b">z-index and transforms don't apply.</text>
+    <text x="70" y="272" fill="#334155">overlayRef.attach(portal)</text>
+    <text x="70" y="296" fill="#64748b">detach() / dispose() to close</text>
+
+    <rect x="450" y="96" width="330" height="230" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="470" y="122" font-size="15" font-weight="700" fill="#7e22ce">cdk-overlay-container</text>
+    <text x="470" y="146" fill="#64748b">appended to document.body</text>
+    <rect x="480" y="160" width="270" height="46" rx="10" fill="#000000" opacity="0.35"/>
+    <text x="490" y="188" fill="#ffffff" font-weight="700">backdrop (scrim)</text>
+    <rect x="500" y="216" width="230" height="90" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="1.5"/>
+    <text x="520" y="244" fill="#7e22ce" font-weight="700">overlay pane</text>
+    <text x="520" y="268" fill="#334155">the detached portal content</text>
+    <text x="520" y="290" fill="#64748b">positioned by a PositionStrategy</text>
+
+    <line x1="342" y1="165" x2="498" y2="235" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#a12op)"/>
+    <text x="360" y="185" fill="#334155">attach → renders here</text>
+
+    <rect x="40" y="350" width="740" height="66" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="60" y="378" font-size="15" font-weight="700" fill="#15803d">Why</text>
+    <text x="60" y="400" fill="#334155">Dropdowns/dialogs live above everything, unclipped, backdrop-dismissable, positioned relative to a trigger.</text>
+  </g>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <rect x="0" y="0" width="820" height="440" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="410" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#0f172a">Material 3 theming: palette → tokens → components</text>
+  <text x="410" y="68" text-anchor="middle" font-size="14" fill="#64748b">mat.theme() turns a config into CSS custom properties</text>
+  <defs>
+    <marker id="a12tk" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <g font-size="13">
+    <rect x="40" y="96" width="230" height="120" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="60" y="122" font-size="15" font-weight="700" fill="#7e22ce">1. Theme config</text>
+    <text x="60" y="148" fill="#334155">color: primary palette</text>
+    <text x="60" y="170" fill="#334155">typography: brand font</text>
+    <text x="60" y="192" fill="#334155">density: 0</text>
+    <text x="60" y="210" fill="#64748b">mat.theme((...))</text>
+
+    <rect x="295" y="96" width="230" height="120" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="315" y="122" font-size="15" font-weight="700" fill="#1d4ed8">2. Generated tokens</text>
+    <text x="315" y="148" fill="#334155">--mat-sys-primary</text>
+    <text x="315" y="170" fill="#334155">--mat-sys-surface</text>
+    <text x="315" y="192" fill="#334155">--mat-sys-on-surface</text>
+    <text x="315" y="210" fill="#64748b">CSS custom properties</text>
+
+    <rect x="550" y="96" width="230" height="120" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="570" y="122" font-size="15" font-weight="700" fill="#15803d">3. Components read</text>
+    <text x="570" y="148" fill="#334155">mat-button</text>
+    <text x="570" y="170" fill="#334155">mat-card</text>
+    <text x="570" y="192" fill="#334155">mat-form-field</text>
+    <text x="570" y="210" fill="#64748b">auto-styled by tokens</text>
+
+    <line x1="270" y1="156" x2="293" y2="156" stroke="#64748b" stroke-width="2" marker-end="url(#a12tk)"/>
+    <line x1="525" y1="156" x2="548" y2="156" stroke="#64748b" stroke-width="2" marker-end="url(#a12tk)"/>
+
+    <rect x="40" y="248" width="360" height="80" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="60" y="276" font-size="15" font-weight="700" fill="#b45309">Light (default)</text>
+    <text x="60" y="300" fill="#334155">:root { color-scheme: light; }</text>
+    <text x="60" y="320" fill="#64748b">tokens resolve to light values</text>
+
+    <rect x="420" y="248" width="360" height="80" rx="12" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
+    <text x="440" y="276" font-size="15" font-weight="700" fill="#e2e8f0">Dark</text>
+    <text x="440" y="300" fill="#cbd5e1">color-scheme: light dark;</text>
+    <text x="440" y="320" fill="#94a3b8">same tokens, dark values</text>
+
+    <rect x="40" y="356" width="740" height="60" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text x="60" y="384" font-size="15" font-weight="700" fill="#b91c1c">M3 win</text>
+    <text x="60" y="404" fill="#334155">One token system; override a variable, not a component's internal Sass.</text>
+  </g>
+</svg>
