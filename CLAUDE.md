@@ -120,6 +120,36 @@ measure whether learners want to practise (the ≥30% attempt-rate gate).
   denominator. PRD §15 says that is the population the gate actually depends on, so treat the buyer
   rate as health, not go/no-go, until a preview-side activity signal exists.
 
+## Bulk access + email campaigns (`/admin/campaigns`)
+
+For rolling a kit out to every past buyer when the list is bigger than one day's Gmail allowance
+(~400-500). `EmailCampaign` holds the settings; **`CampaignRecipient` is one row per (campaign,
+email) and is the only source of truth for who has been emailed.**
+
+- **Why not `/admin/kit-onboarding`.** That screen infers "still needs an email" from *has the user
+  set a password* + *were they mailed in the last 2 days*. Both are proxies: a buyer who never clicks
+  is re-mailed every third day, and its `limit` without a ledger re-slices the **same** first N
+  buyers every run. The ledger exists so "send the next 400" means the next 400 never sent to.
+- **⚠️ The two screens don't share state.** Sends from `/admin/kit-onboarding` write no
+  `CampaignRecipient` rows, so they neither count against the campaign's daily cap nor mark anyone
+  done. Don't run both against the same kit.
+- **Claiming is atomic** — `findOneAndUpdate({status:'pending'} → 'sending')`. That, plus the unique
+  `(campaignId, email)` index, is what makes a double-click or two open tabs safe. Rows stranded in
+  `sending` by a killed request are requeued after 30 min (a possible duplicate beats a silent drop).
+- **The daily cap is counted across ALL campaigns** (`sentAt >= startOfIstDay()`) because the quota
+  belongs to the Gmail account, not the campaign. Test sends deliberately bypass the ledger, so they
+  consume real quota **without** being counted — keep them to a handful.
+- **`grantPlanName` must be a key of `PLAN_TO_SLUGS`**, else the grant writes a string
+  `getAllowedSlugs()` maps to nothing: access looks granted in the DB, learner still locked out. The
+  create endpoint rejects unknown names for this reason.
+- **Access is granted before the email is sent**, so a bounce never costs someone content they paid
+  for; a retry only re-sends the mail.
+- Two bodies (`lib/email/kit-emails.ts`), chosen per recipient **at send time**: users who already
+  have a password get "your kit is live, log in"; everyone else gets the set-password onboarding
+  mail. Sending a set-password link to someone who logs in fine reads as a phish.
+- Batches are 25 per HTTP request, driven in a loop by the client — a serverless function cannot
+  hold hundreds of SMTP sends open. Closing the tab loses nothing.
+
 ## Known weak spots (from graphify analysis — see `graphify-out/GRAPH_REPORT.md`)
 - `Dashboard Page` and `Ui Sidebar` communities have low cohesion (~0.05) — their pieces are loosely
   related; if touching dashboard code, don't assume nodes in the same community are actually coupled.
