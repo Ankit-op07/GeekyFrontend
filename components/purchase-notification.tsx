@@ -166,9 +166,15 @@ export function PurchaseNotifications() {
         {body}
       </div>
 
-      {/* Mobile — bottom, full width */}
+      {/* Mobile — bottom, full width.
+          This is mounted in the ROOT layout, so it cannot know about a
+          page-level fixed CTA bar (the buy bar on /checkout/[kit]) and would
+          sit underneath one. Pages that own the bottom of the screen publish
+          their bar's height as `--page-cta-offset` on <html>; everywhere else
+          the 0px fallback keeps the original position. */}
       <div
-        className={`fixed bottom-4 left-4 right-4 z-40 sm:hidden transform transition-all duration-500 ease-out ${
+        style={{ bottom: "calc(1rem + var(--page-cta-offset, 0px))" }}
+        className={`fixed left-4 right-4 z-40 sm:hidden transform transition-all duration-500 ease-out ${
           isVisible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
         }`}
       >

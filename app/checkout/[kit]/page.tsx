@@ -1001,6 +1001,29 @@ export default function CheckoutPage() {
     setKit(kitsData[kitId])
   }, [kitId, router])
 
+  /* Tell root-layout overlays how much of the bottom of the screen this page
+   * has claimed, so the purchase-notification toast stacks above the buy bar
+   * instead of behind it. Only the mobile bar is fixed (`lg:hidden`), so the
+   * offset is cleared above that breakpoint — otherwise the toast would float
+   * for no reason on desktop. */
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const apply = () => {
+      document.documentElement.style.setProperty(
+        '--page-cta-offset',
+        // bar = pt-3 (12) + h-12 (48) + pb-3 (12) + 1px border, plus the
+        // iPhone home-indicator inset the bar also pads for.
+        mq.matches ? '0px' : 'calc(73px + env(safe-area-inset-bottom))',
+      )
+    }
+    apply()
+    mq.addEventListener('change', apply)
+    return () => {
+      mq.removeEventListener('change', apply)
+      document.documentElement.style.removeProperty('--page-cta-offset')
+    }
+  }, [])
+
   useEffect(() => {
     if (!kit || !kit.testimonials || kit.testimonials.length === 0) {
       setSelectedTestimonial(0)
@@ -1027,21 +1050,26 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white via-gray-50/50 to-white pt-12 lg:pt-8 overflow-x-hidden">
+    /* pt matches SiteHeader's real height (h-16 / sm:h-20) — it is `fixed`, so it
+       takes no space in flow and any smaller offset tucks the breadcrumb under it.
+       pb clears the fixed mobile purchase bar; without it the bar sits on top of
+       the footer. */
+    <main className="min-h-screen bg-gradient-to-b from-white via-gray-50/50 to-white pt-16 sm:pt-20 pb-28 lg:pb-0 overflow-x-hidden">
       <SiteHeader />
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 md:py-8">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 md:mb-6 overflow-x-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 md:py-8">
+        {/* Breadcrumb — the middle crumb is noise on a 360px screen, so it only
+            appears once there is room for it. */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4 md:mb-6 min-w-0">
           <Link href="/" className="hover:text-primary flex items-center gap-1 flex-shrink-0">
-            <ArrowLeft className="w-3 h-3" />
+            <ArrowLeft className="w-3.5 h-3.5" />
             Home
           </Link>
+          <ChevronRight className="w-3 h-3 flex-shrink-0 hidden sm:block" />
+          <span className="flex-shrink-0 hidden sm:block">Checkout</span>
           <ChevronRight className="w-3 h-3 flex-shrink-0" />
-          <span className="flex-shrink-0">Checkout</span>
-          <ChevronRight className="w-3 h-3 flex-shrink-0" />
-          <span className="text-foreground font-medium truncate">{kit.name}</span>
-        </div>
+          <span className="text-foreground font-medium truncate min-w-0">{kit.name}</span>
+        </nav>
 
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Main Content */}
@@ -1743,95 +1771,11 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Mobile Checkout Card - IMPROVED */}
-          <div className="lg:hidden">
-            <div className="sticky bottom-20 z-40">
-              <div className="mx-3 rounded-lg shadow-lg overflow-hidden">
-                <div className="bg-white p-2 flex items-center justify-between gap-2 min-w-0">
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    {getKitLogo(kit.id) ? (
-                      <div className="w-10 h-10 rounded-md bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
-                        <img src={getKitLogo(kit.id)!} alt={kit.name} className="w-7 h-7 object-contain" />
-                      </div>
-                    ) : (
-                      <div className={`w-10 h-10 rounded-md bg-gradient-to-br ${kit.color} flex items-center justify-center text-white flex-shrink-0`}>
-                        {kit.id === "nodejs" ? <NodeIcon size={28} /> : kit.icon}
-                      </div>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs text-muted-foreground">Today's Price</p>
-                      <div className="flex items-baseline gap-2 flex-wrap">
-                        <span className="text-base font-bold">₹{kit.price}</span>
-                        <span className="text-xs line-through text-muted-foreground">₹{kit.originalPrice}</span>
-                        <Badge className="bg-green-600 text-white text-xs">{kit.discount}%</Badge>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <button
-                      onClick={() => setMobileCheckoutOpen(!mobileCheckoutOpen)}
-                      aria-expanded={mobileCheckoutOpen}
-                      aria-controls="mobile-checkout-panel"
-                      className="p-2 rounded-md bg-gray-50 hover:bg-gray-100 focus:ring-2 focus:ring-offset-1 focus:ring-primary"
-                      aria-label={mobileCheckoutOpen ? "Close checkout" : "Open checkout"}
-                    >
-                      {mobileCheckoutOpen ? <X className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4 transform rotate-180" />}
-                    </button>
-                    <div className="w-20">
-                      <PaymentButton
-                        kitId={SLUG_TO_KIT_ID[kit.id] || kit.id}
-                        buttonText="Buy"
-                        className="w-full h-10 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {mobileCheckoutOpen && (
-                  <div id="mobile-checkout-panel" className="bg-white p-3 border-t">
-                    <div className="mb-2">
-                      <div className="flex items-center justify-between text-sm mb-1">
-                        <span>Total Value</span>
-                        <span className="line-through text-muted-foreground text-xs">₹{totalValue.toLocaleString()}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-base font-semibold">
-                        <span>You Pay</span>
-                        <span>₹{kit.price}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1">You save ₹{savings.toLocaleString()}</p>
-                    </div>
-
-                    <div className="space-y-1 mb-2">
-                      {kit.included.slice(0, 2).map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between text-sm gap-2 min-w-0">
-                          <div className="flex items-center gap-2 min-w-0 flex-1">
-                            <div className="text-green-500 flex-shrink-0">{item.icon}</div>
-                            <span className="truncate">{item.text}</span>
-                          </div>
-                          {item.value && (
-                            <span className="text-muted-foreground font-medium text-xs flex-shrink-0">{item.value}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mb-2">
-                      <PaymentButton
-                        kitId={SLUG_TO_KIT_ID[kit.id] || kit.id}
-                        buttonText="Get Instant Access Now"
-                        className="w-full h-10 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600"
-                      />
-                    </div>
-
-                    <div className="text-center text-xs text-muted-foreground">
-                      <p>Secure payment • 30-day refund • Instant access</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          {/* On mobile the purchase UI is the fixed bar at the foot of the page
+              (below). There is deliberately no second in-flow checkout card
+              here: the old one was `sticky bottom-20`, so it floated directly
+              on top of that bar — two price blocks and two Buy buttons stacked
+              on each other, eating ~160px of an already small viewport. */}
 
         </div>
 
@@ -1874,33 +1818,87 @@ export default function CheckoutPage() {
 
       <SiteFooter />
 
-      {/* Sticky Bottom CTA - IMPROVED */}
-      <div className="fixed left-0 right-0 bottom-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-200 py-3 px-3 sm:px-4 shadow-xl">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 min-w-0">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            {getKitLogo(kit.id) ? (
-              <div className="w-10 h-10 rounded-md bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
-                <img src={getKitLogo(kit.id)!} alt={kit.name} className="w-7 h-7 object-contain" />
+      {/* ── Mobile purchase bar ───────────────────────────────────────────
+          The single buy CTA below `lg`. Hidden on desktop, which already has
+          the sticky sidebar card — showing both there was two CTAs competing
+          for the same click.
+
+          The price row is itself the toggle for a details sheet, so the whole
+          left half is one big tap target instead of a 32px icon button, and
+          the summary the old floating card carried lives in the sheet. */}
+      <div className="lg:hidden fixed inset-x-0 bottom-0 z-50">
+        {/* Tapping outside closes the sheet — expected of anything that covers
+            the page, and it saves a precise hit on the small chevron. */}
+        {mobileCheckoutOpen && (
+          <div
+            className="fixed inset-0 bg-black/20 -z-10"
+            onClick={() => setMobileCheckoutOpen(false)}
+            aria-hidden
+          />
+        )}
+
+        <div className="bg-white/97 backdrop-blur border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+          {/* Details sheet — capped and scrollable so a long list can never
+              push the Buy button off a short (landscape) screen. */}
+          {mobileCheckoutOpen && (
+            <div id="mobile-checkout-panel" className="px-4 pt-4 pb-3 border-b border-gray-100 max-h-[45vh] overflow-y-auto overscroll-contain">
+              <div className="rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 p-3 mb-3">
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span className="text-muted-foreground">Total value</span>
+                  <span className="line-through text-muted-foreground">₹{totalValue.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold">You pay today</span>
+                  <span className="text-xl font-bold text-green-700">₹{kit.price}</span>
+                </div>
+                <p className="text-xs text-green-700 font-medium mt-1">You save ₹{savings.toLocaleString()}</p>
               </div>
-            ) : (
-              <div className={`w-10 h-10 rounded-md bg-gradient-to-br ${kit.color} flex items-center justify-center text-white flex-shrink-0`}>
-                {kit.id === "nodejs" ? <NodeIcon size={24} /> : kit.icon}
-              </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="text-xs text-muted-foreground">You pay</p>
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-base sm:text-lg font-bold">₹{kit.price}</span>
-                <span className="text-xs line-through text-muted-foreground">₹{kit.originalPrice}</span>
-              </div>
-              <p className="text-xs text-green-600 font-medium truncate">{kit.discount}% OFF • Save ₹{kit.originalPrice - kit.price}</p>
+
+              <p className="text-xs font-semibold text-gray-700 mb-2">Instant access to</p>
+              <ul className="space-y-2 mb-1">
+                {kit.included.slice(0, 4).map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-2.5 text-sm min-w-0">
+                    <span className="text-green-500 flex-shrink-0">{item.icon}</span>
+                    <span className="flex-1 min-w-0 truncate">{item.text}</span>
+                    {item.value && (
+                      <span className="text-muted-foreground text-xs flex-shrink-0">{item.value}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          )}
+
+          {/* Bar. pb respects the iPhone home-indicator inset so the button is
+              never half under it. */}
+          <div className="flex items-center gap-3 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <button
+              onClick={() => setMobileCheckoutOpen(!mobileCheckoutOpen)}
+              aria-expanded={mobileCheckoutOpen}
+              aria-controls="mobile-checkout-panel"
+              className="flex items-center gap-2 min-w-0 h-12 pr-2 rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <span className="min-w-0">
+                <span className="flex items-baseline gap-1.5">
+                  <span className="text-lg font-bold">₹{kit.price}</span>
+                  <span className="text-xs line-through text-muted-foreground">₹{kit.originalPrice}</span>
+                </span>
+                <span className="block text-[11px] text-green-600 font-medium whitespace-nowrap">
+                  {kit.discount}% off · save ₹{(kit.originalPrice - kit.price).toLocaleString()}
+                </span>
+              </span>
+              {/* Points UP to open (the sheet rises), DOWN to dismiss it. */}
+              <ChevronRight
+                className={`w-4 h-4 text-muted-foreground flex-shrink-0 transition-transform ${mobileCheckoutOpen ? "rotate-90" : "-rotate-90"}`}
+              />
+            </button>
+
+            {/* The button takes the remaining width — a full-width primary
+                action is far easier to hit with a thumb than a fixed 80px one. */}
             <PaymentButton
               kitId={SLUG_TO_KIT_ID[kit.id] || kit.id}
-              buttonText={`Buy Now • ₹${kit.price}`}
-              className="h-10 sm:h-12 px-3 sm:px-6 text-xs sm:text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 shadow-md whitespace-nowrap"
+              buttonText="Get instant access"
+              className="flex-1 h-12 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-md"
             />
           </div>
         </div>

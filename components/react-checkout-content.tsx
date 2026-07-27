@@ -457,11 +457,19 @@ export function ReactCheckoutContent() {
 
                 {isOpen && (
                   <div className="px-4 pb-4 pt-0">
-                    <div className="ml-[52px] space-y-2">
+                    {/* The 52px indent aligns the topics under the module title,
+                        past the 40px icon + 12px gap. On a phone that indent
+                        costs more than the alignment is worth: it left 233px for
+                        badges that are 254px wide, so the longest topics were
+                        cut off mid-word. Indent from `sm` up only. */}
+                    <div className="ml-0 sm:ml-[52px] space-y-2">
                       <div className="flex flex-wrap gap-1.5">
                         {mod.topics.map((topic, tidx) => (
-                          <Badge key={tidx} variant="secondary" className="text-xs bg-white border border-gray-200">
-                            <Check className="w-3 h-3 text-green-500 mr-1" />
+                          /* Badge is `whitespace-nowrap` by default, so a long
+                             topic cannot wrap and simply overflows. Allow it to
+                             break onto a second line on narrow screens. */
+                          <Badge key={tidx} variant="secondary" className="text-xs bg-white border border-gray-200 whitespace-normal text-left h-auto py-1">
+                            <Check className="w-3 h-3 text-green-500 mr-1 flex-shrink-0" />
                             {topic}
                           </Badge>
                         ))}
@@ -651,15 +659,24 @@ export function ReactCheckoutContent() {
           <Award className="w-5 h-5 text-yellow-600 flex-shrink-0" />
           Why This Kit vs Free Resources?
         </h2>
-        <div className="overflow-x-auto">
+        {/* `w-full` alone let the 4 columns SQUASH to fit 390px: the "This Kit"
+            pill collapsed into a circle with its two words stacked inside, which
+            reads as a broken layout.
+
+            Widening the table and letting it scroll fixes the squash but hides
+            the "This Kit" column — the entire point of the comparison — behind a
+            horizontal scroll nobody discovers. So on phones the weakest column
+            (Blogs) is dropped instead, and the three that carry the argument fit
+            on screen. Everything is still there from `sm` up. */}
+        <div className="overflow-x-auto -mx-1 px-1">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b-2 border-gray-200">
                 <th className="text-left py-3 px-2 font-semibold text-gray-700">Feature</th>
-                <th className="text-center py-3 px-2"><span className="text-gray-500 text-xs">📺 YouTube</span></th>
-                <th className="text-center py-3 px-2"><span className="text-gray-500 text-xs">📝 Blogs</span></th>
+                <th className="text-center py-3 px-2"><span className="text-gray-500 text-xs whitespace-nowrap">📺 YouTube</span></th>
+                <th className="text-center py-3 px-2 hidden sm:table-cell"><span className="text-gray-500 text-xs whitespace-nowrap">📝 Blogs</span></th>
                 <th className="text-center py-3 px-2">
-                  <span className="inline-flex items-center gap-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-2.5 py-1 rounded-full text-xs font-bold">⭐ This Kit</span>
+                  <span className="inline-flex items-center gap-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-2 sm:px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold whitespace-nowrap">⭐ This Kit</span>
                 </th>
               </tr>
             </thead>
@@ -679,7 +696,7 @@ export function ReactCheckoutContent() {
                   <td className="py-3 px-2 text-center">
                     {row.yt === true ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : row.yt === "partial" ? <span className="text-yellow-500 text-sm">~</span> : <X className="w-5 h-5 text-red-400 mx-auto" />}
                   </td>
-                  <td className="py-3 px-2 text-center">
+                  <td className="py-3 px-2 text-center hidden sm:table-cell">
                     {row.blog === true ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : row.blog === "partial" ? <span className="text-yellow-500 text-sm">~</span> : <X className="w-5 h-5 text-red-400 mx-auto" />}
                   </td>
                   <td className="py-3 px-2 text-center bg-cyan-50/50">
