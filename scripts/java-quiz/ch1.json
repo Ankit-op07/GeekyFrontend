@@ -1,0 +1,342 @@
+{
+  "_comment": [
+    "Java Interview Kit — Chapter 1 quiz questions (PRD-009 §5.1).",
+    "",
+    "Keyed by TOPIC SLUG, not topicId: slugs are stable and exist before the kit",
+    "is seeded, whereas topicIds only exist afterwards. scripts/java-quiz-export.js",
+    "resolves slug -> topicId against the DB and writes the authored/*.json files",
+    "that scripts/quiz-insert-authored.ts consumes, so that script stays the only",
+    "thing that writes quiz rows.",
+    "",
+    "EVERY question here is type 'concept'. The 'predict-output' path is verified",
+    "by EXECUTING the snippet in a Node vm (lib/quiz/verify-output.ts), which",
+    "cannot run Java — so a Java question can never legitimately earn",
+    "verifiedBy:'vm'. These can only reach 'live' via a blind peer solve."
+  ],
+  "topics": {
+    "jdk-jre-jvm": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Which statement about the JVM is most accurate?",
+          "options": [
+            "The JVM is a single program written by Oracle and shipped only with the Oracle JDK",
+            "The JVM is another name for the JDK's compiler, javac",
+            "The JVM is a specification, with multiple implementations such as HotSpot and OpenJ9",
+            "The JVM is the set of core class libraries like java.lang and java.util"
+          ],
+          "correctIndex": 2,
+          "explanation": "Oracle publishes the Java Virtual Machine Specification, which defines an abstract machine — its instruction set, memory areas and class file format. Anyone may implement it: HotSpot is the common implementation, Eclipse OpenJ9 is another. The class libraries are the JRE layer, and javac is a JDK tool, not the JVM.",
+          "difficulty": "medium",
+          "tags": ["jvm", "fundamentals"],
+          "citation": "The concept, simply — 'the JVM is a specification'"
+        },
+        {
+          "type": "concept",
+          "prompt": "You install a Java runtime on a build server and `javac` is not found. What is the most likely cause?",
+          "options": [
+            "You installed a runtime-only distribution; the compiler ships only with the JDK",
+            "javac was removed from Java in version 11 and replaced by jlink",
+            "javac only exists on Linux builds of Java",
+            "The JVM must be started before javac becomes available"
+          ],
+          "correctIndex": 0,
+          "explanation": "Compilation tools live in the JDK. A runtime (historically the JRE) contains the JVM and the class libraries — enough to run a program, not to build one. jlink did not replace javac; it builds trimmed runtime images.",
+          "difficulty": "easy",
+          "tags": ["jdk", "tooling"],
+          "citation": "How it works — the JDK tool table"
+        },
+        {
+          "type": "concept",
+          "prompt": "An application compiled on JDK 17 fails on a Java 11 server with UnsupportedClassVersionError. What is the correct fix?",
+          "options": [
+            "Catch the error at startup and fall back to an older code path",
+            "Recompile with -source 11 -target 11",
+            "Raise the server's -Xmx so the newer classes fit in memory",
+            "Recompile with --release 11"
+          ],
+          "correctIndex": 3,
+          "explanation": "The class file's major version is newer than the running JVM accepts — Java is backward but not forward compatible. `--release 11` emits the older class format AND restricts you to the Java 11 API. The older `-source`/`-target` pair still compiles against the current JDK's libraries, so a newer API call survives compilation and throws NoSuchMethodError at run time.",
+          "difficulty": "hard",
+          "tags": ["compatibility", "javac"],
+          "citation": "Under the hood — UnsupportedClassVersionError and --release"
+        },
+        {
+          "type": "concept",
+          "prompt": "\"Java is platform independent.\" Which refinement of that claim is correct?",
+          "options": [
+            "Both the bytecode and the JVM are platform independent",
+            "The bytecode is platform independent; the JVM is a platform-specific native binary",
+            "The JVM is platform independent; the bytecode is compiled per platform",
+            "Neither is platform independent — javac produces native code for the build machine"
+          ],
+          "correctIndex": 1,
+          "explanation": "javac emits bytecode that targets the abstract JVM, so one .class file is byte-for-byte usable everywhere. The JVM itself must be a native binary compiled for each OS and CPU — that is precisely what allows the bytecode to stay portable.",
+          "difficulty": "medium",
+          "tags": ["portability", "jvm"],
+          "citation": "Interview lens — 'Is Java platform independent? Fully?'"
+        }
+      ]
+    },
+
+    "how-java-runs": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Is Java compiled or interpreted?",
+          "options": [
+            "Interpreted — the JVM reads the .java source line by line",
+            "Both: javac compiles to bytecode ahead of time, then the JVM interprets it and JIT-compiles hot methods to native code",
+            "Compiled — javac produces native machine code for the target platform",
+            "Neither; the JVM executes the abstract syntax tree directly"
+          ],
+          "correctIndex": 1,
+          "explanation": "There are two compilation steps with an interpreter between them. javac compiles source to portable bytecode ahead of time. At run time the JVM interprets that bytecode while profiling it, and the JIT compiles the methods that turn out to be hot into native machine code.",
+          "difficulty": "easy",
+          "tags": ["jit", "compilation"],
+          "citation": "The concept, simply — the two-step split"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why can the JIT compiler produce optimisations that an ahead-of-time compiler cannot?",
+          "options": [
+            "It has more time available, because it runs while the program is idle",
+            "It can rewrite the original source code before compiling it",
+            "It targets bytecode rather than machine code, which is easier to optimise",
+            "It observes real runtime behaviour — actual branch frequencies and receiver types — and can speculate, with guards that deoptimise if the assumption breaks"
+          ],
+          "correctIndex": 3,
+          "explanation": "The JIT's advantage is information, not time. Profiling tells it which branch is actually taken and which single class a virtual call site actually sees, enabling aggressive inlining and monomorphic dispatch. Those bets are guarded: if a guard fails, the JVM deoptimises back to the interpreter and recompiles with the corrected profile.",
+          "difficulty": "hard",
+          "tags": ["jit", "optimisation"],
+          "citation": "How it works — profiling, and Interview lens on deoptimisation"
+        },
+        {
+          "type": "concept",
+          "prompt": "A load test shows the service is much slower during its first few seconds. What is the standard explanation?",
+          "options": [
+            "Warm-up: classes are still being loaded lazily and code is still interpreted until the JIT compiles the hot methods",
+            "The garbage collector always runs a full collection at startup",
+            "The JVM verifies every class on the classpath before accepting the first request",
+            "Bytecode is decompressed on first use and cached afterwards"
+          ],
+          "correctIndex": 0,
+          "explanation": "Classes load lazily on first use, and the JVM starts by interpreting while it gathers profiling data. Once methods cross their compilation thresholds the JIT emits native code and throughput climbs. This is exactly why benchmarks must warm up first, and why JMH exists.",
+          "difficulty": "medium",
+          "tags": ["jit", "performance"],
+          "citation": "Interview lens — 'Why is my Java application slow for the first few seconds?'"
+        },
+        {
+          "type": "concept",
+          "prompt": "What is the main trade-off of compiling a Java service with GraalVM Native Image?",
+          "options": [
+            "It produces smaller class files but requires a newer JVM to run them",
+            "It removes the need for a garbage collector, so memory must be freed manually",
+            "Startup and memory improve a lot, but peak throughput is usually lower and reflection must be declared at build time",
+            "It is faster in every dimension, which is why it is the default for Spring Boot"
+          ],
+          "correctIndex": 2,
+          "explanation": "Native Image compiles ahead of time to a standalone binary, so there is no warm-up — startup drops to milliseconds and memory falls sharply. But there is also no profile-guided JIT, so long-running peak throughput is typically lower, and anything dynamic (reflection, proxies, resources) must be registered at build time. It is a good fit for short-lived and serverless workloads, not a free upgrade.",
+          "difficulty": "hard",
+          "tags": ["graalvm", "aot"],
+          "citation": "Under the hood — AOT compilation exists too"
+        }
+      ]
+    },
+
+    "primitives-vs-references": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Which of these is TRUE of Java's primitive types?",
+          "options": [
+            "There are nine of them, including String",
+            "They can be used directly as generic type arguments, as in List<int>",
+            "They can hold null when explicitly initialised to it",
+            "There are exactly eight, none can be null, and char is the only unsigned one"
+          ],
+          "correctIndex": 3,
+          "explanation": "The eight are byte, short, int, long, float, double, char and boolean. A primitive slot always holds a valid bit pattern, so null is impossible. char is a 16-bit unsigned UTF-16 code unit — the only unsigned type in Java. String is a class, and generics only accept reference types, which is why the wrapper classes exist.",
+          "difficulty": "medium",
+          "tags": ["primitives", "types"],
+          "citation": "The concept, simply — the primitive table"
+        },
+        {
+          "type": "concept",
+          "prompt": "int[] x = {1, 2, 3}; int[] y = x; y[0] = 99;  — what is x[0] afterwards, and why?",
+          "options": [
+            "1, because assigning y = x copies the array",
+            "99, because arrays in Java are always passed by reference rather than by value",
+            "99, because y received a copy of the reference and both variables point at the same array object",
+            "A compile error — arrays cannot be assigned to one another"
+          ],
+          "correctIndex": 2,
+          "explanation": "Assignment copies the contents of the variable's slot. For a reference variable that content is the handle, not the object — so x and y are two independent slots pointing at one array. Mutating through either is visible through both. Note the wording of the wrong answer: Java assignment copies the reference by value; it is not 'pass by reference'.",
+          "difficulty": "medium",
+          "tags": ["references", "arrays"],
+          "citation": "Code examples — assignment behaves differently for each kind"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why does `long ms = 1000 * 60 * 60 * 24 * 30;` produce a negative number?",
+          "options": [
+            "long cannot represent values above two billion",
+            "The right-hand side is evaluated as int arithmetic and overflows before it is widened to long",
+            "Java evaluates multiplication right-to-left, changing the result",
+            "The literals are parsed as float and lose precision"
+          ],
+          "correctIndex": 1,
+          "explanation": "Every literal there is an int, so the whole expression is computed in 32-bit int arithmetic — which silently wraps around — and only the final (already wrong) result is widened to long. Writing 1000L as the first operand promotes the whole expression to long arithmetic and fixes it.",
+          "difficulty": "medium",
+          "tags": ["primitives", "overflow"],
+          "citation": "Code examples — the classic long-overflow bug"
+        },
+        {
+          "type": "concept",
+          "prompt": "Integer x = map.get(\"missing\"); int y = x;  — what happens at run time?",
+          "options": [
+            "NullPointerException, because unboxing calls intValue() on a null reference",
+            "y is set to 0, the default value for int",
+            "A compile error, because Integer cannot be assigned to int",
+            "y is set to null, and using it later throws"
+          ],
+          "correctIndex": 0,
+          "explanation": "map.get returns null for a missing key. The assignment to an int inserts an implicit unboxing call — x.intValue() — which dereferences null and throws NullPointerException. It is one of the most common production NPEs precisely because the line looks like a plain assignment. int can never hold null, so option 4 is impossible.",
+          "difficulty": "medium",
+          "tags": ["autoboxing", "npe"],
+          "citation": "Common mistakes — unboxing a null wrapper"
+        }
+      ]
+    },
+
+    "stack-vs-heap": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Where does the field `int age;` declared inside a class live?",
+          "options": [
+            "On the heap, inside the object that declares it",
+            "On the stack, in the frame of whichever method reads it",
+            "In Metaspace, alongside the class metadata",
+            "In the constant pool of the .class file"
+          ],
+          "correctIndex": 0,
+          "explanation": "Only LOCAL variables live on the stack. A field is part of the object, so it lives on the heap for as long as that object does. The rule is 'locals on the stack; objects and their fields on the heap' — not 'primitives on the stack, objects on the heap'. Metaspace holds class metadata and static fields.",
+          "difficulty": "medium",
+          "tags": ["memory", "heap"],
+          "citation": "How it works — the what-lives-where table"
+        },
+        {
+          "type": "concept",
+          "prompt": "A method recurses without a base case. Which error do you get, and which JVM flag is relevant?",
+          "options": [
+            "OutOfMemoryError: Java heap space — raise -Xmx",
+            "StackOverflowError — the stack is sized by -Xss, though the real fix is bounding the recursion",
+            "OutOfMemoryError: Metaspace — raise -XX:MaxMetaspaceSize",
+            "StackOverflowError — the stack is sized by -Xmx"
+          ],
+          "correctIndex": 1,
+          "explanation": "Each call pushes a frame onto the thread's stack; unbounded recursion exhausts it and throws StackOverflowError. Stack size is set per thread by -Xss, and -Xmx (the heap) has nothing to do with it. Raising -Xss only buys a constant factor, so unbounded recursion needs restructuring rather than tuning.",
+          "difficulty": "easy",
+          "tags": ["memory", "errors"],
+          "citation": "Code examples — the two errors, and why they differ"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why are local variables thread-safe without any synchronisation?",
+          "options": [
+            "The JVM automatically synchronises access to method-local state",
+            "They are immutable once assigned",
+            "Each thread has its own stack, so a local exists only in that thread's frame and no other thread can reach it",
+            "The JIT compiler copies them into registers, which are per-core"
+          ],
+          "correctIndex": 2,
+          "explanation": "Stacks are per-thread and private, so locals are physically unshareable — there is nothing to synchronise. The important caveat: this protects the variable, not what it points at. A local reference to a shared object still needs the object protected.",
+          "difficulty": "medium",
+          "tags": ["memory", "concurrency"],
+          "citation": "How it works — the stack, precisely"
+        },
+        {
+          "type": "concept",
+          "prompt": "Java has a garbage collector. Can a Java application still leak memory?",
+          "options": [
+            "No — reachable objects are collected automatically once they go out of scope",
+            "No, unless the application uses JNI or direct ByteBuffers",
+            "Only if the GC is misconfigured",
+            "Yes — the GC frees UNREACHABLE objects, so anything still referenced (a static Map never cleared, an unregistered listener, a ThreadLocal in a pooled thread) stays alive forever"
+          ],
+          "correctIndex": 3,
+          "explanation": "Reachability is the only criterion, and reachable is not the same as useful. Objects parked in a long-lived static collection are perfectly reachable, so they are never collected — a leak by any practical definition, and diagnosed with a heap dump rather than by reading code.",
+          "difficulty": "medium",
+          "tags": ["memory", "gc"],
+          "citation": "Interview lens — 'Can Java have a memory leak?'"
+        }
+      ]
+    },
+
+    "pass-by-value": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Is Java pass-by-value or pass-by-reference?",
+          "options": [
+            "Pass-by-value for primitives, pass-by-reference for objects",
+            "Pass-by-reference for everything, which is why mutations are visible to the caller",
+            "Always pass-by-value — for an object, the value copied is the reference, not the object",
+            "It depends on whether the parameter is declared final"
+          ],
+          "correctIndex": 2,
+          "explanation": "Java is pass-by-value with no exceptions. Passing an object copies the reference into the callee's own slot, so both point at one heap object — which makes mutation visible and creates the illusion of pass-by-reference. The distinguishing test is reassignment: rebinding the parameter never affects the caller, which pass-by-reference would.",
+          "difficulty": "medium",
+          "tags": ["pass-by-value", "semantics"],
+          "citation": "The concept, simply — the rule stated once, exactly"
+        },
+        {
+          "type": "concept",
+          "prompt": "static void replace(User p) { p = new User(\"Bob\"); }  — after calling replace(u) where u.name is \"Asha\", what is u.name?",
+          "options": [
+            "\"Asha\" — the method rebound only its own parameter slot; the caller's variable never moved",
+            "\"Bob\" — the caller's reference now points at the new object",
+            "null — the original object became unreachable",
+            "It depends on whether User is mutable"
+          ],
+          "correctIndex": 0,
+          "explanation": "This is the decisive test. The method received a copy of the arrow; assigning to p re-points only that copy. The caller's variable still references the original object, and the newly created User becomes garbage as soon as the method returns. Under genuine pass-by-reference the answer would be \"Bob\".",
+          "difficulty": "medium",
+          "tags": ["pass-by-value", "references"],
+          "citation": "Code examples — the two object cases, side by side"
+        },
+        {
+          "type": "concept",
+          "prompt": "Which of these methods will NOT be visible to the caller?",
+          "options": [
+            "void f(List<String> l) { l.add(\"x\"); }",
+            "void f(StringBuilder sb) { sb.append(\"!\"); }",
+            "void f(int[] a) { a[0] = 99; }",
+            "void f(String s) { s = s + \"!\"; }"
+          ],
+          "correctIndex": 3,
+          "explanation": "The first three MUTATE a shared object through the copied reference, so the caller sees them. The fourth cannot mutate anything: String is immutable, so `+` builds a new String and the assignment rebinds only the method's own parameter slot. Use StringBuilder when the callee genuinely needs to modify shared text.",
+          "difficulty": "medium",
+          "tags": ["pass-by-value", "immutability"],
+          "citation": "How it works — the mutate-vs-reassign table"
+        },
+        {
+          "type": "concept",
+          "prompt": "Does declaring a parameter `final` protect the caller's object from being modified?",
+          "options": [
+            "Yes — final makes the referenced object immutable for the duration of the call",
+            "No — it only stops the method rebinding its own parameter slot, which the caller could not observe anyway",
+            "Yes, but only for collections and arrays",
+            "No, because final has no effect on parameters at all"
+          ],
+          "correctIndex": 1,
+          "explanation": "final on a parameter prevents reassignment inside the method — and reassignment was already invisible to the caller, so it buys the caller nothing. The object stays fully mutable through the reference. Real protection means passing an immutable type, a defensive copy, or an unmodifiable view.",
+          "difficulty": "hard",
+          "tags": ["pass-by-value", "final"],
+          "citation": "Interview lens — 'Does making a parameter final protect the caller's object?'"
+        }
+      ]
+    }
+  }
+}

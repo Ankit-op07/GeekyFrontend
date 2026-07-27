@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">count++ is three operations, and another thread can run between any of them</text>
+  <text x="14" y="40" font-size="11" fill="currentColor" opacity=".7">read count → add 1 → write count.  Two threads, two increments, one lost.</text>
+
+  <!-- timeline -->
+  <line x1="120" y1="60" x2="120" y2="248" stroke="currentColor" stroke-opacity=".2" stroke-width="1"/>
+  <text x="20" y="72" font-size="10" font-weight="700" fill="currentColor" opacity=".6">time</text>
+
+  <!-- thread A column -->
+  <rect x="140" y="56" width="270" height="24" rx="5" fill="#3b82f6" fill-opacity=".22"/>
+  <text x="154" y="73" font-size="11" font-weight="700" fill="#3b82f6">Thread A</text>
+  <!-- thread B column -->
+  <rect x="424" y="56" width="270" height="24" rx="5" fill="#f59e0b" fill-opacity=".22"/>
+  <text x="438" y="73" font-size="11" font-weight="700" fill="#f59e0b">Thread B</text>
+
+  <g font-size="10.5" fill="currentColor">
+    <g class="gf-seq gf-s1">
+      <rect x="140" y="90" width="270" height="30" rx="6" fill="#3b82f6" fill-opacity=".16"/>
+      <text x="154" y="110">reads count → 5</text>
+      <text x="40" y="110" font-size="10" opacity=".6">t1</text>
+    </g>
+    <g class="gf-seq gf-s2">
+      <rect x="424" y="128" width="270" height="30" rx="6" fill="#f59e0b" fill-opacity=".16"/>
+      <text x="438" y="148">reads count → 5   ← same value!</text>
+      <text x="40" y="148" font-size="10" opacity=".6">t2</text>
+    </g>
+    <g class="gf-seq gf-s3">
+      <rect x="140" y="166" width="270" height="30" rx="6" fill="#3b82f6" fill-opacity=".16"/>
+      <text x="154" y="186">computes 6, writes count = 6</text>
+      <text x="40" y="186" font-size="10" opacity=".6">t3</text>
+    </g>
+    <g class="gf-seq gf-s4">
+      <rect x="424" y="204" width="270" height="30" rx="6" fill="#f43f5e" fill-opacity=".22"/>
+      <text x="438" y="224">computes 6, writes count = 6</text>
+      <text x="40" y="224" font-size="10" opacity=".6">t4</text>
+    </g>
+  </g>
+
+  <rect x="140" y="244" width="554" height="0"/>
+  <rect x="14" y="252" width="360" height="42" rx="8" fill="#f43f5e" fill-opacity=".14" stroke="#f43f5e" stroke-width="1.2"/>
+  <text x="30" y="270" font-size="11" font-weight="700" fill="#f43f5e">Result: 6.  Expected: 7.</text>
+  <text x="30" y="286" font-size="10" fill="currentColor" opacity=".85">One increment silently vanished — a LOST UPDATE.</text>
+
+  <rect x="386" y="252" width="360" height="42" rx="8" fill="#10b981" fill-opacity=".14" stroke="#10b981" stroke-width="1.2"/>
+  <text x="402" y="270" font-size="11" font-weight="700" fill="#10b981">Fixes, cheapest first</text>
+  <text x="402" y="286" font-size="10" fill="currentColor" opacity=".85">AtomicInteger.incrementAndGet() · LongAdder · synchronized · Lock</text>
+</svg>

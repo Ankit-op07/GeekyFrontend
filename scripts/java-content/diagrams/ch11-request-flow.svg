@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 250" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch11rfArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">One HTTP request through Spring MVC</text>
+
+  <g font-size="10" fill="currentColor">
+    <g class="gf-seq gf-s1">
+      <rect x="14" y="36" width="112" height="46" rx="8" fill="#3b82f6" fill-opacity=".2" stroke="#3b82f6" stroke-width="1.1"/>
+      <text x="28" y="55" font-weight="700" fill="#3b82f6">HTTP request</text>
+      <text x="28" y="72" opacity=".8">Tomcat thread</text>
+    </g>
+    <path d="M130 59 L152 59" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch11rfArrow)" class="gf-dash"/>
+
+    <g class="gf-seq gf-s2">
+      <rect x="156" y="36" width="128" height="46" rx="8" fill="#8b5cf6" fill-opacity=".2" stroke="#8b5cf6" stroke-width="1.1"/>
+      <text x="170" y="55" font-weight="700" fill="#8b5cf6">Filter chain</text>
+      <text x="170" y="72" opacity=".8">Spring Security lives here</text>
+    </g>
+    <path d="M288 59 L310 59" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch11rfArrow)" class="gf-dash"/>
+
+    <g class="gf-seq gf-s3">
+      <rect x="314" y="36" width="140" height="46" rx="8" fill="#f59e0b" fill-opacity=".2" stroke="#f59e0b" stroke-width="1.1"/>
+      <text x="328" y="55" font-weight="700" fill="#f59e0b">DispatcherServlet</text>
+      <text x="328" y="72" opacity=".8">the front controller</text>
+    </g>
+    <path d="M458 59 L480 59" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch11rfArrow)" class="gf-dash"/>
+
+    <g class="gf-seq gf-s4">
+      <rect x="484" y="36" width="130" height="46" rx="8" fill="#10b981" fill-opacity=".2" stroke="#10b981" stroke-width="1.1"/>
+      <text x="498" y="55" font-weight="700" fill="#10b981">HandlerMapping</text>
+      <text x="498" y="72" opacity=".8">URL → controller method</text>
+    </g>
+    <path d="M618 59 L640 59" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch11rfArrow)" class="gf-dash"/>
+
+    <rect x="644" y="36" width="102" height="46" rx="8" fill="#10b981" fill-opacity=".2" stroke="#10b981" stroke-width="1.1"/>
+    <text x="658" y="55" font-weight="700" fill="#10b981">@Controller</text>
+    <text x="658" y="72" opacity=".8">your method</text>
+  </g>
+
+  <path d="M695 86 L695 106" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch11rfArrow)"/>
+
+  <g font-size="10" fill="currentColor">
+    <rect x="484" y="110" width="262" height="46" rx="8" fill="#3b82f6" fill-opacity=".16" stroke="#3b82f6" stroke-width="1.1"/>
+    <text x="498" y="129" font-weight="700" fill="#3b82f6">HttpMessageConverter</text>
+    <text x="498" y="146" opacity=".8">@RequestBody in / @ResponseBody out — Jackson</text>
+  </g>
+  <path d="M482 133 L460 133" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch11rfArrow)"/>
+  <rect x="314" y="110" width="140" height="46" rx="8" fill="#f43f5e" fill-opacity=".16" stroke="#f43f5e" stroke-width="1.1"/>
+  <text x="328" y="129" font-size="10" font-weight="700" fill="#f43f5e">@ControllerAdvice</text>
+  <text x="328" y="146" font-size="10" fill="currentColor" opacity=".8">on exception → status</text>
+
+  <path d="M312 133 L290 133" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch11rfArrow)"/>
+  <rect x="156" y="110" width="128" height="46" rx="8" fill="#10b981" fill-opacity=".2" stroke="#10b981" stroke-width="1.2"/>
+  <text x="170" y="129" font-size="10" font-weight="700" fill="#10b981">HTTP response</text>
+  <text x="170" y="146" font-size="10" fill="currentColor" opacity=".8">JSON + status code</text>
+
+  <rect x="14" y="176" width="732" height="62" rx="10" fill="currentColor" fill-opacity=".05" stroke="currentColor" stroke-opacity=".18"/>
+  <text x="30" y="196" font-size="10.5" font-weight="700" fill="currentColor">Two things worth remembering</text>
+  <text x="30" y="215" font-size="10.5" fill="currentColor" opacity=".85">1 · <tspan font-weight="600">@RestController = @Controller + @ResponseBody</tspan> — the return value is serialised, not treated as a view name.</text>
+  <text x="30" y="232" font-size="10.5" fill="currentColor" opacity=".85">2 · Security is a <tspan font-weight="600">servlet filter</tspan>, so it runs BEFORE the DispatcherServlet — which is why @ControllerAdvice never sees a 401.</text>
+</svg>

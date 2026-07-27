@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch3icArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f43f5e"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="22" font-size="13" font-weight="700" fill="currentColor">The Integer cache: why == is true at 127 and false at 128</text>
+  <text x="14" y="42" font-size="11" fill="currentColor" opacity=".7">Integer.valueOf(int) — which is what autoboxing calls — returns a SHARED object for −128…127</text>
+
+  <!-- cache -->
+  <rect x="14" y="58" width="440" height="86" rx="11" fill="#10b981" fill-opacity=".12" stroke="#10b981" stroke-width="1.4"/>
+  <text x="32" y="80" font-size="11.5" font-weight="700" fill="#10b981">IntegerCache — preallocated, one object per value</text>
+  <g font-size="11" fill="currentColor">
+    <rect x="32" y="92" width="62" height="34" rx="6" fill="#10b981" fill-opacity=".24"/><text x="52" y="114">−128</text>
+    <rect x="100" y="92" width="52" height="34" rx="6" fill="#10b981" fill-opacity=".24"/><text x="118" y="114">−127</text>
+    <text x="164" y="114" opacity=".55">· · ·</text>
+    <rect x="208" y="92" width="44" height="34" rx="6" fill="#10b981" fill-opacity=".24"/><text x="224" y="114">0</text>
+    <text x="264" y="114" opacity=".55">· · ·</text>
+    <rect x="304" y="92" width="52" height="34" rx="6" fill="#10b981" fill-opacity=".24"/><text x="320" y="114">126</text>
+    <rect x="362" y="92" width="52" height="34" rx="6" fill="#10b981" fill-opacity=".24" class="gf-pulse"/><text x="378" y="114">127</text>
+  </g>
+
+  <!-- outside -->
+  <rect x="474" y="58" width="272" height="86" rx="11" fill="#f43f5e" fill-opacity=".09" stroke="#f43f5e" stroke-width="1.4"/>
+  <text x="492" y="80" font-size="11.5" font-weight="700" fill="#f43f5e">128 and above — a NEW object each time</text>
+  <rect x="492" y="92" width="110" height="34" rx="6" fill="#f43f5e" fill-opacity=".2"/>
+  <text x="514" y="114" font-size="11" fill="currentColor">128 @a1</text>
+  <rect x="614" y="92" width="110" height="34" rx="6" fill="#f43f5e" fill-opacity=".2"/>
+  <text x="636" y="114" font-size="11" fill="currentColor">128 @b7</text>
+
+  <!-- comparisons -->
+  <rect x="14" y="164" width="360" height="98" rx="11" fill="#10b981" fill-opacity=".08" stroke="#10b981" stroke-width="1.2"/>
+  <text x="32" y="186" font-size="11" fill="currentColor">Integer a = 127, b = 127;</text>
+  <text x="32" y="208" font-size="11" fill="currentColor">a == b        →  <tspan font-weight="700" fill="#10b981">true</tspan></text>
+  <text x="32" y="230" font-size="10.5" fill="currentColor" opacity=".75">both variables were handed the SAME cached object</text>
+  <text x="32" y="252" font-size="10.5" fill="currentColor" opacity=".75">a.equals(b) → true as well</text>
+
+  <rect x="394" y="164" width="352" height="98" rx="11" fill="#f43f5e" fill-opacity=".08" stroke="#f43f5e" stroke-width="1.2"/>
+  <text x="412" y="186" font-size="11" fill="currentColor">Integer c = 128, d = 128;</text>
+  <text x="412" y="208" font-size="11" fill="currentColor">c == d        →  <tspan font-weight="700" fill="#f43f5e">false</tspan></text>
+  <text x="412" y="230" font-size="10.5" fill="currentColor" opacity=".75">two distinct objects — identity differs</text>
+  <text x="412" y="252" font-size="10.5" fill="currentColor" opacity=".75">c.equals(d) → <tspan font-weight="700" fill="#10b981">true</tspan> — always compare with equals()</text>
+
+  <path d="M420 128 L462 110" stroke="#f43f5e" stroke-width="1.3" marker-end="url(#ch3icArrow)" class="gf-dash"/>
+</svg>

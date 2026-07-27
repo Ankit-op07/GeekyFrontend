@@ -6,7 +6,7 @@ import Link from "next/link"
 import { ArrowRight, Zap, TrendingUp, Clock, Flame, Code2, Layers, Sparkles } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { appConstants } from "@/lib/appConstants"
-const { js_kit_price, react_kit_price, complete_kit_price, js_kit_original_price, react_kit_original_price, complete_kit_original_price, all_access_price, all_access_original_price, angular_kit_price, angular_kit_original_price, nodejs_kit_price, nodejs_kit_original_price } = appConstants()
+const { js_kit_price, react_kit_price, complete_kit_price, js_kit_original_price, react_kit_original_price, complete_kit_original_price, all_access_price, all_access_original_price, angular_kit_price, angular_kit_original_price, nodejs_kit_price, nodejs_kit_original_price, devops_kit_price, devops_kit_original_price, java_kit_price, java_kit_original_price } = appConstants()
 export interface Product {
   id: string
   title: string
@@ -24,6 +24,8 @@ export interface Product {
   /** The bundle. Gets the BEST VALUE treatment and a wider card. */
   featured?: boolean
   comingSoon?: boolean
+  /** Optional CTA target; defaults to /checkout/{id} when omitted. */
+  href?: string
   /** Omitted for new SKUs — we don't invent enrolment numbers. */
   studentsCount?: number
   discount: number
@@ -89,6 +91,45 @@ const products: Product[] = [
     isNew: true,
     discount: 90,
     tag: "8 Modules • 40 Topics"
+  },
+  {
+    id: "devops",
+    href: "/pay?kit=devops-kit",
+    title: "DevOps Engineering Kit",
+    shortTitle: "DevOps Engineering Kit",
+    price: {
+      current: devops_kit_price,
+      original: devops_kit_original_price
+    },
+    icon: (
+      <div className="w-14 h-14 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-lg text-3xl">🚀</div>
+    ),
+    bgGradient: "from-sky-50 via-white to-indigo-50",
+    iconBg: "bg-gradient-to-br from-sky-500 to-indigo-600",
+    isNew: true,
+    discount: 90,
+    tag: "14 Modules • 52 Topics"
+  },
+  {
+    id: "java",
+    title: "Java Interview Preparation Kit",
+    shortTitle: "Java Interview Kit",
+    price: {
+      current: java_kit_price,
+      original: java_kit_original_price
+    },
+    icon: (
+      <div className="w-14 h-14 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-lg">
+        <img src="/Kit%20logos/java.svg" alt="Java" className="w-9 h-9 object-contain" />
+      </div>
+    ),
+    bgGradient: "from-orange-50 via-white to-red-50",
+    iconBg: "bg-gradient-to-br from-orange-500 to-red-600",
+    isNew: true,
+    // Content complete; still comingSoon until the kit is put on sale.
+    comingSoon: true,
+    discount: 90,
+    tag: "14 Modules • 65 Topics"
   },
   /* Renamed 2026-07. `id` stays "complete" so /checkout/complete and any live
    * ads or backlinks keep resolving. Only the display name changed — the kit's
@@ -325,7 +366,7 @@ export function ProductsShowcase() {
                     </div>
 
                     {/* CTA Button - Link to checkout */}
-                    <Link href={product.comingSoon ? '#' : `/checkout/${product.id}`}>
+                    <Link href={product.comingSoon ? '#' : (product.href ?? `/checkout/${product.id}`)}>
                       <button
                         className={`
                           w-full h-9 text-xs font-bold rounded-lg flex items-center justify-center gap-1

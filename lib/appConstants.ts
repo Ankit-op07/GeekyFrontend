@@ -39,6 +39,16 @@ export const PLAN_TO_SLUGS: Record<string, string[]> = {
     // Node kit
     "Node.js Interview Preparation Kit": ["node"],
     "Node.js Backend Mastery Kit": ["node"],
+    // DevOps kit — fragment matches the DB Kit.slug "devops-engineering-kit"
+    "DevOps Engineering Kit": ["devops"],
+    /* Java kit — PRD-009.
+     * ⚠️  The fragment MUST be "java-interview", never "java".
+     * Access matching is a SUBSTRING test (resolveTopicAccess in lib/learn-access.ts:
+     *   kitSlug.toLowerCase().includes(fragment)
+     * ) and "javascript-interview-kit".includes("java") is TRUE — a bare "java"
+     * fragment would silently hand every Java buyer the JavaScript kit for free.
+     * The reverse is safe: "java-interview-kit".includes("javascript") is false. */
+    "Java Interview Preparation Kit": ["java-interview"],
     /* ── Frontend System Design Kit ──────────────────────────────
      *  Renamed from "Complete Frontend Interview Preparation Kit" (2026-07).
      *  ⚠️  NEVER delete the legacy key below — past buyers are stored in
@@ -278,6 +288,56 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
             'Lifetime updates included',
         ],
     },
+    /* PRD-009 — Core Java + Spring Boot. Sold standalone; deliberately NOT part
+     * of the All-Access bundle (adding it would hand every past bundle buyer a
+     * kit they never paid for and break the bundle's honest ₹647 anchor). */
+    'java-kit': {
+        id: 'java-kit',
+        name: 'Java Interview Preparation Kit',
+        /* CONTENT COMPLETE — 14 modules, 65 topics, 53 animated diagrams.
+         * The figures below are COUNTED from scripts/java-content, not aspirational:
+         *   node scripts/seed-java-kit.js   prints chapters/topics/diagrams.
+         * ⚠️ Still `comingSoon: true`, which keeps it out of checkout and out of
+         * getPurchasableKits(). Removing that line is what puts the kit on sale —
+         * a deliberate business decision, not a content one. */
+        tagline: '14 modules · 65 in-depth topics · 53 animated diagrams — core Java, collections internals, concurrency, the JVM, modern Java 17/21 and Spring Boot, built for interviews.',
+        price: 299,
+        originalPrice: 2999,
+        duration: 'Lifetime',
+        badge: 'NEW',
+        comingSoon: true,
+        features: [
+            '65 in-depth topics across 14 structured modules',
+            '53 animated, theme-aware diagrams (HashMap internals, GC, thread lifecycle & more)',
+            'Deep dives: OOP, collections internals, generics, exceptions & functional Java',
+            'Concurrency, the Java Memory Model, JVM internals & garbage collection',
+            'Modern Java 17→21: records, sealed types, pattern matching, virtual threads',
+            'Spring Core, Spring Boot, Spring Data JPA, REST, security & testing',
+            'Design patterns, SOLID and Java LLD walkthroughs',
+            'Interview questions with model answers and common traps on every topic',
+            'Last-minute revision cheat-cards',
+            'Lifetime updates included',
+        ],
+    },
+    'devops-kit': {
+        id: 'devops-kit',
+        name: 'DevOps Engineering Kit',
+        tagline: '14 modules · 52 in-depth topics · 130+ animated diagrams — Linux, Git, Docker, Kubernetes, CI/CD, Terraform, cloud, observability, SRE & DevSecOps, built for interviews and the job.',
+        price: 399,
+        originalPrice: 3999,
+        duration: 'Lifetime',
+        badge: 'NEW',
+        features: [
+            '52 in-depth topics across 14 structured modules',
+            '130+ animated, theme-aware diagrams (the DevOps loop, CI/CD, Kubernetes & more)',
+            'Deep dives: Linux, Git & GitOps, Docker, Kubernetes, CI/CD, Terraform & AWS',
+            'Observability, SRE, DevSecOps & incident management',
+            '150+ interview questions with model answers and common gotchas',
+            'Troubleshooting drills, DevOps system design & a fresher→senior roadmap',
+            'Last-minute revision cheat-sheets',
+            'Lifetime updates included',
+        ],
+    },
 };
 
 /** Helper: look up a kit by ID — returns undefined if not found */
@@ -302,6 +362,12 @@ export function appConstants() {
         nodejs_kit_price: KIT_CATALOG['nodejs-kit'].price,
         nodejs_kit_original_price: KIT_CATALOG['nodejs-kit'].originalPrice,
         nodejs_kit_plan_name: KIT_CATALOG['nodejs-kit'].name,
+        devops_kit_price: KIT_CATALOG['devops-kit'].price,
+        devops_kit_original_price: KIT_CATALOG['devops-kit'].originalPrice,
+        devops_kit_plan_name: KIT_CATALOG['devops-kit'].name,
+        java_kit_price: KIT_CATALOG['java-kit'].price,
+        java_kit_original_price: KIT_CATALOG['java-kit'].originalPrice,
+        java_kit_plan_name: KIT_CATALOG['java-kit'].name,
         js_kit_original_price: KIT_CATALOG['js-kit'].originalPrice,
         complete_kit_original_price: KIT_CATALOG['complete-kit'].originalPrice,
         experiences_kit_original_price: KIT_CATALOG['experiences-kit'].originalPrice,

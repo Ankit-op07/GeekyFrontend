@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 290" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch8cfArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Future blocks. CompletableFuture composes.</text>
+
+  <!-- Future -->
+  <rect x="14" y="34" width="360" height="106" rx="11" fill="#f43f5e" fill-opacity=".07" stroke="#f43f5e" stroke-width="1.3"/>
+  <text x="30" y="56" font-size="11.5" font-weight="700" fill="#f43f5e">✘ Future.get()</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="30" y="66" width="100" height="30" rx="6" fill="#3b82f6" fill-opacity=".18"/><text x="52" y="86">task A</text>
+    <rect x="140" y="66" width="100" height="30" rx="6" fill="currentColor" fill-opacity=".08" stroke="currentColor" stroke-opacity=".2"/><text x="156" y="86" opacity=".6">blocked…</text>
+    <rect x="250" y="66" width="106" height="30" rx="6" fill="#8b5cf6" fill-opacity=".18"/><text x="272" y="86">task B</text>
+  </g>
+  <text x="30" y="116" font-size="10" fill="currentColor" opacity=".85">The calling thread sits idle waiting. No way to attach</text>
+  <text x="30" y="130" font-size="10" fill="currentColor" opacity=".85">a callback, chain, combine, or handle failure inline.</text>
+
+  <!-- CompletableFuture -->
+  <rect x="386" y="34" width="360" height="106" rx="11" fill="#10b981" fill-opacity=".07" stroke="#10b981" stroke-width="1.3"/>
+  <text x="402" y="56" font-size="11.5" font-weight="700" fill="#10b981">✔ CompletableFuture</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="402" y="66" width="100" height="30" rx="6" fill="#3b82f6" fill-opacity=".18" class="gf-seq gf-s1"/><text x="424" y="86">task A</text>
+    <rect x="512" y="66" width="100" height="30" rx="6" fill="#10b981" fill-opacity=".2" class="gf-seq gf-s2"/><text x="530" y="86">thenApply</text>
+    <rect x="622" y="66" width="106" height="30" rx="6" fill="#8b5cf6" fill-opacity=".2" class="gf-seq gf-s3"/><text x="640" y="86">thenAccept</text>
+  </g>
+  <text x="402" y="116" font-size="10" fill="currentColor" opacity=".85">Each stage runs when the previous completes. The</text>
+  <text x="402" y="130" font-size="10" fill="currentColor" opacity=".85">calling thread is never blocked.</text>
+
+  <!-- API map -->
+  <rect x="14" y="152" width="240" height="128" rx="10" fill="#3b82f6" fill-opacity=".08" stroke="#3b82f6" stroke-width="1.2"/>
+  <text x="30" y="172" font-size="11" font-weight="700" fill="#3b82f6">transform</text>
+  <g font-size="10" fill="currentColor">
+    <text x="30" y="192">thenApply(fn)      → value</text>
+    <text x="30" y="210">thenCompose(fn)  → another CF</text>
+    <text x="30" y="228">thenAccept(c)     → consume</text>
+    <text x="30" y="246">thenRun(r)          → ignore value</text>
+    <text x="30" y="268" opacity=".7">compose : apply :: flatMap : map</text>
+  </g>
+
+  <rect x="266" y="152" width="240" height="128" rx="10" fill="#8b5cf6" fill-opacity=".08" stroke="#8b5cf6" stroke-width="1.2"/>
+  <text x="282" y="172" font-size="11" font-weight="700" fill="#8b5cf6">combine</text>
+  <g font-size="10" fill="currentColor">
+    <text x="282" y="192">thenCombine(o, fn)  → both</text>
+    <text x="282" y="210">allOf(a, b, c)            → wait all</text>
+    <text x="282" y="228">anyOf(a, b, c)          → first done</text>
+    <text x="282" y="250" opacity=".7">allOf returns CF&lt;Void&gt; — you still</text>
+    <text x="282" y="264" opacity=".7">join() each one for its value.</text>
+  </g>
+
+  <rect x="518" y="152" width="228" height="128" rx="10" fill="#f59e0b" fill-opacity=".08" stroke="#f59e0b" stroke-width="1.2"/>
+  <text x="534" y="172" font-size="11" font-weight="700" fill="#f59e0b">failure</text>
+  <g font-size="10" fill="currentColor">
+    <text x="534" y="192">exceptionally(fn)  → recover</text>
+    <text x="534" y="210">handle(v, ex)        → both cases</text>
+    <text x="534" y="228">whenComplete      → peek</text>
+    <text x="534" y="250" opacity=".7">⚠ Without one of these, a failure</text>
+    <text x="534" y="264" opacity=".7">is SILENT until you call get/join.</text>
+  </g>
+</svg>

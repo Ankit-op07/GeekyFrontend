@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link"
 import { appConstants } from "@/lib/appConstants";
-import { Check, Star, Zap, Shield, Clock, Eye, ArrowRight, Sparkles, Crown, Rocket, TrendingUp } from "lucide-react"
+import { Check, Star, Zap, Shield, Clock, Eye, ArrowRight, Sparkles, Crown, Rocket, TrendingUp, Coffee } from "lucide-react"
 
 export function Pricing() {
   const { js, complete, experiences, isLoading } = useDevicePricing();
@@ -22,6 +22,8 @@ export function Pricing() {
     complete_kit_price, complete_kit_original_price,
     react_kit_price, react_kit_original_price,
     all_access_price, all_access_original_price,
+    devops_kit_price, devops_kit_original_price,
+    java_kit_price, java_kit_original_price,
   } = appConstants();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
@@ -150,6 +152,65 @@ export function Pricing() {
         "Lifetime access",
       ],
       highlights: ["42 System Design", "180 DSA", "570+ Items"]
+    },
+    {
+      kitId: 'devops-kit',
+      name: "DevOps Kit",
+      fullName: "DevOps Engineering Kit",
+      description: "Linux, Git, Docker, Kubernetes, CI/CD, Terraform, cloud, observability, SRE & DevSecOps — built for interviews.",
+      priceINR: devops_kit_price,
+      originalPriceINR: devops_kit_original_price,
+      discountPercentage: Math.round(((devops_kit_original_price - devops_kit_price) / devops_kit_original_price) * 100),
+      popular: false,
+      icon: <Rocket className="w-6 h-6" />,
+      color: "from-sky-500 to-indigo-600",
+      bgGradient: "from-sky-50 via-indigo-50/50 to-blue-50",
+      shadowColor: "shadow-sky-200",
+      previewUrl: "/learn/devops-engineering-kit",
+      badge: "NEW",
+      savings: devops_kit_original_price - devops_kit_price,
+      features: [
+        "52 in-depth topics across 14 modules",
+        "130+ animated diagrams (the DevOps loop, K8s, CI/CD & more)",
+        "Docker, Kubernetes, CI/CD, Terraform & AWS deep dives",
+        "Observability, SRE & DevSecOps",
+        "150+ interview questions with model answers",
+        "Troubleshooting drills & DevOps system design",
+        "Last-minute revision cheat-sheets",
+        "Lifetime updates included",
+      ],
+      highlights: ["52 Topics", "14 Modules", "130+ Diagrams"]
+    },
+    {
+      kitId: 'java-kit',
+      name: "Java Kit",
+      fullName: "Java Interview Preparation Kit",
+      // ⚠️ IN PROGRESS — see the comment on KIT_CATALOG['java-kit'].
+      // comingSoon keeps the card visible but not purchasable.
+      comingSoon: true,
+      description: "In progress — fundamentals, OOP, strings, collections, generics, exceptions and streams are live; concurrency, JVM and Spring are being written.",
+      priceINR: java_kit_price,
+      originalPriceINR: java_kit_original_price,
+      discountPercentage: Math.round(((java_kit_original_price - java_kit_price) / java_kit_original_price) * 100),
+      popular: false,
+      icon: <Coffee className="w-6 h-6" />,
+      color: "from-orange-500 to-red-600",
+      bgGradient: "from-orange-50 via-red-50/50 to-amber-50",
+      shadowColor: "shadow-orange-200",
+      previewUrl: "/learn/java-interview-kit",
+      badge: "IN PROGRESS",
+      savings: java_kit_original_price - java_kit_price,
+      features: [
+        "51 topics live today across 10 of 14 planned modules",
+        "48 animated diagrams (HashMap internals, GC, thread lifecycle & more)",
+        "Live: core Java, collections, generics, exceptions, streams, concurrency",
+        "Live: JVM internals, GC, and modern Java 17→21 including virtual threads",
+        "Coming: four Spring Boot modules, design patterns and Java LLD",
+        "Interview questions and traps on every topic",
+        "Last-minute revision cheat-cards",
+        "Lifetime updates included",
+      ],
+      highlights: ["51 Topics Live", "10 of 14 Modules", "48 Diagrams"]
     },
     {
       kitId: 'experiences-kit',

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch7spArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Streams are lazy: ONE element flows all the way through before the next starts</text>
+  <text x="14" y="40" font-size="11" fill="currentColor" opacity=".7">list.stream().filter(n -&gt; n % 2 == 0).map(n -&gt; n * 10).findFirst()</text>
+
+  <!-- source -->
+  <rect x="14" y="54" width="120" height="180" rx="10" fill="#3b82f6" fill-opacity=".1" stroke="#3b82f6" stroke-width="1.3"/>
+  <text x="30" y="74" font-size="11" font-weight="700" fill="#3b82f6">source</text>
+  <g font-size="11" fill="currentColor">
+    <rect x="30" y="84" width="88" height="26" rx="5" fill="#3b82f6" fill-opacity=".22" class="gf-seq gf-s1"/><text x="66" y="102">1</text>
+    <rect x="30" y="114" width="88" height="26" rx="5" fill="#3b82f6" fill-opacity=".22" class="gf-seq gf-s2"/><text x="66" y="132">2</text>
+    <rect x="30" y="144" width="88" height="26" rx="5" fill="currentColor" fill-opacity=".06" stroke="currentColor" stroke-opacity=".15" stroke-dasharray="3 3"/><text x="66" y="162" opacity=".45">3</text>
+    <rect x="30" y="174" width="88" height="26" rx="5" fill="currentColor" fill-opacity=".06" stroke="currentColor" stroke-opacity=".15" stroke-dasharray="3 3"/><text x="66" y="192" opacity=".45">4</text>
+  </g>
+  <text x="30" y="222" font-size="9.5" fill="currentColor" opacity=".6">3 and 4 are never read</text>
+
+  <path d="M140 120 L172 120" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ch7spArrow)" class="gf-dash"/>
+
+  <!-- filter -->
+  <rect x="178" y="54" width="150" height="180" rx="10" fill="#8b5cf6" fill-opacity=".1" stroke="#8b5cf6" stroke-width="1.3"/>
+  <text x="194" y="74" font-size="11" font-weight="700" fill="#8b5cf6">filter — intermediate</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="194" y="84" width="118" height="26" rx="5" fill="#f43f5e" fill-opacity=".18" class="gf-seq gf-s1"/><text x="206" y="102">1 → dropped</text>
+    <rect x="194" y="114" width="118" height="26" rx="5" fill="#10b981" fill-opacity=".24" class="gf-seq gf-s2"/><text x="206" y="132">2 → passes</text>
+  </g>
+  <text x="194" y="176" font-size="9.5" fill="currentColor" opacity=".7">Returns a new Stream.</text>
+  <text x="194" y="192" font-size="9.5" fill="currentColor" opacity=".7">Runs NOTHING on its own —</text>
+  <text x="194" y="208" font-size="9.5" fill="currentColor" opacity=".7">it only records what to do.</text>
+
+  <path d="M334 120 L366 120" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ch7spArrow)" class="gf-dash"/>
+
+  <!-- map -->
+  <rect x="372" y="54" width="150" height="180" rx="10" fill="#f59e0b" fill-opacity=".1" stroke="#f59e0b" stroke-width="1.3"/>
+  <text x="388" y="74" font-size="11" font-weight="700" fill="#f59e0b">map — intermediate</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="388" y="114" width="118" height="26" rx="5" fill="#f59e0b" fill-opacity=".24" class="gf-seq gf-s2"/><text x="400" y="132">2 → 20</text>
+  </g>
+  <text x="388" y="176" font-size="9.5" fill="currentColor" opacity=".7">map() is called ONCE —</text>
+  <text x="388" y="192" font-size="9.5" fill="currentColor" opacity=".7">only for the element that</text>
+  <text x="388" y="208" font-size="9.5" fill="currentColor" opacity=".7">survived the filter.</text>
+
+  <path d="M528 120 L560 120" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ch7spArrow)" class="gf-dash"/>
+
+  <!-- terminal -->
+  <rect x="566" y="54" width="180" height="180" rx="10" fill="#10b981" fill-opacity=".12" stroke="#10b981" stroke-width="1.4"/>
+  <text x="582" y="74" font-size="11" font-weight="700" fill="#10b981">findFirst — TERMINAL</text>
+  <rect x="582" y="108" width="148" height="34" rx="6" fill="#10b981" fill-opacity=".28" class="gf-seq gf-s3"/>
+  <text x="596" y="130" font-size="11.5" font-weight="700" fill="currentColor">Optional[20]</text>
+  <text x="582" y="168" font-size="9.5" fill="currentColor" opacity=".75">The terminal operation is what</text>
+  <text x="582" y="184" font-size="9.5" fill="currentColor" opacity=".75">actually pulls elements through.</text>
+  <text x="582" y="200" font-size="9.5" fill="currentColor" opacity=".75">Short-circuits: it stops the</text>
+  <text x="582" y="216" font-size="9.5" fill="currentColor" opacity=".75">moment it has an answer.</text>
+
+  <rect x="14" y="248" width="732" height="70" rx="10" fill="#f43f5e" fill-opacity=".08" stroke="#f43f5e" stroke-width="1.2"/>
+  <text x="30" y="270" font-size="11" font-weight="700" fill="#f43f5e">Two consequences people get wrong</text>
+  <text x="30" y="290" font-size="10.5" fill="currentColor" opacity=".85">1 · A pipeline with no terminal operation does <tspan font-weight="600">nothing at all</tspan> — no filter, no map, no side effects, silently.</text>
+  <text x="30" y="308" font-size="10.5" fill="currentColor" opacity=".85">2 · A stream is <tspan font-weight="600">single-use</tspan>. Reuse one after a terminal call and you get IllegalStateException: stream has already been operated upon or closed.</text>
+</svg>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 270" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch8casArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Compare-and-swap: no lock, just retry until nobody interfered</text>
+  <text x="14" y="40" font-size="11" fill="currentColor" opacity=".7">AtomicInteger.incrementAndGet() is a loop around one CPU instruction</text>
+
+  <g class="gf-seq gf-s1">
+    <rect x="14" y="56" width="170" height="60" rx="9" fill="#3b82f6" fill-opacity=".16" stroke="#3b82f6" stroke-width="1.2"/>
+    <text x="30" y="76" font-size="10.5" font-weight="700" fill="#3b82f6">1 · read current</text>
+    <text x="30" y="96" font-size="10.5" fill="currentColor">expected = 5</text>
+  </g>
+  <path d="M188 86 L216 86" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch8casArrow)" class="gf-dash"/>
+
+  <g class="gf-seq gf-s2">
+    <rect x="220" y="56" width="170" height="60" rx="9" fill="#8b5cf6" fill-opacity=".16" stroke="#8b5cf6" stroke-width="1.2"/>
+    <text x="236" y="76" font-size="10.5" font-weight="700" fill="#8b5cf6">2 · compute new</text>
+    <text x="236" y="96" font-size="10.5" fill="currentColor">next = 6</text>
+  </g>
+  <path d="M394 86 L422 86" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch8casArrow)" class="gf-dash"/>
+
+  <g class="gf-seq gf-s3">
+    <rect x="426" y="56" width="320" height="60" rx="9" fill="#10b981" fill-opacity=".16" stroke="#10b981" stroke-width="1.2"/>
+    <text x="442" y="76" font-size="10.5" font-weight="700" fill="#10b981">3 · compareAndSet(5, 6) — one atomic CPU instruction</text>
+    <text x="442" y="96" font-size="10.5" fill="currentColor">"if the value is still 5, make it 6" — succeeds or reports failure</text>
+  </g>
+
+  <path d="M586 120 L586 142" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch8casArrow)"/>
+
+  <rect x="426" y="146" width="150" height="48" rx="8" fill="#10b981" fill-opacity=".22" stroke="#10b981" stroke-width="1.1"/>
+  <text x="442" y="166" font-size="10.5" font-weight="700" fill="#10b981">success → done</text>
+  <text x="442" y="184" font-size="10" fill="currentColor" opacity=".8">nobody interfered</text>
+
+  <rect x="596" y="146" width="150" height="48" rx="8" fill="#f43f5e" fill-opacity=".18" stroke="#f43f5e" stroke-width="1.1"/>
+  <text x="612" y="166" font-size="10.5" font-weight="700" fill="#f43f5e">failure → retry</text>
+  <text x="612" y="184" font-size="10" fill="currentColor" opacity=".8">re-read and loop</text>
+
+  <path d="M660 198 C 660 224, 100 226, 100 122" fill="none" stroke="#f43f5e" stroke-width="1.4" marker-end="url(#ch8casArrow)" class="gf-dash"/>
+
+  <rect x="14" y="212" width="360" height="52" rx="9" fill="#10b981" fill-opacity=".1" stroke="#10b981" stroke-width="1.1"/>
+  <text x="30" y="232" font-size="10.5" font-weight="700" fill="#10b981">Why it beats a lock at low contention</text>
+  <text x="30" y="250" font-size="10" fill="currentColor" opacity=".85">No blocking, no context switch, no scheduler involvement.</text>
+
+  <rect x="386" y="212" width="360" height="52" rx="9" fill="#f43f5e" fill-opacity=".1" stroke="#f43f5e" stroke-width="1.1"/>
+  <text x="402" y="232" font-size="10.5" font-weight="700" fill="#f43f5e">Why it loses at HIGH contention</text>
+  <text x="402" y="250" font-size="10" fill="currentColor" opacity=".85">Many threads spin and retry, burning CPU → use LongAdder.</text>
+</svg>

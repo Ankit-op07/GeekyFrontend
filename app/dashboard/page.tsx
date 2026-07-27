@@ -32,6 +32,7 @@ interface SessionUser {
 
 /** DB Kit shape from /api/learn/kits */
 import { BundleUpsell } from "@/components/bundle-upsell"
+import { NewKitsBanner } from "@/components/dashboard/new-kits-banner"
 
 interface DbKit {
     _id: string;
@@ -63,6 +64,12 @@ function getResumeHref(slug: string): string {
 function getCheckoutPathForKit(kit: DbKit) {
     const label = `${kit.name} ${kit.slug}`.toLowerCase()
     // Order matters: check "node"/"angular" before "js" — "node.js" contains "js".
+    // DevOps has no /checkout/[kit] page — that SKU is sold through /pay.
+    if (label.includes("devops")) return "/pay?kit=devops-kit"
+    // ⚠️ Java must be a WORD match, never a substring: "javascript..." contains
+    // "java", so `label.includes("java")` would send JS buyers to Java checkout.
+    // `\bjava\b` cannot match inside "javascript" (no boundary after "java").
+    if (/\bjava\b/.test(label)) return "/checkout/java"
     if (label.includes("angular")) return "/checkout/angular"
     if (label.includes("node")) return "/checkout/nodejs"
     if (label.includes("complete")) return "/checkout/complete"
@@ -71,6 +78,14 @@ function getCheckoutPathForKit(kit: DbKit) {
     // Placement SKU retired — existing buyers keep access; others go to /pricing.
     if (label.includes("placement")) return "/#pricing"
     return "/#products"
+}
+
+/** Time-of-day greeting. Module scope because the top bar renders it for the
+ *  overview tab — it used to be a full-width banner inside OverviewTab, which
+ *  pushed the actual content (kits) below the fold. */
+function getGreeting() {
+    const hour = new Date().getHours()
+    return hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
 }
 
 const NAV = [
@@ -249,12 +264,15 @@ export default function DashboardPage() {
     return (
         <div className="min-h-screen bg-background flex">
 
-            {/* ── Sidebar ── */}
+            {/* ── Sidebar ──
+                Mobile: a fixed off-canvas drawer. Desktop: `sticky top-0 h-screen` so it
+                pins to the viewport while the page scrolls — it used to be `lg:relative`,
+                which made it a plain flex child that scrolled away with the content. */}
             <aside className={`
         fixed inset-y-0 left-0 z-50 w-64 bg-card/95 backdrop-blur-xl border-r border-hairline flex flex-col
         transition-transform duration-300
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:relative lg:translate-x-0
+        lg:sticky lg:top-0 lg:bottom-auto lg:h-screen lg:self-start lg:flex-shrink-0 lg:translate-x-0
       `}>
                 {/* Logo */}
                 <div className="p-6 border-b border-hairline">
@@ -356,11 +374,13 @@ export default function DashboardPage() {
                             <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg bg-overlay hover:bg-overlay-strong text-muted-foreground">
                                 <Menu className="w-5 h-5" />
                             </button>
-                            <div>
-                                <h1 className="text-foreground font-bold text-lg leading-none">
-                                    {NAV.find(n => n.id === activeTab)?.label || "Dashboard"}
+                            <div className="min-w-0">
+                                <h1 className="text-foreground font-bold text-lg leading-none truncate">
+                                    {activeTab === "overview"
+                                        ? `${getGreeting()}, ${user.name.split(" ")[0]} 👋`
+                                        : NAV.find(n => n.id === activeTab)?.label || "Dashboard"}
                                 </h1>
-                                <p className="text-muted-foreground text-xs mt-0.5">
+                                <p className="text-muted-foreground text-xs mt-1">
                                     {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })}
                                 </p>
                             </div>
@@ -400,8 +420,6 @@ export default function DashboardPage() {
 function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
     user: SessionUser; purchasedKits: string[]; streak: number; topicsStudied: number
 }) {
-    const hour = new Date().getHours()
-    const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
     const [dbKits, setDbKits] = useState<DbKit[]>([])
 
     useEffect(() => {
@@ -414,84 +432,8 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
 
     return (
         <div className="space-y-8 max-w-5xl">
-            {/* ── Welcome Banner ── (theme-aware gradient: light violet tint in
-                light mode, deep violet in dark — so text stays legible on both) */}
-            <div className="relative overflow-hidden rounded-3xl p-8 sm:p-10 bg-gradient-to-br from-violet-500/20 via-indigo-500/10 to-sky-500/10 dark:from-violet-700/40 dark:via-indigo-900/30 dark:to-slate-950/60">
-                {/* Animated shimmer overlay */}
-                <div className="absolute inset-0 opacity-30"
-                     style={{
-                         background: "linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.04) 37%, transparent 63%)",
-                         backgroundSize: "200% 100%",
-                         animation: "shimmer 3s ease-in-out infinite",
-                     }} />
-                {/* Decorative orbs */}
-                <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-violet-500/10 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-                {/* Grid pattern */}
-                <div className="absolute inset-0 opacity-[0.03]"
-                     style={{
-                         backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
-                         backgroundSize: "32px 32px",
-                     }} />
-                <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div>
-                        <p className="text-violet-700 dark:text-violet-300/80 text-sm font-medium tracking-wide uppercase">{greeting},</p>
-                        <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight">
-                            {user.name.split(" ")[0]} <span className="inline-block animate-[wave_1.8s_ease-in-out_infinite]">👋</span>
-                        </h2>
-                        <p className="text-foreground text-sm sm:text-base mt-3 max-w-md leading-relaxed">
-                            {ownedKits.length > 0
-                                ? `You have ${ownedKits.length} kit${ownedKits.length > 1 ? "s" : ""} active. Keep the momentum going!`
-                                : "Welcome to your dashboard! Preview any kit below or purchase one to unlock full access."}
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        {streak > 0 && (
-                            <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-gradient-to-br from-orange-500/15 to-red-500/10 border border-orange-400/20 backdrop-blur-sm">
-                                <Flame className="w-6 h-6 text-orange-700 dark:text-orange-400 animate-pulse" />
-                                <div>
-                                    <p className="text-orange-700 dark:text-orange-300 font-bold text-lg leading-none">{streak}</p>
-                                    <p className="text-orange-700 dark:text-orange-400/60 text-[10px] font-medium uppercase tracking-wider mt-0.5">day streak</p>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Stats Grid ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                {[
-                    { label: "Day Streak", value: streak, icon: Flame, gradient: "from-orange-500 to-amber-500", bgGlow: "rgba(249,115,22,0.08)", suffix: "🔥", description: "consecutive days" },
-                    { label: "Topics Studied", value: topicsStudied, icon: BookOpen, gradient: "from-blue-500 to-cyan-400", bgGlow: "rgba(59,130,246,0.08)", suffix: "", description: "topics completed" },
-                    { label: "Kits Owned", value: ownedKits.length, icon: Package, gradient: "from-violet-500 to-purple-500", bgGlow: "rgba(139,92,246,0.08)", suffix: "", description: "active kits" },
-                ].map((stat, i) => {
-                    const Icon = stat.icon
-                    return (
-                        <div key={i}
-                             className="group relative overflow-hidden rounded-2xl p-5 border border-hairline hover:border-hairline transition-all duration-500 cursor-default"
-                             style={{ background: `linear-gradient(135deg, ${stat.bgGlow} 0%, var(--card) 100%)` }}>
-                            {/* Hover glow */}
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                                 style={{ background: `radial-gradient(circle at 50% 50%, ${stat.bgGlow} 0%, transparent 70%)` }} />
-                            <div className="relative z-10">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}>
-                                        <Icon className="w-5 h-5 text-white" />
-                                    </div>
-                                    {stat.suffix && <span className="text-2xl">{stat.suffix}</span>}
-                                </div>
-                                <p className="text-3xl font-extrabold text-foreground tracking-tight">{stat.value}</p>
-                                <p className="text-muted-foreground text-xs mt-1.5 font-medium">{stat.label}</p>
-                                <p className="text-muted-foreground text-[11px] mt-0.5">{stat.description}</p>
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
-
-            {/* Cross-sell: renders nothing if they already own the bundle. */}
-            <BundleUpsell tone="dark" />
+            {/* Announce freshly-added kits to existing users (dismissible). */}
+            <NewKitsBanner />
 
             {/* ── Active Kits ── */}
             {ownedKits.length > 0 && (
@@ -543,6 +485,9 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
 
             {/* ── Bookmarked topics (compact preview) ── */}
             <BookmarksPreview kits={dbKits} />
+
+            {/* Cross-sell sits after the user's own kits — it's an offer, not the page. */}
+            <BundleUpsell tone="dark" />
 
             {/* ── Explore / Preview Kits ── */}
             {previewKits.length > 0 && (
@@ -622,18 +567,41 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                 </div>
             )}
 
-            {/* Inline keyframes for shimmer & wave animations */}
-            <style dangerouslySetInnerHTML={{ __html: `
-                @keyframes shimmer {
-                    0%, 100% { background-position: 200% 0; }
-                    50% { background-position: -200% 0; }
-                }
-                @keyframes wave {
-                    0%, 100% { transform: rotate(0deg); }
-                    25% { transform: rotate(20deg); }
-                    75% { transform: rotate(-10deg); }
-                }
-            `}} />
+            {/* ── Progress at a glance ──
+                Streak / topics / kits used to be three hero cards above the fold; they
+                summarise the work rather than being the work, so they sit at the foot of
+                the page as one slim row. The live streak also stays in the top bar. */}
+            <ProgressStrip streak={streak} topicsStudied={topicsStudied} kitsOwned={ownedKits.length} />
+        </div>
+    )
+}
+
+/** Compact three-up counter row — replaces the old full-width stats grid. */
+function ProgressStrip({ streak, topicsStudied, kitsOwned }: {
+    streak: number; topicsStudied: number; kitsOwned: number
+}) {
+    const stats = [
+        { label: "Day streak", value: streak, icon: Flame, accent: "text-orange-700 dark:text-orange-400", bg: "bg-orange-500/10" },
+        { label: "Topics studied", value: topicsStudied, icon: BookOpen, accent: "text-blue-700 dark:text-blue-400", bg: "bg-blue-500/10" },
+        { label: "Kits owned", value: kitsOwned, icon: Package, accent: "text-violet-700 dark:text-violet-400", bg: "bg-violet-500/10" },
+    ]
+
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-3 rounded-2xl border border-hairline bg-card divide-y sm:divide-y-0 sm:divide-x divide-hairline">
+            {stats.map(stat => {
+                const Icon = stat.icon
+                return (
+                    <div key={stat.label} className="flex items-center gap-3 px-5 py-4">
+                        <div className={`w-9 h-9 rounded-lg ${stat.bg} flex items-center justify-center flex-shrink-0`}>
+                            <Icon className={`w-4 h-4 ${stat.accent}`} />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-xl font-bold text-foreground leading-none">{stat.value}</p>
+                            <p className="text-muted-foreground text-xs mt-1">{stat.label}</p>
+                        </div>
+                    </div>
+                )
+            })}
         </div>
     )
 }

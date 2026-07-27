@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 290" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch5teArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Generics are a COMPILE-TIME feature. The JVM never sees them.</text>
+
+  <!-- source -->
+  <rect x="14" y="34" width="330" height="126" rx="11" fill="#3b82f6" fill-opacity=".1" stroke="#3b82f6" stroke-width="1.3"/>
+  <text x="30" y="56" font-size="11.5" font-weight="700" fill="#3b82f6">what you write</text>
+  <g font-size="11" fill="currentColor">
+    <text x="30" y="80">List&lt;String&gt; names = new ArrayList&lt;&gt;();</text>
+    <text x="30" y="102">names.add("Asha");</text>
+    <text x="30" y="124">String first = names.get(0);</text>
+  </g>
+  <text x="30" y="150" font-size="10.5" fill="currentColor" opacity=".7">javac checks every type here — this is where safety lives</text>
+
+  <path d="M352 96 L392 96" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#ch5teArrow)" class="gf-dash"/>
+  <text x="346" y="86" font-size="10" fill="currentColor" opacity=".65">erasure</text>
+
+  <!-- bytecode -->
+  <rect x="400" y="34" width="346" height="126" rx="11" fill="#f59e0b" fill-opacity=".1" stroke="#f59e0b" stroke-width="1.3"/>
+  <text x="416" y="56" font-size="11.5" font-weight="700" fill="#f59e0b">what the JVM runs</text>
+  <g font-size="11" fill="currentColor">
+    <text x="416" y="80">List names = new ArrayList();</text>
+    <text x="416" y="102">names.add("Asha");</text>
+    <text x="416" y="124">String first = <tspan fill="#f43f5e" font-weight="600">(String)</tspan> names.get(0);</text>
+  </g>
+  <text x="416" y="150" font-size="10.5" fill="currentColor" opacity=".7">type arguments gone; casts inserted automatically</text>
+
+  <!-- consequences -->
+  <rect x="14" y="174" width="732" height="104" rx="11" fill="#f43f5e" fill-opacity=".07" stroke="#f43f5e" stroke-width="1.2"/>
+  <text x="30" y="196" font-size="11.5" font-weight="700" fill="#f43f5e">Everything that "doesn't work" with generics follows from this one fact</text>
+  <g font-size="10.5" fill="currentColor">
+    <text x="30" y="218" class="gf-seq gf-s1">✘ new T()  ·  new T[10]           — no type to instantiate at run time</text>
+    <text x="30" y="238" class="gf-seq gf-s2">✘ x instanceof List&lt;String&gt;        — only "instanceof List" survives</text>
+    <text x="30" y="258" class="gf-seq gf-s3">✘ void f(List&lt;String&gt;) + void f(List&lt;Integer&gt;)   — same erased signature</text>
+    <text x="400" y="218" class="gf-seq gf-s4">✘ catch (MyException&lt;T&gt; e)</text>
+    <text x="400" y="238">✘ static T field</text>
+    <text x="400" y="258">✔ List&lt;String&gt;.class == List&lt;Integer&gt;.class → <tspan font-weight="700">true</tspan></text>
+  </g>
+</svg>

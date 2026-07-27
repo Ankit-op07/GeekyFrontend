@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch6ffArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">finally runs on every path out of the try — including return</text>
+
+  <!-- normal path -->
+  <rect x="14" y="34" width="230" height="180" rx="11" fill="#10b981" fill-opacity=".08" stroke="#10b981" stroke-width="1.3"/>
+  <text x="30" y="56" font-size="11.5" font-weight="700" fill="#10b981">no exception</text>
+  <g class="gf-seq gf-s1"><rect x="30" y="68" width="198" height="30" rx="6" fill="#10b981" fill-opacity=".2"/><text x="44" y="88" font-size="10.5" fill="currentColor">try body runs</text></g>
+  <path d="M129 100 L129 116" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ffArrow)"/>
+  <g class="gf-seq gf-s2"><rect x="30" y="118" width="198" height="30" rx="6" fill="currentColor" fill-opacity=".07"/><text x="44" y="138" font-size="10.5" fill="currentColor" opacity=".55">catch — skipped</text></g>
+  <path d="M129 150 L129 166" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ffArrow)"/>
+  <g class="gf-seq gf-s3"><rect x="30" y="168" width="198" height="30" rx="6" fill="#8b5cf6" fill-opacity=".25"/><text x="44" y="188" font-size="10.5" font-weight="600" fill="currentColor">finally runs</text></g>
+
+  <!-- exception path -->
+  <rect x="258" y="34" width="230" height="180" rx="11" fill="#f59e0b" fill-opacity=".08" stroke="#f59e0b" stroke-width="1.3"/>
+  <text x="274" y="56" font-size="11.5" font-weight="700" fill="#f59e0b">exception thrown</text>
+  <g class="gf-seq gf-s1"><rect x="274" y="68" width="198" height="30" rx="6" fill="#f59e0b" fill-opacity=".2"/><text x="288" y="88" font-size="10.5" fill="currentColor">try body throws</text></g>
+  <path d="M373 100 L373 116" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ffArrow)"/>
+  <g class="gf-seq gf-s2"><rect x="274" y="118" width="198" height="30" rx="6" fill="#f59e0b" fill-opacity=".25"/><text x="288" y="138" font-size="10.5" fill="currentColor">catch handles it</text></g>
+  <path d="M373 150 L373 166" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ffArrow)"/>
+  <g class="gf-seq gf-s3"><rect x="274" y="168" width="198" height="30" rx="6" fill="#8b5cf6" fill-opacity=".25"/><text x="288" y="188" font-size="10.5" font-weight="600" fill="currentColor">finally runs</text></g>
+
+  <!-- return path -->
+  <rect x="502" y="34" width="244" height="180" rx="11" fill="#3b82f6" fill-opacity=".08" stroke="#3b82f6" stroke-width="1.3"/>
+  <text x="518" y="56" font-size="11.5" font-weight="700" fill="#3b82f6">return inside try</text>
+  <g class="gf-seq gf-s1"><rect x="518" y="68" width="212" height="30" rx="6" fill="#3b82f6" fill-opacity=".2"/><text x="532" y="88" font-size="10.5" fill="currentColor">return value EVALUATED</text></g>
+  <path d="M624 100 L624 116" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ffArrow)"/>
+  <g class="gf-seq gf-s2"><rect x="518" y="118" width="212" height="30" rx="6" fill="#8b5cf6" fill-opacity=".25"/><text x="532" y="138" font-size="10.5" font-weight="600" fill="currentColor">finally runs — value already fixed</text></g>
+  <path d="M624 150 L624 166" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ffArrow)"/>
+  <g class="gf-seq gf-s3"><rect x="518" y="168" width="212" height="30" rx="6" fill="#3b82f6" fill-opacity=".2"/><text x="532" y="188" font-size="10.5" fill="currentColor">the SAVED value is returned</text></g>
+
+  <rect x="14" y="226" width="732" height="66" rx="10" fill="#f43f5e" fill-opacity=".09" stroke="#f43f5e" stroke-width="1.2"/>
+  <text x="30" y="248" font-size="11" font-weight="700" fill="#f43f5e">The two ways finally goes wrong</text>
+  <text x="30" y="268" font-size="10.5" fill="currentColor" opacity=".85">1 · Mutating the returned variable in finally has NO effect — the value was already captured.</text>
+  <text x="30" y="284" font-size="10.5" fill="currentColor" opacity=".85">2 · <tspan font-weight="600">return</tspan> or <tspan font-weight="600">throw</tspan> inside finally DISCARDS whatever the try was returning or throwing — the original exception vanishes.</text>
+</svg>

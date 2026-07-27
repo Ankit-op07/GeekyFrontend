@@ -13,6 +13,12 @@ import type { ReactNode } from 'react';
  */
 const KIT_LOGOS: { test: RegExp; src: string }[] = [
     { test: /react/i, src: '/Kit%20logos/React.png' },
+    /* ⚠️  MUST stay above the JavaScript rule. `\bjava\b` cannot match
+     * "JavaScript" (there is no word boundary after "java" there), so the two
+     * never cross-match — the ordering is belt-and-braces so that a future
+     * loosening of either pattern shows up in review instead of silently
+     * putting the JS logo on the Java kit. */
+    { test: /\bjava\b/i, src: '/Kit%20logos/java.svg' },
     { test: /angular/i, src: '/Kit%20logos/angular.png' },
     { test: /node/i, src: '/Kit%20logos/nodejs.svg' },
     { test: /javascript|(^|[^a-z])js([^a-z]|$)/i, src: '/Kit%20logos/JavaScript.svg' },

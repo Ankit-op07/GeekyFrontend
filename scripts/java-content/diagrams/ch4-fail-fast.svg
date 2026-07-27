@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 270" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch4ffArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Fail-fast iterators compare a modCount snapshot on every step</text>
+
+  <!-- fail fast -->
+  <rect x="14" y="34" width="360" height="222" rx="12" fill="#f43f5e" fill-opacity=".07" stroke="#f43f5e" stroke-width="1.3"/>
+  <text x="30" y="56" font-size="12" font-weight="700" fill="#f43f5e">Fail-fast — ArrayList, HashMap, HashSet</text>
+
+  <g class="gf-seq gf-s1">
+    <rect x="30" y="68" width="328" height="30" rx="6" fill="#f43f5e" fill-opacity=".16"/>
+    <text x="44" y="88" font-size="10.5" fill="currentColor">iterator() captures expectedModCount = 4</text>
+  </g>
+  <g class="gf-seq gf-s2">
+    <rect x="30" y="104" width="328" height="30" rx="6" fill="#f43f5e" fill-opacity=".16"/>
+    <text x="44" y="124" font-size="10.5" fill="currentColor">next() → modCount 4 == 4 ✔  element returned</text>
+  </g>
+  <g class="gf-seq gf-s3">
+    <rect x="30" y="140" width="328" height="30" rx="6" fill="#f43f5e" fill-opacity=".22"/>
+    <text x="44" y="160" font-size="10.5" fill="currentColor">list.remove(x) inside the loop → modCount becomes 5</text>
+  </g>
+  <g class="gf-seq gf-s4">
+    <rect x="30" y="176" width="328" height="34" rx="6" fill="#f43f5e" fill-opacity=".3" stroke="#f43f5e" stroke-width="1.2"/>
+    <text x="44" y="197" font-size="10.5" font-weight="700" fill="#f43f5e">next() → 5 ≠ 4 → ConcurrentModificationException</text>
+  </g>
+
+  <text x="30" y="230" font-size="10.5" fill="currentColor" opacity=".8">A best-effort BUG DETECTOR, not a thread-safety</text>
+  <text x="30" y="246" font-size="10.5" fill="currentColor" opacity=".8">mechanism. Never catch it — fix the loop.</text>
+
+  <!-- fail safe -->
+  <rect x="386" y="34" width="360" height="222" rx="12" fill="#10b981" fill-opacity=".07" stroke="#10b981" stroke-width="1.3"/>
+  <text x="402" y="56" font-size="12" font-weight="700" fill="#10b981">Weakly consistent — ConcurrentHashMap,</text>
+  <text x="402" y="72" font-size="12" font-weight="700" fill="#10b981">CopyOnWriteArrayList</text>
+
+  <rect x="402" y="84" width="328" height="58" rx="8" fill="#10b981" fill-opacity=".16"/>
+  <text x="416" y="104" font-size="10.5" fill="currentColor">Iteration never throws. It traverses the table as it</text>
+  <text x="416" y="120" font-size="10.5" fill="currentColor">finds it, so concurrent changes may or may not</text>
+  <text x="416" y="136" font-size="10.5" fill="currentColor">appear — but nothing breaks.</text>
+
+  <rect x="402" y="152" width="328" height="58" rx="8" fill="#10b981" fill-opacity=".16"/>
+  <text x="416" y="172" font-size="10.5" fill="currentColor">CopyOnWriteArrayList goes further: each write</text>
+  <text x="416" y="188" font-size="10.5" fill="currentColor">copies the whole array, so an iterator holds an</text>
+  <text x="416" y="204" font-size="10.5" fill="currentColor">immutable SNAPSHOT of the moment it started.</text>
+
+  <text x="402" y="234" font-size="10.5" fill="currentColor" opacity=".8">"Fail-safe" is the common interview word, but the</text>
+  <text x="402" y="250" font-size="10.5" fill="currentColor" opacity=".8">javadoc term is <tspan font-weight="700">weakly consistent</tspan> — say both.</text>
+</svg>

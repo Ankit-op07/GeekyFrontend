@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">try-with-resources: closing is generated, and the real exception survives</text>
+
+  <!-- manual -->
+  <rect x="14" y="34" width="360" height="176" rx="12" fill="#f43f5e" fill-opacity=".07" stroke="#f43f5e" stroke-width="1.3"/>
+  <text x="30" y="56" font-size="12" font-weight="700" fill="#f43f5e">✘ manual finally</text>
+  <g font-size="10.5" fill="currentColor">
+    <text x="30" y="80">InputStream in = null;</text>
+    <text x="30" y="98">try {</text>
+    <text x="30" y="116">    in = new FileInputStream(f);</text>
+    <text x="30" y="134">    read(in);            ← throws IOException</text>
+    <text x="30" y="152">} finally {</text>
+    <text x="30" y="170">    if (in != null) in.close();  ← ALSO throws</text>
+    <text x="30" y="188">}</text>
+  </g>
+  <rect x="30" y="196" width="328" height="0" rx="0"/>
+
+  <rect x="14" y="218" width="360" height="54" rx="9" fill="#f43f5e" fill-opacity=".14" stroke="#f43f5e" stroke-width="1.1"/>
+  <text x="30" y="238" font-size="10.5" font-weight="700" fill="#f43f5e">close()'s exception REPLACES read()'s.</text>
+  <text x="30" y="256" font-size="10.5" fill="currentColor" opacity=".85">You lose the cause and debug the wrong failure.</text>
+
+  <!-- twr -->
+  <rect x="386" y="34" width="360" height="176" rx="12" fill="#10b981" fill-opacity=".07" stroke="#10b981" stroke-width="1.3"/>
+  <text x="402" y="56" font-size="12" font-weight="700" fill="#10b981">✔ try-with-resources</text>
+  <g font-size="10.5" fill="currentColor">
+    <text x="402" y="80">try (InputStream in = new FileInputStream(f);</text>
+    <text x="402" y="98">     OutputStream out = new FileOutputStream(g)) {</text>
+    <text x="402" y="116">    copy(in, out);</text>
+    <text x="402" y="134">}</text>
+  </g>
+  <g font-size="10.5" fill="currentColor" opacity=".8">
+    <text x="402" y="160">close() is generated for you, in a hidden finally,</text>
+    <text x="402" y="176">in <tspan font-weight="700">REVERSE</tspan> order of declaration: out, then in.</text>
+    <text x="402" y="196">Resources must implement AutoCloseable.</text>
+  </g>
+
+  <rect x="386" y="218" width="360" height="54" rx="9" fill="#10b981" fill-opacity=".14" stroke="#10b981" stroke-width="1.1"/>
+  <text x="402" y="238" font-size="10.5" font-weight="700" fill="#10b981">copy()'s exception is thrown; close()'s is ATTACHED</text>
+  <text x="402" y="256" font-size="10.5" fill="currentColor" opacity=".85">as suppressed — read it with e.getSuppressed(). Nothing is lost.</text>
+</svg>

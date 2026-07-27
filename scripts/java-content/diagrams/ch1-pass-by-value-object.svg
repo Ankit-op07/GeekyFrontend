@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch1pbvoRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f43f5e"/>
+    </marker>
+    <marker id="ch1pbvoGrey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="22" font-size="13" font-weight="700" fill="currentColor">Passing an object: the callee gets a COPY OF THE ARROW — both point at one object</text>
+
+  <!-- case A: mutation -->
+  <text x="14" y="48" font-size="12" font-weight="700" fill="#10b981">✔ Mutating through the copy IS visible to the caller</text>
+  <text x="14" y="66" font-size="11" fill="currentColor" opacity=".7">void rename(User p) { p.setName("Bob"); }</text>
+
+  <rect x="14" y="76" width="180" height="56" rx="9" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6" stroke-width="1.2"/>
+  <text x="30" y="96" font-size="11" font-weight="600" fill="currentColor">main():  u</text>
+  <circle cx="160" cy="112" r="8" fill="#f43f5e"/>
+
+  <rect x="222" y="76" width="180" height="56" rx="9" fill="#f59e0b" fill-opacity=".14" stroke="#f59e0b" stroke-width="1.2"/>
+  <text x="238" y="96" font-size="11" font-weight="600" fill="currentColor">rename():  p</text>
+  <circle cx="368" cy="112" r="8" fill="#f43f5e"/>
+
+  <rect x="500" y="72" width="200" height="64" rx="9" fill="#10b981" fill-opacity=".18" stroke="#10b981" stroke-width="1.4"/>
+  <text x="516" y="94" font-size="11" font-weight="600" fill="currentColor">User@1f3a</text>
+  <text x="516" y="114" font-size="11" fill="currentColor" opacity=".8">name = <tspan font-weight="700" fill="#10b981">"Bob"</tspan></text>
+  <text x="516" y="130" font-size="10" fill="currentColor" opacity=".6">mutated in place — one object, both see it</text>
+
+  <path d="M170 108 C 340 60, 420 78, 496 96" fill="none" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#ch1pbvoRed)"/>
+  <path d="M378 112 L494 112" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#ch1pbvoRed)" class="gf-dash"/>
+
+  <line x1="14" y1="156" x2="746" y2="156" stroke="currentColor" stroke-opacity=".15"/>
+
+  <!-- case B: reassignment -->
+  <text x="14" y="180" font-size="12" font-weight="700" fill="#f43f5e">✘ REASSIGNING the copy is NOT visible to the caller</text>
+  <text x="14" y="198" font-size="11" fill="currentColor" opacity=".7">void replace(User p) { p = new User("Bob"); }</text>
+
+  <rect x="14" y="208" width="180" height="56" rx="9" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6" stroke-width="1.2"/>
+  <text x="30" y="228" font-size="11" font-weight="600" fill="currentColor">main():  u</text>
+  <circle cx="160" cy="244" r="8" fill="#f43f5e"/>
+
+  <rect x="222" y="208" width="180" height="56" rx="9" fill="#f59e0b" fill-opacity=".14" stroke="#f59e0b" stroke-width="1.2"/>
+  <text x="238" y="228" font-size="11" font-weight="600" fill="currentColor">replace():  p</text>
+  <circle cx="368" cy="244" r="8" fill="#94a3b8" class="gf-pulse"/>
+
+  <rect x="500" y="196" width="200" height="44" rx="9" fill="#10b981" fill-opacity=".18" stroke="#10b981" stroke-width="1.3"/>
+  <text x="516" y="222" font-size="11" fill="currentColor">User@1f3a — name = "Asha"</text>
+
+  <rect x="500" y="252" width="200" height="44" rx="9" fill="#94a3b8" fill-opacity=".18" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="4 4"/>
+  <text x="516" y="278" font-size="11" fill="currentColor">User@88c1 — name = "Bob"</text>
+
+  <path d="M170 240 C 340 200, 420 206, 496 216" fill="none" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#ch1pbvoRed)"/>
+  <path d="M378 248 C 430 250, 450 268, 496 274" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ch1pbvoGrey)" class="gf-dash"/>
+
+  <text x="222" y="286" font-size="10.5" fill="currentColor" opacity=".7">p now points somewhere else.</text>
+  <text x="222" y="302" font-size="10.5" fill="currentColor" opacity=".7">u never moved. The new object is</text>
+  <text x="222" y="316" font-size="10.5" fill="currentColor" opacity=".7">garbage the moment replace() returns.</text>
+</svg>

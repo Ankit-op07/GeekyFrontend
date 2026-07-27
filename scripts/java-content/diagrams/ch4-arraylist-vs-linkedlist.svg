@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch4alArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">One contiguous array vs a chain of separate node objects</text>
+
+  <!-- ArrayList -->
+  <rect x="14" y="34" width="732" height="122" rx="12" fill="#10b981" fill-opacity=".07" stroke="#10b981" stroke-width="1.3"/>
+  <text x="30" y="56" font-size="12" font-weight="700" fill="#10b981">ArrayList — Object[] behind the scenes</text>
+
+  <g font-size="11" fill="currentColor">
+    <rect x="30" y="66" width="62" height="34" rx="6" fill="#10b981" fill-opacity=".26"/><text x="54" y="88">A</text>
+    <rect x="94" y="66" width="62" height="34" rx="6" fill="#10b981" fill-opacity=".26"/><text x="118" y="88">B</text>
+    <rect x="158" y="66" width="62" height="34" rx="6" fill="#10b981" fill-opacity=".26"/><text x="182" y="88">C</text>
+    <rect x="222" y="66" width="62" height="34" rx="6" fill="#10b981" fill-opacity=".26"/><text x="246" y="88">D</text>
+    <rect x="286" y="66" width="62" height="34" rx="6" fill="#10b981" fill-opacity=".26"/><text x="310" y="88">E</text>
+    <rect x="350" y="66" width="120" height="34" rx="6" fill="currentColor" fill-opacity=".06" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="3 3"/>
+    <text x="366" y="88" opacity=".55">spare capacity</text>
+  </g>
+  <text x="30" y="120" font-size="10.5" fill="currentColor" opacity=".8">get(i) is address + i × width — one memory access, <tspan font-weight="700" fill="#10b981">O(1)</tspan>.</text>
+  <text x="30" y="138" font-size="10.5" fill="currentColor" opacity=".8">Elements are adjacent, so the CPU prefetches them. Iteration is very fast.</text>
+  <text x="490" y="120" font-size="10.5" fill="currentColor" opacity=".8">add(0, x) must shift every</text>
+  <text x="490" y="138" font-size="10.5" fill="currentColor" opacity=".8">element right — <tspan font-weight="700" fill="#f43f5e">O(n)</tspan>.</text>
+
+  <!-- LinkedList -->
+  <rect x="14" y="168" width="732" height="140" rx="12" fill="#8b5cf6" fill-opacity=".07" stroke="#8b5cf6" stroke-width="1.3"/>
+  <text x="30" y="190" font-size="12" font-weight="700" fill="#8b5cf6">LinkedList — a doubly-linked chain of Node objects</text>
+
+  <g font-size="11" fill="currentColor">
+    <rect x="30" y="200" width="100" height="44" rx="7" fill="#8b5cf6" fill-opacity=".2" stroke="#8b5cf6" stroke-width="1"/>
+    <text x="44" y="218" font-size="10">prev · A · next</text>
+    <rect x="176" y="200" width="100" height="44" rx="7" fill="#8b5cf6" fill-opacity=".2" stroke="#8b5cf6" stroke-width="1"/>
+    <text x="190" y="218" font-size="10">prev · B · next</text>
+    <rect x="322" y="200" width="100" height="44" rx="7" fill="#8b5cf6" fill-opacity=".2" stroke="#8b5cf6" stroke-width="1"/>
+    <text x="336" y="218" font-size="10">prev · C · next</text>
+    <rect x="468" y="200" width="100" height="44" rx="7" fill="#8b5cf6" fill-opacity=".2" stroke="#8b5cf6" stroke-width="1"/>
+    <text x="482" y="218" font-size="10">prev · D · next</text>
+  </g>
+  <path d="M132 216 L172 216" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch4alArrow)" class="gf-dash"/>
+  <path d="M278 216 L318 216" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch4alArrow)" class="gf-dash"/>
+  <path d="M424 216 L464 216" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch4alArrow)" class="gf-dash"/>
+  <path d="M172 234 L132 234" stroke="#94a3b8" stroke-width="1.1" marker-end="url(#ch4alArrow)" opacity=".5"/>
+  <path d="M318 234 L278 234" stroke="#94a3b8" stroke-width="1.1" marker-end="url(#ch4alArrow)" opacity=".5"/>
+  <path d="M464 234 L424 234" stroke="#94a3b8" stroke-width="1.1" marker-end="url(#ch4alArrow)" opacity=".5"/>
+
+  <text x="30" y="268" font-size="10.5" fill="currentColor" opacity=".8">get(i) must WALK from an end — <tspan font-weight="700" fill="#f43f5e">O(n)</tspan>. Nodes are scattered across the heap,</text>
+  <text x="30" y="286" font-size="10.5" fill="currentColor" opacity=".8">so each hop is a potential cache miss, and every node costs ~24 extra bytes of overhead.</text>
+  <text x="30" y="304" font-size="10.5" fill="currentColor" opacity=".8">Its real strength: add/remove at either END, and removal via an iterator you already hold — <tspan font-weight="700" fill="#10b981">O(1)</tspan>.</text>
+
+  <rect x="600" y="196" width="132" height="100" rx="9" fill="#f43f5e" fill-opacity=".1" stroke="#f43f5e" stroke-width="1.1"/>
+  <text x="614" y="216" font-size="10.5" font-weight="700" fill="#f43f5e">In practice</text>
+  <text x="614" y="234" font-size="10" fill="currentColor" opacity=".8">ArrayList wins almost</text>
+  <text x="614" y="248" font-size="10" fill="currentColor" opacity=".8">always. For a queue or</text>
+  <text x="614" y="262" font-size="10" fill="currentColor" opacity=".8">deque, prefer</text>
+  <text x="614" y="278" font-size="10" font-weight="600" fill="currentColor">ArrayDeque —</text>
+  <text x="614" y="292" font-size="10" fill="currentColor" opacity=".8">faster than both.</text>
+</svg>

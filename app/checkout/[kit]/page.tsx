@@ -71,7 +71,31 @@ interface KitDetails {
   }[]
 }
 
-const { react_kit_price, react_kit_original_price, js_kit_price, js_kit_original_price, complete_kit_price, complete_kit_original_price, all_access_price, all_access_original_price, angular_kit_price, angular_kit_original_price, nodejs_kit_price, nodejs_kit_original_price } = appConstants()
+const { react_kit_price, react_kit_original_price, js_kit_price, js_kit_original_price, complete_kit_price, complete_kit_original_price, all_access_price, all_access_original_price, angular_kit_price, angular_kit_original_price, nodejs_kit_price, nodejs_kit_original_price, java_kit_price, java_kit_original_price } = appConstants()
+
+/* ---------- Java mark (inline) ----------
+ * Generic steaming cup, matching public/Kit logos/java.svg. Deliberately not
+ * the Oracle wordmark or the Duke mascot — both are trademarked. */
+function JavaIcon({ size = 40 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <defs>
+        <linearGradient id="javaCupGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#f97316" />
+          <stop offset="1" stopColor="#dc2626" />
+        </linearGradient>
+      </defs>
+      <g fill="none" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round">
+        <path d="M24 17c0-4 4-4 4-8s-4-4-4-8" />
+        <path d="M34 17c0-4 4-4 4-8s-4-4-4-8" />
+      </g>
+      <rect x="10" y="53" width="44" height="5" rx="2.5" fill="#7c2d12" />
+      <path d="M46 30h4a7 7 0 0 1 0 14h-4" fill="none" stroke="url(#javaCupGrad)" strokeWidth="4" strokeLinecap="round" />
+      <path d="M12 26h36v14a13 13 0 0 1-13 13H25a13 13 0 0 1-13-13V26z" fill="url(#javaCupGrad)" />
+    </svg>
+  )
+}
+
 /* ---------- Custom Node SVG Icon (inline) ---------- */
 function NodeIcon({ size = 36 }: { size?: number }) {
   return (
@@ -96,6 +120,7 @@ const SLUG_TO_KIT_ID: Record<string, string> = {
   react: 'react-kit',
   angular: 'angular-kit',
   nodejs: 'nodejs-kit',
+  java: 'java-kit',
   // 'complete' is the LEGACY slug for the kit now named "Frontend System Design Kit".
   // Kept so existing ads/backlinks to /checkout/complete keep resolving.
   complete: 'complete-kit',
@@ -933,6 +958,65 @@ const kitsData: Record<string, KitDetails> = {
       { question: "Is this for learning Node.js or for interview prep?", answer: "Both. Each topic teaches the concept deeply with diagrams and code, then has an 'Interview lens' section with the exact questions asked, common traps and model answers — so it works whether you're learning or revising before an interview." },
       { question: "Do I get lifetime access and updates?", answer: "Yes. One payment gives you lifetime access and all future updates to the kit for free." },
       { question: "How do I access it after paying?", answer: "Instantly. After payment your account is unlocked and you can read every topic from your dashboard right away." },
+    ],
+    bonuses: []
+  },
+  java: {
+    id: "java",
+    name: "Java Interview Preparation Kit",
+    tagline: "14 modules · 65 in-depth topics · 130+ animated diagrams. Core Java, collections internals, concurrency, the JVM, modern Java 17/21 and Spring Boot — taught properly, then framed exactly the way interviewers ask it.",
+    price: java_kit_price,
+    originalPrice: java_kit_original_price,
+    discount: Math.round(((java_kit_original_price - java_kit_price) / java_kit_original_price) * 100),
+    icon: <JavaIcon size={40} />,
+    color: "from-orange-500 to-red-600",
+    bgGradient: "from-orange-50 via-white to-red-50",
+    // NOTE: placeholder social proof — replace `students`/`rating`/`reviews` with
+    // real numbers before heavy promotion. Testimonials left empty (not fabricated).
+    students: 0,
+    rating: 5,
+    reviews: 0,
+    lastUpdated: "Java 17 LTS baseline, with Java 21 covered",
+    features: [
+      { icon: <BookOpen className="w-4 h-4" />, title: "65 deep-dive topics", description: "Every core Java and Spring concept explained for learning and interviews, ~2,000 words each." },
+      { icon: <Sparkles className="w-4 h-4" />, title: "130+ animated diagrams", description: "HashMap resize, GC generations, thread lifecycle, stream pipelines, bean lifecycle, JPA entity states and more — animated and theme-aware." },
+      { icon: <Brain className="w-4 h-4" />, title: "Interview lens on every topic", description: "250+ real interview questions with model answers, follow-ups and the traps to avoid." },
+      { icon: <Code className="w-4 h-4" />, title: "Modern Java (17 LTS → 21)", description: "Records, sealed types, pattern matching, switch expressions and virtual threads — plus the Java 8 equivalents interviewers still ask about." },
+      { icon: <Layers className="w-4 h-4" />, title: "Spring Boot, not just core Java", description: "Four full modules on Spring Core, Boot auto-configuration, Data JPA/Hibernate, REST, security and testing — where Java interviews actually go." },
+      { icon: <Zap className="w-4 h-4" />, title: "Revision cheat-cards", description: "A quick-recall summary at the end of every topic for last-minute prep." },
+    ],
+    curriculum: [
+      { module: "1 · Java Fundamentals", topics: ["JDK vs JRE vs JVM", "Compilation & bytecode", "Primitives vs references", "Stack vs heap", "Pass-by-value"], hours: 4 },
+      { module: "2 · OOP Deep Dive", topics: ["Classes & constructors", "Inheritance & overriding", "Abstract class vs interface", "Encapsulation & access", "equals & hashCode", "static, final & init order"], hours: 6 },
+      { module: "3 · Strings & Immutability", topics: ["Why String is immutable", "String pool & interning", "StringBuilder vs StringBuffer", "Wrappers & the Integer cache"], hours: 4 },
+      { module: "4 · Collections Framework", topics: ["Collection hierarchy", "ArrayList vs LinkedList", "HashMap internals", "LinkedHashMap & TreeMap", "Sets", "ConcurrentHashMap", "Fail-fast vs fail-safe"], hours: 8 },
+      { module: "5 · Generics & Sorting", topics: ["Generics & type erasure", "Wildcards & PECS", "Comparable vs Comparator"], hours: 4 },
+      { module: "6 · Exceptions", topics: ["Throwable hierarchy", "Checked vs unchecked", "finally & control flow", "try-with-resources", "Custom exceptions"], hours: 4 },
+      { module: "7 · Java 8+ Functional Java", topics: ["Lambdas", "Functional interfaces", "Streams & laziness", "Collectors & groupingBy", "Parallel streams", "Optional"], hours: 7 },
+      { module: "8 · Multithreading & Concurrency", topics: ["Thread lifecycle", "Runnable/Callable/Future", "synchronized, locks & volatile", "Java Memory Model", "Deadlock", "Executors & thread pools", "CompletableFuture", "Concurrent collections"], hours: 8 },
+      { module: "9 · JVM Internals", topics: ["Classloading & delegation", "Runtime memory areas", "Garbage collection", "GC tuning", "OOM vs StackOverflow"], hours: 5 },
+      { module: "10 · Modern Java (11→21)", topics: ["var & text blocks", "Records", "Sealed classes", "Pattern matching & switch", "Virtual threads"], hours: 5 },
+      { module: "11 · Spring Core & Spring Boot", topics: ["IoC & dependency injection", "Bean lifecycle & scopes", "Stereotype annotations", "Boot auto-configuration", "Profiles & properties", "Spring MVC request flow"], hours: 7 },
+      { module: "12 · Spring Data, JPA & Hibernate", topics: ["Entity mapping", "Repositories & derived queries", "Lazy vs eager & N+1", "Persistence context", "@Transactional"], hours: 6 },
+      { module: "13 · REST, Security & Testing", topics: ["REST controllers & validation", "@ControllerAdvice", "Spring Security & JWT", "JUnit 5 & Mockito", "Slice vs @SpringBootTest"], hours: 6 },
+      { module: "14 · Design Patterns & Java LLD", topics: ["SOLID in Java", "Singleton & threading traps", "Factory, Builder, Strategy, Observer", "LLD walkthroughs"], hours: 5 },
+    ],
+    included: [
+      { icon: <BookOpen className="w-4 h-4" />, text: "65 in-depth topics", value: "14 modules" },
+      { icon: <Sparkles className="w-4 h-4" />, text: "130+ animated diagrams", value: "Visual learning" },
+      { icon: <Code className="w-4 h-4" />, text: "250+ interview questions", value: "With model answers" },
+      { icon: <Layers className="w-4 h-4" />, text: "Spring Boot & JPA modules", value: "4 modules" },
+      { icon: <RefreshCw className="w-4 h-4" />, text: "Lifetime updates", value: "Forever free" },
+      { icon: <Download className="w-4 h-4" />, text: "Instant access", value: "Start in 2 mins" },
+    ],
+    testimonials: [],
+    faqs: [
+      { question: "What exactly do I get?", answer: "Full access to the Java Interview Kit: 14 modules, 65 in-depth topics (~2,000 words each) with 130+ animated diagrams, 250+ interview questions with model answers, plus gotchas, best practices and revision cheat-cards for every topic. Lifetime access with free updates." },
+      { question: "Does it cover Spring Boot, or only core Java?", answer: "Both, and that is the point. Modules 1-10 build real depth in core Java, the collections internals, concurrency and the JVM. Modules 11-14 then cover Spring Core, Spring Boot auto-configuration, Spring Data JPA/Hibernate, REST, Spring Security, JUnit 5/Mockito and Java LLD — the parts most free material skips even though interviews lean on them." },
+      { question: "Which Java version is it written for?", answer: "Java 17 LTS is the baseline, with Java 21 features (including virtual threads) covered explicitly. Where interviewers still ask about the Java 8 way of doing something, the older equivalent is shown alongside." },
+      { question: "Is this for learning Java or for interview prep?", answer: "Both. Each topic teaches the concept deeply with diagrams and code, then has an 'Interview lens' section with the exact questions asked, common traps and model answers — so it works whether you're learning or revising the night before." },
+      { question: "Does it include DSA problems in Java?", answer: "No, and we would rather say so plainly. This kit is language, JVM and framework depth — the part of a Java interview that tests whether you actually know Java. DSA practice is a separate discipline and is not included here." },
+      { question: "Do I get lifetime access and updates?", answer: "Yes. One payment gives you lifetime access and all future updates to the kit for free." },
     ],
     bonuses: []
   }

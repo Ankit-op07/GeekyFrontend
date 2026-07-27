@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <text x="14" y="22" font-size="13" font-weight="700" fill="currentColor">Four access levels, as widening rings of visibility</text>
+
+  <g class="gf-seq gf-s4">
+    <rect x="14" y="38" width="452" height="226" rx="12" fill="#f43f5e" fill-opacity=".07" stroke="#f43f5e" stroke-width="1.4"/>
+    <text x="32" y="60" font-size="12" font-weight="700" fill="#f43f5e">public</text>
+    <text x="86" y="60" font-size="10.5" fill="currentColor" opacity=".7">— everywhere, any package, any module that reads yours</text>
+  </g>
+  <g class="gf-seq gf-s3">
+    <rect x="32" y="72" width="416" height="176" rx="11" fill="#f59e0b" fill-opacity=".09" stroke="#f59e0b" stroke-width="1.3"/>
+    <text x="50" y="94" font-size="12" font-weight="700" fill="#f59e0b">protected</text>
+    <text x="126" y="94" font-size="10.5" fill="currentColor" opacity=".7">— same package + SUBCLASSES anywhere</text>
+  </g>
+  <g class="gf-seq gf-s2">
+    <rect x="50" y="106" width="380" height="126" rx="10" fill="#3b82f6" fill-opacity=".10" stroke="#3b82f6" stroke-width="1.3"/>
+    <text x="68" y="128" font-size="12" font-weight="700" fill="#3b82f6">(no modifier) — package-private</text>
+    <text x="68" y="146" font-size="10.5" fill="currentColor" opacity=".7">same package only. The DEFAULT, and the most forgotten.</text>
+  </g>
+  <g class="gf-seq gf-s1">
+    <rect x="68" y="158" width="344" height="58" rx="10" fill="#10b981" fill-opacity=".16" stroke="#10b981" stroke-width="1.3"/>
+    <text x="86" y="180" font-size="12" font-weight="700" fill="#10b981">private</text>
+    <text x="146" y="180" font-size="10.5" fill="currentColor" opacity=".75">— this class only (including its nested classes)</text>
+    <text x="86" y="202" font-size="10.5" fill="currentColor" opacity=".7">Start here. Widen only when something outside genuinely needs it.</text>
+  </g>
+
+  <!-- table -->
+  <rect x="486" y="38" width="260" height="226" rx="11" fill="currentColor" fill-opacity=".04" stroke="currentColor" stroke-opacity=".18" stroke-width="1"/>
+  <text x="502" y="60" font-size="11.5" font-weight="700" fill="currentColor">Visible from…</text>
+  <g font-size="10.5" fill="currentColor">
+    <text x="502" y="84" opacity=".6">                 cls  pkg  sub  all</text>
+    <text x="502" y="106"><tspan font-weight="600" fill="#10b981">private</tspan>      ✔    ✘    ✘    ✘</text>
+    <text x="502" y="128"><tspan font-weight="600" fill="#3b82f6">package</tspan>      ✔    ✔    ✘    ✘</text>
+    <text x="502" y="150"><tspan font-weight="600" fill="#f59e0b">protected</tspan>    ✔    ✔    ✔    ✘</text>
+    <text x="502" y="172"><tspan font-weight="600" fill="#f43f5e">public</tspan>       ✔    ✔    ✔    ✔</text>
+  </g>
+  <text x="502" y="204" font-size="10.5" fill="currentColor" opacity=".7">An override may WIDEN access</text>
+  <text x="502" y="220" font-size="10.5" fill="currentColor" opacity=".7">but never narrow it — narrowing</text>
+  <text x="502" y="236" font-size="10.5" fill="currentColor" opacity=".7">would break substitutability</text>
+  <text x="502" y="252" font-size="10.5" fill="currentColor" opacity=".7">and is a compile error.</text>
+</svg>

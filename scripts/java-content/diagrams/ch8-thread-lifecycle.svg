@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch8tlArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Thread.State — the six values the JVM actually reports</text>
+
+  <!-- NEW -->
+  <g class="gf-seq gf-s1">
+    <rect x="14" y="40" width="130" height="46" rx="9" fill="#94a3b8" fill-opacity=".2" stroke="#94a3b8" stroke-width="1.2"/>
+    <text x="30" y="62" font-size="11.5" font-weight="700" fill="currentColor">NEW</text>
+    <text x="30" y="78" font-size="9.5" fill="currentColor" opacity=".75">created, not started</text>
+  </g>
+  <path d="M148 63 L192 63" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ch8tlArrow)"/>
+  <text x="146" y="55" font-size="9" fill="currentColor" opacity=".65">start()</text>
+
+  <!-- RUNNABLE -->
+  <g class="gf-seq gf-s2">
+    <rect x="196" y="40" width="170" height="46" rx="9" fill="#10b981" fill-opacity=".2" stroke="#10b981" stroke-width="1.3"/>
+    <text x="212" y="62" font-size="11.5" font-weight="700" fill="#10b981">RUNNABLE</text>
+    <text x="212" y="78" font-size="9.5" fill="currentColor" opacity=".75">running OR ready — the JVM does not distinguish</text>
+  </g>
+  <path d="M370 63 L414 63" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ch8tlArrow)"/>
+  <text x="368" y="55" font-size="9" fill="currentColor" opacity=".65">run() returns</text>
+
+  <!-- TERMINATED -->
+  <g class="gf-seq gf-s5">
+    <rect x="418" y="40" width="150" height="46" rx="9" fill="#f43f5e" fill-opacity=".18" stroke="#f43f5e" stroke-width="1.2"/>
+    <text x="434" y="62" font-size="11.5" font-weight="700" fill="#f43f5e">TERMINATED</text>
+    <text x="434" y="78" font-size="9.5" fill="currentColor" opacity=".75">cannot be restarted</text>
+  </g>
+
+  <!-- blocked states -->
+  <path d="M240 90 L200 128" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch8tlArrow)" class="gf-dash"/>
+  <path d="M290 90 L370 128" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch8tlArrow)" class="gf-dash"/>
+  <path d="M310 90 L540 128" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch8tlArrow)" class="gf-dash"/>
+
+  <g class="gf-seq gf-s3">
+    <rect x="14" y="132" width="230" height="76" rx="10" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="1.3"/>
+    <text x="30" y="154" font-size="11.5" font-weight="700" fill="#f59e0b">BLOCKED</text>
+    <text x="30" y="172" font-size="9.5" fill="currentColor" opacity=".8">waiting to ENTER a synchronized</text>
+    <text x="30" y="186" font-size="9.5" fill="currentColor" opacity=".8">block whose monitor is held</text>
+    <text x="30" y="202" font-size="9.5" fill="currentColor" opacity=".6">only ever caused by synchronized</text>
+  </g>
+
+  <g class="gf-seq gf-s4">
+    <rect x="258" y="132" width="230" height="76" rx="10" fill="#8b5cf6" fill-opacity=".16" stroke="#8b5cf6" stroke-width="1.3"/>
+    <text x="274" y="154" font-size="11.5" font-weight="700" fill="#8b5cf6">WAITING</text>
+    <text x="274" y="172" font-size="9.5" fill="currentColor" opacity=".8">wait() · join() · park()</text>
+    <text x="274" y="186" font-size="9.5" fill="currentColor" opacity=".8">no timeout — waits indefinitely</text>
+    <text x="274" y="202" font-size="9.5" fill="currentColor" opacity=".6">needs notify()/notifyAll() to leave</text>
+  </g>
+
+  <g class="gf-seq gf-s4">
+    <rect x="502" y="132" width="244" height="76" rx="10" fill="#3b82f6" fill-opacity=".16" stroke="#3b82f6" stroke-width="1.3"/>
+    <text x="518" y="154" font-size="11.5" font-weight="700" fill="#3b82f6">TIMED_WAITING</text>
+    <text x="518" y="172" font-size="9.5" fill="currentColor" opacity=".8">sleep(n) · wait(n) · join(n)</text>
+    <text x="518" y="186" font-size="9.5" fill="currentColor" opacity=".8">returns on its own when time is up</text>
+    <text x="518" y="202" font-size="9.5" fill="currentColor" opacity=".6">the state you see most in thread dumps</text>
+  </g>
+
+  <path d="M129 132 L200 92" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#ch8tlArrow)" opacity=".5"/>
+  <path d="M373 132 L300 92" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#ch8tlArrow)" opacity=".5"/>
+
+  <rect x="14" y="224" width="732" height="82" rx="10" fill="#f43f5e" fill-opacity=".07" stroke="#f43f5e" stroke-width="1.2"/>
+  <text x="30" y="246" font-size="11" font-weight="700" fill="#f43f5e">The three facts interviewers check</text>
+  <text x="30" y="266" font-size="10.5" fill="currentColor" opacity=".85">1 · There is no RUNNING state. RUNNABLE covers both "on a CPU" and "ready and waiting for one".</text>
+  <text x="30" y="284" font-size="10.5" fill="currentColor" opacity=".85">2 · <tspan font-weight="600">sleep() keeps the lock</tspan>; <tspan font-weight="600">wait() releases it</tspan>. That single difference is why wait() must be called inside synchronized.</text>
+  <text x="30" y="300" font-size="10.5" fill="currentColor" opacity=".85">3 · A TERMINATED thread cannot be restarted — calling start() again throws IllegalThreadStateException.</text>
+</svg>

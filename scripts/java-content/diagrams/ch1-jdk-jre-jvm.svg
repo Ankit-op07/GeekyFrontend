@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <!-- JDK ⊃ JRE ⊃ JVM, as nested containment. The highlight walks outward-in. -->
+  <rect x="14" y="14" width="732" height="272" rx="14" fill="#f97316" fill-opacity=".08" stroke="#f97316" stroke-width="1.5"/>
+  <text x="32" y="42" font-size="14" font-weight="700" fill="#f97316">JDK</text>
+  <text x="70" y="42" font-size="13" fill="currentColor" opacity=".75">Java Development Kit — everything below, plus the tools to build</text>
+
+  <!-- developer tools column -->
+  <g class="gf-seq gf-s1">
+    <rect x="32" y="60" width="230" height="210" rx="10" fill="#f97316" fill-opacity=".12" stroke="#f97316" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="48" y="84" font-size="12" font-weight="600" fill="currentColor" opacity=".85">Development tools</text>
+    <g font-size="12" fill="currentColor">
+      <rect x="48" y="96" width="90" height="26" rx="6" fill="#f97316" fill-opacity=".18"/>
+      <text x="60" y="113">javac</text>
+      <rect x="148" y="96" width="90" height="26" rx="6" fill="#f97316" fill-opacity=".18"/>
+      <text x="160" y="113">jar</text>
+      <rect x="48" y="130" width="90" height="26" rx="6" fill="#f97316" fill-opacity=".18"/>
+      <text x="60" y="147">javadoc</text>
+      <rect x="148" y="130" width="90" height="26" rx="6" fill="#f97316" fill-opacity=".18"/>
+      <text x="160" y="147">jdb</text>
+      <rect x="48" y="164" width="90" height="26" rx="6" fill="#f97316" fill-opacity=".18"/>
+      <text x="60" y="181">jshell</text>
+      <rect x="148" y="164" width="90" height="26" rx="6" fill="#f97316" fill-opacity=".18"/>
+      <text x="160" y="181">jlink</text>
+    </g>
+    <text x="48" y="214" font-size="11" fill="currentColor" opacity=".6">You need these to</text>
+    <text x="48" y="230" font-size="11" fill="currentColor" opacity=".6">COMPILE and package.</text>
+    <text x="48" y="252" font-size="11" fill="currentColor" opacity=".6">Absent from a plain JRE.</text>
+  </g>
+
+  <!-- JRE -->
+  <g class="gf-seq gf-s2">
+    <rect x="286" y="60" width="446" height="210" rx="12" fill="#3b82f6" fill-opacity=".10" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="304" y="84" font-size="13" font-weight="700" fill="#3b82f6">JRE</text>
+    <text x="338" y="84" font-size="12" fill="currentColor" opacity=".75">Java Runtime Environment — enough to RUN</text>
+  </g>
+
+  <!-- JVM -->
+  <g class="gf-seq gf-s3">
+    <rect x="304" y="98" width="410" height="88" rx="10" fill="#10b981" fill-opacity=".14" stroke="#10b981" stroke-width="1.5"/>
+    <text x="322" y="124" font-size="13" font-weight="700" fill="#10b981">JVM</text>
+    <text x="360" y="124" font-size="12" fill="currentColor" opacity=".75">Java Virtual Machine</text>
+    <text x="322" y="146" font-size="11.5" fill="currentColor" opacity=".7">Loads, verifies and executes bytecode. Manages memory</text>
+    <text x="322" y="164" font-size="11.5" fill="currentColor" opacity=".7">and garbage collection. This is the abstract machine — a spec.</text>
+  </g>
+
+  <!-- core libraries -->
+  <g class="gf-seq gf-s4">
+    <rect x="304" y="198" width="410" height="56" rx="10" fill="#8b5cf6" fill-opacity=".14" stroke="#8b5cf6" stroke-width="1.2"/>
+    <text x="322" y="222" font-size="12" font-weight="600" fill="#8b5cf6">Core class libraries</text>
+    <text x="322" y="242" font-size="11.5" fill="currentColor" opacity=".7">java.lang, java.util, java.io, java.time …</text>
+  </g>
+</svg>

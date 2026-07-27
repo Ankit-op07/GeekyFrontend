@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch4hrArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Resize: at size &gt; capacity × loadFactor, the table doubles and everything is rehomed</text>
+  <text x="14" y="40" font-size="11" fill="currentColor" opacity=".7">Default capacity 16, load factor 0.75 → the 13th entry triggers a resize to 32</text>
+
+  <!-- before -->
+  <rect x="14" y="54" width="286" height="200" rx="11" fill="#f59e0b" fill-opacity=".08" stroke="#f59e0b" stroke-width="1.3"/>
+  <text x="30" y="76" font-size="11.5" font-weight="700" fill="#f59e0b">before — capacity 16, size 12</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="30" y="88" width="254" height="24" rx="5" fill="#f59e0b" fill-opacity=".2"/><text x="42" y="105">[5]  →  "kiwi"  →  "date"  →  "lime"</text>
+    <rect x="30" y="118" width="254" height="24" rx="5" fill="#f59e0b" fill-opacity=".2"/><text x="42" y="135">[9]  →  "fig"   →  "plum"</text>
+    <rect x="30" y="148" width="254" height="24" rx="5" fill="currentColor" fill-opacity=".07"/><text x="42" y="165">…</text>
+  </g>
+  <text x="30" y="196" font-size="10.5" fill="currentColor" opacity=".8">Bins are getting long. Lookups in bin 5 now</text>
+  <text x="30" y="212" font-size="10.5" fill="currentColor" opacity=".8">walk three nodes instead of one.</text>
+  <text x="30" y="236" font-size="10.5" font-weight="700" fill="#f43f5e">threshold = 16 × 0.75 = 12 → next put resizes</text>
+
+  <path d="M310 150 L354 150" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#ch4hrArrow)" class="gf-dash"/>
+  <text x="304" y="140" font-size="10" fill="currentColor" opacity=".65">resize()</text>
+
+  <!-- after -->
+  <rect x="364" y="54" width="382" height="200" rx="11" fill="#10b981" fill-opacity=".08" stroke="#10b981" stroke-width="1.3"/>
+  <text x="380" y="76" font-size="11.5" font-weight="700" fill="#10b981">after — capacity 32, same 13 entries</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="380" y="88" width="350" height="24" rx="5" fill="#10b981" fill-opacity=".2" class="gf-seq gf-s1"/><text x="392" y="105">[5]   →  "kiwi"  →  "lime"</text>
+    <rect x="380" y="118" width="350" height="24" rx="5" fill="#10b981" fill-opacity=".2" class="gf-seq gf-s2"/><text x="392" y="135">[21]  →  "date"        ← moved by exactly +16</text>
+    <rect x="380" y="148" width="350" height="24" rx="5" fill="#10b981" fill-opacity=".2" class="gf-seq gf-s3"/><text x="392" y="165">[9]   →  "fig"</text>
+    <rect x="380" y="178" width="350" height="24" rx="5" fill="#10b981" fill-opacity=".2" class="gf-seq gf-s4"/><text x="392" y="195">[25]  →  "plum"        ← moved by exactly +16</text>
+  </g>
+  <text x="380" y="224" font-size="10.5" fill="currentColor" opacity=".85">Because capacity is a power of two, one extra hash bit decides everything: an entry either</text>
+  <text x="380" y="240" font-size="10.5" fill="currentColor" opacity=".85">stays at index i or moves to i + oldCapacity. No rehashing — Java 8 splits each bin in one pass.</text>
+</svg>

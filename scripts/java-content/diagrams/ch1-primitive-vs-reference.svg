@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 250" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch1pvrArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f43f5e"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="22" font-size="13" font-weight="700" fill="currentColor">A primitive variable HOLDS the value. A reference variable holds a way to FIND the value.</text>
+
+  <!-- primitive -->
+  <rect x="14" y="40" width="352" height="190" rx="12" fill="#10b981" fill-opacity=".08" stroke="#10b981" stroke-width="1.4"/>
+  <text x="32" y="64" font-size="12" font-weight="700" fill="#10b981">Primitive</text>
+  <text x="100" y="64" font-size="11.5" fill="currentColor" opacity=".7">int age = 30;</text>
+
+  <text x="32" y="92" font-size="10.5" fill="currentColor" opacity=".6">STACK</text>
+  <rect x="32" y="100" width="200" height="52" rx="8" fill="#10b981" fill-opacity=".2" stroke="#10b981" stroke-width="1.2"/>
+  <text x="48" y="120" font-size="11.5" font-weight="600" fill="currentColor">age</text>
+  <rect x="140" y="110" width="76" height="32" rx="6" fill="#10b981" fill-opacity=".3"/>
+  <text x="166" y="131" font-size="14" font-weight="700" fill="currentColor">30</text>
+
+  <text x="32" y="180" font-size="11" fill="currentColor" opacity=".75">The bits ARE the number. Nothing on the heap.</text>
+  <text x="32" y="198" font-size="11" fill="currentColor" opacity=".75">Fixed size (int = 32 bits). Never null.</text>
+  <text x="32" y="216" font-size="11" fill="currentColor" opacity=".75">Copying the variable copies the value.</text>
+
+  <!-- reference -->
+  <rect x="382" y="40" width="364" height="190" rx="12" fill="#3b82f6" fill-opacity=".08" stroke="#3b82f6" stroke-width="1.4"/>
+  <text x="400" y="64" font-size="12" font-weight="700" fill="#3b82f6">Reference</text>
+  <text x="472" y="64" font-size="11.5" fill="currentColor" opacity=".7">User u = new User("Asha");</text>
+
+  <text x="400" y="92" font-size="10.5" fill="currentColor" opacity=".6">STACK</text>
+  <rect x="400" y="100" width="150" height="52" rx="8" fill="#3b82f6" fill-opacity=".2" stroke="#3b82f6" stroke-width="1.2"/>
+  <text x="416" y="120" font-size="11.5" font-weight="600" fill="currentColor">u</text>
+  <circle cx="510" cy="126" r="9" fill="#f43f5e" fill-opacity=".9" class="gf-pulse"/>
+
+  <text x="596" y="92" font-size="10.5" fill="currentColor" opacity=".6">HEAP</text>
+  <rect x="596" y="100" width="134" height="66" rx="8" fill="#3b82f6" fill-opacity=".16" stroke="#3b82f6" stroke-width="1.2"/>
+  <text x="612" y="120" font-size="11" font-weight="600" fill="currentColor">User@1f3a</text>
+  <text x="612" y="138" font-size="10.5" fill="currentColor" opacity=".75">name = "Asha"</text>
+  <text x="612" y="156" font-size="10.5" fill="currentColor" opacity=".75">age = 30</text>
+
+  <path d="M521 126 L590 126" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#ch1pvrArrow)" class="gf-dash"/>
+
+  <text x="400" y="188" font-size="11" fill="currentColor" opacity=".75">The variable holds an address, not the object.</text>
+  <text x="400" y="206" font-size="11" fill="currentColor" opacity=".75">Can be null. Two variables can point at one object.</text>
+  <text x="400" y="224" font-size="11" fill="currentColor" opacity=".75">Copying the variable copies the ARROW, not the object.</text>
+</svg>

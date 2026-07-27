@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Records give you the data class. Sealed types close the hierarchy so switch can be exhaustive.</text>
+
+  <!-- record -->
+  <rect x="14" y="34" width="360" height="128" rx="12" fill="#3b82f6" fill-opacity=".08" stroke="#3b82f6" stroke-width="1.3"/>
+  <text x="30" y="56" font-size="12" font-weight="700" fill="#3b82f6">record Point(int x, int y) { }</text>
+  <text x="30" y="74" font-size="10" fill="currentColor" opacity=".7">one line generates all of this:</text>
+  <g font-size="10" fill="currentColor">
+    <rect x="30" y="84" width="160" height="24" rx="5" fill="#3b82f6" fill-opacity=".16"/><text x="42" y="100">private final int x, y</text>
+    <rect x="198" y="84" width="160" height="24" rx="5" fill="#3b82f6" fill-opacity=".16"/><text x="210" y="100">x() and y() accessors</text>
+    <rect x="30" y="112" width="160" height="24" rx="5" fill="#3b82f6" fill-opacity=".16"/><text x="42" y="128">equals + hashCode</text>
+    <rect x="198" y="112" width="160" height="24" rx="5" fill="#3b82f6" fill-opacity=".16"/><text x="210" y="128">toString</text>
+  </g>
+  <text x="30" y="152" font-size="10" fill="currentColor" opacity=".8">Implicitly final, cannot extend — so the Chapter 2 equals symmetry trap cannot happen.</text>
+
+  <!-- sealed -->
+  <rect x="386" y="34" width="360" height="128" rx="12" fill="#8b5cf6" fill-opacity=".08" stroke="#8b5cf6" stroke-width="1.3"/>
+  <text x="402" y="56" font-size="12" font-weight="700" fill="#8b5cf6">sealed interface Shape</text>
+  <text x="402" y="74" font-size="10" fill="currentColor" opacity=".7">permits Circle, Square, Triangle</text>
+  <g font-size="10" fill="currentColor">
+    <rect x="402" y="84" width="102" height="24" rx="5" fill="#8b5cf6" fill-opacity=".18" class="gf-seq gf-s1"/><text x="424" y="100">Circle</text>
+    <rect x="512" y="84" width="102" height="24" rx="5" fill="#8b5cf6" fill-opacity=".18" class="gf-seq gf-s2"/><text x="534" y="100">Square</text>
+    <rect x="622" y="84" width="108" height="24" rx="5" fill="#8b5cf6" fill-opacity=".18" class="gf-seq gf-s3"/><text x="644" y="100">Triangle</text>
+    <rect x="402" y="112" width="328" height="24" rx="5" fill="#f43f5e" fill-opacity=".14" stroke="#f43f5e" stroke-width="1" stroke-dasharray="3 3"/>
+    <text x="414" y="128" fill="#f43f5e">anything else — will not compile</text>
+  </g>
+  <text x="402" y="152" font-size="10" fill="currentColor" opacity=".8">The compiler now KNOWS the complete set of subtypes.</text>
+
+  <!-- payoff -->
+  <rect x="14" y="176" width="732" height="112" rx="11" fill="#10b981" fill-opacity=".08" stroke="#10b981" stroke-width="1.3"/>
+  <text x="30" y="198" font-size="12" font-weight="700" fill="#10b981">The payoff: exhaustive switch with pattern matching, checked at compile time</text>
+  <g font-size="10.5" fill="currentColor">
+    <text x="30" y="222">double area(Shape s) {</text>
+    <text x="30" y="240">    return switch (s) {                         <tspan opacity=".6">// no default needed</tspan></text>
+    <text x="30" y="258">        case Circle c   -&gt; Math.PI * c.r() * c.r();</text>
+    <text x="30" y="276">        case Square q   -&gt; q.side() * q.side();</text>
+    <text x="420" y="258">        case Triangle t -&gt; 0.5 * t.b() * t.h();</text>
+    <text x="420" y="276">    };  }</text>
+  </g>
+  <text x="420" y="222" font-size="10" font-weight="700" fill="#10b981">Add a fourth Shape → this switch</text>
+  <text x="420" y="238" font-size="10" font-weight="700" fill="#10b981">STOPS COMPILING. That is the point.</text>
+</svg>

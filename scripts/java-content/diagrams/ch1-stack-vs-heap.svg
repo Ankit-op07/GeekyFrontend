@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch1shArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f43f5e"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="22" font-size="13" font-weight="700" fill="currentColor">One heap, shared by all threads. One stack per thread, private to it.</text>
+
+  <!-- Thread 1 stack -->
+  <rect x="14" y="40" width="180" height="256" rx="12" fill="#3b82f6" fill-opacity=".08" stroke="#3b82f6" stroke-width="1.4"/>
+  <text x="30" y="62" font-size="12" font-weight="700" fill="#3b82f6">Thread-1 stack</text>
+  <text x="30" y="79" font-size="10.5" fill="currentColor" opacity=".65">grows down, LIFO</text>
+
+  <g class="gf-seq gf-s3">
+    <rect x="28" y="90" width="152" height="52" rx="8" fill="#3b82f6" fill-opacity=".18" stroke="#3b82f6" stroke-width="1"/>
+    <text x="40" y="108" font-size="11.5" font-weight="600" fill="currentColor">format() frame</text>
+    <text x="40" y="126" font-size="10.5" fill="currentColor" opacity=".75">int len = 5</text>
+  </g>
+  <g class="gf-seq gf-s2">
+    <rect x="28" y="150" width="152" height="52" rx="8" fill="#3b82f6" fill-opacity=".18" stroke="#3b82f6" stroke-width="1"/>
+    <text x="40" y="168" font-size="11.5" font-weight="600" fill="currentColor">greet() frame</text>
+    <text x="40" y="186" font-size="10.5" fill="currentColor" opacity=".75">User u = ●</text>
+  </g>
+  <g class="gf-seq gf-s1">
+    <rect x="28" y="210" width="152" height="66" rx="8" fill="#3b82f6" fill-opacity=".18" stroke="#3b82f6" stroke-width="1"/>
+    <text x="40" y="228" font-size="11.5" font-weight="600" fill="currentColor">main() frame</text>
+    <text x="40" y="246" font-size="10.5" fill="currentColor" opacity=".75">int count = 3</text>
+    <text x="40" y="262" font-size="10.5" fill="currentColor" opacity=".75">User u = ●</text>
+  </g>
+
+  <!-- Thread 2 stack -->
+  <rect x="206" y="40" width="150" height="256" rx="12" fill="#8b5cf6" fill-opacity=".08" stroke="#8b5cf6" stroke-width="1.4"/>
+  <text x="222" y="62" font-size="12" font-weight="700" fill="#8b5cf6">Thread-2 stack</text>
+  <text x="222" y="79" font-size="10.5" fill="currentColor" opacity=".65">cannot see Thread-1's</text>
+  <rect x="220" y="150" width="122" height="52" rx="8" fill="#8b5cf6" fill-opacity=".16" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="232" y="168" font-size="11.5" font-weight="600" fill="currentColor">run() frame</text>
+  <text x="232" y="186" font-size="10.5" fill="currentColor" opacity=".75">User u = ●</text>
+
+  <!-- Heap -->
+  <rect x="378" y="40" width="368" height="196" rx="12" fill="#10b981" fill-opacity=".08" stroke="#10b981" stroke-width="1.4"/>
+  <text x="396" y="62" font-size="12" font-weight="700" fill="#10b981">Heap — shared by every thread</text>
+  <text x="396" y="79" font-size="10.5" fill="currentColor" opacity=".65">every object lives here, whoever created it. Garbage-collected.</text>
+
+  <g class="gf-pulse">
+    <rect x="396" y="94" width="160" height="60" rx="9" fill="#10b981" fill-opacity=".18" stroke="#10b981" stroke-width="1.2"/>
+  </g>
+  <text x="412" y="114" font-size="11.5" font-weight="600" fill="currentColor">User@1f3a</text>
+  <text x="412" y="132" font-size="10.5" fill="currentColor" opacity=".75">name = "Asha"</text>
+  <text x="412" y="148" font-size="10.5" fill="currentColor" opacity=".75">age = 30</text>
+
+  <rect x="572" y="94" width="156" height="60" rx="9" fill="#10b981" fill-opacity=".14" stroke="#10b981" stroke-width="1.1"/>
+  <text x="588" y="114" font-size="11.5" font-weight="600" fill="currentColor">String@9b2</text>
+  <text x="588" y="132" font-size="10.5" fill="currentColor" opacity=".75">"Asha"</text>
+
+  <rect x="396" y="168" width="332" height="52" rx="9" fill="#f59e0b" fill-opacity=".14" stroke="#f59e0b" stroke-width="1.1"/>
+  <text x="412" y="188" font-size="11.5" font-weight="600" fill="#f59e0b">Metaspace (outside the heap, native memory)</text>
+  <text x="412" y="206" font-size="10.5" fill="currentColor" opacity=".75">class metadata, method bytecode, static fields</text>
+
+  <!-- references -->
+  <path d="M182 236 C 300 236, 320 130, 394 124" fill="none" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#ch1shArrow)" class="gf-dash"/>
+  <path d="M182 182 C 300 182, 330 140, 394 130" fill="none" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#ch1shArrow)" class="gf-dash"/>
+  <path d="M344 182 C 366 182, 370 150, 394 138" fill="none" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#ch1shArrow)" class="gf-dash"/>
+
+  <text x="14" y="316" font-size="11.5" fill="currentColor" opacity=".78">The variable <tspan font-weight="600">u</tspan> is not the object. It is a reference sitting in a stack frame that points at one heap object —</text>
+  <text x="14" y="332" font-size="11.5" fill="currentColor" opacity=".78">which is exactly why three different variables, in two different threads, can all name the same <tspan font-weight="600">User@1f3a</tspan>.</text>
+</svg>

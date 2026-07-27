@@ -665,6 +665,87 @@ export default function TopicPage() {
             border: 1px solid var(--reader-border);
             margin: 1.5rem auto;
           }
+          /* ── Inline-SVG diagrams (PRD-009) ──────────────────────────────
+             The Java kit ships diagrams as inline <svg> inside <figure>
+             rather than Cloudinary <img>, so they inherit the reader's text
+             colour (every label uses currentColor) and can animate. These
+             rules also tidy the <figure>/<figcaption> pairs the Angular and
+             Node kits already emit around their images. */
+          .topic-content figure {
+            margin: 1.75rem 0;
+          }
+          .topic-content figure svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0.75rem;
+            box-sizing: border-box;
+            border-radius: 0.75rem;
+            border: 1px solid var(--reader-border);
+            background: var(--reader-surface);
+            color: var(--reader-text);
+          }
+          .topic-content figure img {
+            margin: 0 auto;
+          }
+          .topic-content figcaption {
+            margin-top: 0.65rem;
+            text-align: center;
+            font-size: 0.8125rem;
+            line-height: 1.6;
+            color: var(--reader-faint);
+          }
+          /* ── Shared diagram animation utilities ────────────────────────
+             Defined ONCE here rather than in a <style> block inside each SVG:
+             keyframe names are global, so per-file definitions would collide
+             across the several diagrams on one page — and one definition means
+             the reduced-motion opt-out below is honoured everywhere. SMIL
+             (<animate>) is deliberately NOT used: CSS cannot switch it off for
+             users who ask for less motion. */
+          @keyframes gf-dash {
+            to { stroke-dashoffset: -24; }
+          }
+          @keyframes gf-pulse {
+            0%, 100% { opacity: 0.35; }
+            50% { opacity: 1; }
+          }
+          @keyframes gf-seq {
+            0%, 12% { opacity: 0.18; }
+            25%, 62% { opacity: 1; }
+            75%, 100% { opacity: 0.18; }
+          }
+          .topic-content .gf-dash {
+            stroke-dasharray: 8 6;
+            animation: gf-dash 1.2s linear infinite;
+          }
+          .topic-content .gf-pulse {
+            animation: gf-pulse 2s ease-in-out infinite;
+          }
+          /* Step-through diagrams: give each step .gf-seq plus .gf-s1….gf-s5 so
+             the highlight walks the sequence on a shared 5s loop. */
+          .topic-content .gf-seq {
+            animation: gf-seq 5s ease-in-out infinite;
+          }
+          .topic-content .gf-s1 { animation-delay: 0s; }
+          .topic-content .gf-s2 { animation-delay: 1s; }
+          .topic-content .gf-s3 { animation-delay: 2s; }
+          .topic-content .gf-s4 { animation-delay: 3s; }
+          .topic-content .gf-s5 { animation-delay: 4s; }
+          @media (prefers-reduced-motion: reduce) {
+            .topic-content .gf-dash,
+            .topic-content .gf-pulse,
+            .topic-content .gf-seq {
+              animation: none;
+            }
+            /* Without the loop, a sequenced element must not be left dimmed —
+               show every step at full strength instead. */
+            .topic-content .gf-seq,
+            .topic-content .gf-pulse {
+              opacity: 1;
+            }
+          }
           .topic-content table {
             width: 100%;
             border-collapse: collapse;

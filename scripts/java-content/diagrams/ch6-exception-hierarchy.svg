@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch6ehArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">The Throwable hierarchy — and where the checked/unchecked line falls</text>
+
+  <rect x="300" y="32" width="160" height="30" rx="7" fill="#8b5cf6" fill-opacity=".24" stroke="#8b5cf6" stroke-width="1.2"/>
+  <text x="342" y="52" font-size="11.5" font-weight="700" fill="currentColor">Throwable</text>
+
+  <path d="M380 64 L180 88" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ehArrow)"/>
+  <path d="M380 64 L560 88" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ehArrow)"/>
+
+  <!-- Error -->
+  <rect x="100" y="90" width="160" height="30" rx="7" fill="#f43f5e" fill-opacity=".24" stroke="#f43f5e" stroke-width="1.2"/>
+  <text x="152" y="110" font-size="11.5" font-weight="700" fill="currentColor">Error</text>
+  <text x="100" y="136" font-size="10" fill="#f43f5e" font-weight="600">UNCHECKED · do not catch</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="100" y="144" width="160" height="24" rx="5" fill="#f43f5e" fill-opacity=".12"/><text x="112" y="160">OutOfMemoryError</text>
+    <rect x="100" y="172" width="160" height="24" rx="5" fill="#f43f5e" fill-opacity=".12"/><text x="112" y="188">StackOverflowError</text>
+    <rect x="100" y="200" width="160" height="24" rx="5" fill="#f43f5e" fill-opacity=".12"/><text x="112" y="216">NoClassDefFoundError</text>
+  </g>
+  <text x="100" y="246" font-size="10" fill="currentColor" opacity=".7">The JVM is broken. Nothing your</text>
+  <text x="100" y="260" font-size="10" fill="currentColor" opacity=".7">code can do will fix it.</text>
+
+  <!-- Exception -->
+  <rect x="480" y="90" width="160" height="30" rx="7" fill="#3b82f6" fill-opacity=".24" stroke="#3b82f6" stroke-width="1.2"/>
+  <text x="524" y="110" font-size="11.5" font-weight="700" fill="currentColor">Exception</text>
+
+  <path d="M520 122 L440 148" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ehArrow)"/>
+  <path d="M600 122 L640 148" stroke="#94a3b8" stroke-width="1.3" marker-end="url(#ch6ehArrow)"/>
+
+  <!-- checked -->
+  <rect x="300" y="150" width="200" height="30" rx="7" fill="#10b981" fill-opacity=".24" stroke="#10b981" stroke-width="1.2"/>
+  <text x="316" y="170" font-size="11" font-weight="700" fill="currentColor">everything else</text>
+  <text x="300" y="196" font-size="10" fill="#10b981" font-weight="600">CHECKED · declare or handle</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="300" y="204" width="200" height="24" rx="5" fill="#10b981" fill-opacity=".12"/><text x="312" y="220">IOException</text>
+    <rect x="300" y="232" width="200" height="24" rx="5" fill="#10b981" fill-opacity=".12"/><text x="312" y="248">SQLException</text>
+    <rect x="300" y="260" width="200" height="24" rx="5" fill="#10b981" fill-opacity=".12"/><text x="312" y="276">InterruptedException</text>
+  </g>
+  <text x="300" y="302" font-size="10" fill="currentColor" opacity=".7">Recoverable, and the caller could plausibly act on it.</text>
+
+  <!-- unchecked -->
+  <rect x="540" y="150" width="206" height="30" rx="7" fill="#f59e0b" fill-opacity=".24" stroke="#f59e0b" stroke-width="1.2"/>
+  <text x="556" y="170" font-size="11" font-weight="700" fill="currentColor">RuntimeException</text>
+  <text x="540" y="196" font-size="10" fill="#f59e0b" font-weight="600">UNCHECKED · usually a bug</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="540" y="204" width="206" height="24" rx="5" fill="#f59e0b" fill-opacity=".12"/><text x="552" y="220">NullPointerException</text>
+    <rect x="540" y="232" width="206" height="24" rx="5" fill="#f59e0b" fill-opacity=".12"/><text x="552" y="248">IllegalArgumentException</text>
+    <rect x="540" y="260" width="206" height="24" rx="5" fill="#f59e0b" fill-opacity=".12"/><text x="552" y="276">IndexOutOfBoundsException</text>
+  </g>
+  <text x="540" y="302" font-size="10" fill="currentColor" opacity=".7">Fix the code, do not catch the symptom.</text>
+
+  <rect x="14" y="284" width="76" height="30" rx="6" fill="currentColor" fill-opacity=".06" stroke="currentColor" stroke-opacity=".2"/>
+  <text x="24" y="296" font-size="9" fill="currentColor" opacity=".7">Only Throwable</text>
+  <text x="24" y="308" font-size="9" fill="currentColor" opacity=".7">can be thrown.</text>
+</svg>

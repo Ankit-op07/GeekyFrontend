@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Java">
+  <title>Java</title>
+  <!-- Generic steaming-coffee mark. Deliberately NOT the Oracle "Java" wordmark
+       or the Duke mascot — both are trademarked. Same visual weight as the
+       other kit logos in this folder. -->
+  <defs>
+    <linearGradient id="jCup" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+  <!-- steam -->
+  <g fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round">
+    <path d="M24 17c0-4 4-4 4-8s-4-4-4-8"/>
+    <path d="M34 17c0-4 4-4 4-8s-4-4-4-8"/>
+    <path d="M44 17c0-3.5 3.5-3.5 3.5-7"/>
+  </g>
+  <!-- saucer -->
+  <rect x="10" y="53" width="44" height="5" rx="2.5" fill="#7c2d12"/>
+  <!-- handle -->
+  <path d="M46 30h4a7 7 0 0 1 0 14h-4" fill="none" stroke="url(#jCup)" stroke-width="4" stroke-linecap="round"/>
+  <!-- cup -->
+  <path d="M12 26h36v14a13 13 0 0 1-13 13H25a13 13 0 0 1-13-13V26z" fill="url(#jCup)"/>
+  <path d="M12 26h36v5H12z" fill="#fb923c" opacity=".55"/>
+</svg>

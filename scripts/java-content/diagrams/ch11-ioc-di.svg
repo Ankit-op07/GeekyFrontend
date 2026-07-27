@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="ch11diArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Inversion of control: the object stops deciding where its collaborators come from</text>
+
+  <!-- without -->
+  <rect x="14" y="34" width="360" height="146" rx="12" fill="#f43f5e" fill-opacity=".07" stroke="#f43f5e" stroke-width="1.3"/>
+  <text x="30" y="56" font-size="11.5" font-weight="700" fill="#f43f5e">✘ the class controls its dependencies</text>
+  <g font-size="10.5" fill="currentColor">
+    <text x="30" y="80">class OrderService {</text>
+    <text x="30" y="98">    private final Repo repo = new JdbcRepo();</text>
+    <text x="30" y="116">}</text>
+  </g>
+  <rect x="30" y="126" width="328" height="44" rx="8" fill="#f43f5e" fill-opacity=".14"/>
+  <text x="44" y="145" font-size="10" fill="currentColor" opacity=".85">Hard-wired to JdbcRepo. Cannot substitute a fake in a</text>
+  <text x="44" y="161" font-size="10" fill="currentColor" opacity=".85">test, cannot swap implementations, cannot share one instance.</text>
+
+  <!-- with -->
+  <rect x="386" y="34" width="360" height="146" rx="12" fill="#10b981" fill-opacity=".07" stroke="#10b981" stroke-width="1.3"/>
+  <text x="402" y="56" font-size="11.5" font-weight="700" fill="#10b981">✔ the container supplies them</text>
+  <g font-size="10.5" fill="currentColor">
+    <text x="402" y="80">class OrderService {</text>
+    <text x="402" y="98">    private final Repo repo;</text>
+    <text x="402" y="116">    OrderService(Repo repo) { this.repo = repo; }</text>
+  </g>
+  <rect x="402" y="126" width="328" height="44" rx="8" fill="#10b981" fill-opacity=".14"/>
+  <text x="416" y="145" font-size="10" fill="currentColor" opacity=".85">Depends on the INTERFACE. The test passes a stub; the</text>
+  <text x="416" y="161" font-size="10" fill="currentColor" opacity=".85">container passes the real one. Nothing here changes.</text>
+
+  <!-- container -->
+  <rect x="14" y="196" width="732" height="76" rx="11" fill="#3b82f6" fill-opacity=".08" stroke="#3b82f6" stroke-width="1.3"/>
+  <text x="30" y="216" font-size="11" font-weight="700" fill="#3b82f6">ApplicationContext</text>
+  <g font-size="10" fill="currentColor">
+    <rect x="150" y="204" width="130" height="26" rx="5" fill="#3b82f6" fill-opacity=".2" class="gf-seq gf-s1"/><text x="164" y="221">JdbcRepo bean</text>
+    <rect x="292" y="204" width="150" height="26" rx="5" fill="#3b82f6" fill-opacity=".2" class="gf-seq gf-s2"/><text x="306" y="221">OrderService bean</text>
+    <rect x="454" y="204" width="150" height="26" rx="5" fill="#3b82f6" fill-opacity=".2" class="gf-seq gf-s3"/><text x="468" y="221">OrderController bean</text>
+  </g>
+  <path d="M284 217 L288 217" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch11diArrow)"/>
+  <path d="M446 217 L450 217" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ch11diArrow)"/>
+  <text x="30" y="248" font-size="10.5" fill="currentColor" opacity=".85">The container builds the graph in dependency order and injects each constructor argument. Your classes never</text>
+  <text x="30" y="264" font-size="10.5" fill="currentColor" opacity=".85">call <tspan font-weight="600">new</tspan> on a collaborator — that is the "inversion". DI is one way to achieve IoC, not a synonym for it.</text>
+</svg>

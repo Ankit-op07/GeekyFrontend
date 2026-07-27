@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 250" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Same puts, three iteration orders</text>
+  <text x="14" y="40" font-size="11" fill="currentColor" opacity=".7">put("banana"), put("apple"), put("cherry")</text>
+
+  <!-- HashMap -->
+  <rect x="14" y="54" width="238" height="180" rx="11" fill="#f43f5e" fill-opacity=".08" stroke="#f43f5e" stroke-width="1.3"/>
+  <text x="30" y="76" font-size="11.5" font-weight="700" fill="#f43f5e">HashMap</text>
+  <text x="30" y="94" font-size="10" fill="currentColor" opacity=".65">bucket order — effectively arbitrary</text>
+  <g font-size="11" fill="currentColor">
+    <rect x="30" y="104" width="206" height="26" rx="5" fill="#f43f5e" fill-opacity=".16"/><text x="44" y="122">cherry</text>
+    <rect x="30" y="134" width="206" height="26" rx="5" fill="#f43f5e" fill-opacity=".16"/><text x="44" y="152">banana</text>
+    <rect x="30" y="164" width="206" height="26" rx="5" fill="#f43f5e" fill-opacity=".16"/><text x="44" y="182">apple</text>
+  </g>
+  <text x="30" y="212" font-size="10" fill="currentColor" opacity=".75">O(1) average. Never rely on this</text>
+  <text x="30" y="226" font-size="10" fill="currentColor" opacity=".75">order — it can change on resize.</text>
+
+  <!-- LinkedHashMap -->
+  <rect x="262" y="54" width="238" height="180" rx="11" fill="#3b82f6" fill-opacity=".08" stroke="#3b82f6" stroke-width="1.3"/>
+  <text x="278" y="76" font-size="11.5" font-weight="700" fill="#3b82f6">LinkedHashMap</text>
+  <text x="278" y="94" font-size="10" fill="currentColor" opacity=".65">insertion order (or access order)</text>
+  <g font-size="11" fill="currentColor">
+    <rect x="278" y="104" width="206" height="26" rx="5" fill="#3b82f6" fill-opacity=".16" class="gf-seq gf-s1"/><text x="292" y="122">banana</text>
+    <rect x="278" y="134" width="206" height="26" rx="5" fill="#3b82f6" fill-opacity=".16" class="gf-seq gf-s2"/><text x="292" y="152">apple</text>
+    <rect x="278" y="164" width="206" height="26" rx="5" fill="#3b82f6" fill-opacity=".16" class="gf-seq gf-s3"/><text x="292" y="182">cherry</text>
+  </g>
+  <text x="278" y="212" font-size="10" fill="currentColor" opacity=".75">O(1) average, plus a doubly-linked</text>
+  <text x="278" y="226" font-size="10" fill="currentColor" opacity=".75">list through the entries. LRU-capable.</text>
+
+  <!-- TreeMap -->
+  <rect x="510" y="54" width="236" height="180" rx="11" fill="#10b981" fill-opacity=".08" stroke="#10b981" stroke-width="1.3"/>
+  <text x="526" y="76" font-size="11.5" font-weight="700" fill="#10b981">TreeMap</text>
+  <text x="526" y="94" font-size="10" fill="currentColor" opacity=".65">sorted by key (natural or Comparator)</text>
+  <g font-size="11" fill="currentColor">
+    <rect x="526" y="104" width="204" height="26" rx="5" fill="#10b981" fill-opacity=".16"/><text x="540" y="122">apple</text>
+    <rect x="526" y="134" width="204" height="26" rx="5" fill="#10b981" fill-opacity=".16"/><text x="540" y="152">banana</text>
+    <rect x="526" y="164" width="204" height="26" rx="5" fill="#10b981" fill-opacity=".16"/><text x="540" y="182">cherry</text>
+  </g>
+  <text x="526" y="212" font-size="10" fill="currentColor" opacity=".75">O(log n) — a red-black tree. Adds</text>
+  <text x="526" y="226" font-size="10" fill="currentColor" opacity=".75">range queries: headMap, floorKey…</text>
+</svg>

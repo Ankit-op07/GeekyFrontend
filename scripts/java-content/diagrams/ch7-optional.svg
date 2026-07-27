@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 260" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+  <text x="14" y="20" font-size="13" font-weight="700" fill="currentColor">Optional makes absence part of the TYPE — so a caller cannot forget it</text>
+
+  <!-- without -->
+  <rect x="14" y="34" width="360" height="102" rx="11" fill="#f43f5e" fill-opacity=".08" stroke="#f43f5e" stroke-width="1.3"/>
+  <text x="30" y="56" font-size="11.5" font-weight="700" fill="#f43f5e">✘ returning null</text>
+  <text x="30" y="78" font-size="10.5" fill="currentColor">User findUser(String id)   // may return null</text>
+  <text x="30" y="100" font-size="10.5" fill="currentColor">findUser("x").getName();   // compiles fine</text>
+  <text x="30" y="122" font-size="10.5" font-weight="600" fill="#f43f5e">→ NullPointerException at run time</text>
+
+  <!-- with -->
+  <rect x="386" y="34" width="360" height="102" rx="11" fill="#10b981" fill-opacity=".08" stroke="#10b981" stroke-width="1.3"/>
+  <text x="402" y="56" font-size="11.5" font-weight="700" fill="#10b981">✔ returning Optional</text>
+  <text x="402" y="78" font-size="10.5" fill="currentColor">Optional&lt;User&gt; findUser(String id)</text>
+  <text x="402" y="100" font-size="10.5" fill="currentColor">findUser("x").getName();   // will not compile</text>
+  <text x="402" y="122" font-size="10.5" font-weight="600" fill="#10b981">→ the compiler forces you to deal with it</text>
+
+  <!-- the API -->
+  <text x="14" y="164" font-size="11.5" font-weight="700" fill="currentColor">Use it as a pipeline — not as a null check with extra steps</text>
+
+  <g class="gf-seq gf-s1">
+    <rect x="14" y="176" width="176" height="70" rx="9" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6" stroke-width="1.1"/>
+    <text x="28" y="196" font-size="10.5" font-weight="600" fill="#3b82f6">transform</text>
+    <text x="28" y="216" font-size="10" fill="currentColor">.map(User::name)</text>
+    <text x="28" y="234" font-size="10" fill="currentColor">.flatMap(::findAddress)</text>
+  </g>
+  <g class="gf-seq gf-s2">
+    <rect x="200" y="176" width="176" height="70" rx="9" fill="#8b5cf6" fill-opacity=".14" stroke="#8b5cf6" stroke-width="1.1"/>
+    <text x="214" y="196" font-size="10.5" font-weight="600" fill="#8b5cf6">narrow</text>
+    <text x="214" y="216" font-size="10" fill="currentColor">.filter(u -&gt; u.isActive())</text>
+    <text x="214" y="234" font-size="10" fill="currentColor">.or(() -&gt; findByEmail(e))</text>
+  </g>
+  <g class="gf-seq gf-s3">
+    <rect x="386" y="176" width="176" height="70" rx="9" fill="#10b981" fill-opacity=".14" stroke="#10b981" stroke-width="1.1"/>
+    <text x="400" y="196" font-size="10.5" font-weight="600" fill="#10b981">unwrap</text>
+    <text x="400" y="216" font-size="10" fill="currentColor">.orElse(GUEST)</text>
+    <text x="400" y="234" font-size="10" fill="currentColor">.orElseGet(::loadDefault)</text>
+  </g>
+  <g class="gf-seq gf-s4">
+    <rect x="572" y="176" width="174" height="70" rx="9" fill="#f43f5e" fill-opacity=".12" stroke="#f43f5e" stroke-width="1.1"/>
+    <text x="586" y="196" font-size="10.5" font-weight="600" fill="#f43f5e">avoid</text>
+    <text x="586" y="216" font-size="10" fill="currentColor">.get()  without isPresent</text>
+    <text x="586" y="234" font-size="10" fill="currentColor">Optional fields / parameters</text>
+  </g>
+</svg>
