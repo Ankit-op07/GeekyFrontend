@@ -6,6 +6,7 @@ import Razorpay from 'razorpay';
 import connectToDatabase from '@/lib/db';
 import Order from '@/lib/models/Order';
 import { recordPurchase } from '@/lib/purchase';
+import { recordRedemption } from '@/lib/coupons';
 import { getPlanDisplayName } from '@/lib/appConstants';
 
 // ============================================================
@@ -237,9 +238,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: 'Email missing' });
       }
 
-      // Get plan name + user name (payment.notes, falling back to the order's notes)
+      // Get plan name + user name (payment.notes, falling back to the order's notes).
+      // `couponCode` is checked for KEY PRESENCE, not truthiness: create-order
+      // always writes it (empty string when there is no coupon), so a missing
+      // key means these notes did not come from our order and the real ones
+      // still have to be fetched. Testing truthiness would refetch the order on
+      // every single un-couponed payment.
       let orderNotes: Record<string, any> = payment.notes || {};
-      if ((!orderNotes.planName || !orderNotes.userName) && orderId) {
+      if ((!orderNotes.planName || !orderNotes.userName || orderNotes.couponCode === undefined) && orderId) {
         try {
           const order = await razorpay.orders.fetch(orderId);
           orderNotes = { ...order.notes, ...orderNotes };
@@ -251,6 +257,14 @@ export async function POST(request: NextRequest) {
       const displayName = getPlanDisplayName(planName);
       console.log(`📋 Processing: ${userEmail} - ${planName}`);
 
+      // Discount attribution, read from the notes create-order wrote — the only
+      // trustworthy copy, since the browser may never have come back.
+      const couponCode: string = orderNotes.couponCode || '';
+      const couponDiscount = Number(orderNotes.couponDiscount) || 0;
+      const listPrice = Number(orderNotes.listPrice) || 0;
+      const creditApplied = Number(orderNotes.creditApplied) || 0;
+      const kitId: string = orderNotes.kitId || '';
+
       // Save order to DB
       if (!existingOrder) {
         await createOrder({
@@ -260,6 +274,7 @@ export async function POST(request: NextRequest) {
           planName,
           amount: payment.amount,
           status: 'processing',
+          ...(couponCode && { couponCode, discount: couponDiscount, listPrice }),
         }, dbConnected);
       }
 
@@ -280,6 +295,31 @@ export async function POST(request: NextRequest) {
         orderId,
       });
       console.log(`✅ Purchase recorded for ${userEmail}: ${planName}`);
+
+      /* ── Book the coupon redemption ────────────────────────────────────
+       * The webhook is the ONLY writer of coupon counters. /api/payment/verify
+       * deliberately does not do this — same reasoning as the onboarding email
+       * it also leaves to us: this is the server-to-server confirmation that
+       * arrives even when the buyer closed the tab, so exactly one place owns
+       * the write and there is no race to reason about.
+       *
+       * recordRedemption is idempotent (unique index on orderId) and never
+       * throws, so a Razorpay retry cannot double-count and a failure here
+       * cannot cost the buyer their kit. */
+      if (couponCode) {
+        await recordRedemption({
+          code: couponCode,
+          email: userEmail,
+          kitId,
+          planName,
+          orderId,
+          paymentId,
+          listPrice,
+          credit: creditApplied,
+          discount: couponDiscount,
+          amountPaid: Math.round((Number(payment.amount) || 0) / 100), // paise → ₹
+        });
+      }
 
       // Build the onboarding email (Set Password step only for brand-new users)
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';

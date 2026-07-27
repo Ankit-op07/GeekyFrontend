@@ -120,6 +120,41 @@ measure whether learners want to practise (the ≥30% attempt-rate gate).
   denominator. PRD §15 says that is the population the gate actually depends on, so treat the buyer
   rate as health, not go/no-go, until a preview-side activity signal exists.
 
+## Coupons & offers (discount codes, bonuses, cross-sell)
+
+Discount campaigns live alongside the upgrade-credit system. **One order of operations**, and it is
+the thing to get right:
+
+```
+listPrice − upgrade credit = payableBeforeCoupon − coupon discount = payable
+```
+
+- **The client sends a CODE, never an amount.** `computeUpgradePrice()` (`lib/pricing.ts`) is still
+  the only place a payable is computed; it now takes `{ couponCode, buyerEmail }` and re-derives the
+  discount from the `Coupon` row on every call, including inside `create-order`. `/api/payment/quote`,
+  `/api/coupons/validate` and `/api/payment/offers` are **display only**.
+- **A percent coupon applies to `payableBeforeCoupon`, not `listPrice`.** Off the list price, a 50%
+  code on the ₹499 bundle for a buyer with ₹350 credit would take ₹249 off a ₹149 bill. `MIN_PAYABLE`
+  (₹49, `lib/coupon-math.ts`) floors the result — Razorpay rejects sub-₹1 orders, and free access is
+  supposed to go through `/admin/access`, not the payment gateway. `npm run test:coupons` pins both.
+- **Two different emails, on purpose.** Upgrade *credit* is keyed to the **signed session** email
+  (money already spent — naming someone else's email must not spend their history). *Coupon*
+  eligibility is keyed to the **buyer** email, session or typed into guest checkout, because guest
+  checkout is the primary purchase path. With no email yet, per-buyer rules are skipped and the
+  result is marked `provisional`; `create-order` re-checks before charging.
+- **The buyer always gets the deeper of (typed code, best auto-apply offer).** A refused or shallower
+  typed code never raises a bill that already had an offer on it.
+- **`recordRedemption()` (`lib/coupons.ts`) is the ONLY writer of coupon counters**, called only from
+  the Razorpay **webhook** — the same reasoning as the onboarding email: it is the delivery that
+  survives a closed tab, so exactly one place owns the write. Idempotency is the unique index on
+  `CouponRedemption.orderId`; the global cap is claimed atomically with `$expr`. A capped coupon that
+  loses a race is honoured and flagged `overLimit` — never fail a buyer whose money is already taken.
+- **Bonuses are displayed value, not entitlements.** Everything in `BONUS_CATALOG` (`lib/offers.ts`)
+  must be a feature the platform really ships; remove the bonus in the same commit as the feature.
+- Admin: `/admin/coupons`. Counters are not editable there — a coupon's numbers always come from
+  captured payments. Codes are immutable once created (redemptions, orders and Razorpay notes all
+  reference them by code); retire and recreate instead.
+
 ## Bulk access + email campaigns (`/admin/campaigns`)
 
 For rolling a kit out to every past buyer when the list is bigger than one day's Gmail allowance

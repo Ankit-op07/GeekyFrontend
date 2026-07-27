@@ -10,6 +10,8 @@ import {
     BUNDLE_COMPONENT_PLANS,
 } from '@/lib/appConstants';
 import { quoteUpgradeMath } from '@/lib/pricing-math';
+import { evaluateCoupon, findAutoCoupon, type AppliedCoupon, type CouponRejection } from '@/lib/coupons';
+import { totalSavings } from '@/lib/coupon-math';
 
 /**
  * ─── Upgrade Credit ────────────────────────────────────────────────────────
@@ -38,9 +40,11 @@ export interface PriceQuote {
     kitId: string;
     kitName: string;
     listPrice: number;
-    /** Credit applied toward this purchase, in ₹. credit + payable === listPrice. */
+    /** Credit applied toward this purchase, in ₹. credit + payableBeforeCoupon === listPrice. */
     credit: number;
-    /** What they actually pay now, in ₹. For the bundle, never below MIN_TOPUP. */
+    /** ₹ owed after credit, before any coupon — the base a percent coupon applies to. */
+    payableBeforeCoupon: number;
+    /** What they actually pay now, in ₹ — after credit AND coupon. */
     payable: number;
     /** True when the user already has access to this kit — block the sale. */
     alreadyOwned: boolean;
@@ -48,6 +52,32 @@ export interface PriceQuote {
     ownedPlans: string[];
     /** True when prior spend exceeded the credit cap (credit was clamped). */
     floored: boolean;
+    /** The coupon actually applied, or null. Never client-supplied. */
+    coupon: AppliedCoupon | null;
+    /** Why a requested code was refused — for the buyer-facing message. */
+    couponError: { reason: CouponRejection; message: string } | null;
+    /** ₹ saved versus the catalog anchor (originalPrice). Headline number. */
+    totalSavings: number;
+}
+
+/** Options for {@link computeUpgradePrice}. */
+export interface QuoteOptions {
+    /**
+     * A code the buyer typed. When omitted (or empty), the best `autoApply`
+     * offer is looked up instead, so a buyer who types nothing still gets the
+     * live campaign price.
+     *
+     * ⚠️  This is a CODE, not an amount. The discount it produces is always
+     * recomputed here from the DB row.
+     */
+    couponCode?: string | null;
+    /**
+     * The buyer email for COUPON eligibility — session email when signed in,
+     * otherwise the address typed into guest checkout. Defaults to `email`
+     * (the credit-eligible, session-verified one). See the header of
+     * lib/coupons.ts on why these two are not the same key.
+     */
+    buyerEmail?: string | null;
 }
 
 /**
@@ -116,12 +146,23 @@ function ownsKitAlready(ownedPlans: string[], kitId: string): boolean {
 /**
  * THE pricing function. Server-side only.
  *
- * @param email  the buyer (may be empty for logged-out users → no credit)
+ * Composes the two discounts in the one correct order:
+ *
+ *     listPrice − upgrade credit = payableBeforeCoupon − coupon = payable
+ *
+ * A percent coupon is applied to `payableBeforeCoupon`, never to `listPrice`.
+ * See the header of lib/coupon-math.ts for why the other order owes the buyer
+ * money.
+ *
+ * @param email  the buyer whose CREDIT may be spent — must be session-verified
+ *               by the caller (may be empty for logged-out users → no credit)
  * @param kitId  catalog id of the kit being bought
+ * @param opts   coupon code + the (possibly unverified) buyer email
  */
 export async function computeUpgradePrice(
     email: string | null | undefined,
     kitId: string,
+    opts: QuoteOptions = {},
 ): Promise<PriceQuote> {
     const kit = getKitById(kitId);
     if (!kit) throw new Error(`Unknown kit: ${kitId}`);
@@ -132,39 +173,89 @@ export async function computeUpgradePrice(
     // flows toward (Rule 1). isBundle drives every branch below.
     const isBundle = kit.isBundle === true || kitId === BUNDLE_KIT_ID;
 
-    // Logged-out / unknown buyer → full price, no credit.
-    if (!email) {
+    // Credit needs a verified identity; a coupon only needs the buyer to say who
+    // they are. Fall back to the credit email so a signed-in buyer needs no
+    // extra plumbing at the call site.
+    const buyerEmail = (opts.buyerEmail ?? email)?.toLowerCase().trim() || null;
+
+    let credit = 0;
+    let creditFloored = false;
+    let ownedPlans: string[] = [];
+    let alreadyOwned = false;
+
+    if (email) {
+        // Only pay for the credit query when it can actually apply (bundle target).
+        const [bundleCredit, plans] = await Promise.all([
+            isBundle ? getBundleCredit(email) : Promise.resolve(0),
+            getOwnedPlans(email),
+        ]);
+        ownedPlans = plans;
+        alreadyOwned = ownsKitAlready(plans, kitId);
+        const math = quoteUpgradeMath(isBundle, listPrice, bundleCredit);
+        credit = math.credit;
+        creditFloored = math.floored;
+    } else {
+        // Logged-out / unknown buyer → full price, no credit.
         const math = quoteUpgradeMath(isBundle, listPrice, 0);
-        return {
-            kitId,
-            kitName: kit.displayName ?? kit.name,
-            listPrice,
-            credit: math.credit,
-            payable: math.payable,
-            alreadyOwned: false,
-            ownedPlans: [],
-            floored: math.floored,
-        };
+        credit = math.credit;
+        creditFloored = math.floored;
     }
 
-    // Only pay for the credit query when it can actually apply (bundle target).
-    const [bundleCredit, ownedPlans] = await Promise.all([
-        isBundle ? getBundleCredit(email) : Promise.resolve(0),
-        getOwnedPlans(email),
-    ]);
+    const payableBeforeCoupon = listPrice - credit;
 
-    const alreadyOwned = ownsKitAlready(ownedPlans, kitId);
-    const math = quoteUpgradeMath(isBundle, listPrice, bundleCredit);
+    /* ── Coupon layer ─────────────────────────────────────────────────────
+     * Skipped entirely when the sale is blocked anyway — quoting a discount on
+     * a kit we are about to refuse to sell is just a confusing UI. */
+    let coupon: AppliedCoupon | null = null;
+    let couponError: PriceQuote['couponError'] = null;
+
+    if (!alreadyOwned) {
+        const typed = opts.couponCode?.trim();
+
+        if (typed) {
+            const evaluation = await evaluateCoupon({
+                code: typed,
+                email: buyerEmail,
+                kitId,
+                payableBeforeCoupon,
+                credit,
+            });
+            if (evaluation.ok) coupon = evaluation.coupon;
+            // Only a code the buyer actually typed earns an error message; a
+            // failed auto-apply sweep is silent, as there is nothing to fix.
+            else couponError = { reason: evaluation.reason, message: evaluation.message };
+        }
+
+        /* The buyer always gets the DEEPER of (typed code, best auto offer).
+         *
+         * Both directions of this matter, and both are ways of not punishing
+         * someone for interacting with the coupon box:
+         *   • typed code refused → they keep the campaign discount that was
+         *     already on the page, instead of a typo raising their bill;
+         *   • typed code accepted but worth less than the live offer → they
+         *     keep the bigger one, instead of a shared code being a downgrade.
+         * The rejection message is still shown either way. */
+        const auto = await findAutoCoupon({ email: buyerEmail, kitId, payableBeforeCoupon, credit });
+        if (auto?.ok && auto.coupon.discount > (coupon?.discount ?? 0)) {
+            coupon = auto.coupon;
+        }
+    }
+
+    const payable = payableBeforeCoupon - (coupon?.discount ?? 0);
 
     return {
         kitId,
         kitName: kit.displayName ?? kit.name,
         listPrice,
-        credit: math.credit,
-        payable: math.payable,
+        credit,
+        payableBeforeCoupon,
+        payable,
         alreadyOwned,
         ownedPlans,
-        floored: math.floored,
+        floored: creditFloored,
+        coupon,
+        couponError,
+        totalSavings: totalSavings(kit.originalPrice, payable),
     };
 }
 

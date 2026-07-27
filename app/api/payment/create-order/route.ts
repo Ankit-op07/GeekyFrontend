@@ -12,7 +12,7 @@ const razorpay = new Razorpay({
 
 export async function POST(request: NextRequest) {
   try {
-    const { kitId, userEmail, userName, userMobile } = await request.json();
+    const { kitId, userEmail, userName, userMobile, couponCode } = await request.json();
 
     if (!kitId || !userEmail) {
       return NextResponse.json({ error: 'Kit ID and email are required' }, { status: 400 });
@@ -41,8 +41,22 @@ export async function POST(request: NextRequest) {
     const requestedEmail = String(userEmail).toLowerCase().trim();
     const creditEligibleEmail = sessionEmail === requestedEmail ? sessionEmail : null;
 
-    /* ── Price is computed HERE, from the DB. Never from the client. ───── */
-    const quote = await computeUpgradePrice(creditEligibleEmail, kitId);
+    /* ── Price is computed HERE, from the DB. Never from the client. ─────
+     *
+     * The client sends a coupon CODE — a string — and nothing else about money.
+     * The discount is re-derived from the Coupon row right now, so a tampered
+     * quote, a stale price on the page, or a hand-crafted request all end up
+     * charging exactly what the server decides.
+     *
+     * Note the two different emails, on purpose (see lib/coupons.ts header):
+     *   • creditEligibleEmail — session-verified. Unlocks upgrade credit.
+     *   • requestedEmail      — merely claimed. Enough for coupon limits, since
+     *                           the kit is delivered to that same address.
+     * ────────────────────────────────────────────────────────────────────── */
+    const quote = await computeUpgradePrice(creditEligibleEmail, kitId, {
+        couponCode: typeof couponCode === 'string' ? couponCode : null,
+        buyerEmail: requestedEmail,
+    });
 
     if (quote.alreadyOwned) {
       return NextResponse.json(
@@ -63,6 +77,11 @@ export async function POST(request: NextRequest) {
         userMobile: userMobile || '',
         listPrice: String(quote.listPrice),
         creditApplied: String(quote.credit),
+        /* The coupon is recorded on the ORDER, not just returned to the page.
+         * The webhook books the redemption from these notes, which is the only
+         * copy that survives the browser being closed mid-payment. */
+        couponCode: quote.coupon?.code ?? '',
+        couponDiscount: String(quote.coupon?.discount ?? 0),
       },
     });
 
@@ -75,6 +94,10 @@ export async function POST(request: NextRequest) {
       listPrice: quote.listPrice,
       creditApplied: quote.credit,
       payable: quote.payable,
+      coupon: quote.coupon,
+      // Set when a typed code was refused — the page shows this and the buyer
+      // pays the undiscounted amount rather than being silently overcharged.
+      couponError: quote.couponError,
     });
 
   } catch (error) {

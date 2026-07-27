@@ -5,9 +5,20 @@ export interface IOrder extends Document {
     paymentId: string;
     email: string;
     planName: string;
+    /** What was actually charged, in PAISE (Razorpay's payment.amount, verbatim). */
     amount: number;
     status: 'processing' | 'email_sent' | 'failed';
     errorMessage?: string;
+
+    /* ── Discount attribution (optional; absent on every pre-coupon order) ──
+     * Kept in ₹, unlike `amount`, because that is how the coupon system and
+     * every admin report denominate money. Purely for reporting — access and
+     * upgrade credit are derived from `amount`, never from these. */
+    couponCode?: string;
+    /** ₹ the coupon took off. */
+    discount?: number;
+    /** ₹ catalog price at the time of sale. */
+    listPrice?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -24,6 +35,10 @@ const OrderSchema = new Schema<IOrder>({
         default: 'processing'
     },
     errorMessage: { type: String },
+
+    couponCode: { type: String, uppercase: true, trim: true, index: true, sparse: true },
+    discount: { type: Number },
+    listPrice: { type: Number },
 }, { timestamps: true });
 
 export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);

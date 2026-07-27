@@ -3,9 +3,29 @@
 import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { CheckCircle2, Loader2, ShieldCheck, Lock, CreditCard, Zap, Star, AlertTriangle, User, LogIn, Atom, FileText, Code } from "lucide-react"
+import { CheckCircle2, Loader2, ShieldCheck, Lock, CreditCard, Zap, Star, AlertTriangle, User, LogIn, Atom, FileText, Code, ChevronDown } from "lucide-react"
 import { KIT_CATALOG, getKitById } from "@/lib/appConstants"
 import { trackPurchase } from "@/lib/meta-pixel"
+import { CouponField, type AppliedCouponView } from "@/components/checkout/coupon-field"
+import { BonusList, type BonusItemView } from "@/components/checkout/bonus-list"
+import { BetterDeal, type KitDealView } from "@/components/checkout/better-deal"
+
+/**
+ * Is the "have a coupon code?" box shown to buyers?
+ *
+ * OFF for now — a deliberate product decision, not a bug. Everything behind it
+ * is live and tested: an admin can create codes at /admin/coupons, and any
+ * coupon marked `autoApply` is still applied server-side, so a campaign price
+ * shows up at checkout without anyone typing anything.
+ *
+ * What this flag withholds is only the manual entry box. Flip it to `true` to
+ * start accepting shared/partner codes; nothing else needs to change.
+ *
+ * ⚠️  While this is false, do NOT advertise a code anyone has to type —
+ * components/offer-banner.tsx only surfaces auto-applied offers for exactly
+ * this reason.
+ */
+const COUPON_FIELD_ENABLED = false
 
 interface SessionUser {
     id: string
@@ -34,7 +54,7 @@ function PayContent() {
     const [error, setError] = useState("")
     const [emailConflict, setEmailConflict] = useState(false)
 
-    /* ── Personalised price quote (upgrade credit applied) ────────
+    /* ── Personalised price quote (upgrade credit + coupon applied) ────────
      * DISPLAY ONLY. The amount actually charged is recomputed server-side in
      * /api/payment/create-order and never trusts this. Without it the page
      * would show the full list price (e.g. ₹499) even for a user whose owned
@@ -42,9 +62,21 @@ function PayContent() {
     const [quote, setQuote] = useState<{
         listPrice: number
         credit: number
+        payableBeforeCoupon: number
         payable: number
         alreadyOwned: boolean
+        coupon: AppliedCouponView | null
+        totalSavings: number
     } | null>(null)
+
+    /* The code the buyer typed, if any. It is passed to the server on every
+     * quote AND on create-order — it is a code, never an amount. */
+    const [couponCode, setCouponCode] = useState<string | null>(null)
+    /** Mobile-only: the summary's inclusion list starts collapsed. See the render. */
+    const [featuresOpen, setFeaturesOpen] = useState(false)
+    const [bonuses, setBonuses] = useState<BonusItemView[]>([])
+    const [bonusWorth, setBonusWorth] = useState(0)
+    const [deals, setDeals] = useState<KitDealView[]>([])
 
     /* ── Check session on mount ───────────────────────────────── */
     useEffect(() => {
@@ -68,20 +100,76 @@ function PayContent() {
         }
     }, [sessionUser])
 
-    /* ── Fetch the user's personalised quote (credit applied) ──
-     * Uses the signed session cookie server-side, so re-fetch when the
-     * logged-in identity resolves/changes to reflect their credit. */
+    /* ── Fetch the personalised quote + offers ─────────────────────────────
+     * One request for quote, bonuses and deals (see /api/payment/offers).
+     *
+     * Re-runs on identity change, because all three are personalised: credit
+     * comes from the signed session, and coupon limits are checked against the
+     * buyer email. For a guest that email is the one being typed, so it is
+     * DEBOUNCED — this fires on a settled address, not on every keystroke, and
+     * it is why a provisional discount settles into a confirmed one before the
+     * buyer ever reaches the Pay button. */
+    const guestEmail = sessionUser ? "" : email.trim()
+    const [debouncedGuestEmail, setDebouncedGuestEmail] = useState("")
+
+    useEffect(() => {
+        const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail)
+        const t = setTimeout(() => setDebouncedGuestEmail(valid ? guestEmail : ""), 500)
+        return () => clearTimeout(t)
+    }, [guestEmail])
+
+    const quoteEmail = sessionUser?.email ?? debouncedGuestEmail
+
     useEffect(() => {
         if (!kitId) return
         let active = true
-        fetch(`/api/payment/quote?kit=${encodeURIComponent(kitId)}`)
+
+        const params = new URLSearchParams({ kit: kitId })
+        if (couponCode) params.set("coupon", couponCode)
+        if (quoteEmail) params.set("email", quoteEmail)
+
+        fetch(`/api/payment/offers?${params.toString()}`)
             .then((r) => (r.ok ? r.json() : null))
-            .then((q) => {
-                if (active && q && typeof q.payable === "number") setQuote(q)
+            .then((data) => {
+                if (!active || !data?.quote || typeof data.quote.payable !== "number") return
+                setQuote(data.quote)
+                setBonuses(data.bonuses ?? [])
+                setBonusWorth(data.bonusWorth ?? 0)
+                setDeals(data.deals ?? [])
             })
             .catch(() => { /* fall back to list price */ })
+
         return () => { active = false }
-    }, [kitId, sessionUser?.email])
+    }, [kitId, quoteEmail, couponCode])
+
+    /* ── Apply / remove a coupon ───────────────────────────────────────────
+     * Validation is entirely server-side. On success we store the CODE and let
+     * the effect above re-quote, so the price on screen always comes from one
+     * place instead of being patched locally. */
+    const handleCoupon = async (code: string | null): Promise<{ ok: boolean; message?: string }> => {
+        if (!code) {
+            setCouponCode(null)
+            return { ok: true }
+        }
+        try {
+            const res = await fetch("/api/coupons/validate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ kitId, code, email: quoteEmail || undefined }),
+            })
+            const data = await res.json()
+            if (data.quote) {
+                // Render the server's quote either way: a refused code can still
+                // leave an auto-apply offer standing, and the total must match it.
+                setQuote(data.quote)
+            }
+            if (!data.ok) return { ok: false, message: data.message }
+            setCouponCode(code)
+            return { ok: true }
+        } catch {
+            return { ok: false, message: "Could not check that code. Please try again." }
+        }
+    }
 
     /* ── Load Razorpay SDK ────────────────────────────────────── */
     useEffect(() => {
@@ -109,6 +197,8 @@ function PayContent() {
     const credit = quote?.credit ?? 0
     const payable = quote?.payable ?? kit.price
     const alreadyOwned = quote?.alreadyOwned ?? false
+    const appliedCoupon = quote?.coupon ?? null
+    const totalSaved = quote?.totalSavings ?? Math.max(kit.originalPrice - payable, 0)
     const discount = Math.round(((kit.originalPrice - listPrice) / kit.originalPrice) * 100)
 
     /* ── Resolve user details (from session or form) ──────────── */
@@ -157,10 +247,24 @@ function PayContent() {
                     userEmail: resolvedEmail,
                     userName: resolvedName,
                     userMobile: mobile,
+                    // A code, not an amount — the server re-derives the discount.
+                    couponCode,
                 }),
             })
             const orderData = await orderRes.json()
             if (!orderData.orderId) throw new Error(orderData.error || "Order creation failed")
+
+            /* The server had the last word on the coupon. If it refused the code
+             * (ran out while they sat on the page, expired mid-session), stop
+             * here: clearing the code re-quotes the page at the real price, and
+             * they can pay with one more click. Opening Razorpay for an amount
+             * higher than the one on screen would be the worst possible moment
+             * to surprise someone. */
+            if (orderData.couponError) {
+                setCouponCode(null)
+                setError(orderData.couponError.message)
+                return
+            }
 
             const rzp = new (window as any).Razorpay({
                 key: orderData.keyId,
@@ -248,10 +352,19 @@ function PayContent() {
 
             {/* Main */}
             <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+                {/* ⚠️  `min-w-0` on BOTH columns is load-bearing, not cosmetic.
+                    A grid item defaults to `min-width: auto`, i.e. it refuses to
+                    shrink below its own min-content. Any `truncate` inside sets
+                    `white-space: nowrap`, whose min-content is the FULL text
+                    width — so one long untruncatable kit name in the deal card
+                    sized this single-column mobile track to 666px and pushed the
+                    entire page into horizontal scroll. min-w-0 removes that
+                    automatic floor, which is also what finally lets `truncate`
+                    do its job. */}
                 <div className="grid lg:grid-cols-[1fr_420px] gap-10 lg:gap-16 items-start">
 
                     {/* ─── LEFT: Form or Logged-In Card ─────────────── */}
-                    <div className="order-2 lg:order-1">
+                    <div className="order-2 lg:order-1 min-w-0">
 
                         {/* ── Logged-in user: streamlined card ─────── */}
                         {sessionUser ? (
@@ -372,8 +485,23 @@ function PayContent() {
                             </div>
                         )}
 
+                        {/* Coupon — a control over the server's quote, not a price source.
+                            Gated OFF for buyers for now (see COUPON_FIELD_ENABLED).
+                            Auto-applied offers still work without it: the server
+                            picks the best live offer on its own, so a campaign can
+                            run before the code box is ever shown. */}
+                        {COUPON_FIELD_ENABLED && (
+                            <div className="mt-8">
+                                <CouponField
+                                    applied={appliedCoupon}
+                                    email={resolvedEmail}
+                                    onApply={handleCoupon}
+                                />
+                            </div>
+                        )}
+
                         {/* Payment section (shared) */}
-                        <div className="mt-10 mb-4">
+                        <div className="mt-8 mb-4">
                             <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
                                 <CreditCard className="w-5 h-5 text-gray-400" />
                                 Payment
@@ -444,16 +572,22 @@ function PayContent() {
                             </div>
                         )}
 
-                        {/* Trust badges */}
-                        <div className="mt-6 flex items-center justify-center gap-5 text-xs text-gray-400">
+                        {/* Trust badges — wrap rather than squeeze on a 360px screen */}
+                        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-gray-400">
                             <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> 256-bit SSL</span>
                             <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Safe & Secure</span>
                             <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-yellow-500" /> Instant Access</span>
                         </div>
+
+                        {/* Free bonuses — reassurance, so it sits after the Pay
+                            button in the mobile reading order. */}
+                        <div className="mt-6">
+                            <BonusList bonuses={bonuses} worth={bonusWorth} />
+                        </div>
                     </div>
 
                     {/* ─── RIGHT: Order Summary ───────────────────────── */}
-                    <div className="order-1 lg:order-2 lg:sticky lg:top-24">
+                    <div className="order-1 lg:order-2 lg:sticky lg:top-24 min-w-0">
                         <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
                             {/* Product card */}
                             <div className="p-6 border-b border-gray-100">
@@ -489,14 +623,44 @@ function PayContent() {
                                 </div>
                             </div>
 
-                            {/* Features checklist */}
-                            <div className="px-6 py-5 border-b border-gray-100 space-y-2.5">
-                                {kit.features.map((f, i) => (
-                                    <div key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                        <span>{f}</span>
-                                    </div>
-                                ))}
+                            {/* Features checklist.
+                                COLLAPSED BY DEFAULT ON MOBILE. The summary card
+                                renders above the form on a phone (it is order-1),
+                                so listing all 10 features here pushed the email
+                                field and the Pay button a full screen down — the
+                                buyer had to scroll past the sales pitch to reach
+                                the thing they already decided to do. Desktop has
+                                a side column and no such problem, so it always
+                                shows the full list. */}
+                            <div className="px-6 py-5 border-b border-gray-100">
+                                <div className="space-y-2.5">
+                                    {kit.features.map((f, i) => (
+                                        <div
+                                            key={i}
+                                            className={`flex items-start gap-2.5 text-sm text-gray-600 ${i >= 3 && !featuresOpen ? "hidden lg:flex" : ""
+                                                }`}
+                                        >
+                                            <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                                            <span>{f}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {kit.features.length > 3 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setFeaturesOpen(!featuresOpen)}
+                                        aria-expanded={featuresOpen}
+                                        className="lg:hidden mt-3 h-9 inline-flex items-center gap-1 text-sm font-semibold text-violet-600 hover:text-violet-700"
+                                    >
+                                        {featuresOpen
+                                            ? "Show less"
+                                            : `Show all ${kit.features.length} inclusions`}
+                                        <ChevronDown
+                                            className={`w-4 h-4 transition-transform ${featuresOpen ? "rotate-180" : ""}`}
+                                        />
+                                    </button>
+                                )}
                             </div>
 
                             {/* Price breakdown */}
@@ -521,6 +685,16 @@ function PayContent() {
                                         </span>
                                     </div>
                                 )}
+                                {appliedCoupon && appliedCoupon.discount > 0 && (
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-green-600 font-medium truncate pr-2">
+                                            {appliedCoupon.auto ? "Offer applied" : `Coupon ${appliedCoupon.code}`}
+                                        </span>
+                                        <span className="text-green-600 font-medium shrink-0">
+                                            -₹{appliedCoupon.discount.toLocaleString("en-IN")}
+                                        </span>
+                                    </div>
+                                )}
                                 <div className="border-t border-gray-100 pt-3 flex justify-between items-baseline">
                                     <span className="text-base font-bold text-gray-900">Total</span>
                                     <div className="text-right">
@@ -528,8 +702,28 @@ function PayContent() {
                                         <span className="text-2xl font-extrabold text-gray-900">₹{payable.toLocaleString("en-IN")}</span>
                                     </div>
                                 </div>
+                                {totalSaved > 0 && (
+                                    <div className="rounded-lg bg-green-50 border border-green-200/70 px-3 py-2 text-center">
+                                        <span className="text-[13px] font-semibold text-green-800">
+                                            You save ₹{totalSaved.toLocaleString("en-IN")} today
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
+
+                        {/* A genuinely better deal, if one exists for this buyer.
+                            Stays in this column on purpose: on mobile this column
+                            renders BEFORE the form, and an upgrade offer is only
+                            useful while the buyer is still deciding. Shown after
+                            the Pay button it would just be a regret.
+                            (The bonuses moved to the other column — they are
+                            reassurance, which reads fine after the button.) */}
+                        {!alreadyOwned && deals.length > 0 && (
+                            <div className="mt-4">
+                                <BetterDeal deals={deals} />
+                            </div>
+                        )}
                     </div>
                 </div>
             </main>

@@ -8,6 +8,7 @@
     "lint": "next lint",
     "start": "next start",
     "test:quiz": "node --experimental-strip-types --test lib/quiz/*.test.ts",
+    "test:coupons": "node --experimental-strip-types --test lib/coupon-math.test.ts",
     "rename-complete-kit": "node scripts/rename-complete-kit.js"
   },
   "dependencies": {

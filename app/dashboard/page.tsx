@@ -33,6 +33,7 @@ interface SessionUser {
 /** DB Kit shape from /api/learn/kits */
 import { BundleUpsell } from "@/components/bundle-upsell"
 import { NewKitsBanner } from "@/components/dashboard/new-kits-banner"
+import { OfferBanner } from "@/components/offer-banner"
 
 interface DbKit {
     _id: string;
@@ -434,6 +435,9 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
         <div className="space-y-8 max-w-5xl">
             {/* Announce freshly-added kits to existing users (dismissible). */}
             <NewKitsBanner />
+
+            {/* Live public offer, if one is running. Renders nothing otherwise. */}
+            <OfferBanner />
 
             {/* ── Active Kits ── */}
             {ownedKits.length > 0 && (

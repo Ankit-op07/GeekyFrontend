@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import {
     BookOpen, Building2, Users, ShieldCheck, Menu, X,
-    LayoutDashboard, ChevronRight, Loader2, Lock, Mail, Video, ListChecks, Radio, Send
+    LayoutDashboard, ChevronRight, Loader2, Lock, Mail, Video, ListChecks, Radio, Ticket, Send
 } from 'lucide-react';
 
 const ADMIN_EMAIL = 'geekyfrontend@gmail.com';
@@ -19,6 +19,7 @@ const ADMIN_NAV = [
     { href: '/admin/questions', label: 'Questions', icon: Building2, desc: 'Company-wise questions' },
     { href: '/admin/interviews', label: 'Interviews', icon: Video, desc: 'Student mock interviews' },
     { href: '/admin/users', label: 'Orders', icon: Users, desc: 'Purchase orders management' },
+    { href: '/admin/coupons', label: 'Coupons', icon: Ticket, desc: 'Discount codes & offers' },
     { href: '/admin/access', label: 'Access', icon: ShieldCheck, desc: 'Grant course access' },
     { href: '/admin/kit-onboarding', label: 'Kit Onboarding', icon: Mail, desc: 'Onboard buyers by kit' },
     { href: '/admin/campaigns', label: 'Campaigns', icon: Send, desc: 'Multi-day bulk access + email' },
