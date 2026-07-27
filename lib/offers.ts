@@ -5,7 +5,6 @@ import {
     PLAN_TO_SLUGS,
     getKitById,
     getKitDisplayName,
-    AI_INTERVIEW,
 } from '@/lib/appConstants';
 import { computeUpgradePrice, getOwnedPlans } from '@/lib/pricing';
 
@@ -41,28 +40,22 @@ export interface BonusItem {
     icon: string;
 }
 
-/** Every bonus below maps to a feature that ships today. */
+/* Every bonus below maps to a feature that ships today.
+ *
+ * REMOVED, and why — both were promising things a buyer cannot actually reach:
+ *   • 'ai-interview' — the AI Interview tab is still commented out of the
+ *     dashboard nav (app/dashboard/page.tsx). Not launched.
+ *   • 'company-bank' — company-wise questions are not open to buyers yet.
+ *
+ * Put them back the day they ship, not before. This list is read at the exact
+ * moment someone decides to trust us with money. */
 const BONUS_CATALOG: Record<string, BonusItem> = {
-    'ai-interview': {
-        id: 'ai-interview',
-        title: 'AI mock interviews',
-        description: `Practise with an AI interviewer and get a graded report — up to ${AI_INTERVIEW.DAILY_LIMIT} sessions a day, plus live voice rounds.`,
-        worth: 999,
-        icon: 'Video',
-    },
     'quiz': {
         id: 'quiz',
         title: 'End-of-topic self-checks',
         description: 'A quick MCQ at the foot of every lesson so you find the gaps before an interviewer does.',
         worth: 299,
         icon: 'ListChecks',
-    },
-    'company-bank': {
-        id: 'company-bank',
-        title: 'Company-wise question bank',
-        description: 'Browse what specific companies actually ask, sorted by company and round.',
-        worth: 499,
-        icon: 'Building2',
     },
     'progress': {
         id: 'progress',
@@ -81,7 +74,7 @@ const BONUS_CATALOG: Record<string, BonusItem> = {
 };
 
 /** Bonuses shown with every purchase, in display order. */
-const DEFAULT_BONUS_IDS = ['ai-interview', 'quiz', 'company-bank', 'progress', 'updates'];
+const DEFAULT_BONUS_IDS = ['quiz', 'progress', 'updates'];
 
 /**
  * Bonus overrides for specific SKUs. A kit absent from this map gets
