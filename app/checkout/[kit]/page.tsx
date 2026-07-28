@@ -1133,6 +1133,17 @@ export default function CheckoutPage() {
     )
   }
 
+  /* Has this kit actually been bought by anyone yet?
+   *
+   * DERIVED FROM THE DATA, not a hardcoded id list. It used to read
+   * `kit.id === "angular" || kit.id === "nodejs"`, so every newly launched kit
+   * silently fell through to the social-proof row and advertised itself with
+   * "0 students" and a 5★ rating built from zero reviews — which is both
+   * dispiriting and untrue. Java hit exactly that. Anything launching next is
+   * now covered without touching this file; the row comes back on its own once
+   * real enrolments exist. */
+  const isNewKit = kit.students === 0 || kit.reviews === 0
+
   return (
     /* pt matches SiteHeader's real height (h-16 / sm:h-20) — it is `fixed`, so it
        takes no space in flow and any smaller offset tucks the breadcrumb under it.
@@ -1179,9 +1190,10 @@ export default function CheckoutPage() {
                     </div>
                     <p className="text-xs md:text-sm text-muted-foreground mb-2 break-words">{kit.tagline}</p>
 
-                    {/* Trust micro-row. New kits (angular/nodejs) have no real
-                        enrolment/rating yet — show a "New" badge instead of 0s. */}
-                    {(kit.id === "angular" || kit.id === "nodejs") ? (
+                    {/* Trust micro-row. A kit with no enrolments yet has nothing
+                        honest to put here — "0 students · 5★" from zero reviews
+                        reads worse than saying plainly that it is new. */}
+                    {isNewKit ? (
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge className="bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-xs font-semibold">
                           ✨ New kit
@@ -1835,7 +1847,9 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  {!(kit.id === "angular" || kit.id === "nodejs") && (
+                  {/* Derived from student count, so a kit with no buyers never
+                      claims "8 people viewing" out of a Math.max floor. */}
+                  {!isNewKit && (
                   <div className="p-2 rounded-lg bg-yellow-50 border border-yellow-200 text-center">
                     <p className="text-xs">
                       <span className="font-semibold">⚡ {Math.max(8, Math.floor(kit.students / 25))}</span> people viewing
@@ -1885,8 +1899,8 @@ export default function CheckoutPage() {
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-2">
                   <Users className="w-5 h-5 text-white" />
                 </div>
-                <p className="font-semibold text-sm">{(kit.id === "angular" || kit.id === "nodejs") ? "New" : `${(kit.students + 5892).toLocaleString()}+ Students`}</p>
-                <p className="text-xs text-muted-foreground mt-1">{(kit.id === "angular" || kit.id === "nodejs") ? "Just launched" : "Join our community"}</p>
+                <p className="font-semibold text-sm">{isNewKit ? "New" : `${(kit.students + 5892).toLocaleString()}+ Students`}</p>
+                <p className="text-xs text-muted-foreground mt-1">{isNewKit ? "Just launched" : "Join our community"}</p>
               </div>
               <div>
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
