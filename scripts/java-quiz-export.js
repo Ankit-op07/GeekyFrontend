@@ -155,8 +155,15 @@ async function main() {
 
   for (const [slug, { questions }] of bySlug) {
     const topic = topicBySlug.get(slug);
+    /* ⚠️ kitId is REQUIRED, not decorative. quiz-insert-authored.ts does
+     * `new ObjectId(rec.kitId)` — and ObjectId(undefined) silently mints a
+     * BRAND NEW random id rather than throwing. Omitting it once produced 200
+     * rows each pointing at a different non-existent kit: invisible to
+     * /admin/quiz and to the metrics panel, which both filter by kitId, while
+     * still being served to learners (that query keys off topicId). */
     const payload = {
       kitSlug: KIT_SLUG,
+      kitId: String(kit._id),
       topicSlug: slug,
       topicTitle: topic.title,
       topicId: String(topic._id),

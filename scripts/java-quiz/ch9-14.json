@@ -1,0 +1,1257 @@
+{
+  "_comment": "Java Interview Kit — quiz questions for chapters 9-14. Keyed by topic slug.",
+  "topics": {
+    "classloading": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "What is parent delegation and why does it exist?",
+          "options": [
+            "Loaders share one flat namespace and the fastest wins",
+            "The JVM picks a loader at random for each class",
+            "A loader asks its parent to load a class before trying itself — so you cannot substitute your own java.lang.String, because Bootstrap is always asked first",
+            "A loader delegates to its children first, so application classes win"
+          ],
+          "correctIndex": 2,
+          "explanation": "Requests travel up to Bootstrap and loading happens on the way back down, so the highest loader that can load a class does. It exists for security and consistency. Tomcat deliberately inverts it for webapp classes so an application's bundled library beats the container's — a documented exception.",
+          "difficulty": "medium",
+          "tags": [
+            "classloading"
+          ],
+          "citation": "The concept, simply — parent delegation"
+        },
+        {
+          "type": "concept",
+          "prompt": "You see 'class com.app.User cannot be cast to class com.app.User'. What causes it?",
+          "options": [
+            "A generics erasure problem",
+            "A corrupted class file",
+            "Two versions of the class with different fields",
+            "Class identity is the fully-qualified name PLUS the loader, so two loaders produce two distinct, incompatible types"
+          ],
+          "correctIndex": 3,
+          "explanation": "The message looks absurd and is literally true. It usually means the same jar is on both the container's and the application's classpath, or an object crossed a plugin boundary. The exception text names the loaders in brackets, which is how you confirm it.",
+          "difficulty": "hard",
+          "tags": [
+            "classloading"
+          ],
+          "citation": "How it works — class identity is name plus loader"
+        },
+        {
+          "type": "concept",
+          "prompt": "What is the difference between ClassNotFoundException and NoClassDefFoundError?",
+          "options": [
+            "ClassNotFoundException means a by-name lookup failed; NoClassDefFoundError means the class was present at compile time but is missing now — OR it failed its static initialiser earlier",
+            "NoClassDefFoundError only occurs with reflection",
+            "ClassNotFoundException is thrown by the JVM and NoClassDefFoundError by the compiler",
+            "They are the same; one is just newer"
+          ],
+          "correctIndex": 0,
+          "explanation": "The second cause is the one that wastes time: a class whose static initialiser threw produces ExceptionInInitializerError on the first attempt and NoClassDefFoundError with no cause on every attempt after. Always look further up the log for the original failure.",
+          "difficulty": "hard",
+          "tags": [
+            "classloading",
+            "exceptions"
+          ],
+          "citation": "Code examples — the two errors"
+        }
+      ]
+    },
+    "jvm-memory-areas": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Your container has a 1 GB memory limit. Why is -Xmx1g wrong?",
+          "options": [
+            "Because the JVM cannot address a full gigabyte",
+            "Because -Xmx bounds only the HEAP — thread stacks, Metaspace, the code cache and direct buffers are native memory outside it, and the kernel counts every byte",
+            "Because -Xmx must always be a power of two",
+            "Because the container limit includes the operating system"
+          ],
+          "correctIndex": 1,
+          "explanation": "The process gets OOM-killed while the heap graph looks healthy. Leave 25-30% headroom and cap Metaspace and the code cache, or on Java 10+ use -XX:MaxRAMPercentage so the JVM reads the container limit itself.",
+          "difficulty": "medium",
+          "tags": [
+            "jvm",
+            "memory"
+          ],
+          "citation": "Code examples — sizing a JVM in a container"
+        },
+        {
+          "type": "concept",
+          "prompt": "You get 'OutOfMemoryError: unable to create new native thread'. What should you NOT do?",
+          "options": [
+            "Check the per-process limit with ulimit",
+            "Look for a thread leak in the application",
+            "Raise -Xmx — that takes memory away from thread stacks and makes it worse",
+            "Take a thread dump to count threads"
+          ],
+          "correctIndex": 2,
+          "explanation": "This is not a heap problem at all; the OS refused to create a thread. Stacks live outside the heap, so a larger heap leaves less room for them. The fixes are finding the thread leak, checking limits, reducing -Xss, or moving to virtual threads.",
+          "difficulty": "hard",
+          "tags": [
+            "jvm",
+            "memory"
+          ],
+          "citation": "Code examples — the four OutOfMemoryError messages"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why can raising the heap from 31 GB to 33 GB let you hold FEWER objects?",
+          "options": [
+            "Because Metaspace shrinks proportionally",
+            "Because the JIT disables inlining on large heaps",
+            "Because the garbage collector runs less often",
+            "Compressed oops switch off above roughly 32 GB, so every reference doubles from 32 to 64 bits"
+          ],
+          "correctIndex": 3,
+          "explanation": "Below the threshold the JVM stores references as 32-bit offsets, halving reference size and improving cache behaviour. Cross it and every reference widens, which can more than consume the extra 2 GB. Stay comfortably under 32 GB, or go well beyond it.",
+          "difficulty": "hard",
+          "tags": [
+            "jvm",
+            "memory"
+          ],
+          "citation": "Under the hood — compressed oops"
+        }
+      ]
+    },
+    "garbage-collection": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "What is the weak generational hypothesis, and why does it shape GC design?",
+          "options": [
+            "Most objects die very young, so collecting the young generation frequently is cheap — a minor GC copies only the few survivors and reclaims the rest for free",
+            "Objects should be allocated in generations to reduce fragmentation",
+            "Garbage collection should run on a fixed schedule",
+            "Older objects reference newer ones, so the old generation must be scanned first"
+          ],
+          "correctIndex": 0,
+          "explanation": "Typically 90-98% of objects never leave Eden, and the cost of a minor collection is proportional to what SURVIVES rather than what died. That is why allocation is cheap and why 'avoid creating objects' is largely obsolete advice on a modern JVM.",
+          "difficulty": "medium",
+          "tags": [
+            "gc"
+          ],
+          "citation": "The concept, simply — the weak generational hypothesis"
+        },
+        {
+          "type": "concept",
+          "prompt": "Which GC log pattern indicates a memory leak?",
+          "options": [
+            "A sawtooth heap graph that returns to a stable baseline",
+            "Frequent FULL collections that reclaim very little — the heap is genuinely full of live objects",
+            "Long pauses during application startup",
+            "Frequent minor collections that reclaim most of the young generation"
+          ],
+          "correctIndex": 1,
+          "explanation": "Frequent minor GCs reclaiming most of Eden is healthy — that is the design working. The leak signature is full collections that free almost nothing, meaning the data is still reachable. That is the point to take a heap dump and open the dominator tree in Eclipse MAT.",
+          "difficulty": "medium",
+          "tags": [
+            "gc",
+            "troubleshooting"
+          ],
+          "citation": "Code examples — reading a GC log"
+        },
+        {
+          "type": "concept",
+          "prompt": "Which statement about collectors is currently accurate?",
+          "options": [
+            "Serial GC is the only option in containers",
+            "CMS is the recommended low-pause collector",
+            "G1 is the default since Java 9; ZGC and Shenandoah target sub-millisecond pauses; CMS was REMOVED in Java 14",
+            "Parallel GC is the default and best for latency"
+          ],
+          "correctIndex": 2,
+          "explanation": "A lot of tuning advice online still recommends CMS, which no longer exists. G1 is region-based and takes a pause-time target; ZGC and Shenandoah do nearly all their work concurrently; Parallel favours throughput over latency; Serial suits small heaps and short-lived processes.",
+          "difficulty": "medium",
+          "tags": [
+            "gc"
+          ],
+          "citation": "How it works — the collectors"
+        }
+      ]
+    },
+    "jvm-troubleshooting": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "The service has become slow. What is the cheapest first diagnostic?",
+          "options": [
+            "A heap dump",
+            "Restarting with a larger heap",
+            "Enabling a sampling profiler in production",
+            "Three thread dumps a few seconds apart — they distinguish lock contention, CPU-bound work and a slow dependency immediately"
+          ],
+          "correctIndex": 3,
+          "explanation": "Many threads BLOCKED on one monitor means contention; threads RUNNABLE in application code means CPU work; threads waiting in socket reads means a downstream dependency. Three dumps rather than one distinguishes stuck from merely busy, and it costs nothing.",
+          "difficulty": "medium",
+          "tags": [
+            "troubleshooting"
+          ],
+          "citation": "How it works — the decision tree"
+        },
+        {
+          "type": "concept",
+          "prompt": "Which is a leading cause of Java memory leaks?",
+          "options": [
+            "A ThreadLocal never removed on a pooled thread — the pool thread lives for the application's life, so the value is never collected and it pins the class loader",
+            "Creating too many short-lived objects",
+            "Not calling System.gc() often enough",
+            "Circular references between objects"
+          ],
+          "correctIndex": 0,
+          "explanation": "Java's collector handles circular references fine, and short-lived objects are nearly free. Leaks come from things that stay REACHABLE: unbounded static collections, unremoved ThreadLocals, unregistered listeners and caches with no eviction.",
+          "difficulty": "medium",
+          "tags": [
+            "troubleshooting",
+            "leaks"
+          ],
+          "citation": "Code examples — two leak patterns"
+        },
+        {
+          "type": "concept",
+          "prompt": "Is taking a heap dump safe on a live production instance?",
+          "options": [
+            "Yes, it has no measurable effect",
+            "It pauses the JVM for the duration and writes a file the size of the live heap — take it from an instance out of rotation, or configure -XX:+HeapDumpOnOutOfMemoryError",
+            "No, it always crashes the JVM",
+            "Only if the heap is under 1 GB"
+          ],
+          "correctIndex": 1,
+          "explanation": "On a 16 GB heap that is minutes of downtime and 16 GB of disk. Automatic capture at the moment of failure is usually better evidence anyway. For continuous, low-overhead insight, JFR at around 1% overhead is the better default.",
+          "difficulty": "medium",
+          "tags": [
+            "troubleshooting"
+          ],
+          "citation": "Under the hood — heap dumps are expensive"
+        }
+      ]
+    },
+    "var-and-text-blocks": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Does var make Java dynamically typed?",
+          "options": [
+            "Yes, but only when the initialiser is a method call",
+            "Yes — the variable's type can change at run time",
+            "No — the compiler infers one specific static type and enforces it exactly as before; var is erased and the bytecode is identical",
+            "Only for local variables inside lambdas"
+          ],
+          "correctIndex": 2,
+          "explanation": "Nothing about the type system changed. var is restricted to local variables, loop variables and try-with-resources — never fields, parameters or return types, because those are API contracts that should be written down.",
+          "difficulty": "easy",
+          "tags": [
+            "var"
+          ],
+          "citation": "The concept, simply"
+        },
+        {
+          "type": "concept",
+          "prompt": "In a text block, what determines how much leading whitespace is stripped?",
+          "options": [
+            "The indentation of the first line only",
+            "Exactly four spaces are always removed",
+            "Nothing is stripped; whitespace is preserved verbatim",
+            "The minimum indentation across all lines INCLUDING the closing delimiter — so moving the closing \"\"\" left preserves more whitespace"
+          ],
+          "correctIndex": 3,
+          "explanation": "That the closing delimiter participates is the surprising rule and the one people trip over. There is also a backslash to suppress a line break and a \\s escape to keep a trailing space, both useful for wrapping long SQL.",
+          "difficulty": "medium",
+          "tags": [
+            "text-blocks"
+          ],
+          "citation": "How it works — text blocks"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why prefer strip() over trim()?",
+          "options": [
+            "trim() dates from Java 1.0 and only removes characters up to U+0020, so it misses several Unicode whitespace characters; strip() is Unicode-aware",
+            "strip() is faster",
+            "trim() was removed in Java 11",
+            "strip() also removes punctuation"
+          ],
+          "correctIndex": 0,
+          "explanation": "Java 11 added strip, stripLeading, stripTrailing and isBlank — the last being the readable way to test for whitespace-only content. trim still exists for compatibility.",
+          "difficulty": "medium",
+          "tags": [
+            "strings",
+            "java-11"
+          ],
+          "citation": "Code examples — the other small wins"
+        }
+      ]
+    },
+    "records-and-sealed-types": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "A record has a List component. Is the record immutable?",
+          "options": [
+            "Only if the record is declared final",
+            "Only shallowly — the field reference is final, but the List it points at can still be modified by anyone holding it",
+            "Yes, fully — records deep-copy all components",
+            "No, records are always mutable"
+          ],
+          "correctIndex": 1,
+          "explanation": "For real immutability, defensive-copy in the compact constructor by REASSIGNING the parameter — the field assignment is generated after your code runs, so 'members = List.copyOf(members)' is the idiom.",
+          "difficulty": "hard",
+          "tags": [
+            "records"
+          ],
+          "citation": "Under the hood — records are shallowly immutable"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why can a record not be a JPA entity?",
+          "options": [
+            "JPA cannot generate accessors named x() rather than getX()",
+            "Records cannot implement interfaces",
+            "JPA needs a no-arg constructor, mutable fields to populate, and a non-final class for lazy proxies — records provide none of those",
+            "Records cannot have annotations"
+          ],
+          "correctIndex": 2,
+          "explanation": "Records are ideal as DTOs and projections returned FROM the repository layer, which is a better boundary anyway than passing entities upward. They are also excellent map keys, since equals and hashCode are correct by construction.",
+          "difficulty": "medium",
+          "tags": [
+            "records",
+            "jpa"
+          ],
+          "citation": "Code examples — where records are the wrong tool"
+        },
+        {
+          "type": "concept",
+          "prompt": "What do sealed types buy you that a plain interface does not?",
+          "options": [
+            "Protection against reflection",
+            "Better run-time performance",
+            "Automatic serialisation",
+            "The compiler knows the complete set of subtypes, so a switch over them can be verified EXHAUSTIVE — adding a case breaks the build instead of silently falling into default"
+          ],
+          "correctIndex": 3,
+          "explanation": "Without sealing, the compiler must assume anything could implement the interface, so it demands a default branch — and that branch silently absorbs the new case you forgot. Sealing turns 'I hope I updated every switch' into a compile error.",
+          "difficulty": "medium",
+          "tags": [
+            "sealed"
+          ],
+          "citation": "Under the hood — sealed types make exhaustiveness checkable"
+        }
+      ]
+    },
+    "pattern-matching": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "After 'if (!(obj instanceof String s)) return \"no\";' can you use s on the next line?",
+          "options": [
+            "Yes — flow scoping puts s in scope wherever the compiler can prove the test succeeded, including after the negated branch returns",
+            "No — the binding is only in scope inside the if block",
+            "Only if s is declared final",
+            "No — it is a compile error to negate an instanceof pattern"
+          ],
+          "correctIndex": 0,
+          "explanation": "Flow scoping follows control flow rather than block structure. Because the negated branch returns, execution can only continue when obj IS a String, so s is available — which is what makes the pattern pleasant rather than merely shorter.",
+          "difficulty": "hard",
+          "tags": [
+            "pattern-matching"
+          ],
+          "citation": "Under the hood — flow scoping"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why should you NOT add a default branch to a switch over a sealed type?",
+          "options": [
+            "It makes the switch slower",
+            "It disables exhaustiveness checking — the compiler stops warning about new subtypes because you claimed to handle everything, so a new case silently falls into default",
+            "default is not allowed in switch expressions",
+            "It causes a compile error"
+          ],
+          "correctIndex": 1,
+          "explanation": "Omitting default on a sealed type is not a style choice — it is what buys the safety. With it, adding a new implementation compiles cleanly and does the wrong thing at run time.",
+          "difficulty": "hard",
+          "tags": [
+            "pattern-matching",
+            "sealed"
+          ],
+          "citation": "Under the hood — adding default disables exhaustiveness"
+        },
+        {
+          "type": "concept",
+          "prompt": "What do switch EXPRESSIONS improve over classic switch statements?",
+          "options": [
+            "They are evaluated at compile time",
+            "They allow fall-through between cases by default",
+            "They produce a value, arrow labels remove fall-through, and over an enum they must be exhaustive — so adding a constant breaks the build",
+            "They can switch on any object type without patterns"
+          ],
+          "correctIndex": 2,
+          "explanation": "Three long-standing problems fixed at once: no more declaring a variable and mutating it, no more forgotten break, and no more silent fall-through to default when an enum gains a constant. yield returns a value from a multi-statement branch.",
+          "difficulty": "medium",
+          "tags": [
+            "pattern-matching",
+            "switch"
+          ],
+          "citation": "Code examples — switch expressions"
+        }
+      ]
+    },
+    "virtual-threads": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Should you pool virtual threads?",
+          "options": [
+            "Yes, otherwise they are never garbage collected",
+            "Yes, with a fixed pool sized to the cores",
+            "Yes, but only for I/O work",
+            "No — pooling exists because platform threads are expensive to create; a virtual thread is cheap, so one per task is the model"
+          ],
+          "correctIndex": 3,
+          "explanation": "Executors.newVirtualThreadPerTaskExecutor() creates a new virtual thread per task. If you need to limit concurrency against a downstream resource, bound the WORK with a Semaphore rather than bounding the threads — pooling used to conflate those two concerns.",
+          "difficulty": "medium",
+          "tags": [
+            "virtual-threads"
+          ],
+          "citation": "Code examples — do not pool them"
+        },
+        {
+          "type": "concept",
+          "prompt": "Do virtual threads make CPU-bound work faster?",
+          "options": [
+            "No — they solve WAITING, not computing; you still have only N cores, so CPU-bound work still wants a pool sized to the cores",
+            "Yes, because they have smaller stacks",
+            "Only when combined with parallel streams",
+            "Yes, because the JVM schedules them more efficiently than the OS"
+          ],
+          "correctIndex": 0,
+          "explanation": "The gain comes from a blocking call unmounting the virtual thread and freeing its carrier for other work. If nothing blocks, there is nothing to gain. Knowing which of the two situations you are in is the whole skill.",
+          "difficulty": "medium",
+          "tags": [
+            "virtual-threads"
+          ],
+          "citation": "Under the hood — they do not help CPU-bound work"
+        },
+        {
+          "type": "concept",
+          "prompt": "What is 'pinning' in the context of virtual threads?",
+          "options": [
+            "Preventing a virtual thread from being garbage collected",
+            "A virtual thread that cannot unmount from its carrier — in Java 21 this happens inside a synchronized block, so blocking there ties up a platform thread",
+            "Reserving heap space for a virtual thread's stack",
+            "Assigning a virtual thread to a specific CPU core"
+          ],
+          "correctIndex": 1,
+          "explanation": "The Java 21 guidance was to prefer ReentrantLock over synchronized in code that blocks. It was substantially fixed in Java 24, so the answer is version-specific — saying that precisely is a good signal. Some native and JNI frames still pin.",
+          "difficulty": "hard",
+          "tags": [
+            "virtual-threads"
+          ],
+          "citation": "Under the hood — pinning"
+        }
+      ]
+    },
+    "ioc-and-dependency-injection": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Why is constructor injection preferred over field injection?",
+          "options": [
+            "Because @Autowired only works on constructors",
+            "It is faster at startup",
+            "Fields can be final so the bean is immutable and safely publishable, the object is never half-built, it is constructible in a plain unit test with no Spring, and an over-long parameter list makes bloat visible",
+            "Field injection was removed in Spring 5"
+          ],
+          "correctIndex": 2,
+          "explanation": "Field injection hides dependencies, prevents final, and makes plain unit tests impossible without reflection or a Spring context. Since Spring 4.3 a class with a single constructor needs no @Autowired at all.",
+          "difficulty": "medium",
+          "tags": [
+            "spring",
+            "di"
+          ],
+          "citation": "How it works — the three injection styles"
+        },
+        {
+          "type": "concept",
+          "prompt": "Are Spring beans thread-safe?",
+          "options": [
+            "Yes, if they are annotated @Service",
+            "Only prototype-scoped beans are unsafe",
+            "Yes — the container synchronises access",
+            "Not automatically. The default scope is singleton — one instance per context serving all request threads — so any mutable instance field is shared mutable state"
+          ],
+          "correctIndex": 3,
+          "explanation": "This is the most common Spring concurrency bug: an instance field used to pass data between methods works under manual testing and corrupts data under load. Keep beans stateless and pass state as parameters. Note also that Spring's 'singleton' means one per ApplicationContext, not the Gang of Four pattern.",
+          "difficulty": "medium",
+          "tags": [
+            "spring",
+            "concurrency"
+          ],
+          "citation": "Under the hood — beans are singletons by default"
+        },
+        {
+          "type": "concept",
+          "prompt": "Which stereotype annotation has behaviour beyond being a component marker?",
+          "options": [
+            "@Repository — it enables persistence exception translation, wrapping vendor SQLExceptions in Spring's DataAccessException hierarchy",
+            "None of them; all four are purely semantic",
+            "@Service — it enables transaction management",
+            "@Controller — it enables validation"
+          ],
+          "correctIndex": 0,
+          "explanation": "All four are @Component underneath and all are picked up by scanning. @Service and @Controller are semantic; @Repository is the one that actually does something, decoupling callers from database-specific exceptions.",
+          "difficulty": "medium",
+          "tags": [
+            "spring",
+            "stereotypes"
+          ],
+          "citation": "How it works — the stereotypes"
+        }
+      ]
+    },
+    "bean-lifecycle-and-scopes": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Why does @Transactional silently do nothing when a method calls another method in the same class?",
+          "options": [
+            "Because Spring only supports one transaction per request",
+            "Because the annotation is implemented by a PROXY — other beans hold the proxy, but an internal call goes through 'this', which is the target object, so nothing intercepts it",
+            "Because the transaction manager is not thread-safe",
+            "Because internal calls run before the transaction starts"
+          ],
+          "correctIndex": 1,
+          "explanation": "The same limitation applies to @Async and @Cacheable, since all three are proxy-based. The fix is to move the annotated method into a separate bean so the call crosses a bean boundary. Adding @Transactional to the outer method changes the boundary but does not make the inner annotation apply.",
+          "difficulty": "hard",
+          "tags": [
+            "spring",
+            "aop"
+          ],
+          "citation": "Code examples — the self-invocation problem"
+        },
+        {
+          "type": "concept",
+          "prompt": "You inject a prototype-scoped bean into a singleton. How many instances do you get?",
+          "options": [
+            "One per request thread",
+            "It throws at startup",
+            "One — injection happens once when the singleton is built, so you get the same instance forever",
+            "A new one on every method call"
+          ],
+          "correctIndex": 2,
+          "explanation": "This defeats the point of prototype scope. If you genuinely need a fresh instance per call, inject an ObjectProvider and call getObject() each time. Note also that Spring never destroys prototype beans, so @PreDestroy does not run on them.",
+          "difficulty": "hard",
+          "tags": [
+            "spring",
+            "scopes"
+          ],
+          "citation": "How it works — the scopes"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why can a final or private method not be @Transactional?",
+          "options": [
+            "Because private methods have no bean definition",
+            "They can be — there is no restriction",
+            "Because transactions require reflection",
+            "Because Spring Boot uses CGLIB proxies, which work by SUBCLASSING — a final or private method cannot be overridden, so it cannot be intercepted and the annotation is silently ignored"
+          ],
+          "correctIndex": 3,
+          "explanation": "Silently ignored is the dangerous part: no warning, no exception, just no transaction. A JDK dynamic proxy has the mirror limitation — it only implements the interface, so injecting the concrete class fails. Boot defaults to CGLIB to avoid that second confusion.",
+          "difficulty": "medium",
+          "tags": [
+            "spring",
+            "aop"
+          ],
+          "citation": "Under the hood — interface versus class proxies"
+        }
+      ]
+    },
+    "spring-boot-autoconfiguration": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "How do you normally override an auto-configured bean such as the DataSource?",
+          "options": [
+            "Just define your own bean — auto-configurations are annotated @ConditionalOnMissingBean and run after user configuration, so they detect yours and back off",
+            "Set a property to disable auto-configuration entirely",
+            "Subclass the auto-configuration class",
+            "Exclude the auto-configuration class explicitly"
+          ],
+          "correctIndex": 0,
+          "explanation": "@ConditionalOnMissingBean is the key to the whole design: you override by DECLARING, not by disabling. Excluding is a bigger hammer, normally only needed to remove a whole feature.",
+          "difficulty": "medium",
+          "tags": [
+            "spring-boot"
+          ],
+          "citation": "How it works — the override hook"
+        },
+        {
+          "type": "concept",
+          "prompt": "A @Component is not being picked up. What is the most likely cause?",
+          "options": [
+            "The application needs a restart",
+            "It is outside the component-scan root — scanning starts at the main class's package and goes down, so a sibling package is invisible",
+            "Its constructor is not public",
+            "It is missing a @Bean method"
+          ],
+          "correctIndex": 1,
+          "explanation": "This is by far the most common cause. @SpringBootApplication includes @ComponentScan of its own package and below. Otherwise: a condition did not match, which --debug will tell you, or a profile excluded it.",
+          "difficulty": "medium",
+          "tags": [
+            "spring-boot"
+          ],
+          "citation": "Interview lens — why is my bean not being picked up"
+        },
+        {
+          "type": "concept",
+          "prompt": "Which configuration source wins?",
+          "options": [
+            "Profile-specific YAML beats command-line arguments",
+            "application.yml always wins, because it is checked into the repository",
+            "Command-line arguments beat environment variables, which beat the profile-specific YAML, which beats application.yml",
+            "Whichever is loaded last"
+          ],
+          "correctIndex": 2,
+          "explanation": "Environment variables outranking the YAML file is the one that surprises people, and it is deliberate — it is what lets the same artefact be configured per environment. Not knowing the order is the usual reason for 'my config is being ignored'.",
+          "difficulty": "medium",
+          "tags": [
+            "spring-boot",
+            "configuration"
+          ],
+          "citation": "Under the hood — property precedence"
+        }
+      ]
+    },
+    "spring-mvc-request-flow": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Why does @ControllerAdvice never see a Spring Security 401?",
+          "options": [
+            "Because 401 responses are generated by the servlet container",
+            "Because security exceptions are Errors, not Exceptions",
+            "Because @ControllerAdvice only handles exceptions from the service layer",
+            "Because Spring Security is a servlet FILTER, and filters run before the DispatcherServlet — the request is rejected before any controller or exception handler is involved"
+          ],
+          "correctIndex": 3,
+          "explanation": "Those responses are customised with an AuthenticationEntryPoint for 401s and an AccessDeniedHandler for 403s, in the security configuration rather than in MVC. It is a direct consequence of the request pipeline order.",
+          "difficulty": "hard",
+          "tags": [
+            "spring-mvc",
+            "security"
+          ],
+          "citation": "How it works — the filter chain runs first"
+        },
+        {
+          "type": "concept",
+          "prompt": "What is the difference between @Controller and @RestController?",
+          "options": [
+            "@RestController is @Controller plus @ResponseBody, so return values are serialised into the body rather than treated as view names",
+            "@RestController only supports GET requests",
+            "@Controller is deprecated",
+            "@RestController automatically adds validation"
+          ],
+          "correctIndex": 0,
+          "explanation": "With plain @Controller, a returned String is a VIEW NAME and Spring tries to resolve a template — the cause of a lot of unexplained 404s when an MVC controller is converted to REST.",
+          "difficulty": "easy",
+          "tags": [
+            "spring-mvc"
+          ],
+          "citation": "How it works — @RestController"
+        },
+        {
+          "type": "concept",
+          "prompt": "When would you use a servlet Filter rather than a Spring interceptor?",
+          "options": [
+            "Filters are deprecated in Spring Boot",
+            "When you need to sit in front of everything and work with the raw request and response — security, CORS, request logging, body wrapping",
+            "There is no practical difference",
+            "When you need to know which controller method was selected"
+          ],
+          "correctIndex": 1,
+          "explanation": "Interceptors run inside the DispatcherServlet and know the selected handler, which is what you want for per-endpoint auditing or metrics. If you need the handler, use an interceptor; if you need to be in front of everything, use a filter.",
+          "difficulty": "medium",
+          "tags": [
+            "spring-mvc"
+          ],
+          "citation": "Under the hood — filters versus interceptors"
+        }
+      ]
+    },
+    "jpa-entities-and-repositories": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Why must you always write @Enumerated(EnumType.STRING)?",
+          "options": [
+            "Because ORDINAL cannot handle more than 10 constants",
+            "Because ORDINAL is not supported by all databases",
+            "Because the default, ORDINAL, stores the enum's POSITION — so inserting or reordering a constant silently changes the meaning of every existing row",
+            "Because STRING is faster to index"
+          ],
+          "correctIndex": 2,
+          "explanation": "There is no exception and no error, just corrupted data discovered much later. STRING costs a little space and is safe against reordering. It is one of the highest-value one-line rules in JPA.",
+          "difficulty": "medium",
+          "tags": [
+            "jpa",
+            "mapping"
+          ],
+          "citation": "Code examples — the two mapping decisions"
+        },
+        {
+          "type": "concept",
+          "prompt": "What should an entity's equals() be based on?",
+          "options": [
+            "The generated id",
+            "All fields",
+            "Reference identity, inherited from Object",
+            "A business key assigned at construction and never changed, compared with instanceof rather than getClass()"
+          ],
+          "correctIndex": 3,
+          "explanation": "The generated id is null before persist, so an entity added to a HashSet before saving becomes unreachable once the id is assigned — Chapter 2's mutable-key trap. And getClass() always fails against a Hibernate lazy proxy, which is a subclass.",
+          "difficulty": "hard",
+          "tags": [
+            "jpa",
+            "equals"
+          ],
+          "citation": "Code examples — equals and hashCode on an entity"
+        },
+        {
+          "type": "concept",
+          "prompt": "What does repository.save() do for an entity that is already MANAGED inside a transaction?",
+          "options": [
+            "Nothing useful — it is redundant, because dirty checking issues the UPDATE at flush regardless",
+            "It forces an immediate INSERT",
+            "It detaches the entity",
+            "It throws, because the entity already exists"
+          ],
+          "correctIndex": 0,
+          "explanation": "save() calls persist for a new entity and merge for a detached one, deciding by whether the id is null. For a managed entity the persistence context already tracks it, so the change is written at commit whether or not you call save.",
+          "difficulty": "medium",
+          "tags": [
+            "jpa",
+            "repositories"
+          ],
+          "citation": "Under the hood — save() is not an insert"
+        }
+      ]
+    },
+    "persistence-context": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Inside a @Transactional method you load an entity and call a setter, with no save() anywhere. What happens at commit?",
+          "options": [
+            "Nothing — without save() no SQL is issued",
+            "An UPDATE is issued — the entity is managed, and dirty checking compares it against the snapshot taken at load",
+            "The change is discarded when the context closes",
+            "An exception, because the entity was not explicitly saved"
+          ],
+          "correctIndex": 1,
+          "explanation": "This is powerful and is also why an 'innocent' setter in a read path writes to the database. Marking read paths @Transactional(readOnly = true) prevents it and lets Hibernate skip the snapshot, which roughly halves memory on a large read.",
+          "difficulty": "medium",
+          "tags": [
+            "jpa",
+            "persistence-context"
+          ],
+          "citation": "The concept, simply — dirty checking"
+        },
+        {
+          "type": "concept",
+          "prompt": "What causes LazyInitializationException, and what is the right fix?",
+          "options": [
+            "Touching a lazy association; fix it by making the association EAGER",
+            "A null association; fix it by initialising the field",
+            "Touching a lazy association after the persistence context has closed; fix it by fetching what you need inside the transaction with a fetch join, an entity graph, or a projection",
+            "A missing @Transactional on the repository; add one there"
+          ],
+          "correctIndex": 2,
+          "explanation": "It typically happens in the controller or during serialisation, after the transactional service method returned. Enabling spring.jpa.open-in-view makes the symptom disappear while holding a database connection for the whole request and hiding N+1 problems — Boot even warns about it at startup.",
+          "difficulty": "medium",
+          "tags": [
+            "jpa",
+            "lazy"
+          ],
+          "citation": "Code examples — the two errors everyone meets"
+        },
+        {
+          "type": "concept",
+          "prompt": "What does merge() return, and why does it matter?",
+          "options": [
+            "A boolean indicating whether the entity existed",
+            "void — it modifies the argument in place",
+            "The same instance you passed in",
+            "A MANAGED COPY — the argument stays detached, so mutating the argument after merging changes nothing"
+          ],
+          "correctIndex": 3,
+          "explanation": "Forgetting the return value is a classic bug: you keep mutating the detached object and nothing is saved. Always work with what merge() or save() returned.",
+          "difficulty": "hard",
+          "tags": [
+            "jpa",
+            "persistence-context"
+          ],
+          "citation": "Code examples — merge returns a copy"
+        }
+      ]
+    },
+    "lazy-loading-and-n-plus-one": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "What are JPA's DEFAULT fetch types?",
+          "options": [
+            "@ManyToOne and @OneToOne are EAGER; @OneToMany and @ManyToMany are LAZY",
+            "Everything is EAGER by default",
+            "@ManyToOne is LAZY; collections are EAGER",
+            "Everything is LAZY by default"
+          ],
+          "correctIndex": 0,
+          "explanation": "The eager to-one default catches people out constantly — every load of an entity silently drags its parents along unless you set fetch = FetchType.LAZY explicitly. The inconsistency is worth memorising.",
+          "difficulty": "medium",
+          "tags": [
+            "jpa",
+            "fetching"
+          ],
+          "citation": "How it works — the defaults"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why is switching an association to EAGER not a fix for N+1?",
+          "options": [
+            "Because EAGER is slower per query",
+            "Because eager fetching cannot be disabled per query, so the association is now loaded by EVERY query touching the entity — you have replaced N+1 on one screen with permanent over-fetching everywhere",
+            "Because EAGER causes LazyInitializationException",
+            "Because EAGER only works for collections"
+          ],
+          "correctIndex": 1,
+          "explanation": "The correct model is LAZY by default, fetched eagerly PER QUERY where needed — with JOIN FETCH, @EntityGraph, @BatchSize, or a DTO projection that avoids loading entities at all.",
+          "difficulty": "medium",
+          "tags": [
+            "jpa",
+            "n-plus-one"
+          ],
+          "citation": "How it works — EAGER is not a fix"
+        },
+        {
+          "type": "concept",
+          "prompt": "What happens if you combine JOIN FETCH of a collection with pagination?",
+          "options": [
+            "It throws MultipleBagFetchException",
+            "It silently ignores the pagination",
+            "Hibernate loads the ENTIRE result set into memory and paginates there, logging a warning about applying firstResult/maxResults in memory",
+            "Hibernate applies the limit in SQL as usual"
+          ],
+          "correctIndex": 2,
+          "explanation": "It cannot apply the limit in SQL without losing rows. On a large table that is an OutOfMemoryError waiting to happen, so treat the warning as an error. Use @BatchSize or two queries — the second populates the same objects thanks to the persistence context's identity guarantee.",
+          "difficulty": "hard",
+          "tags": [
+            "jpa",
+            "n-plus-one"
+          ],
+          "citation": "Code examples — the fetch-join traps"
+        }
+      ]
+    },
+    "transactional": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "By default, when does Spring roll back a transaction?",
+          "options": [
+            "Only when you call setRollbackOnly()",
+            "On checked exceptions only",
+            "On any exception",
+            "On unchecked exceptions and Error ONLY — a checked exception COMMITS"
+          ],
+          "correctIndex": 3,
+          "explanation": "The checked-commits behaviour is inherited from EJB semantics, where checked exceptions were treated as business outcomes rather than failures. Use rollbackFor = Exception.class if you want a checked exception to roll back. And catching the exception inside the method means Spring sees success and commits.",
+          "difficulty": "medium",
+          "tags": [
+            "transactions"
+          ],
+          "citation": "The concept, simply — the default rollback rule"
+        },
+        {
+          "type": "concept",
+          "prompt": "What is REQUIRES_NEW for, and what is its risk?",
+          "options": [
+            "It suspends the outer transaction and runs independently — right for audit records that must survive a rollback — but each nested call takes a SECOND connection, so using it in a loop exhausts the pool",
+            "It makes the transaction read-only; the risk is stale data",
+            "It disables rollback entirely",
+            "It retries the transaction on failure; the risk is duplicate writes"
+          ],
+          "correctIndex": 0,
+          "explanation": "The outer transaction keeps its connection while the inner one takes another, so the connection requirement doubles per nesting level. Under load that is a straightforward outage.",
+          "difficulty": "hard",
+          "tags": [
+            "transactions",
+            "propagation"
+          ],
+          "citation": "How it works — propagation"
+        },
+        {
+          "type": "concept",
+          "prompt": "Two users update the same row concurrently. What is the standard JPA solution?",
+          "options": [
+            "Raise the isolation level to SERIALIZABLE",
+            "Optimistic locking with a @Version field — the UPDATE includes the version in its WHERE clause, so the second writer matches zero rows and gets an exception it can retry",
+            "Synchronize the service method",
+            "Use REQUIRES_NEW so each update is independent"
+          ],
+          "correctIndex": 1,
+          "explanation": "Optimistic locking holds no database locks and cannot deadlock. Pessimistic locking with PESSIMISTIC_WRITE is the alternative for genuinely hot rows, but it blocks writers and risks deadlock. Raising the isolation level is a heavier and usually worse answer, and synchronizing only helps within one JVM.",
+          "difficulty": "medium",
+          "tags": [
+            "transactions",
+            "concurrency"
+          ],
+          "citation": "Code examples — optimistic locking"
+        }
+      ]
+    },
+    "rest-api-design": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Which HTTP methods are idempotent, and why does it matter practically?",
+          "options": [
+            "All of them — HTTP requires idempotency",
+            "Only GET, because it does not modify anything",
+            "GET, PUT and DELETE — it decides whether a client can safely RETRY after a timeout, which is why POST creation endpoints need an idempotency key",
+            "POST and PATCH, because they are the write methods"
+          ],
+          "correctIndex": 2,
+          "explanation": "A client that times out on a POST genuinely does not know whether the resource was created. The standard answer is an idempotency key: the client sends a unique header, the server records it with the result, and a repeat returns the original response. Every payment API works this way.",
+          "difficulty": "medium",
+          "tags": [
+            "rest"
+          ],
+          "citation": "The concept, simply — idempotency"
+        },
+        {
+          "type": "concept",
+          "prompt": "What is the difference between 401 and 403?",
+          "options": [
+            "401 means the resource does not exist; 403 means it is deleted",
+            "401 is for APIs and 403 is for web pages",
+            "They are interchangeable",
+            "401 means not authenticated — authenticate and retry; 403 means authenticated but not permitted — retrying with the same identity will not help"
+          ],
+          "correctIndex": 3,
+          "explanation": "The names are historically confusing: 401 is labelled Unauthorized but really means unauthenticated. Getting this wrong sends clients into pointless re-authentication loops.",
+          "difficulty": "easy",
+          "tags": [
+            "rest",
+            "http"
+          ],
+          "citation": "How it works — status codes"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why should a controller never return a JPA entity directly?",
+          "options": [
+            "It exposes the database schema as your public contract, can leak fields you never meant to publish, and serialisation walks lazy associations — producing N+1 or LazyInitializationException in the web layer",
+            "Because it is slower than a DTO",
+            "Because entities are not thread-safe",
+            "Because entities cannot be serialised to JSON"
+          ],
+          "correctIndex": 0,
+          "explanation": "A record DTO built explicitly from the entity solves all three problems and lets the API evolve independently of the schema — so renaming a column stops being a breaking API change.",
+          "difficulty": "medium",
+          "tags": [
+            "rest",
+            "jpa"
+          ],
+          "citation": "Code examples — never expose entities"
+        }
+      ]
+    },
+    "spring-security-and-jwt": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Is a JWT encrypted?",
+          "options": [
+            "Only when transmitted over HTTPS",
+            "No — it is SIGNED, not encrypted. The payload is base64url and anyone holding the token can read every claim",
+            "Yes, with the server's secret key",
+            "Yes, but only the payload section"
+          ],
+          "correctIndex": 1,
+          "explanation": "The signature proves integrity and origin, nothing more. So a JWT may carry a user id and roles, but never passwords, personal data or internal secrets. JWE exists for encryption but is rarely what people mean by JWT.",
+          "difficulty": "medium",
+          "tags": [
+            "security",
+            "jwt"
+          ],
+          "citation": "The concept, simply — the payload is base64"
+        },
+        {
+          "type": "concept",
+          "prompt": "How do you revoke a JWT before it expires?",
+          "options": [
+            "Delete it from the server's token table",
+            "Call the standard JWT revoke endpoint",
+            "Largely you cannot — the server keeps no record, so the mitigations are short-lived access tokens with a revocable refresh token, a denylist that reintroduces server state, or using sessions instead",
+            "Change the user's password, which invalidates all their tokens"
+          ],
+          "correctIndex": 2,
+          "explanation": "This is the fundamental trade-off of stateless auth. For a single application with no cross-service requirement, an ordinary session cookie is often the better engineering choice precisely because revocation is trivial — questioning the premise is a strong answer.",
+          "difficulty": "hard",
+          "tags": [
+            "security",
+            "jwt"
+          ],
+          "citation": "How it works — the revocation problem"
+        },
+        {
+          "type": "concept",
+          "prompt": "When is disabling CSRF protection correct?",
+          "options": [
+            "Always for REST APIs",
+            "Never",
+            "Only in development",
+            "When authentication does not rely on anything the browser attaches automatically — for example an Authorization header, which an attacker's site cannot make the browser add"
+          ],
+          "correctIndex": 3,
+          "explanation": "If credentials travel in a cookie the browser sends automatically, CSRF protection is required. Disabling it by default because a tutorial did is one of the more common real vulnerabilities in Spring applications.",
+          "difficulty": "hard",
+          "tags": [
+            "security",
+            "csrf"
+          ],
+          "citation": "Under the hood — CSRF depends on the auth mechanism"
+        }
+      ]
+    },
+    "testing-junit-mockito": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "Why should you not mock the database in a repository test?",
+          "options": [
+            "Because the test then proves only that the mock behaves as configured — every mapping error, constraint violation and query mistake passes straight through",
+            "Because mocking is slower than a real database",
+            "Because Spring forbids it",
+            "Because Mockito cannot mock final classes"
+          ],
+          "correctIndex": 0,
+          "explanation": "Mock what is slow, non-deterministic or outside your control — HTTP clients, clocks, brokers. Query correctness belongs in a @DataJpaTest or an integration test against a real database.",
+          "difficulty": "medium",
+          "tags": [
+            "testing"
+          ],
+          "citation": "Under the hood — what to mock"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why prefer Testcontainers over H2 for tests that touch SQL?",
+          "options": [
+            "H2 cannot store dates",
+            "H2 is a DIFFERENT database — dialect, constraint enforcement, type coercion and isolation behaviour all differ, so tests can pass against H2 and fail against Postgres",
+            "H2 does not support transactions",
+            "Testcontainers is faster to start"
+          ],
+          "correctIndex": 1,
+          "explanation": "Passing in the test and failing in production is the worst possible outcome for a test suite. Testcontainers runs the actual database in Docker, so the test exercises what production runs.",
+          "difficulty": "medium",
+          "tags": [
+            "testing"
+          ],
+          "citation": "Code examples — why Testcontainers rather than H2"
+        },
+        {
+          "type": "concept",
+          "prompt": "Your Spring test suite is slow. What is the usual cause?",
+          "options": [
+            "Running tests in parallel",
+            "Too many assertions per test",
+            "Too many DISTINCT Spring contexts — contexts are cached by configuration, so any difference such as an extra mock bean or a different property forces a new one",
+            "Using JUnit 5 instead of JUnit 4"
+          ],
+          "correctIndex": 2,
+          "explanation": "It is rarely the number of tests. Consolidating test configuration and replacing @SpringBootTest with slice tests where possible usually cuts runtime dramatically.",
+          "difficulty": "hard",
+          "tags": [
+            "testing",
+            "spring"
+          ],
+          "citation": "Under the hood — Spring caches application contexts"
+        }
+      ]
+    },
+    "solid-in-java": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "What does the Single Responsibility Principle actually say?",
+          "options": [
+            "A method should do only one thing",
+            "A class should have only one field",
+            "A class should have only one public method",
+            "A class should have one REASON TO CHANGE — one stakeholder — not merely 'do one thing'"
+          ],
+          "correctIndex": 3,
+          "explanation": "'Does one thing' is too vague to apply. Reason-to-change is testable: a class that formats a report and also saves it changes when finance wants a new column AND when the platform team changes the database — two stakeholders, two reasons.",
+          "difficulty": "medium",
+          "tags": [
+            "solid"
+          ],
+          "citation": "How it works — single responsibility"
+        },
+        {
+          "type": "concept",
+          "prompt": "Which is a Liskov substitution violation in the JDK itself?",
+          "options": [
+            "Arrays.asList returning something typed List whose add() throws UnsupportedOperationException",
+            "String being final",
+            "ArrayList implementing both List and RandomAccess",
+            "HashMap allowing a null key"
+          ],
+          "correctIndex": 0,
+          "explanation": "It is a List by type that does not honour List's contract, so any method written against List can be handed it and fail at run time. Java enforces the parts it can through the override rules — covariant returns, no narrowing of access, no broader checked exceptions — but cannot stop you weakening a postcondition.",
+          "difficulty": "hard",
+          "tags": [
+            "solid",
+            "liskov"
+          ],
+          "citation": "How it works — Liskov"
+        },
+        {
+          "type": "concept",
+          "prompt": "What is the risk of applying SOLID too aggressively?",
+          "options": [
+            "Larger class files",
+            "Speculative generality — an interface for every class, a factory for every constructor, layers of indirection that cost readability for flexibility nobody needed",
+            "There is no risk; more abstraction is always better",
+            "Slower run-time performance"
+          ],
+          "correctIndex": 1,
+          "explanation": "They are heuristics for making change cheap, not laws. The right time to introduce an abstraction is when you have a second case or a genuine testing seam — not in anticipation of one.",
+          "difficulty": "medium",
+          "tags": [
+            "solid",
+            "design"
+          ],
+          "citation": "Under the hood — SOLID is a set of heuristics"
+        }
+      ]
+    },
+    "design-patterns": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "What is the safest way to implement a singleton in plain Java?",
+          "options": [
+            "Double-checked locking with a volatile field",
+            "A private constructor plus a public static field",
+            "An enum with a single constant — the JVM guarantees one instance and it is immune to the reflection and serialisation attacks that break the classic form",
+            "A static field initialised in a static block"
+          ],
+          "correctIndex": 2,
+          "explanation": "The initialisation-on-demand holder idiom is the lazy equivalent, thread-safe through the class-initialisation guarantee with no synchronisation. But in a Spring application you would use a singleton-scoped bean instead, which stays injectable and testable.",
+          "difficulty": "medium",
+          "tags": [
+            "patterns",
+            "singleton"
+          ],
+          "citation": "Code examples — singleton"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why is the singleton pattern widely criticised?",
+          "options": [
+            "It is slower than creating new instances",
+            "It cannot be serialised",
+            "It uses too much memory",
+            "It is global mutable state — impossible to substitute in a test, it hides dependencies since a class using it does not declare them, and one instance is shared across all threads"
+          ],
+          "correctIndex": 3,
+          "explanation": "Dependency injection gives the single-instance property without any of those drawbacks, which is why Spring beans are the right answer in a Spring application.",
+          "difficulty": "medium",
+          "tags": [
+            "patterns",
+            "singleton"
+          ],
+          "citation": "Code examples — the one to be careful about"
+        },
+        {
+          "type": "concept",
+          "prompt": "Which pattern has modern Java largely made unnecessary?",
+          "options": [
+            "Visitor — it existed because Java could not switch on type safely, and Java 21's sealed interfaces plus pattern-matching switch do the job with no double dispatch",
+            "Factory, replaced by dependency injection",
+            "Builder, replaced by records",
+            "Decorator, replaced by inheritance"
+          ],
+          "correctIndex": 0,
+          "explanation": "Command as a class is another — a lambda is a command object. Hand-written iterators are replaced by for-each and streams. The catalogue was written for Java 1.1 and several entries are workarounds for limitations that no longer exist.",
+          "difficulty": "hard",
+          "tags": [
+            "patterns",
+            "modern-java"
+          ],
+          "citation": "Code examples — patterns modern Java has retired"
+        }
+      ]
+    },
+    "lld-walkthrough": {
+      "questions": [
+        {
+          "type": "concept",
+          "prompt": "What is the most common way candidates fail an LLD round?",
+          "options": [
+            "Writing code that does not compile",
+            "Jumping straight to classes without clarifying and scoping the problem first",
+            "Choosing the wrong data structure",
+            "Not knowing enough design patterns"
+          ],
+          "correctIndex": 1,
+          "explanation": "Designing the wrong system elegantly scores worse than designing the right one plainly. The first five minutes should be questions and an explicit statement of what is in and out of scope.",
+          "difficulty": "medium",
+          "tags": [
+            "lld"
+          ],
+          "citation": "The concept, simply — the structure"
+        },
+        {
+          "type": "concept",
+          "prompt": "In a parking lot design, which parts are worth putting behind an interface?",
+          "options": [
+            "The Ticket and Vehicle types",
+            "Only the persistence layer",
+            "Spot allocation and pricing — the two things a customer will actually want to change",
+            "Every class, so the design is fully flexible"
+          ],
+          "correctIndex": 2,
+          "explanation": "Abstract where change is likely. Two well-chosen interfaces beat eight speculative ones, and saying out loud that you are deliberately NOT abstracting something because there is only one case today is usually a stronger signal than adding another interface.",
+          "difficulty": "medium",
+          "tags": [
+            "lld",
+            "design"
+          ],
+          "citation": "Code examples — the seams"
+        },
+        {
+          "type": "concept",
+          "prompt": "Why is a token bucket usually preferred over a fixed window for rate limiting?",
+          "options": [
+            "It does not require a timer thread",
+            "It is easier to distribute across instances",
+            "It uses less memory",
+            "A fixed window allows a burst of 2N requests across a window boundary; a token bucket smooths the rate continuously"
+          ],
+          "correctIndex": 3,
+          "explanation": "The boundary burst is the classic follow-up question. A token bucket refilled lazily on each call also avoids a timer thread. Per-user buckets need a map with eviction or they leak, and across instances per-instance buckets multiply the limit by the instance count, so it moves to Redis with an atomic script.",
+          "difficulty": "hard",
+          "tags": [
+            "lld",
+            "rate-limiting"
+          ],
+          "citation": "Code examples — a rate limiter"
+        }
+      ]
+    }
+  }
+}

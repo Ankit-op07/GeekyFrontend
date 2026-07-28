@@ -11,80 +11,91 @@
           "type": "concept",
           "prompt": "What is the first statement of every Java constructor?",
           "options": [
-            "The first field assignment",
             "A call to this(...) or super(...) — inserted implicitly as super() if you write neither",
             "A null check on the parameters",
-            "Nothing is required before the constructor body"
+            "Nothing is required before the constructor body",
+            "The first field assignment"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Every constructor begins by invoking another one: this(...) to delegate within the class, or super(...) to the parent. If you write neither, the compiler inserts super(). That is why a single new runs a chain of constructors from Object downward, guaranteeing inherited state is initialised before the class's own body runs.",
           "difficulty": "medium",
-          "tags": ["constructors"],
+          "tags": [
+            "constructors"
+          ],
           "citation": "How it works — chain upward"
         },
         {
           "type": "concept",
           "prompt": "A Parent constructor calls an overridable method init(). Child overrides init() and reads its own field 'value', initialised to \"ready\". What does the override see?",
           "options": [
-            "\"ready\", because field initialisers run before any constructor",
             "A compile error — a constructor cannot call an overridable method",
             "null, because the parent constructor runs BEFORE the child's field initialisers",
-            "The parent's version of init() runs instead, so the field is irrelevant"
+            "The parent's version of init() runs instead, so the field is irrelevant",
+            "\"ready\", because field initialisers run before any constructor"
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "Dispatch is dynamic, so Child.init() runs. But initialisation order is parent instance initialisers, parent constructor body, THEN child instance initialisers — so the child's fields are still at their defaults when the override executes. This is why an overridable method must never be called from a constructor; make such methods private, static or final.",
           "difficulty": "hard",
-          "tags": ["constructors", "inheritance"],
+          "tags": [
+            "constructors",
+            "inheritance"
+          ],
           "citation": "Code examples — the classic constructor bug"
         },
         {
           "type": "concept",
           "prompt": "You add a constructor User(String name) to a class that previously had none. What breaks?",
           "options": [
+            "Serialization only",
             "Nothing — the compiler still provides a no-arg constructor as well",
             "Existing calls to new User(), because the default constructor disappears once you declare any constructor",
-            "All subclasses, because constructors are inherited",
-            "Serialization only"
+            "All subclasses, because constructors are inherited"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "The compiler generates a no-arg constructor only when you declare no constructor at all. Declaring any constructor removes the free one, so previously valid new User() calls stop compiling. Constructors are also not inherited, which is a separate point.",
           "difficulty": "easy",
-          "tags": ["constructors"],
+          "tags": [
+            "constructors"
+          ],
           "citation": "How it works — the default constructor"
         }
       ]
     },
-
     "inheritance-and-overriding": {
       "questions": [
         {
           "type": "concept",
           "prompt": "Parent p = new Child();  Which of p.label (a field), p.instanceMethod() and p.staticMethod() resolve to the Child version?",
           "options": [
-            "Only p.instanceMethod() — fields and static methods are resolved from the declared type",
             "All three, because the object is a Child",
             "Only the field, because fields are looked up on the instance",
-            "None — the reference type is Parent"
+            "None — the reference type is Parent",
+            "Only p.instanceMethod() — fields and static methods are resolved from the declared type"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Only instance methods are dynamically dispatched. Fields and static methods are resolved at compile time from the declared type, so re-declaring either in a subclass HIDES rather than overrides it. This is a strong argument for keeping fields private and calling statics on the class.",
           "difficulty": "hard",
-          "tags": ["polymorphism", "hiding"],
+          "tags": [
+            "polymorphism",
+            "hiding"
+          ],
           "citation": "Code examples — fields and static methods are not polymorphic"
         },
         {
           "type": "concept",
           "prompt": "Which change to an overriding method will NOT compile?",
           "options": [
-            "Returning Dog where the parent returned Animal",
-            "Widening access from protected to public",
             "Declaring a broader checked exception than the parent declared",
-            "Declaring no checked exceptions at all"
+            "Declaring no checked exceptions at all",
+            "Returning Dog where the parent returned Animal",
+            "Widening access from protected to public"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "An override may narrow or drop checked exceptions but never broaden them, because code compiled against the parent would not be prepared to handle the new one. Covariant returns and widened access are both allowed. All of these rules exist to preserve Liskov substitutability.",
           "difficulty": "medium",
-          "tags": ["overriding"],
+          "tags": [
+            "overriding"
+          ],
           "citation": "How it works — the override rules table"
         },
         {
@@ -99,112 +110,128 @@
           "correctIndex": 1,
           "explanation": "Most call sites see only one receiver type in practice. The JIT observes this, compiles a direct call guarded by a class check and inlines it, falling back safely if the assumption breaks. So final should express design intent — this must not be overridden — rather than being used to chase speed.",
           "difficulty": "hard",
-          "tags": ["polymorphism", "jit"],
+          "tags": [
+            "polymorphism",
+            "jit"
+          ],
           "citation": "Under the hood — dynamic dispatch and devirtualisation"
         }
       ]
     },
-
     "abstract-class-vs-interface": {
       "questions": [
         {
           "type": "concept",
           "prompt": "Since Java 8 gave interfaces default methods, what is the remaining fundamental difference from an abstract class?",
           "options": [
-            "Interfaces still cannot contain any method bodies",
             "Abstract classes can be instantiated directly",
             "Interfaces cannot be used as types",
-            "Interfaces have no instance state — an abstract class can hold mutable per-object fields and a constructor"
+            "Interfaces have no instance state — an abstract class can hold mutable per-object fields and a constructor",
+            "Interfaces still cannot contain any method bodies"
           ],
-          "correctIndex": 3,
+          "correctIndex": 2,
           "explanation": "Both can carry method bodies now, so the old answer is wrong. The line that still holds is state: any field declared in an interface is implicitly public static final — a shared constant, not per-object state — and interfaces have no constructor. That is also why default methods cannot read or write instance state.",
           "difficulty": "medium",
-          "tags": ["interfaces", "abstract"],
+          "tags": [
+            "interfaces",
+            "abstract"
+          ],
           "citation": "The concept, simply — the line that still holds after Java 8"
         },
         {
           "type": "concept",
           "prompt": "Why were default methods added in Java 8?",
           "options": [
-            "To let interfaces be evolved without breaking existing implementations — adding stream() to Collection as an abstract method would have broken every List in existence",
             "To replace abstract classes entirely",
             "To allow interfaces to hold mutable state",
-            "To make lambdas possible"
+            "To make lambdas possible",
+            "To let interfaces be evolved without breaking existing implementations — adding stream() to Collection as an abstract method would have broken every List in existence"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Backward-compatible interface evolution was the motivating problem. Java 8 needed to add stream() and forEach() to Collection; as abstract methods that would have broken every implementation on the planet. A default gives a working body so existing code keeps compiling.",
           "difficulty": "medium",
-          "tags": ["interfaces", "default-methods"],
+          "tags": [
+            "interfaces",
+            "default-methods"
+          ],
           "citation": "How it works — why default methods were added"
         },
         {
           "type": "concept",
           "prompt": "A class implements two interfaces that both declare the same default method. What happens?",
           "options": [
-            "The first interface in the implements clause wins",
             "It will not compile until the class overrides the method — it can delegate explicitly with A.super.method()",
             "Both run, in declaration order",
-            "The JVM picks one at random at run time"
+            "The JVM picks one at random at run time",
+            "The first interface in the implements clause wins"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Java refuses to guess: inheriting unrelated defaults for the same signature is a compile error until the class provides its own override, which may delegate with A.super.method(). Note also that a concrete method inherited from a superclass always beats an interface default.",
           "difficulty": "medium",
-          "tags": ["interfaces", "diamond"],
+          "tags": [
+            "interfaces",
+            "diamond"
+          ],
           "citation": "How it works — conflicting defaults"
         }
       ]
     },
-
     "encapsulation-access-modifiers": {
       "questions": [
         {
           "type": "concept",
           "prompt": "What is the default access level when you write no modifier?",
           "options": [
-            "public",
             "protected",
             "package-private — visible only within the same package",
-            "private"
+            "private",
+            "public"
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "The default is package-private, the second-narrowest level. It is genuinely useful: classes collaborating closely inside one package can cooperate without exposing anything outside it. Developers coming from C# often assume the default is public.",
           "difficulty": "easy",
-          "tags": ["access"],
+          "tags": [
+            "access"
+          ],
           "citation": "How it works — the visibility table"
         },
         {
           "type": "concept",
           "prompt": "A subclass in a different package tries to access a protected field on a Base-typed reference to another object. What happens?",
           "options": [
+            "It compiles only if the field is also final",
             "It compiles — protected means any subclass can access it anywhere",
             "It is a compile error: cross-package protected access works only through a reference of the subclass's own type",
-            "It compiles but throws IllegalAccessError at run time",
-            "It compiles only if the field is also final"
+            "It compiles but throws IllegalAccessError at run time"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Cross-package protected access is restricted to the subclass's own inherited member, reached through a reference of that subclass type. Accessing the same member on an arbitrary Base instance is rejected — the restriction stops subclassing being used as a back door into unrelated objects.",
           "difficulty": "hard",
-          "tags": ["access", "protected"],
+          "tags": [
+            "access",
+            "protected"
+          ],
           "citation": "How it works — the asterisk on protected"
         },
         {
           "type": "concept",
           "prompt": "A class has a private list and a getter that returns it directly. Why is that a problem?",
           "options": [
+            "It causes a memory leak",
             "It is not a problem — the field is private, so the object is encapsulated",
             "It prevents the class from being serialised",
-            "The caller receives a reference to the live internal collection and can clear or reorder it, bypassing every invariant the class enforces",
-            "It causes a memory leak"
+            "The caller receives a reference to the live internal collection and can clear or reorder it, bypassing every invariant the class enforces"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Encapsulation is about controlling state, not about the private keyword. Handing out the live collection hands out control of it — the same pass-by-value reasoning from Chapter 1. Return List.copyOf(...) for a snapshot, or an unmodifiable view.",
           "difficulty": "medium",
-          "tags": ["encapsulation"],
+          "tags": [
+            "encapsulation"
+          ],
           "citation": "Code examples — the leaky getter"
         }
       ]
     },
-
     "equals-and-hashcode": {
       "questions": [
         {
@@ -219,42 +246,49 @@
           "correctIndex": 0,
           "explanation": "A hash lookup is two steps: hashCode picks the bucket, then equals confirms the key within it. With an inherited identity hashCode, two equal objects land in different buckets, so the search happens in the wrong place and equals is never reached. Nothing throws — the entry is in the table and unreachable.",
           "difficulty": "medium",
-          "tags": ["equals", "hashcode"],
+          "tags": [
+            "equals",
+            "hashcode"
+          ],
           "citation": "Code examples — the bug, reproduced in six lines"
         },
         {
           "type": "concept",
           "prompt": "Can two objects that are NOT equal share a hash code?",
           "options": [
-            "No — that would violate the contract",
             "Only if they are instances of different classes",
             "Yes, and it is expected — a hash code is 32 bits over an unbounded object space, so collisions are inevitable",
-            "Only when hashCode() is badly implemented"
+            "Only when hashCode() is badly implemented",
+            "No — that would violate the contract"
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "The contract runs one way only: equal objects MUST share a hash code, but unequal objects may collide. That is why a hash map always calls equals after locating the bucket. Frequent collisions are a performance concern, never a correctness one.",
           "difficulty": "medium",
-          "tags": ["hashcode"],
+          "tags": [
+            "hashcode"
+          ],
           "citation": "How it works — the hashCode contract"
         },
         {
           "type": "concept",
           "prompt": "Why is 'implement equals(MyType other)' a bug?",
           "options": [
+            "It breaks serialisation",
             "It is not — that is the type-safe way to write it",
             "It overloads Object.equals(Object) rather than overriding it, so every library that calls equals(Object) — including HashMap — ignores it",
-            "It causes infinite recursion",
-            "It breaks serialisation"
+            "It causes infinite recursion"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Object declares equals(Object). A method taking a narrower parameter type is a different signature, so it is an overload — the JDK continues to call the inherited identity comparison. Writing @Override turns this silent behavioural bug into a compile error, which is why it is close to mandatory.",
           "difficulty": "medium",
-          "tags": ["equals", "override"],
+          "tags": [
+            "equals",
+            "override"
+          ],
           "citation": "Common mistakes — writing equals(MyType o)"
         }
       ]
     },
-
     "static-final-initialization-order": {
       "questions": [
         {
@@ -269,7 +303,9 @@
           "correctIndex": 3,
           "explanation": "final fixes the binding, not the object. You cannot reassign the variable, but the ArrayList it points at remains fully mutable. Real immutability is a property of the object — List.of(...) or a record — not of the reference.",
           "difficulty": "easy",
-          "tags": ["final"],
+          "tags": [
+            "final"
+          ],
           "citation": "The concept, simply — final makes the reference immutable, not the object"
         },
         {
@@ -284,7 +320,10 @@
           "correctIndex": 0,
           "explanation": "Static fields and static blocks run exactly once, when the class is first initialised, parent before child. Instance initialisers and constructor bodies run on every new: parent instance init, parent constructor, child instance init, child constructor.",
           "difficulty": "medium",
-          "tags": ["static", "initialisation"],
+          "tags": [
+            "static",
+            "initialisation"
+          ],
           "citation": "Code examples — the order question"
         },
         {
@@ -299,12 +338,15 @@
           "correctIndex": 1,
           "explanation": "Class initialisation is lazy and thread-safe by specification. The nested holder class is not initialised until getInstance() first touches it, and the JVM serialises that initialisation, giving laziness and thread safety for free. The same lock is also why a blocking static initialiser can deadlock.",
           "difficulty": "hard",
-          "tags": ["static", "singleton", "concurrency"],
+          "tags": [
+            "static",
+            "singleton",
+            "concurrency"
+          ],
           "citation": "Under the hood — class initialisation is thread-safe"
         }
       ]
     },
-
     "why-string-is-immutable": {
       "questions": [
         {
@@ -319,7 +361,10 @@
           "correctIndex": 2,
           "explanation": "Immutability actually costs performance for repeated edits — every transformation allocates a new object, which is exactly why StringBuilder exists. The four genuine reasons are security, hash caching, thread safety and pooling.",
           "difficulty": "medium",
-          "tags": ["string", "immutability"],
+          "tags": [
+            "string",
+            "immutability"
+          ],
           "citation": "How it works — the four reasons"
         },
         {
@@ -334,92 +379,107 @@
           "correctIndex": 3,
           "explanation": "The property that makes String safe elsewhere works against you here: you cannot wipe it. A char[] can be zeroed immediately after use, which is why JPasswordField.getPassword() returns one.",
           "difficulty": "medium",
-          "tags": ["string", "security"],
+          "tags": [
+            "string",
+            "security"
+          ],
           "citation": "Code examples — the security argument"
         },
         {
           "type": "concept",
           "prompt": "How much memory does a Java String use per character on Java 9 and later?",
           "options": [
-            "Always 2 bytes — String stores a char[]",
             "One byte for Latin-1 content, two for anything wider — compact strings store a byte[] plus a coder flag",
             "Always 4 bytes, for full Unicode",
-            "It depends on the platform's default charset"
+            "It depends on the platform's default charset",
+            "Always 2 bytes — String stores a char[]"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Before Java 9, String stored a char[] at two bytes per character. Compact strings changed it to a byte[] with a one-byte coder, so ASCII text — the overwhelming majority — uses one byte per character. 'A Java String is 2 bytes per char' has been wrong since Java 9.",
           "difficulty": "hard",
-          "tags": ["string", "memory"],
+          "tags": [
+            "string",
+            "memory"
+          ],
           "citation": "Under the hood — compact strings"
         }
       ]
     },
-
     "string-pool-and-interning": {
       "questions": [
         {
           "type": "concept",
           "prompt": "String a = \"hi\"; String b = new String(\"hi\");  What are a == b and a.equals(b)?",
           "options": [
+            "true and false",
             "false and true — b is a distinct heap object, but the characters match",
             "true and true",
-            "false and false",
-            "true and false"
+            "false and false"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "The literal is pooled; new String() explicitly allocates a separate object, which is essentially its only purpose. == compares identity so it is false; equals compares characters so it is true. b.intern() would return the pooled instance, which would be == to a.",
           "difficulty": "easy",
-          "tags": ["string-pool"],
+          "tags": [
+            "string-pool"
+          ],
           "citation": "Code examples — the four comparisons"
         },
         {
           "type": "concept",
           "prompt": "Why is \"hel\" + \"lo\" == \"hello\" true, but prefix + \"lo\" == \"hello\" false when prefix is a non-final variable holding \"hel\"?",
           "options": [
+            "It is a JVM bug fixed in Java 9",
             "The + operator behaves differently on variables",
             "Constant folding: javac evaluates the all-literal expression at compile time so it becomes a pooled literal, while the variable version is built on the heap at run time",
-            "Non-final variables are never pooled at all, including their contents",
-            "It is a JVM bug fixed in Java 9"
+            "Non-final variables are never pooled at all, including their contents"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "If the compiler can evaluate the expression — both operands literals, or a final variable initialised with a constant — the result is a literal and gets pooled. With a non-final variable the concatenation happens at run time. That the answer depends on a final keyword elsewhere is the strongest argument against ever using == on strings.",
           "difficulty": "hard",
-          "tags": ["string-pool", "constant-folding"],
+          "tags": [
+            "string-pool",
+            "constant-folding"
+          ],
           "citation": "How it works — compile-time constant folding"
         },
         {
           "type": "concept",
           "prompt": "What is the modern alternative to calling intern() to reduce memory from duplicate strings?",
           "options": [
+            "Increasing -XX:StringTableSize",
             "Calling System.gc() more often",
             "Storing strings as char[] instead",
-            "G1 string deduplication (-XX:+UseStringDeduplication), which merges identical strings' backing arrays during GC with no code changes",
-            "Increasing -XX:StringTableSize"
+            "G1 string deduplication (-XX:+UseStringDeduplication), which merges identical strings' backing arrays during GC with no code changes"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "intern() adds pool insertion cost and contention and requires changing application code. G1's string deduplication achieves most of the memory benefit in the collector, transparently. Increasing the string table size only helps if you are already interning heavily.",
           "difficulty": "hard",
-          "tags": ["string-pool", "gc"],
+          "tags": [
+            "string-pool",
+            "gc"
+          ],
           "citation": "Under the hood — the modern alternative to intern()"
         }
       ]
     },
-
     "stringbuilder-vs-stringbuffer": {
       "questions": [
         {
           "type": "concept",
           "prompt": "Why is building a string with += inside a loop O(n squared)?",
           "options": [
-            "Because the JVM cannot optimise loops containing string operations",
             "Because each iteration allocates a new String and copies every character accumulated so far",
             "Because string concatenation always sorts the characters",
-            "It is not — the compiler converts it to a StringBuilder automatically"
+            "It is not — the compiler converts it to a StringBuilder automatically",
+            "Because the JVM cannot optimise loops containing string operations"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Strings are immutable, so iteration i must allocate a new object and copy all i characters so far; summed over n iterations that is quadratic copying plus n objects of garbage. A StringBuilder appends into one buffer that doubles when full, giving amortised O(n).",
           "difficulty": "medium",
-          "tags": ["stringbuilder", "performance"],
+          "tags": [
+            "stringbuilder",
+            "performance"
+          ],
           "citation": "How it works — the complexity change"
         },
         {
@@ -434,7 +494,10 @@
           "correctIndex": 1,
           "explanation": "Java 9 changed the strategy: an invokedynamic call site is linked at run time to a generated method, which is faster than the old builder expansion. Either way the optimisation applies to a single expression — a loop is a sequence of separate expressions each producing a complete new string, which no code generation can rescue.",
           "difficulty": "hard",
-          "tags": ["stringbuilder", "invokedynamic"],
+          "tags": [
+            "stringbuilder",
+            "invokedynamic"
+          ],
           "citation": "Under the hood — the Java 9 invokedynamic change"
         },
         {
@@ -449,62 +512,72 @@
           "correctIndex": 2,
           "explanation": "StringBuffer synchronises each method, which is the wrong granularity: unnecessary for the usual case of a local builder, and insufficient for genuine sharing, where you would need the whole append sequence to be atomic. Give each thread its own builder, or collect and join.",
           "difficulty": "medium",
-          "tags": ["stringbuilder", "concurrency"],
+          "tags": [
+            "stringbuilder",
+            "concurrency"
+          ],
           "citation": "How it works — why StringBuffer is obsolete"
         }
       ]
     },
-
     "wrappers-and-integer-cache": {
       "questions": [
         {
           "type": "concept",
           "prompt": "Integer a = 127, b = 127, c = 128, d = 128.  What are a == b and c == d?",
           "options": [
-            "true and false — valueOf returns a cached shared object for -128 to 127 and a new object above that",
             "true and true",
             "false and false",
-            "false and true"
+            "false and true",
+            "true and false — valueOf returns a cached shared object for -128 to 127 and a new object above that"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Autoboxing calls Integer.valueOf, which serves values from -128 to 127 out of a preallocated cache, so both variables reference the same object. Above the range each call allocates. equals() is true in both cases, which is why it is the only correct comparison.",
           "difficulty": "medium",
-          "tags": ["autoboxing", "integer-cache"],
+          "tags": [
+            "autoboxing",
+            "integer-cache"
+          ],
           "citation": "Code examples — the famous puzzle"
         },
         {
           "type": "concept",
           "prompt": "Which wrapper types does the JLS guarantee are cached?",
           "options": [
-            "All of them, across their full ranges",
             "Boolean, all Byte values, Character 0-127, and Short/Integer/Long from -128 to 127 — Float and Double are never cached",
             "Only Integer, from -128 to 127",
-            "Only Boolean and Character"
+            "Only Boolean and Character",
+            "All of them, across their full ranges"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Those are the mandated ranges. Floating-point wrappers are never cached, so Double.valueOf(1.0) == Double.valueOf(1.0) is false. The Integer upper bound is also tunable with -XX:AutoBoxCacheMax, which means identical code can behave differently on two JVMs — a decisive reason never to rely on ==.",
           "difficulty": "hard",
-          "tags": ["autoboxing", "integer-cache"],
+          "tags": [
+            "autoboxing",
+            "integer-cache"
+          ],
           "citation": "How it works — the cached ranges"
         },
         {
           "type": "concept",
           "prompt": "List<Integer> list contains 10, 20, 30. What does list.remove(1) do?",
           "options": [
-            "Throws, because the argument is ambiguous",
             "Removes the value 1, leaving the list unchanged since it is not present",
             "Removes the element at index 1, which is 20 — remove(int) and remove(Object) are overloads and an int literal selects the index version",
-            "Removes both the element at index 1 and any element equal to 1"
+            "Removes both the element at index 1 and any element equal to 1",
+            "Throws, because the argument is ambiguous"
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "Overload resolution happens at compile time on the declared argument type, so an int literal picks remove(int index). To remove by value you must box explicitly: list.remove(Integer.valueOf(1)). It is Chapter 2's overload resolution biting inside the standard library.",
           "difficulty": "medium",
-          "tags": ["autoboxing", "collections"],
+          "tags": [
+            "autoboxing",
+            "collections"
+          ],
           "citation": "Code examples — the nastier trap"
         }
       ]
     },
-
     "collection-hierarchy": {
       "questions": [
         {
@@ -519,157 +592,184 @@
           "correctIndex": 2,
           "explanation": "The abstractions genuinely do not fit. Rather than force the inheritance, Map is a separate root that offers collection VIEWS — keySet(), values() and entrySet() — when you need one.",
           "difficulty": "medium",
-          "tags": ["collections", "hierarchy"],
+          "tags": [
+            "collections",
+            "hierarchy"
+          ],
           "citation": "The concept, simply — two independent roots"
         },
         {
           "type": "concept",
           "prompt": "What is the difference between Arrays.asList(\"a\",\"b\") and List.of(\"a\",\"b\")?",
           "options": [
-            "They are identical",
-            "Arrays.asList is a fixed-size mutable view backed by the array — set works and writes through, add throws — while List.of is fully immutable and rejects nulls",
             "List.of is a view of the array; Arrays.asList is a copy",
-            "Arrays.asList is immutable; List.of is mutable"
+            "Arrays.asList is immutable; List.of is mutable",
+            "They are identical",
+            "Arrays.asList is a fixed-size mutable view backed by the array — set works and writes through, add throws — while List.of is fully immutable and rejects nulls"
           ],
-          "correctIndex": 1,
+          "correctIndex": 3,
           "explanation": "Arrays.asList gives a fixed-size wrapper: you can replace elements and the writes go through to the backing array, but you cannot add or remove. List.of (Java 9+) is genuinely immutable and throws on any modification, and it rejects null elements.",
           "difficulty": "medium",
-          "tags": ["collections", "factories"],
+          "tags": [
+            "collections",
+            "factories"
+          ],
           "citation": "Code examples — factory methods and the trap in one"
         },
         {
           "type": "concept",
           "prompt": "Why does ConcurrentHashMap reject null keys and values when HashMap allows them?",
           "options": [
-            "Because null cannot be hashed",
             "Because get() returning null would be ambiguous between 'absent' and 'mapped to null', and unlike a HashMap you cannot resolve it with containsKey — the state may change between the two calls",
             "To save memory",
-            "It is an arbitrary API restriction with no technical reason"
+            "It is an arbitrary API restriction with no technical reason",
+            "Because null cannot be hashed"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "In a single-threaded HashMap you can disambiguate with a follow-up containsKey. Concurrently that check is worthless because another thread may act in between. Banning null makes null unambiguously mean absent, which is what makes correct concurrent code writable.",
           "difficulty": "hard",
-          "tags": ["collections", "concurrency"],
+          "tags": [
+            "collections",
+            "concurrency"
+          ],
           "citation": "Under the hood — null handling by implementation"
         }
       ]
     },
-
     "arraylist-vs-linkedlist": {
       "questions": [
         {
           "type": "concept",
           "prompt": "LinkedList has O(1) insertion. Why is it still usually slower than ArrayList in practice?",
           "options": [
+            "Because LinkedList does not implement List properly",
             "Because its O(1) applies only at the ends or through an iterator you already hold — and because pointer-chasing to scattered nodes misses cache while ArrayList's shift is one contiguous System.arraycopy",
             "Because LinkedList is synchronised",
-            "Because ArrayList caches its elements in the CPU register file",
-            "Because LinkedList does not implement List properly"
+            "Because ArrayList caches its elements in the CPU register file"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Positional insertion still has to walk the chain to find the position, so add(i, e) is O(n) anyway. And constants dominate at realistic sizes: contiguous memory is prefetched by the CPU, while each node hop is a potential cache miss, with about 40 bytes of overhead per element.",
           "difficulty": "hard",
-          "tags": ["list", "performance"],
+          "tags": [
+            "list",
+            "performance"
+          ],
           "citation": "Interview lens — but LinkedList has O(1) insertion"
         },
         {
           "type": "concept",
           "prompt": "How does ArrayList grow when it runs out of capacity?",
           "options": [
+            "It converts to a LinkedList",
             "It doubles the array on every add",
             "It allocates a new array of roughly 1.5 times the size and copies with System.arraycopy — amortised O(1) per add",
-            "It allocates one extra slot each time",
-            "It converts to a LinkedList"
+            "It allocates one extra slot each time"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Default capacity is 10, allocated lazily on the first add; growth is about 1.5x with a copy. That makes add amortised O(1) even though an individual add can be O(n). Passing an initial capacity avoids the intermediate allocations entirely.",
           "difficulty": "medium",
-          "tags": ["list", "internals"],
+          "tags": [
+            "list",
+            "internals"
+          ],
           "citation": "How it works — ArrayList growth"
         },
         {
           "type": "concept",
           "prompt": "What does list.subList(0, 5) return?",
           "options": [
+            "A new ArrayList with the same elements",
             "An independent copy of the first five elements",
             "An immutable snapshot",
-            "A live VIEW onto the original list — writes go through, and structurally modifying the parent invalidates it",
-            "A new ArrayList with the same elements"
+            "A live VIEW onto the original list — writes go through, and structurally modifying the parent invalidates it"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "It is a view, not a copy. That makes list.subList(a, b).clear() a neat way to delete a range, and a trap if you assumed independence. Wrap it in new ArrayList<>(...) when you want a real copy.",
           "difficulty": "medium",
-          "tags": ["list", "views"],
+          "tags": [
+            "list",
+            "views"
+          ],
           "citation": "Under the hood — subList is a view"
         }
       ]
     },
-
     "hashmap-internals": {
       "questions": [
         {
           "type": "concept",
           "prompt": "Why does HashMap apply h ^ (h >>> 16) to the key's hash code?",
           "options": [
+            "Because the bucket index is computed by masking the LOW bits, so mixing the high bits down means they still influence which bucket is chosen",
             "To make the hash code positive",
             "To compress the hash into fewer bits",
-            "To detect collisions",
-            "Because the bucket index is computed by masking the LOW bits, so mixing the high bits down means they still influence which bucket is chosen"
+            "To detect collisions"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Since the table length is a power of two, the index is hash & (length - 1) — a mask that keeps only low bits. Without spreading, two keys differing only in their high bits would always collide. This one line rescues mediocre hashCode implementations.",
           "difficulty": "hard",
-          "tags": ["hashmap", "internals"],
+          "tags": [
+            "hashmap",
+            "internals"
+          ],
           "citation": "How it works — step 2, spreading"
         },
         {
           "type": "concept",
           "prompt": "When does a HashMap bin convert from a linked list into a red-black tree?",
           "options": [
+            "Never — that is a ConcurrentHashMap feature",
             "When the bin reaches 8 nodes AND the table is at least 64 entries long",
             "As soon as any collision occurs",
-            "When the map exceeds its load factor",
-            "Never — that is a ConcurrentHashMap feature"
+            "When the map exceeds its load factor"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Treeification, added in Java 8, needs both conditions: 8 nodes in one bin and a table of at least 64. Below that table size the map resizes instead, because spreading entries is cheaper than building a tree. It untreeifies below 6. The motivation was hash-collision denial-of-service attacks, not everyday performance.",
           "difficulty": "hard",
-          "tags": ["hashmap", "treeify"],
+          "tags": [
+            "hashmap",
+            "treeify"
+          ],
           "citation": "How it works — treeification"
         },
         {
           "type": "concept",
           "prompt": "With the default capacity of 16 and load factor 0.75, which insertion triggers the first resize?",
           "options": [
+            "The 8th",
             "The 16th",
             "The 13th — the threshold is 16 x 0.75 = 12",
-            "The 12th",
-            "The 8th"
+            "The 12th"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "The map resizes when size exceeds capacity times load factor, so the 13th entry triggers a doubling to 32 and rehomes everything. Because capacity is a power of two, one extra hash bit decides each entry's fate: it stays at index i or moves to i + oldCapacity, so Java 8 splits each bin in one pass with no rehashing.",
           "difficulty": "medium",
-          "tags": ["hashmap", "resize"],
+          "tags": [
+            "hashmap",
+            "resize"
+          ],
           "citation": "How it works — resize"
         }
       ]
     },
-
     "linkedhashmap-and-treemap": {
       "questions": [
         {
           "type": "concept",
           "prompt": "How do you build an LRU cache from the JDK's collections?",
           "options": [
+            "Use an ArrayDeque and move entries to the front on access",
             "Use a TreeMap sorted by last access time",
             "Use a ConcurrentHashMap with a background eviction thread",
-            "Extend LinkedHashMap with accessOrder=true in the three-arg constructor and override removeEldestEntry to return size() > capacity",
-            "Use an ArrayDeque and move entries to the front on access"
+            "Extend LinkedHashMap with accessOrder=true in the three-arg constructor and override removeEldestEntry to return size() > capacity"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "That is the whole implementation. Access order means every get moves the entry to the end of the internal linked list, and removeEldestEntry lets the map evict on insertion. Built from scratch it would be a HashMap plus a doubly-linked list — which is exactly what LinkedHashMap is.",
           "difficulty": "medium",
-          "tags": ["linkedhashmap", "lru"],
+          "tags": [
+            "linkedhashmap",
+            "lru"
+          ],
           "citation": "Code examples — the LRU cache"
         },
         {
@@ -684,157 +784,182 @@
           "correctIndex": 0,
           "explanation": "This is how new TreeMap<>(String.CASE_INSENSITIVE_ORDER) gives a case-insensitive map for free, and also how a comparator on a single field can silently overwrite entries equals would keep distinct. The javadoc recommends the ordering be consistent with equals for this reason.",
           "difficulty": "hard",
-          "tags": ["treemap", "ordering"],
+          "tags": [
+            "treemap",
+            "ordering"
+          ],
           "citation": "How it works — TreeMap requires ordering"
         },
         {
           "type": "concept",
           "prompt": "Which map would you choose to answer 'which pricing tier applies to a spend of 88?'",
           "options": [
-            "HashMap, iterating the keys and comparing",
             "LinkedHashMap, relying on insertion order",
             "TreeMap, using floorEntry(88) to get the greatest key not exceeding 88 in O(log n)",
-            "Any of them — the choice makes no difference"
+            "Any of them — the choice makes no difference",
+            "HashMap, iterating the keys and comparing"
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "The question is a RANGE query, which is precisely what TreeMap's navigation methods exist for: floorKey, ceilingKey, headMap, subMap. Iterating a HashMap to find it is O(n) per lookup and reimplements what the data structure already provides.",
           "difficulty": "medium",
-          "tags": ["treemap", "navigation"],
+          "tags": [
+            "treemap",
+            "navigation"
+          ],
           "citation": "Code examples — TreeMap navigation methods"
         }
       ]
     },
-
     "sets-and-uniqueness": {
       "questions": [
         {
           "type": "concept",
           "prompt": "How does HashSet guarantee uniqueness?",
           "options": [
+            "It uses reference identity only",
             "It scans the set on each add to check for duplicates",
             "It wraps a HashMap, storing each element as a KEY with a single shared dummy value — uniqueness comes entirely from map key uniqueness, i.e. from hashCode and equals",
-            "It sorts elements and compares neighbours",
-            "It uses reference identity only"
+            "It sorts elements and compares neighbours"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "HashSet implements nothing itself. add returns map.put(e, PRESENT) == null, which is why it tells you whether the element was new. Everything true of HashMap keys — the equals/hashCode contract, mutable-key danger, arbitrary iteration order — is therefore true of HashSet elements.",
           "difficulty": "medium",
-          "tags": ["set", "internals"],
+          "tags": [
+            "set",
+            "internals"
+          ],
           "citation": "The concept, simply — HashSet is a HashMap"
         },
         {
           "type": "concept",
           "prompt": "How do you deduplicate a list while preserving the original order?",
           "options": [
+            "Collections.sort followed by a manual scan",
             "new ArrayList<>(new HashSet<>(list))",
             "list.stream().sorted().distinct().toList()",
-            "new ArrayList<>(new LinkedHashSet<>(list)), or list.stream().distinct().toList()",
-            "Collections.sort followed by a manual scan"
+            "new ArrayList<>(new LinkedHashSet<>(list)), or list.stream().distinct().toList()"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "LinkedHashSet keeps insertion order while removing duplicates, and Stream.distinct preserves encounter order too. A plain HashSet would deduplicate but scramble the order, and sorting changes the order by definition.",
           "difficulty": "easy",
-          "tags": ["set", "deduplication"],
+          "tags": [
+            "set",
+            "deduplication"
+          ],
           "citation": "Code examples — deduplicate keeping order"
         },
         {
           "type": "concept",
           "prompt": "There is no ConcurrentHashSet class. What do you use instead?",
           "options": [
-            "Collections.synchronizedSet(new HashSet<>())",
             "ConcurrentHashMap.newKeySet()",
             "CopyOnWriteArraySet for all cases",
-            "A ConcurrentLinkedQueue with manual duplicate checks"
+            "A ConcurrentLinkedQueue with manual duplicate checks",
+            "Collections.synchronizedSet(new HashSet<>())"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "newKeySet() returns a set backed by a ConcurrentHashMap — the same dummy-value technique applied to the concurrent implementation, so it inherits lock-free reads and per-bin write locking. Collections.newSetFromMap is the general form. synchronizedSet wraps one lock around everything and still needs manual locking around iteration.",
           "difficulty": "medium",
-          "tags": ["set", "concurrency"],
+          "tags": [
+            "set",
+            "concurrency"
+          ],
           "citation": "Under the hood — the concurrent set"
         }
       ]
     },
-
     "concurrent-collections": {
       "questions": [
         {
           "type": "concept",
           "prompt": "How does ConcurrentHashMap achieve thread safety in Java 8 and later?",
           "options": [
-            "By dividing the table into 16 segments, each with its own lock",
-            "By synchronising every method on the map object",
             "By copying the whole table on every write",
-            "Lock-free reads via volatile fields, plus writes that CAS into an empty bin or synchronise on the bin's first node"
+            "Lock-free reads via volatile fields, plus writes that CAS into an empty bin or synchronise on the bin's first node",
+            "By dividing the table into 16 segments, each with its own lock",
+            "By synchronising every method on the map object"
           ],
-          "correctIndex": 3,
+          "correctIndex": 1,
           "explanation": "Segments were the Java 7 design and were removed in Java 8, which capped concurrency at the segment count regardless of table size. The modern implementation locks per bin, so writers to different bins never contend, and get() takes no lock at all.",
           "difficulty": "hard",
-          "tags": ["concurrency", "map"],
+          "tags": [
+            "concurrency",
+            "map"
+          ],
           "citation": "How it works — what changed in Java 8"
         },
         {
           "type": "concept",
           "prompt": "Is 'if (!map.containsKey(k)) map.put(k, v)' safe on a ConcurrentHashMap?",
           "options": [
-            "No — each call is atomic but the SEQUENCE is not, so another thread can act between them. Use putIfAbsent, computeIfAbsent, compute or merge",
-            "Yes — ConcurrentHashMap makes all operations on it atomic",
             "Yes, as long as the map is declared final",
-            "Only if the value is immutable"
+            "Only if the value is immutable",
+            "No — each call is atomic but the SEQUENCE is not, so another thread can act between them. Use putIfAbsent, computeIfAbsent, compute or merge",
+            "Yes — ConcurrentHashMap makes all operations on it atomic"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Per-operation atomicity does not compose. Any read-modify-write must go through one of the atomic compound methods, which perform the whole operation under the bin's lock. This is the single most common misuse of the class.",
           "difficulty": "medium",
-          "tags": ["concurrency", "map"],
+          "tags": [
+            "concurrency",
+            "map"
+          ],
           "citation": "How it works — what it does not give you"
         },
         {
           "type": "concept",
           "prompt": "When is CopyOnWriteArrayList the right choice?",
           "options": [
+            "For large lists that are frequently appended to",
             "For any list accessed from multiple threads",
             "For producer-consumer hand-off between threads",
-            "When reads vastly outnumber writes and iteration must never throw — a listener list configured at startup is the classic case",
-            "For large lists that are frequently appended to"
+            "When reads vastly outnumber writes and iteration must never throw — a listener list configured at startup is the classic case"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Every write copies the entire backing array, so iteration is a lock-free snapshot but writes are expensive. It is ideal for read-mostly data and completely wrong for anything write-heavy. Producer-consumer wants a BlockingQueue instead.",
           "difficulty": "medium",
-          "tags": ["concurrency", "list"],
+          "tags": [
+            "concurrency",
+            "list"
+          ],
           "citation": "Under the hood — when CopyOnWriteArrayList is wrong"
         }
       ]
     },
-
     "fail-fast-vs-fail-safe": {
       "questions": [
         {
           "type": "concept",
           "prompt": "What mechanism produces ConcurrentModificationException?",
           "options": [
-            "The JVM detects concurrent access to the collection from two threads",
             "A modCount counter on the collection, snapshotted by the iterator at creation and compared on every next() call",
             "A lock timeout inside the iterator",
-            "A hash of the collection's contents, recomputed on each iteration step"
+            "A hash of the collection's contents, recomputed on each iteration step",
+            "The JVM detects concurrent access to the collection from two threads"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Every structural change increments modCount; the iterator remembers the value it saw at creation and throws if they diverge. No threads are involved — the usual cause is one thread modifying a collection inside its own loop, which is why the exception's name misleads people.",
           "difficulty": "medium",
-          "tags": ["iterators"],
+          "tags": [
+            "iterators"
+          ],
           "citation": "How it works — the mechanism"
         },
         {
           "type": "concept",
           "prompt": "Which operation during iteration will NOT trigger the fail-fast check?",
           "options": [
-            "list.add(x)",
-            "list.remove(x)",
             "map.remove(k)",
-            "list.set(i, x) — replacing an element is not a STRUCTURAL modification"
+            "list.set(i, x) — replacing an element is not a STRUCTURAL modification",
+            "list.add(x)",
+            "list.remove(x)"
           ],
-          "correctIndex": 3,
+          "correctIndex": 1,
           "explanation": "Only structural changes — adding or removing elements — increment modCount. Replacing an existing element's value with set(), or a map.put on a key that already exists, leaves the structure unchanged and is safe during iteration.",
           "difficulty": "medium",
-          "tags": ["iterators"],
+          "tags": [
+            "iterators"
+          ],
           "citation": "How it works — 'structural' is the key word"
         },
         {
@@ -849,7 +974,9 @@
           "correctIndex": 2,
           "explanation": "The check is unsynchronised and explicitly best-effort, so it may or may not fire in a genuinely concurrent scenario. It exists to surface bugs during development. The fix is to change the loop — removeIf, an explicit Iterator with remove(), iterate a copy, or collect and remove afterwards.",
           "difficulty": "medium",
-          "tags": ["iterators"],
+          "tags": [
+            "iterators"
+          ],
           "citation": "How it works — explicitly best-effort"
         }
       ]
