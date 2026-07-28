@@ -126,8 +126,6 @@ const products: Product[] = [
     bgGradient: "from-orange-50 via-white to-red-50",
     iconBg: "bg-gradient-to-br from-orange-500 to-red-600",
     isNew: true,
-    // Content complete; still comingSoon until the kit is put on sale.
-    comingSoon: true,
     discount: 90,
     tag: "14 Modules • 65 Topics"
   },

@@ -72,9 +72,12 @@ export function NewKitsBanner() {
                     narrow screens, and squeezing them truncates the labels.
                     DevOps has no /checkout/[kit] entry; it sells via /pay. */}
                 <div className="flex flex-wrap items-center gap-2 sm:flex-shrink-0">
-                    {/* No Java CTA yet — the kit is comingSoon, so /checkout/java
-                        redirects to the home page. Add it back in the commit that
-                        makes the kit purchasable. */}
+                    <Link
+                        href="/checkout/java"
+                        className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white text-xs font-semibold px-3 py-2 shadow-sm hover:opacity-95 transition-opacity"
+                    >
+                        Java <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                     <Link
                         href="/checkout/angular"
                         className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-red-500 to-rose-600 text-white text-xs font-semibold px-3 py-2 shadow-sm hover:opacity-95 transition-opacity"

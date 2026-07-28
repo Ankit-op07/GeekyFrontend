@@ -185,9 +185,6 @@ export function Pricing() {
       kitId: 'java-kit',
       name: "Java Kit",
       fullName: "Java Interview Preparation Kit",
-      // ⚠️ IN PROGRESS — see the comment on KIT_CATALOG['java-kit'].
-      // comingSoon keeps the card visible but not purchasable.
-      comingSoon: true,
       description: "In progress — fundamentals, OOP, strings, collections, generics, exceptions and streams are live; concurrency, JVM and Spring are being written.",
       priceINR: java_kit_price,
       originalPriceINR: java_kit_original_price,

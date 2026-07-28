@@ -294,18 +294,16 @@ export const KIT_CATALOG: Record<string, KitCatalogItem> = {
     'java-kit': {
         id: 'java-kit',
         name: 'Java Interview Preparation Kit',
-        /* CONTENT COMPLETE — 14 modules, 65 topics, 53 animated diagrams.
-         * The figures below are COUNTED from scripts/java-content, not aspirational:
+        /* LIVE — 14 modules, 65 topics, 53 animated diagrams, 200 quiz questions.
+         * Figures are COUNTED from scripts/java-content, not aspirational:
          *   node scripts/seed-java-kit.js   prints chapters/topics/diagrams.
-         * ⚠️ Still `comingSoon: true`, which keeps it out of checkout and out of
-         * getPurchasableKits(). Removing that line is what puts the kit on sale —
-         * a deliberate business decision, not a content one. */
+         * Went on sale 2026-07-28 (comingSoon removed). Keep these numbers in
+         * step with the content — they are a promise to a paying buyer. */
         tagline: '14 modules · 65 in-depth topics · 53 animated diagrams — core Java, collections internals, concurrency, the JVM, modern Java 17/21 and Spring Boot, built for interviews.',
         price: 299,
         originalPrice: 2999,
         duration: 'Lifetime',
         badge: 'NEW',
-        comingSoon: true,
         features: [
             '65 in-depth topics across 14 structured modules',
             '53 animated, theme-aware diagrams (HashMap internals, GC, thread lifecycle & more)',
