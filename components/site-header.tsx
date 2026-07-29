@@ -84,15 +84,21 @@ export function SiteHeader() {
       `}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 sm:h-20">
-            {/* Logo */}
-            <Link href="/" className="flex items-center group">
-              <div className="relative">
-                <Image src="/inter.png" alt="Geeky Frontend" height={140} width={140}
-                  className="hidden sm:block transition-transform duration-300 group-hover:scale-105" priority />
-                <Image src="/inter-mobile.jpg" alt="Geeky Frontend" height={50} width={50}
-                  className="sm:hidden rounded-lg" priority />
+            {/* Logo — the GF mark is a bare glyph (the old /inter.png was a
+                mark+wordmark lockup), so the wordmark is set in text beside it.
+                Both show at every breakpoint — stacked, the wordmark is only
+                ~70px wide, and on mobile the offer pill and login button are
+                already hidden, so there is room next to the hamburger. */}
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="relative flex-shrink-0">
+                <Image src="/GF_logo.png" alt="Geeky Frontend" height={44} width={44}
+                  className="w-9 h-9 sm:w-11 sm:h-11 object-contain transition-transform duration-300 group-hover:scale-105" priority />
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300 rounded-full" />
               </div>
+              <span className="flex flex-col leading-none">
+                <span className="text-[13px] sm:text-[15px] font-extrabold tracking-tight text-gray-900">GEEKY</span>
+                <span className="text-[13px] sm:text-[15px] font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">FRONTEND</span>
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -236,9 +242,16 @@ export function SiteHeader() {
                 </div>
               </div>
             ) : (
-              <div className="absolute bottom-6 left-6 text-white">
-                <h3 className="text-xl font-bold">Geeky Frontend</h3>
-                <p className="text-xs text-white/80">Interview Prep Platform</p>
+              <div className="absolute bottom-6 left-6 flex items-center gap-3">
+                {/* White tile: the mark is blue/violet and would disappear into
+                    the drawer's blue→purple gradient header on its own. */}
+                <span className="flex w-10 h-10 items-center justify-center rounded-xl bg-white shadow-sm">
+                  <Image src="/GF_logo.png" alt="" height={32} width={32} className="w-7 h-7 object-contain" />
+                </span>
+                <div className="text-white">
+                  <h3 className="text-xl font-bold leading-tight">Geeky Frontend</h3>
+                  <p className="text-xs text-white/80">Interview Prep Platform</p>
+                </div>
               </div>
             )}
             <div className="absolute top-4 left-4 w-20 h-20 bg-white/10 rounded-full blur-xl" />

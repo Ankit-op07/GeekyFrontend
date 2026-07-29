@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import { KitLogo, getKitLogo } from '@/components/kit-logo';
+import { getCheckoutPathForKit } from '@/lib/checkout-paths';
 import {
     BookOpen, Loader2, ChevronRight, FileText, Layers,
     Lock, Eye, CheckCircle2, Sparkles, ShoppingCart
@@ -23,18 +24,6 @@ interface Kit {
     hasAccess: boolean;
 }
 
-function getCheckoutPathForKit(kit: Kit): string {
-    const label = `${kit.name} ${kit.slug}`.toLowerCase();
-    // Order matters: check "node"/"angular" before "js" — "node.js" contains "js".
-    if (label.includes('angular')) return '/checkout/angular';
-    if (label.includes('node')) return '/checkout/nodejs';
-    if (label.includes('complete')) return '/checkout/complete';
-    if (label.includes('react')) return '/checkout/react';
-    if (label.includes('javascript') || label.includes('js')) return '/checkout/javascript';
-    // Placement SKU retired — existing buyers keep access; others go to /pricing.
-    if (label.includes('placement')) return '/#pricing';
-    return '/#products';
-}
 
 export default function LearnPage() {
     const router = useRouter();
@@ -222,7 +211,7 @@ export default function LearnPage() {
                                                     Preview
                                                 </Link>
                                                 <Link
-                                                    href={getCheckoutPathForKit(kit)}
+                                                    href={getCheckoutPathForKit(`${kit.name} ${kit.slug}`)}
                                                     className="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-xs font-semibold transition-all shadow-md shadow-violet-500/20"
                                                 >
                                                     <ShoppingCart className="w-3.5 h-3.5" />

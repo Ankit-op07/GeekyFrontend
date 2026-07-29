@@ -8,6 +8,7 @@ import {
     ChevronDown, ChevronRight, Menu, X, ArrowLeft,
     FileText, Loader2, Lock, Sparkles, ShoppingCart, Bookmark
 } from 'lucide-react';
+import { getCheckoutPathForKit } from '@/lib/checkout-paths';
 import { SidebarContext } from './sidebar-context';
 import type { SidebarChapter } from './sidebar-context';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -26,15 +27,6 @@ interface KitInfo {
 
 // ─── Helpers ─────────────────────────────────────────────
 
-function getCheckoutPathForKit(kitSlug: string): string {
-    const slug = kitSlug.toLowerCase();
-    if (slug.includes('complete')) return '/checkout/complete';
-    if (slug.includes('react')) return '/checkout/react';
-    if (slug.includes('javascript') || slug.includes('js')) return '/checkout/javascript';
-    // Placement SKU retired — see lib/appConstants.ts. Existing buyers keep access.
-    if (slug.includes('placement')) return '/#pricing';
-    return '/#products';
-}
 
 // ─── Layout ──────────────────────────────────────────────
 

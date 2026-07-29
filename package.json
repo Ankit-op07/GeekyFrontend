@@ -9,6 +9,7 @@
     "start": "next start",
     "test:quiz": "node --experimental-strip-types --test lib/quiz/*.test.ts",
     "test:coupons": "node --experimental-strip-types --test lib/coupon-math.test.ts",
+    "test:roadmaps": "node --experimental-strip-types --env-file=.env scripts/validate-roadmaps.ts",
     "rename-complete-kit": "node scripts/rename-complete-kit.js"
   },
   "dependencies": {

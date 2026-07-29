@@ -63,22 +63,47 @@ const deny = (reason: TopicAccessReason, extra: Partial<TopicAccess> = {}): Topi
     ...extra,
 });
 
-export async function resolveTopicAccess(params: {
-    userId: string;
-    kitSlug: string;
-    topicSlug: string;
-}): Promise<TopicAccess> {
-    const { userId, kitSlug, topicSlug } = params;
+/**
+ * Kit-level half of THE RULE, shared by the single-topic and bulk resolvers.
+ *
+ * Split out so that "purchased → everything, otherwise → first chapter only"
+ * still has exactly one implementation once a second caller (the roadmap, which
+ * needs the lock state of ~70 topics per request and cannot afford 70 round
+ * trips) exists. Callers must not re-derive either half.
+ *
+ * `userId` may be null: a logged-out visitor is simply a preview user.
+ */
+export interface KitAccess {
+    hasFullAccess: boolean;
+    kit: { _id: unknown; slug: string } | null;
+    /** _id of the free preview chapter (the first one), as a string. */
+    previewChapterId: string | null;
+    /** False only when a userId was supplied and no such user row exists. */
+    userExists: boolean;
+}
 
-    const user = (await CompanyKitUser.findById(userId).select('purchasedKits').lean()) as {
-        purchasedKits?: string[];
-    } | null;
-    if (!user) return deny('user-not-found');
+export async function resolveKitAccess(params: {
+    userId: string | null;
+    kitSlug: string;
+}): Promise<KitAccess> {
+    const { userId, kitSlug } = params;
+
+    let purchasedKits: string[] = [];
+    let userExists = true;
+    if (userId) {
+        const user = (await CompanyKitUser.findById(userId).select('purchasedKits').lean()) as {
+            purchasedKits?: string[];
+        } | null;
+        if (!user) {
+            return { hasFullAccess: false, kit: null, previewChapterId: null, userExists: false };
+        }
+        purchasedKits = user.purchasedKits || [];
+    }
 
     // NOTE: substring match, not equality — an allowed slug is a FRAGMENT
     // ("complete" grants "complete-frontend-kit"). Preserved from the original
     // learn route; changing it would silently revoke access.
-    const allowedSlugs = getAllowedSlugs(user.purchasedKits || []);
+    const allowedSlugs = getAllowedSlugs(purchasedKits);
     const hasFullAccess = Array.from(allowedSlugs).some((s) =>
         kitSlug.toLowerCase().includes(s.toLowerCase())
     );
@@ -87,6 +112,46 @@ export async function resolveTopicAccess(params: {
         _id: unknown;
         slug: string;
     } | null;
+    if (!kit) return { hasFullAccess, kit: null, previewChapterId: null, userExists };
+
+    // Preview: the first chapter is the shop window, the rest is paid.
+    //
+    // Skipped entirely for a buyer — `canReadTopic` short-circuits on
+    // hasFullAccess and never reads it, so querying anyway would add a chapter
+    // lookup to every request a paying user makes. The original inline rule had
+    // the same short-circuit and this preserves it.
+    const firstChapter = hasFullAccess
+        ? null
+        : ((await Chapter.findOne({ kitId: kit._id })
+              .sort({ order: 1 })
+              .select('_id')
+              .lean()) as { _id: unknown } | null);
+
+    return {
+        hasFullAccess,
+        kit,
+        previewChapterId: firstChapter ? String(firstChapter._id) : null,
+        userExists,
+    };
+}
+
+/** Topic-level half of THE RULE. Pure — no I/O, so both resolvers can share it. */
+function canReadTopic(access: KitAccess, chapterId: unknown): boolean {
+    if (access.hasFullAccess) return true;
+    return !!access.previewChapterId && String(chapterId ?? '') === access.previewChapterId;
+}
+
+export async function resolveTopicAccess(params: {
+    userId: string;
+    kitSlug: string;
+    topicSlug: string;
+}): Promise<TopicAccess> {
+    const { userId, kitSlug, topicSlug } = params;
+
+    const access = await resolveKitAccess({ userId, kitSlug });
+    if (!access.userExists) return deny('user-not-found');
+
+    const { hasFullAccess, kit } = access;
     if (!kit) return deny('kit-not-found', { hasFullAccess });
 
     const topic = (await Topic.findOne({ kitId: kit._id, slug: topicSlug })
@@ -94,24 +159,61 @@ export async function resolveTopicAccess(params: {
         .lean()) as TopicAccess['topic'];
     if (!topic) return deny('topic-not-found', { hasFullAccess, kit });
 
-    if (hasFullAccess) {
-        return { reason: 'ok', canRead: true, hasFullAccess: true, kit, topic };
-    }
-
-    // Preview: the first chapter is the shop window, the rest is paid.
-    const firstChapter = (await Chapter.findOne({ kitId: kit._id })
-        .sort({ order: 1 })
-        .select('_id')
-        .lean()) as { _id: unknown } | null;
-
-    const isFirstChapter =
-        !!firstChapter && String(topic.chapterId ?? '') === String(firstChapter._id ?? '');
-
+    const canRead = canReadTopic(access, topic?.chapterId);
     return {
-        reason: isFirstChapter ? 'ok' : 'locked',
-        canRead: isFirstChapter,
-        hasFullAccess: false,
+        reason: canRead ? 'ok' : 'locked',
+        canRead,
+        hasFullAccess,
         kit,
         topic,
     };
+}
+
+/** One topic's lock state, as returned by the bulk resolver. */
+export interface TopicAccessSummary {
+    slug: string;
+    title: string;
+    /** May this user open the lesson? */
+    canRead: boolean;
+}
+
+/**
+ * Bulk version of THE RULE: lock state for many topics in one kit, in two
+ * queries instead of 2N.
+ *
+ * Deliberately returns NO `content` — this powers link lists (the roadmap
+ * drawer), not a reader. Slugs that do not exist in the kit are omitted rather
+ * than returned as locked, so a caller can tell "not bought" from "typo".
+ */
+export async function resolveKitTopicAccess(params: {
+    userId: string | null;
+    kitSlug: string;
+    topicSlugs: string[];
+}): Promise<{ hasFullAccess: boolean; kitExists: boolean; topics: Map<string, TopicAccessSummary> }> {
+    const { userId, kitSlug, topicSlugs } = params;
+    const topics = new Map<string, TopicAccessSummary>();
+
+    if (topicSlugs.length === 0) {
+        const access = await resolveKitAccess({ userId, kitSlug });
+        return { hasFullAccess: access.hasFullAccess, kitExists: !!access.kit, topics };
+    }
+
+    const access = await resolveKitAccess({ userId, kitSlug });
+    if (!access.kit) {
+        return { hasFullAccess: access.hasFullAccess, kitExists: false, topics };
+    }
+
+    const rows = (await Topic.find({ kitId: access.kit._id, slug: { $in: topicSlugs } })
+        .select('slug title chapterId')
+        .lean()) as { slug: string; title?: string; chapterId?: unknown }[];
+
+    for (const row of rows) {
+        topics.set(row.slug, {
+            slug: row.slug,
+            title: row.title || row.slug,
+            canRead: canReadTopic(access, row.chapterId),
+        });
+    }
+
+    return { hasFullAccess: access.hasFullAccess, kitExists: true, topics };
 }

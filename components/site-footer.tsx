@@ -8,7 +8,11 @@ export function SiteFooter() {
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand */}
           <div className="sm:col-span-2 md:col-span-1">
-            <div className="font-bold text-lg mb-2">Geeky Frontend</div>
+            <div className="flex items-center gap-2 font-bold text-lg mb-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/GF_logo.png" alt="" className="w-7 h-7 object-contain" />
+              Geeky Frontend
+            </div>
             <p className="text-xs text-muted-foreground">
               Interview prep for frontend engineers
             </p>

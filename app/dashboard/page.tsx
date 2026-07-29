@@ -7,11 +7,12 @@ import Link from "next/link"
 import {
     LayoutDashboard, BookOpen, TrendingUp, Award, Settings,
     LogOut, X, Menu, User, Mail, Calendar, CheckCircle2,
-    Target, Zap, Clock, Star, ChevronRight, Package, Lock,
+    Target, Clock, Star, ChevronRight, Package, Lock,
     BarChart2, Flame, RefreshCw, ShoppingBag, Building2, ArrowRight,
     Trophy, Medal, Bot, Mic, MicOff, PlayCircle, RotateCcw,
     MessageSquare, Brain, Timer, Send, Sparkles, Video,
-    ClipboardCheck, FileText, Eye, ShoppingCart, Shield, Bookmark
+    ClipboardCheck, FileText, Eye, ShoppingCart, Shield, Bookmark,
+    Map as MapIcon
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -19,7 +20,9 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { CompanyQuestionsTab } from "@/components/dashboard/company-questions-tab"
 import { BookmarksTab, BookmarksPreview } from "@/components/dashboard/bookmarks-tab"
 import { AiInterviewTab } from "@/components/dashboard/ai-interview-tab"
+import { RoadmapTab } from "@/components/dashboard/roadmap-tab"
 import { KitLogo, getKitLogo } from "@/components/kit-logo"
+import { getCheckoutPathForKit } from "@/lib/checkout-paths"
 
 interface SessionUser {
     id: string
@@ -62,24 +65,6 @@ function getResumeHref(slug: string): string {
     return `/learn/${slug}`
 }
 
-function getCheckoutPathForKit(kit: DbKit) {
-    const label = `${kit.name} ${kit.slug}`.toLowerCase()
-    // Order matters: check "node"/"angular" before "js" — "node.js" contains "js".
-    // DevOps has no /checkout/[kit] page — that SKU is sold through /pay.
-    if (label.includes("devops")) return "/pay?kit=devops-kit"
-    // ⚠️ Java must be a WORD match, never a substring: "javascript..." contains
-    // "java", so `label.includes("java")` would send JS buyers to Java checkout.
-    // `\bjava\b` cannot match inside "javascript" (no boundary after "java").
-    if (/\bjava\b/.test(label)) return "/checkout/java"
-    if (label.includes("angular")) return "/checkout/angular"
-    if (label.includes("node")) return "/checkout/nodejs"
-    if (label.includes("complete")) return "/checkout/complete"
-    if (label.includes("react")) return "/checkout/react"
-    if (label.includes("javascript") || label.includes("js")) return "/checkout/javascript"
-    // Placement SKU retired — existing buyers keep access; others go to /pricing.
-    if (label.includes("placement")) return "/#pricing"
-    return "/#products"
-}
 
 /** Time-of-day greeting. Module scope because the top bar renders it for the
  *  overview tab — it used to be a full-width banner inside OverviewTab, which
@@ -93,6 +78,7 @@ const NAV = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "kits", label: "My Kits", icon: Package },
     { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
+    { id: "roadmap", label: "Roadmaps", icon: MapIcon },
     // Hidden for now — feature kept in code, just not surfaced on the dashboard yet.
     // { id: "ai-interview", label: "AI Interview", icon: Bot },
     // { id: "team-interview", label: "Team Interview", icon: Video },
@@ -103,11 +89,29 @@ const NAV = [
 export default function DashboardPage() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const tabParam = searchParams.get("tab") || "overview"
+    /**
+     * THE URL IS THE ONLY SOURCE OF TRUTH FOR WHICH TAB IS OPEN.
+     *
+     * This used to be `useState(tabParam)` kept in sync by an effect on
+     * `tabParam`, with the sidebar calling setState and never touching the URL.
+     * Two failures came out of that:
+     *   • the address bar never reflected the tab, so no tab but the default
+     *     was linkable or reachable with Back;
+     *   • state and URL could disagree, and then a tab became unreachable —
+     *     open Roadmaps (URL becomes ?tab=roadmap), switch to Bookmarks (state
+     *     only, URL still says roadmap), click Roadmaps again: the navigation
+     *     targets the URL it is already on, `tabParam` never changes, the sync
+     *     effect never fires, and the click does nothing.
+     *
+     * Deriving it removes the second state entirely, so the two cannot drift.
+     */
+    const activeTab = searchParams.get("tab") || "overview"
+    /** Which roadmap is open, or null for the picker. Also in the URL (?r=)
+     *  so a roadmap is linkable and Back leaves it. */
+    const roadmapParam = searchParams.get("r")
 
     const [user, setUser] = useState<SessionUser | null>(null)
     const [loading, setLoading] = useState(true)
-    const [activeTab, setActiveTab] = useState(tabParam)
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [streak, setStreak] = useState(0)
     const [topicsStudied, setTopicsStudied] = useState(0)
@@ -224,7 +228,29 @@ export default function DashboardPage() {
             recordStreakActivity()
         })
     }, [checkAuth, fetchProgress, fetchStreak, recordStreakActivity])
-    useEffect(() => { setActiveTab(tabParam) }, [tabParam])
+    /**
+     * Switch tabs by navigating. `activeTab` is read straight back out of the
+     * URL, so there is nothing to keep in sync.
+     *
+     * `?r=` is dropped unless the caller passes one: it belongs to the roadmap
+     * tab, and leaving it behind would make "Roadmaps" in the sidebar reopen
+     * the last roadmap instead of the picker.
+     */
+    const selectTab = useCallback(
+        (tab: string, roadmapId?: string | null) => {
+            const query = new URLSearchParams({ tab })
+            if (roadmapId) query.set("r", roadmapId)
+            router.push(`/dashboard?${query.toString()}`)
+            setSidebarOpen(false)
+        },
+        [router]
+    )
+
+    /** Open a roadmap, or pass null to go back to the picker. */
+    const selectRoadmap = useCallback(
+        (id: string | null) => selectTab("roadmap", id),
+        [selectTab]
+    )
 
     const handleLogout = async () => {
         await fetch("/api/auth/session", { method: "DELETE" })
@@ -254,6 +280,7 @@ export default function DashboardPage() {
             case "overview": return <OverviewTab user={user} purchasedKits={purchasedKits} streak={streak} topicsStudied={topicsStudied} />
             case "kits": return <KitsTab purchasedKits={purchasedKits} />
             case "bookmarks": return <BookmarksTab />
+            case "roadmap": return <RoadmapTab selectedId={roadmapParam} onSelect={selectRoadmap} />
             case "team-interview": return <TeamInterviewTab />
             case "ai-interview": return <AiInterviewTab user={user} />
             case "leaderboard": return <LeaderboardTab />
@@ -278,8 +305,11 @@ export default function DashboardPage() {
                 {/* Logo */}
                 <div className="p-6 border-b border-hairline">
                     <Link href="/" className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                            <Zap className="w-5 h-5 text-white" />
+                        {/* The mark is blue/violet on transparent, so it needs a light
+                            tile to stay legible in dark mode as well as light. */}
+                        <div className="w-10 h-10 rounded-xl bg-white border border-hairline flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/GF_logo.png" alt="" className="w-7 h-7 object-contain" />
                         </div>
                         <div>
                             <p className="text-foreground font-bold text-sm">Geeky Frontend</p>
@@ -314,7 +344,7 @@ export default function DashboardPage() {
                         return (
                             <button
                                 key={item.id}
-                                onClick={() => { setActiveTab(item.id); setSidebarOpen(false) }}
+                                onClick={() => selectTab(item.id)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
                                     ? "bg-gradient-to-r from-violet-600/20 to-purple-600/20 text-violet-700 dark:text-violet-400 border border-violet-500/20 shadow"
                                     : "text-muted-foreground hover:bg-overlay hover:text-foreground"
@@ -396,9 +426,9 @@ export default function DashboardPage() {
                                 {user.profilePicture ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={user.profilePicture} alt={user.name} className="w-9 h-9 rounded-full border-2 border-violet-400/30 object-cover cursor-pointer"
-                                        onClick={() => setActiveTab("profile")} />
+                                        onClick={() => selectTab("profile")} />
                                 ) : (
-                                    <button onClick={() => setActiveTab("profile")}
+                                    <button onClick={() => selectTab("profile")}
                                         className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold border-2 border-violet-400/30">
                                         {initials}
                                     </button>
@@ -539,7 +569,7 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                                             </Link>
                                         </Button>
                                         <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-xs shadow-md shadow-violet-500/20 border-0" asChild>
-                                            <Link href={getCheckoutPathForKit(kit)}>
+                                            <Link href={getCheckoutPathForKit(`${kit.name} ${kit.slug}`)}>
                                                 <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
                                                 Buy Full Kit
                                             </Link>
@@ -1359,7 +1389,7 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                                         </Link>
                                     </Button>
                                     <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-xs shadow-md shadow-violet-500/20 border-0" asChild>
-                                        <Link href={getCheckoutPathForKit(kit)}>
+                                        <Link href={getCheckoutPathForKit(`${kit.name} ${kit.slug}`)}>
                                             <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
                                             Buy Full Kit
                                         </Link>

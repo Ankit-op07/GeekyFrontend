@@ -69,6 +69,9 @@ export default function ContentPreviewPage() {
       price: "₹"+complete_kit_price,
       originalPrice: "₹"+complete_kit_original_price,
       icon: "🚀",
+      /* Official artwork (see components/kit-logo.tsx); the emoji above stays as
+       * the fallback for kits that don't have one. */
+      logoSrc: "/Kit%20logos/frontendSystemDesign.png",
       tagline: "Everything you need to crack any frontend interview",
       highlights: [
         "Land ₹15-40 LPA frontend roles",
@@ -207,7 +210,12 @@ export default function ContentPreviewPage() {
                   : 'text-muted-foreground'
               }`}
             >
-              <span className="mr-1">{kit.icon}</span>
+              {'logoSrc' in kit ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={kit.logoSrc} alt="" className="mr-1 inline-block w-4 h-4 object-contain align-text-bottom" />
+              ) : (
+                <span className="mr-1">{kit.icon}</span>
+              )}
               <span className="hidden sm:inline">{kit.name}</span>
               <span className="sm:hidden">{key === 'js' ? 'JS' : 'Complete'}</span>
             </button>
@@ -229,7 +237,14 @@ export default function ContentPreviewPage() {
               <p className="text-xs mt-1 opacity-90">{activeKitData.tagline}</p>
             </div>
             <div className="text-right">
-              <p className="text-2xl">{activeKitData.icon}</p>
+              {'logoSrc' in activeKitData ? (
+                <span className="inline-flex w-9 h-9 items-center justify-center rounded-lg bg-white shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={activeKitData.logoSrc} alt={activeKitData.name} className="w-6 h-6 object-contain" />
+                </span>
+              ) : (
+                <p className="text-2xl">{activeKitData.icon}</p>
+              )}
               <Link href="/#pricing">
                 <button className="mt-2 px-4 py-1.5 bg-white text-blue-600 rounded-full text-xs font-bold">
                   Get Now →

@@ -135,6 +135,7 @@ export function Pricing() {
       previewUrl: "/preview",
       popular: false,
       icon: <TrendingUp className="w-6 h-6" />,
+      logo: "/Kit%20logos/frontendSystemDesign.png",
       color: "from-violet-500 to-indigo-600",
       bgGradient: "from-violet-50 via-indigo-50/50 to-purple-50",
       shadowColor: "shadow-violet-200",
@@ -163,6 +164,7 @@ export function Pricing() {
       discountPercentage: Math.round(((devops_kit_original_price - devops_kit_price) / devops_kit_original_price) * 100),
       popular: false,
       icon: <Rocket className="w-6 h-6" />,
+      logo: "/Kit%20logos/devopsEngineering.png",
       color: "from-sky-500 to-indigo-600",
       bgGradient: "from-sky-50 via-indigo-50/50 to-blue-50",
       shadowColor: "shadow-sky-200",
@@ -358,11 +360,20 @@ export function Pricing() {
                   )}
 
                   <CardHeader className="relative z-10 pb-4">
-                    {/* Icon */}
+                    {/* Icon — kits with official artwork (see components/kit-logo.tsx)
+                        get the real logo on a neutral tile; the neon artwork has no
+                        contrast on the saturated gradient the glyph cards use. */}
                     <div className="mb-4">
-                      <div className={`w-16 h-16 bg-gradient-to-br ${plan.color} rounded-2xl flex items-center justify-center shadow-lg mx-auto transform ${isHovered ? 'rotate-6 scale-110' : ''} transition-all duration-300`}>
-                        <div className="text-white">{plan.icon}</div>
-                      </div>
+                      {plan.logo ? (
+                        <div className={`w-16 h-16 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-lg mx-auto transform ${isHovered ? 'rotate-6 scale-110' : ''} transition-all duration-300`}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={plan.logo} alt={plan.fullName} className="w-10 h-10 object-contain" />
+                        </div>
+                      ) : (
+                        <div className={`w-16 h-16 bg-gradient-to-br ${plan.color} rounded-2xl flex items-center justify-center shadow-lg mx-auto transform ${isHovered ? 'rotate-6 scale-110' : ''} transition-all duration-300`}>
+                          <div className="text-white">{plan.icon}</div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Title */}

@@ -107,8 +107,9 @@ const kits: Kit[] = [
     subtitle: "42 System Design • 180 DSA • 570+ Items",
     description: "42 frontend system design walkthroughs (RADIO) — plus 180 DSA problems, 60 machine coding challenges, 35 JS challenges and 91 in-depth articles.",
     icon: (
-      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-        <Rocket className="w-7 h-7 text-white" />
+      <div className="w-12 h-12 bg-white border border-gray-200 rounded-xl flex items-center justify-center shadow-lg">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/Kit%20logos/frontendSystemDesign.png" alt="Frontend System Design" className="w-8 h-8 object-contain" />
       </div>
     ),
     color: "text-purple-600",

@@ -338,9 +338,8 @@ function PayContent() {
             <header className="border-b border-gray-100 bg-white sticky top-0 z-30">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2.5 font-bold text-xl tracking-tight text-gray-900">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white text-sm font-extrabold shadow-md">
-                            G
-                        </div>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/GF_logo.png" alt="" className="w-8 h-8 object-contain" />
                         Geeky Frontend
                     </Link>
                     <div className="flex items-center gap-1.5 text-xs text-gray-400">

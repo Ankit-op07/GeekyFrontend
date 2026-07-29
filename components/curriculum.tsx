@@ -88,8 +88,9 @@ const kitsCurriculum: KitCurriculum[] = [
     title: "Frontend System Design Kit",
     subtitle: "25 Chapters • 570+ Items",
     icon: (
-      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-md">
-        <Rocket className="w-6 h-6 text-white" />
+      <div className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center shadow-md">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/Kit%20logos/frontendSystemDesign.png" alt="Frontend System Design" className="w-7 h-7 object-contain" />
       </div>
     ),
     color: "text-purple-600",
