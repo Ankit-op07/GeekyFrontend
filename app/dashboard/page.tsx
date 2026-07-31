@@ -12,7 +12,7 @@ import {
     Trophy, Medal, Bot, Mic, MicOff, PlayCircle, RotateCcw,
     MessageSquare, Brain, Timer, Send, Sparkles, Video,
     ClipboardCheck, FileText, Eye, ShoppingCart, Shield, Bookmark,
-    Map as MapIcon
+    Map as MapIcon, Briefcase
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -21,6 +21,7 @@ import { CompanyQuestionsTab } from "@/components/dashboard/company-questions-ta
 import { BookmarksTab, BookmarksPreview } from "@/components/dashboard/bookmarks-tab"
 import { AiInterviewTab } from "@/components/dashboard/ai-interview-tab"
 import { RoadmapTab } from "@/components/dashboard/roadmap-tab"
+import { JobsTab } from "@/components/dashboard/jobs-tab"
 import { KitLogo, getKitLogo } from "@/components/kit-logo"
 import { getCheckoutPathForKit } from "@/lib/checkout-paths"
 
@@ -79,6 +80,7 @@ const NAV = [
     { id: "kits", label: "My Kits", icon: Package },
     { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
     { id: "roadmap", label: "Roadmaps", icon: MapIcon },
+    { id: "jobs", label: "Jobs", icon: Briefcase },
     // Hidden for now — feature kept in code, just not surfaced on the dashboard yet.
     // { id: "ai-interview", label: "AI Interview", icon: Bot },
     // { id: "team-interview", label: "Team Interview", icon: Video },
@@ -281,6 +283,7 @@ export default function DashboardPage() {
             case "kits": return <KitsTab purchasedKits={purchasedKits} />
             case "bookmarks": return <BookmarksTab />
             case "roadmap": return <RoadmapTab selectedId={roadmapParam} onSelect={selectRoadmap} />
+            case "jobs": return <JobsTab />
             case "team-interview": return <TeamInterviewTab />
             case "ai-interview": return <AiInterviewTab user={user} />
             case "leaderboard": return <LeaderboardTab />

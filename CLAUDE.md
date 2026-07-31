@@ -185,6 +185,80 @@ email) and is the only source of truth for who has been emailed.**
 - Batches are 25 per HTTP request, driven in a loop by the client — a serverless function cannot
   hold hundreds of SMTP sends open. Closing the tab loses nothing.
 
+## Job board (dashboard `?tab=jobs`) — INDIA ONLY
+
+Aggregates Indian developer openings from ~55 upstreams into one deduplicated list. `lib/jobs/` is the
+whole pipeline; `components/dashboard/jobs-tab.tsx` is the UI; `Job` (`lib/models/Job.ts`) is a
+**cache**, not authored data — it can always be rebuilt by re-running an ingest.
+
+- **The unique key is `fingerprint`, not `sourceId`.** company+title+locality, so the same opening
+  carried by RemoteOK, Remotive AND the company's Greenhouse board is ONE row. `sourceIds`/`sources`
+  accumulate every feed it appeared in; `sourceCount` is the last run's count and backs the
+  "most relevant" sort (corroboration, not text score).
+- **Rows expire.** Feeds never say a job closed, it just stops appearing. Every refresh pushes
+  `expiresAt` forward; a TTL index deletes anything refreshes stop finding. Saved jobs are therefore
+  a **denormalized snapshot** on `CompanyKitUser.savedJobs` — a reference would empty itself.
+- **A source failing must not fail the run.** `ingestJobs()` wraps every adapter and returns a
+  per-source `SourceResult[]`. That report is the ONLY way to notice an ATS board slug has gone
+  stale — `doordash` and `netflix` both 404'd in the first draft. Admin/cron see it in the refresh
+  response; learners don't.
+- **Classification never reads the job description.** `detectCategory()` uses the title, then the
+  source's own tags. An earlier version fell back to the description and, over ~1,300 real listings,
+  called 227 roles "devops" because the opening paragraph said "infrastructure". A wrong category is
+  worse than `other` — it makes the filter untrustworthy. Same reason `isEngineeringRole()` matches
+  titles only.
+- **`isStartup` is a per-company judgement**, set on the ATS board config (`sources/ats.ts`) plus
+  every HN Who-is-hiring row. Flagging all ATS rows made 94% of the board a "startup".
+- **Adding sources is additive**: write an adapter returning `RawJob[]`, register it in
+  `buildAdapters()`. Never derive category/level/tags/fingerprint in an adapter — `normalizeJob()`
+  owns all of it, or two adapters classify the same job differently and dedupe breaks.
+- **India-only is enforced in THREE places, and all three are needed.** `isIndianJob` in `ingest.ts`
+  (nothing non-Indian is written), a hard `countryCode: 'IN'` in `buildJobFilter` (nothing non-Indian
+  is *served*, whatever is in the collection), and a `deleteMany` purge at the end of each ingest.
+  The write-path gate alone shipped a visibly broken board: it could not touch the thousands of
+  US/EU rows already stored from before the board went India-only, and TTL would have taken three
+  weeks to clear them. **A gate on writes is not enough when the store outlives the rule.** A job
+  is Indian only if its own location resolves to India (`countryCode === 'IN'`). Rejected alternatives:
+  "keep anything from an Indian employer" would keep Freshworks' San Mateo and London reqs (24 of
+  their 49); "keep generic Remote too" would re-admit ~590 location-less remote roles that are
+  US-only in practice. `detectCountry`'s India pattern is therefore the widest of any country and
+  includes state names — SmartRecruiters emits "Hyderabad, TG" with no country token.
+- **Location filtering is by CITY, not country** (`detectIndianCity`) — country is a settled question
+  on this board. Delhi NCR deliberately merges Gurgaon/Gurugram/Noida/Faridabad: one commutable job
+  market, and four chips would hide roles from candidates who'd take them.
+- **Sources are kept or dropped on measured India yield.** RemoteOK, Arbeitnow, Remotive and Jobicy
+  were all removed at 0 Indian jobs each (Jobicy has no India geo at all — its widest Asian filter,
+  `geo=apac`, returned 50 roles and 0 mentioning India). Only Himalayas and HN Who-is-hiring remain
+  from the remote aggregators. Re-measure before adding one back.
+- **Indian jobs come from the employers' ATS, not from job portals.** Naukri, Instahyre, Cutshort,
+  Wellfound and LinkedIn have no free public API and scraping them breaks their terms — but the
+  Indian employers behind those listings post to Greenhouse/Lever/Ashby/SmartRecruiters, and those
+  boards are open JSON. `SEED_BOARDS` carries ~51 Indian and India-office employers (Paytm, PhonePe,
+  Swiggy, Meesho, Zeta, CRED, Fi Money, Groww, Freshworks, Tekion, HackerRank, plus Databricks /
+  MongoDB / Zscaler / Twilio for their Bengaluru and Pune reqs).
+- **⚠️ Verify a new board by its INDIA JOB COUNT, not by an HTTP 200.** An earlier list was built on
+  "the slug responds" and shipped three wrong companies: `greenhouse:slice` is a US/Macedonia firm
+  (not the Indian fintech), `ashby:navi` is San Francisco, `ashby:bounce` is Portuguese. All three
+  answered perfectly. Fetch the board and count postings whose location is Indian.
+- **The board is senior-heavy and that is the sources, not a bug.** Measured: 428 India-only jobs
+  across 46 companies (263 Bengaluru, 46 Delhi NCR, 43 Remote, 24 Hyderabad), of which ~6 are
+  fresher/internship. Indian entry-level hiring happens on Naukri / Internshala / campus portals,
+  none of which have an API. Adzuna keys are the only lever that moves this number.
+- **The tracker is the same list as the shortlist.** `CompanyKitUser.savedJobs` gained `status`
+  (`saved → applied → interviewing → offer → rejected`), `appliedAt` and `notes`. Clicking Apply
+  files a job under `applied` — a job already past `saved` is never demoted. `appliedAt` is written
+  with **`$min`, never `$set`**, so walking a row through later stages can't rewrite the day you
+  actually applied; for that to work the field must be ABSENT (not null) until first applied, since
+  `$min` will not overwrite a stored null.
+- **The UI never names a source.** Which upstream a listing came from is plumbing; `sources` is not
+  returned by `/api/jobs` at all, so the client cannot display it even by accident. The "confirm on
+  the employer's careers page" caution stays — that is about a listing we did not author, and it
+  doesn't require naming our feeds.
+- **Ops**: `POST|GET /api/jobs/refresh` needs `CRON_SECRET` (Vercel cron sends it as a bearer token;
+  without the env var the cron silently 403s). Optional keys `ADZUNA_APP_ID`/`ADZUNA_APP_KEY` and
+  `RAPIDAPI_KEY` add the **Indian on-site market** — every key-free source is remote-first and
+  Western-skewed. Extra ATS boards via `JOB_ATS_BOARDS="greenhouse:acme,ashby:beta"`.
+
 ## Known weak spots (from graphify analysis — see `graphify-out/GRAPH_REPORT.md`)
 - `Dashboard Page` and `Ui Sidebar` communities have low cohesion (~0.05) — their pieces are loosely
   related; if touching dashboard code, don't assume nodes in the same community are actually coupled.
