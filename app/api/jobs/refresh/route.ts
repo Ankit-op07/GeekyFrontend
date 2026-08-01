@@ -22,7 +22,22 @@ import { ingestJobs, type IngestSummary } from '@/lib/jobs/ingest';
  *    non-admin, so it cannot be used to make us hammer two dozen third parties.
  */
 
-export const maxDuration = 300;
+/**
+ * Both this and the cron schedule in vercel.json are pinned to the HOBBY plan's
+ * limits, and neither is a preference — exceed either and Vercel rejects the
+ * whole deployment at validation, before a build, with no deployment record to
+ * show for it. A 6-hourly cron and maxDuration 300 silently blocked every push
+ * to this repo until they were brought back down.
+ *
+ *   maxDuration  60s  (a full fan-out measures ~16s)
+ *   cron         daily, 02:30 UTC / 08:00 IST
+ *
+ * Raise both if the account moves to Pro. Note the board is not actually
+ * limited to one refresh a day: any logged-in user opening the tab when the
+ * newest row is over STALE_HOURS old triggers one, so real traffic keeps it
+ * warmer than the schedule alone.
+ */
+export const maxDuration = 60;
 /** How old the newest row may be before a non-admin may trigger a refresh. */
 const STALE_HOURS = 6;
 
