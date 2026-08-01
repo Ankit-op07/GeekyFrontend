@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
     ZoomIn, ZoomOut, Maximize2, Map as MapIcon, List, Clock, Target,
-    ChevronLeft, Loader2, Lock, CheckCircle2,
+    ChevronLeft, Lock, CheckCircle2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton"
 import { KitBadge } from "./kit-badge"
 import { layoutRoadmap, NODE_H, NODE_W, STAGE_H, STAGE_W } from "./layout"
 import { NodeDrawer } from "./node-drawer"
@@ -523,9 +524,22 @@ export function RoadmapView({
     }
 
     if (!roadmap) {
+        // Shaped like the header + canvas it replaces, so opening a roadmap does
+        // not collapse the page to a spinner and then jump back to full height.
         return (
-            <div className="flex h-[50vh] items-center justify-center text-muted-foreground">
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Loading roadmap…
+            <div className="space-y-5">
+                <Skeleton className="h-5 w-28 bg-overlay" />
+                <div className="rounded-2xl border border-hairline bg-card p-5">
+                    <div className="flex items-start gap-3">
+                        <Skeleton className="h-11 w-11 flex-shrink-0 rounded-xl bg-overlay-strong" />
+                        <div className="flex-1 space-y-2">
+                            <Skeleton className="h-5 w-64 bg-overlay-strong" />
+                            <Skeleton className="h-3 w-80 bg-overlay" />
+                            <Skeleton className="h-3 w-48 bg-overlay" />
+                        </div>
+                    </div>
+                </div>
+                <Skeleton className="h-[68vh] min-h-[440px] w-full rounded-2xl bg-overlay" />
             </div>
         )
     }

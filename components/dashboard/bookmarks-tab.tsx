@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Bookmark, ArrowRight, X, Loader2, BookOpen } from 'lucide-react';
+import { Bookmark, ArrowRight, X, BookOpen } from 'lucide-react';
 import { KitLogo, getKitLogo } from '@/components/kit-logo';
+import { RowListSkeleton } from '@/components/dashboard/skeletons';
 
 interface BookmarkItem {
     kitSlug: string;
@@ -160,9 +161,7 @@ export function BookmarksTab() {
         return (
             <div className="space-y-8 max-w-5xl">
                 <SectionHeader />
-                <div className="flex items-center justify-center py-16">
-                    <Loader2 className="w-6 h-6 animate-spin text-violet-500" />
-                </div>
+                <RowListSkeleton count={4} />
             </div>
         );
     }

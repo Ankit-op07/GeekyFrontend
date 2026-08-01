@@ -1,9 +1,10 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { Loader2, Clock, Layers, CheckCircle2, Lock, ArrowRight } from "lucide-react"
+import { Clock, Layers, CheckCircle2, Lock, ArrowRight } from "lucide-react"
 import { getCheckoutPathForKit } from "@/lib/checkout-paths"
 import { KitBadge } from "@/components/roadmap/kit-badge"
+import { RoadmapCardSkeleton } from "@/components/dashboard/skeletons"
 import { RoadmapView } from "@/components/roadmap/roadmap-view"
 import type { ApiRoadmapSummary } from "@/components/roadmap/types"
 
@@ -65,14 +66,6 @@ export function RoadmapTab({
         )
     }
 
-    if (!roadmaps) {
-        return (
-            <div className="flex h-64 items-center justify-center text-muted-foreground">
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Loading roadmaps…
-            </div>
-        )
-    }
-
     return (
         <div className="space-y-6">
             <div>
@@ -85,7 +78,12 @@ export function RoadmapTab({
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {roadmaps.map((roadmap) => {
+                {/* The header above is static, so it renders immediately and only the
+                    cards stand in — the section never looks empty. */}
+                {!roadmaps &&
+                    Array.from({ length: 6 }, (_, i) => <RoadmapCardSkeleton key={i} />)}
+
+                {roadmaps?.map((roadmap) => {
                     const pct = roadmap.nodeCount
                         ? Math.round((roadmap.doneCount / roadmap.nodeCount) * 100)
                         : 0

@@ -21,6 +21,8 @@ import { CompanyQuestionsTab } from "@/components/dashboard/company-questions-ta
 import { BookmarksTab, BookmarksPreview } from "@/components/dashboard/bookmarks-tab"
 import { AiInterviewTab } from "@/components/dashboard/ai-interview-tab"
 import { RoadmapTab } from "@/components/dashboard/roadmap-tab"
+import { KitGridSkeleton, RowListSkeleton, StatTilesSkeleton } from "@/components/dashboard/skeletons"
+import { Skeleton } from "@/components/ui/skeleton"
 import { JobsTab } from "@/components/dashboard/jobs-tab"
 import { KitLogo, getKitLogo } from "@/components/kit-logo"
 import { getCheckoutPathForKit } from "@/lib/checkout-paths"
@@ -455,9 +457,21 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
     user: SessionUser; purchasedKits: string[]; streak: number; topicsStudied: number
 }) {
     const [dbKits, setDbKits] = useState<DbKit[]>([])
+    /**
+     * Distinguishes "not fetched yet" from "fetched, and there are none".
+     * Without it `dbKits` is [] on the first paint, and the empty state below
+     * told every returning buyer they had "No kits yet" until the request
+     * landed. An empty state is a claim about the user's account — never show
+     * one before the answer is known.
+     */
+    const [kitsLoading, setKitsLoading] = useState(true)
 
     useEffect(() => {
-        fetch("/api/learn/kits").then(r => r.json()).then(d => { if (d.kits) setDbKits(d.kits) }).catch(() => { })
+        fetch("/api/learn/kits")
+            .then(r => r.json())
+            .then(d => { if (d.kits) setDbKits(d.kits) })
+            .catch(() => { })
+            .finally(() => setKitsLoading(false))
     }, [])
 
     const visibleKits = dbKits
@@ -472,8 +486,12 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
             {/* Live public offer, if one is running. Renders nothing otherwise. */}
             <OfferBanner />
 
+            {/* While the kit list is in flight, stand in for it — otherwise the
+                page renders as though the user owns nothing. */}
+            {kitsLoading && <KitGridSkeleton count={2} />}
+
             {/* ── Active Kits ── */}
-            {ownedKits.length > 0 && (
+            {!kitsLoading && ownedKits.length > 0 && (
                 <div>
                     <div className="flex items-center gap-3 mb-5">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center border border-violet-500/10">
@@ -585,8 +603,8 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                 </div>
             )}
 
-            {/* ── Empty state (no kits at all) ── */}
-            {visibleKits.length === 0 && (
+            {/* ── Empty state (no kits at all) — only once we KNOW there are none ── */}
+            {!kitsLoading && visibleKits.length === 0 && (
                 <div className="relative overflow-hidden text-center py-16 px-8 rounded-3xl border border-dashed border-hairline bg-muted dark:bg-gradient-to-br dark:from-violet-950/40 dark:to-slate-900/50">
                     <div className="absolute inset-0 opacity-[0.03]"
                          style={{
@@ -608,14 +626,14 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
                 Streak / topics / kits used to be three hero cards above the fold; they
                 summarise the work rather than being the work, so they sit at the foot of
                 the page as one slim row. The live streak also stays in the top bar. */}
-            <ProgressStrip streak={streak} topicsStudied={topicsStudied} kitsOwned={ownedKits.length} />
+            <ProgressStrip streak={streak} topicsStudied={topicsStudied} kitsOwned={kitsLoading ? null : ownedKits.length} />
         </div>
     )
 }
 
 /** Compact three-up counter row — replaces the old full-width stats grid. */
 function ProgressStrip({ streak, topicsStudied, kitsOwned }: {
-    streak: number; topicsStudied: number; kitsOwned: number
+    streak: number; topicsStudied: number; /** null = not known yet */ kitsOwned: number | null
 }) {
     const stats = [
         { label: "Day streak", value: streak, icon: Flame, accent: "text-orange-700 dark:text-orange-400", bg: "bg-orange-500/10" },
@@ -633,7 +651,11 @@ function ProgressStrip({ streak, topicsStudied, kitsOwned }: {
                             <Icon className={`w-4 h-4 ${stat.accent}`} />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-xl font-bold text-foreground leading-none">{stat.value}</p>
+                            {stat.value === null ? (
+                                <Skeleton className="h-5 w-8 bg-overlay-strong" />
+                            ) : (
+                                <p className="text-xl font-bold text-foreground leading-none">{stat.value}</p>
+                            )}
                             <p className="text-muted-foreground text-xs mt-1">{stat.label}</p>
                         </div>
                     </div>
@@ -866,8 +888,8 @@ function TeamInterviewTab() {
                         </button>
                     </div>
                     {loading ? (
-                        <div className="py-16 flex justify-center">
-                            <RefreshCw className="w-7 h-7 animate-spin text-muted-foreground" />
+                        <div className="p-4">
+                            <RowListSkeleton count={3} />
                         </div>
                     ) : interviews.length === 0 ? (
                         <div className="text-center py-16 px-6">
@@ -990,8 +1012,9 @@ function LeaderboardTab() {
 
     if (loading) {
         return (
-            <div className="flex justify-center py-12">
-                <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
+            <div className="space-y-6 max-w-5xl">
+                <StatTilesSkeleton count={3} />
+                <RowListSkeleton count={6} />
             </div>
         );
     }
@@ -1214,8 +1237,9 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center py-12">
-                <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
+            <div className="space-y-8 max-w-6xl">
+                <KitGridSkeleton count={2} />
+                <KitGridSkeleton count={4} />
             </div>
         );
     }
@@ -1420,9 +1444,16 @@ function ProgressTab({ purchasedKits, topicsStudied, hoursSpent }: { purchasedKi
     const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     const weekActivity = [3, 5, 2, 6, 4, 7, 3]
     const [dbKits, setDbKits] = useState<DbKit[]>([])
+    // Same reason as OverviewTab: [] before the fetch resolves is indistinguishable
+    // from "owns nothing", and this tab lists per-kit progress off it.
+    const [kitsLoading, setKitsLoading] = useState(true)
 
     useEffect(() => {
-        fetch("/api/learn/kits").then(r => r.json()).then(d => { if (d.kits) setDbKits(d.kits) }).catch(() => { })
+        fetch("/api/learn/kits")
+            .then(r => r.json())
+            .then(d => { if (d.kits) setDbKits(d.kits) })
+            .catch(() => { })
+            .finally(() => setKitsLoading(false))
     }, [])
 
     const ownedKits = dbKits.filter(k => k.hasAccess)
@@ -1434,14 +1465,16 @@ function ProgressTab({ purchasedKits, topicsStudied, hoursSpent }: { purchasedKi
                 {[
                     { label: "Topics Studied", value: topicsStudied, max: 100, icon: BookOpen, color: "violet" },
                     { label: "Hours Invested", value: hoursSpent, max: 50, icon: Clock, color: "blue" },
-                    { label: "Kits Active", value: ownedKits.length, max: 5, icon: Package, color: "green" },
+                    { label: "Kits Active", value: kitsLoading ? null : ownedKits.length, max: 5, icon: Package, color: "green" },
                 ].map((s, i) => {
                     const Icon = s.icon
                     const pct = Math.round((typeof s.value === 'number' ? s.value : 0) / s.max * 100)
                     return (
                         <div key={i} className="bg-card border border-hairline rounded-2xl p-5">
                             <Icon className={`w-5 h-5 text-${s.color}-400 mb-3`} />
-                            <p className="text-2xl font-bold text-foreground">{s.value}</p>
+                            {s.value === null
+                                ? <Skeleton className="h-7 w-12 bg-overlay-strong" />
+                                : <p className="text-2xl font-bold text-foreground">{s.value}</p>}
                             <p className="text-muted-foreground text-xs mb-3">{s.label}</p>
                             <div className="w-full bg-muted rounded-full h-1.5">
                                 <div className={`h-1.5 rounded-full bg-${s.color}-500`} style={{ width: `${Math.min(pct, 100)}%` }} />
@@ -1480,7 +1513,9 @@ function ProgressTab({ purchasedKits, topicsStudied, hoursSpent }: { purchasedKi
             </div>
 
             {/* Per-kit progress */}
-            {ownedKits.length > 0 && (
+            {kitsLoading && <RowListSkeleton count={2} />}
+
+            {!kitsLoading && ownedKits.length > 0 && (
                 <div className="bg-card border border-hairline rounded-2xl p-6">
                     <h3 className="text-foreground font-semibold mb-5 flex items-center gap-2">
                         <Target className="w-4 h-4 text-violet-700 dark:text-violet-400" />

@@ -5,9 +5,10 @@ import { useState, useEffect, useMemo } from "react"
 import {
     Search, ChevronRight, ArrowLeft, Star, BookmarkPlus,
     Bookmark, BarChart2, PieChart, CheckCircle2, Circle,
-    ChevronDown, Loader2, ExternalLink
+    ChevronDown, ExternalLink
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { RowListSkeleton } from "@/components/dashboard/skeletons"
 import Image from "next/image"
 
 // ─── Types (from API) ────────────────────────────────────
@@ -127,11 +128,7 @@ export function CompanyQuestionsTab({
     }, [])
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-violet-700 dark:text-violet-400" />
-            </div>
-        )
+        return <RowListSkeleton count={6} className="max-w-6xl" />
     }
 
     if (selectedCompanyId) {
@@ -301,11 +298,7 @@ function CompanyDetailView({ company, onBack, completedQuestions, onToggleComple
     const maxPattern = Math.max(...(company.patterns || []).map(p => p.count), 1)
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-violet-700 dark:text-violet-400" />
-            </div>
-        )
+        return <RowListSkeleton count={6} className="max-w-6xl" />
     }
 
     return (
