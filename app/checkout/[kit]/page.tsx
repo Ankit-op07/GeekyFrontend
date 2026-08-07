@@ -1870,10 +1870,11 @@ export default function CheckoutPage() {
           </div>
 
           {/* On mobile the purchase UI is the fixed bar at the foot of the page
-              (below). There is deliberately no second in-flow checkout card
-              here: the old one was `sticky bottom-20`, so it floated directly
-              on top of that bar — two price blocks and two Buy buttons stacked
-              on each other, eating ~160px of an already small viewport. */}
+              (below), plus a full in-flow card after the trust section. Nothing
+              goes here: the old card at this spot was `sticky bottom-20`, so it
+              floated directly on top of that bar — two price blocks and two Buy
+              buttons stacked on each other, eating ~160px of an already small
+              viewport. In-flow and non-sticky is what makes the one below safe. */}
 
         </div>
 
@@ -1911,6 +1912,106 @@ export default function CheckoutPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* ── Mobile in-flow purchase card ──────────────────────────────────
+            A reader who scrolls the whole page on a phone ends on the footer
+            with no price in view — the fixed bar is a 73px strip that is easy
+            to read past, and it carries no bonuses, no total-value anchor and
+            no trust badges. This is the mobile counterpart of the desktop
+            sidebar card, placed after every piece of information so it reads
+            as the close of the argument.
+
+            NOT sticky and NOT fixed, unlike the card that used to sit inside
+            the grid — it scrolls with the page, so it can never collide with
+            the bar above it. `lg:hidden` because desktop already has the
+            sidebar, and two competing CTAs was the original bug. */}
+        <div className="lg:hidden mt-8">
+          <Card className="p-5 border-2 border-green-200 shadow-lg overflow-hidden bg-gradient-to-br from-white to-green-50/40">
+            <div className="text-center mb-4">
+              <p className="text-sm text-muted-foreground mb-1">Ready to start?</p>
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-3xl font-bold">₹{kit.price}</span>
+                <div className="text-left">
+                  <p className="text-sm line-through text-muted-foreground">₹{kit.originalPrice}</p>
+                  <Badge className="bg-green-600 text-white text-xs">{kit.discount}% OFF</Badge>
+                </div>
+              </div>
+              <p className="text-sm text-green-600 font-medium mt-2">
+                You save ₹{(kit.originalPrice - kit.price).toLocaleString()} today!
+              </p>
+            </div>
+
+            <Separator className="my-4" />
+
+            <div className="space-y-2 mb-4 text-sm">
+              <p className="font-semibold">Instant access to:</p>
+              {kit.included.map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between gap-2 min-w-0">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="text-green-500 flex-shrink-0">{item.icon}</div>
+                    <span className="min-w-0 flex-1 break-words">{item.text}</span>
+                  </div>
+                  {item.value && (
+                    <span className="text-muted-foreground font-medium text-xs flex-shrink-0">{item.value}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {kit.bonuses && kit.bonuses.length > 0 && (
+              <>
+                <Separator className="my-4" />
+                <div className="mb-4">
+                  <p className="font-semibold text-sm flex items-center gap-2 mb-2">
+                    <Gift className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                    FREE Bonuses (Worth ₹{bonusesSum.toLocaleString()})
+                  </p>
+                  <ul className="space-y-1.5">
+                    {kit.bonuses.map((bonus, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm min-w-0">
+                        <Check className="w-4 h-4 text-purple-500 flex-shrink-0 mt-0.5" />
+                        <span className="min-w-0 flex-1 break-words">{bonus.title}</span>
+                        <Badge variant="secondary" className="text-xs flex-shrink-0">{bonus.value}</Badge>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            )}
+
+            <div className="p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 mb-4">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm">Total Value:</span>
+                <span className="font-semibold line-through text-muted-foreground text-sm">₹{totalValue.toLocaleString()}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold">You Pay Today:</span>
+                <span className="text-xl font-bold text-green-600">₹{kit.price}</span>
+              </div>
+            </div>
+
+            <PaymentButton
+              kitId={SLUG_TO_KIT_ID[kit.id] || kit.id}
+              buttonText="🔥 Get Instant Access Now"
+              className="w-full h-14 text-base font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-md"
+            />
+
+            <div className="mt-4 flex items-center justify-center gap-6 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Lock className="w-3 h-3" />
+                <span>Secure</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Shield className="w-3 h-3" />
+                <span>SSL</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <CreditCard className="w-3 h-3" />
+                <span>Cards/UPI</span>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
 
