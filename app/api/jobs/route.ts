@@ -4,6 +4,7 @@ import Job from '@/lib/models/Job';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import { extractSessionFromRequest } from '@/lib/session';
 import { buildJobFilter, buildJobSort, parseJobQuery } from '@/lib/jobs/query';
+import { resolveFeatureAccess } from '@/lib/feature-access';
 
 /**
  * GET /api/jobs — the board.
@@ -13,14 +14,33 @@ import { buildJobFilter, buildJobSort, parseJobQuery } from '@/lib/jobs/query';
  * two dozen third-party APIs inside a page load would put the board's latency
  * and uptime at the mercy of the slowest one.
  *
- * Session-gated: this is a dashboard feature, and the listings are the fruit of
- * our aggregation, not something to serve anonymously to scrapers.
+ * MEMBERSHIP-GATED, and the gate is HERE rather than only on the tab. Hiding a
+ * tab hides a link, not an endpoint — /api/jobs would still answer in full to
+ * anyone who typed the URL, which is precisely how a paid feature leaks. The
+ * listings are also the fruit of our aggregation across ~55 upstreams, so an
+ * ungated endpoint is a free scraping target for the whole board.
  */
 export async function GET(request: NextRequest) {
     try {
         const session = extractSessionFromRequest(request);
-        if (!session) {
-            return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+        const access = await resolveFeatureAccess(session?.id ?? null, 'jobs');
+        if (!access.allowed) {
+            return NextResponse.json(
+                {
+                    error:
+                        access.reason === 'needs-auth'
+                            ? 'Not authenticated'
+                            : 'A membership is required to use the job board.',
+                    // Lets the client route to sign-in vs the membership page
+                    // instead of showing one generic failure for both.
+                    reason: access.reason,
+                    membership: {
+                        active: access.membership.active,
+                        expiresAt: access.membership.expiresAt,
+                    },
+                },
+                { status: access.reason === 'needs-auth' ? 401 : 403 }
+            );
         }
 
         await connectToDatabase();
@@ -49,7 +69,8 @@ export async function GET(request: NextRequest) {
             // than awaited inline below — it is an independent query and there
             // is no reason to pay for it serially.
             Job.distinct('company', filter),
-            CompanyKitUser.findById(session.id).select('savedJobs').lean() as Promise<{
+            // Non-null: access.allowed is only true for a resolved session.
+            CompanyKitUser.findById(session!.id).select('savedJobs').lean() as Promise<{
                 savedJobs?: { jobId: string; status?: string }[];
             } | null>,
             // Drives the "updated N hours ago" line and the client's decision to

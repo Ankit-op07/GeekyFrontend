@@ -114,11 +114,79 @@ measure whether learners want to practise (the ≥30% attempt-rate gate).
   **only** — never lesson body text. It once matched full content, which fanned 8 questions into 186
   near-duplicate live rows across 62 topics. The seed route also skips any topic that already has
   questions.
+- **⚠️ `QuizAttempt`'s "unique" index was not unique until 2026-08-05.** The schema declared
+  `.index({userId,questionId},{unique:true})`, but a non-unique index of that shape existed first and
+  **Mongoose's autoIndex never upgrades an index in place** — it saw the name taken and silently kept
+  the old one, for months. 163 duplicate rows accumulated over 150 pairs, many reading
+  `correct: [false, true]`: someone re-answering after the UI revealed the key, which is exactly the
+  blindness the index was meant to prevent in the PRD-005 §9 pass-rate flagging. Repaired with
+  `npm run fix:quiz-attempts -- --apply` (dry-run by default; it **deletes** rows) — duplicates
+  removed, index rebuilt, verified rejecting with E11000. **General lesson, and the reason the
+  leaderboard still de-duplicates in its own `$group`: a declared index constraint is a request, not
+  a guarantee — check `.indexes()` before building on one, and again after changing one.**
 - **The metric**: `/api/admin/quiz/metrics` + the panel on `/admin/quiz`. The buyer attempt rate is
   real; the **preview rate is not computable** — `app/api/learn/.../[topicSlug]` only writes
   `lastActiveDate` when `hasAccess` is true, so non-buyers leave no activity record and there is no
   denominator. PRD §15 says that is the population the gate actually depends on, so treat the buyer
   rate as health, not go/no-go, until a preview-side activity signal exists.
+
+## Membership (time-limited whole-platform access)
+
+₹499/1mo, ₹1499/6mo, ₹2499/1yr (`MEMBERSHIP_PLANS`, `lib/membership.ts`). Grants **every kit** plus
+the three gated features: **DSA tracker, Contests planning, Job board**.
+
+- **Not a nav tab, on purpose.** Nobody clicks "Membership" in a sidebar to learn what a membership
+  is. It appears where the buying decision happens: `MembershipShowcase` on the homepage above the kit
+  grid, and `MembershipBanner` at the top of the dashboard Overview + above the Kits grid. For an
+  active member the banner flips from pitch to status ("active until X"), which is why losing the tab
+  costs nothing — the expiry is on the page they already land on.
+- **The ladder must get cheaper per month as it gets longer**, or the longer tier has nothing to sell.
+  ₹499 → ₹250/mo → ₹208/mo. It briefly did not (₹2999/yr was the same ₹250/mo as the 6-month, so it
+  cost twice as much for no better rate); `npm run test:membership` now pins the invariant.
+- **Prices are fetched from `/api/membership/status`, never inlined in a page.** A hardcoded price on
+  a marketing page is the bug where a visitor reads one number and is charged another.
+- **Renewal reminders** (`lib/membership-reminders.ts`) go out at **7 and 1 days** before expiry, and
+  ride the **contests cron** — Hobby allows exactly 2 crons and both are spent, and a third does not
+  fail at runtime, it **rejects the deployment**. Claims are keyed `"<expiryMs>:<days>"` on
+  `membershipRemindersSent`, so renewing moves the expiry, invalidates every key and re-arms the next
+  term's reminders with no cleanup job. Claim-before-send, so a crash loses a reminder rather than
+  double-mailing.
+
+- **A membership is NOT a kit, and must never enter `purchasedKits`.** That array is permanent —
+  `getAllowedSlugs()` has no concept of time — so a membership name written there grants the whole
+  catalogue forever and cannot be told apart from a real lifetime buyer afterwards. `recordPurchase()`
+  refuses membership plan names outright; the guard is at the **writer** because `/api/payment/verify`
+  takes `planName` from the request body. `npm run test:membership` pins it.
+- **⚠️ Do NOT reuse `subscriptionStatus` / `subscriptionEndDate`.** They look exactly right and are a
+  trap: `recordPurchase()` sets `subscriptionStatus: 'active'` on every kit purchase (7 write sites),
+  so **every past buyer already reads as an active subscriber** — gating on it hands the entire
+  customer base free membership. `subscriptionEndDate` is written and read nowhere. Membership uses
+  `membershipExpiresAt`; active means *set and in the future*, so lapsing needs no cron.
+- **Renewals STACK, they do not reset** (`computeMembershipExpiry`) — an early renewal extends from
+  the existing expiry, so nobody loses days they paid for. Once lapsed, the term starts from today.
+  `addMonths()` clamps (31 Jan + 1mo = 28 Feb), because plain `setMonth(+1)` rolls to 2–3 March and
+  silently skips a month.
+- **`grantMembership()` claims the `Membership` ledger row BEFORE extending the expiry.** `orderId` is
+  unique, so a Razorpay webhook retry — or the client verify racing the webhook, which both call it —
+  is a no-op instead of a free extra term. Extending first would make every retry a free month, and
+  the bug would be invisible because the numbers would just be generous.
+- **Access is one line in `resolveKitAccess`** (`lib/learn-access.ts`), OR'd with the purchase check so
+  a lapsed member falls back to the kits they bought, never below. **Feature gating is
+  `resolveFeatureAccess()`** (`lib/feature-access.ts`), enforced in the API routes — `/api/jobs`,
+  `/api/contests/plans`, DSA tracker writes. Hiding a tab hides a link, not an endpoint.
+- **What stays free, deliberately**: the `/dsa/**` approach pages (155 indexed pages — the funnel that
+  sells the membership) and `/api/contests` (a public contest calendar; charging for a copy of public
+  information is indefensible). Gated: the tracker, planning, reminders, the board.
+- **Lapsing never deletes anything** — notes, lists, solved ticks and saved jobs survive and return on
+  renewal. Contest reminders check membership at *send* time, since it can lapse between planning and
+  the morning of.
+- **`GRANDFATHER_EXISTING_BUYERS = false`** per spec. Flipping it to `true` is one line and keeps
+  existing kit buyers on the three features — worth knowing when the refund emails arrive.
+- **Existing kit buyers keep their kits permanently** and are unaffected by any of this — verified
+  against 400 real buyer rows: every stored plan name still maps to slugs, and `resolveKitAccess`
+  returns `hasFullAccess` for them with no membership. Membership is additive; it never replaces a
+  purchase. What they DO lose without a membership is the three gated features — see
+  `GRANDFATHER_EXISTING_BUYERS` above.
 
 ## Coupons & offers (discount codes, bonuses, cross-sell)
 

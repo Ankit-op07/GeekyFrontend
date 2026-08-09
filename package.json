@@ -8,8 +8,11 @@
     "lint": "next lint",
     "start": "next start",
     "test:quiz": "node --experimental-strip-types --test lib/quiz/*.test.ts",
+    "test:membership": "node --experimental-strip-types --test lib/membership.test.ts",
     "test:coupons": "node --experimental-strip-types --test lib/coupon-math.test.ts",
     "test:roadmaps": "node --experimental-strip-types --env-file=.env scripts/validate-roadmaps.ts",
+    "fix:quiz-attempts": "node --experimental-strip-types --env-file=.env scripts/quiz-dedupe-attempts.ts",
+    "test:dsa": "node --experimental-strip-types scripts/validate-dsa.ts",
     "rename-complete-kit": "node scripts/rename-complete-kit.js"
   },
   "dependencies": {

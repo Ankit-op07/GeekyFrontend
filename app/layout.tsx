@@ -59,7 +59,11 @@ export default function RootLayout({
           <Analytics />
           <Toaster />
           <PurchaseNotifications />
-          <PresenceTracker />
+          {/* Suspense is required: PresenceTracker reads useSearchParams(), which
+              would otherwise opt every page out of static prerendering. */}
+          <Suspense fallback={null}>
+            <PresenceTracker />
+          </Suspense>
         </NextAuthProvider>
       </body>
     </html>

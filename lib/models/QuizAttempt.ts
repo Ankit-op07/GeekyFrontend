@@ -66,6 +66,20 @@ const QuizAttemptSchema = new Schema<IQuizAttempt>(
 
 // One row per user per question — see "FIRST ATTEMPT ONLY" above. The write path
 // swallows the duplicate-key error rather than treating it as a failure.
+//
+// ⚠️ THIS INDEX WAS NOT ACTUALLY UNIQUE UNTIL 2026-08-05, and `unique: true`
+// here is not what fixed it. A non-unique index of the same shape existed
+// first, and Mongoose's autoIndex does not upgrade an index in place — it saw
+// the name taken and silently kept the old one, for months, while this line
+// claimed otherwise. 163 duplicate rows built up across 150 (userId,
+// questionId) pairs before `npm run fix:quiz-attempts -- --apply` deleted them
+// and rebuilt the index for real; it now rejects duplicates (verified E11000).
+//
+// Two things follow. Read paths that depend on first-attempt-only should still
+// enforce it themselves rather than inherit it — see the double $group in
+// app/api/leaderboard/quiz/route.ts. And if this definition is ever CHANGED,
+// autoIndex will not apply the change to the existing index either: check
+// `db.quizattempts.indexes()` afterwards instead of assuming it took.
 QuizAttemptSchema.index({ userId: 1, questionId: 1 }, { unique: true });
 // Per-question pass rate, for the >90% / <10% auto-flagging (PRD-005 §9).
 QuizAttemptSchema.index({ questionId: 1, correct: 1 });

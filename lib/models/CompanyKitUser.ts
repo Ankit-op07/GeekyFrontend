@@ -43,9 +43,37 @@ export interface ICompanyKitUser extends Document {
     // is bumped on every page view / heartbeat for any logged-in user.
     lastSeenAt?: Date;
     currentPath?: string;
+    /**
+     * ⚠️ NOT a membership flag, despite the name. recordPurchase() sets this to
+     * 'active' on every kit purchase, and six other sites write it too, so
+     * essentially every past buyer reads 'active' forever. `subscriptionEndDate`
+     * is written and read nowhere at all. Gating anything on these would grant
+     * the whole existing customer base free membership — use the membership*
+     * fields below, which are the ones with a real expiry. See lib/membership.ts.
+     */
     subscriptionStatus: 'active' | 'expired' | 'cancelled' | 'none';
     subscriptionStartDate?: Date;
     subscriptionEndDate?: Date;
+
+    /* ── Membership (time-limited, whole-platform access) ──────────────────
+     * Absent on everyone who has never bought a membership. `membershipExpiresAt`
+     * is THE field — a membership is active iff it is set and in the future, so
+     * lapsing needs no cron and no status column to drift out of sync.
+     * Renewals extend it (computeMembershipExpiry), they do not reset it. */
+    membershipExpiresAt?: Date;
+    membershipStartedAt?: Date;
+    /** The most recent plan bought. Display/support only — never an access key. */
+    membershipPlanId?: string;
+    /**
+     * Renewal reminders already sent, as "<expiryMs>:<daysBefore>".
+     *
+     * Keyed to the EXPIRY rather than to a date, which is what makes it correct
+     * across renewals: renewing moves the expiry, so every key changes and the
+     * next term's reminders become eligible again with no cleanup job. See
+     * lib/membership-reminders.ts.
+     */
+    membershipRemindersSent?: string[];
+
     paymentId?: string;
     orderId?: string;
     purchasedKits: string[];
@@ -137,6 +165,14 @@ const CompanyKitUserSchema = new Schema<ICompanyKitUser>({
     },
     subscriptionStartDate: { type: Date },
     subscriptionEndDate: { type: Date },
+
+    // Indexed: the admin membership view lists active members by expiry, and
+    // renewal-reminder queries scan "expiring in the next N days".
+    membershipExpiresAt: { type: Date, index: true },
+    membershipStartedAt: { type: Date },
+    membershipPlanId: { type: String },
+    membershipRemindersSent: [{ type: String }],
+
     paymentId: { type: String },
     orderId: { type: String },
     purchasedKits: [{ type: String }],

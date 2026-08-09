@@ -3,6 +3,7 @@ import Chapter from '@/lib/models/Chapter';
 import Topic from '@/lib/models/Topic';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import { getAllowedSlugs } from '@/lib/appConstants';
+import { isMembershipActive } from '@/lib/membership';
 
 /**
  * Who may read a given topic — the single source of truth.
@@ -22,8 +23,12 @@ import { getAllowedSlugs } from '@/lib/appConstants';
  *
  * THE RULE
  * --------
- *   • Full access (kit purchased) → any topic.
- *   • No purchase ("preview") → only topics in the kit's FIRST chapter.
+ *   • Active membership → any topic in any kit, until it expires.
+ *   • Full access (kit purchased) → any topic in that kit, forever.
+ *   • Neither ("preview") → only topics in the kit's FIRST chapter.
+ *
+ * Membership and purchase are independent: when a membership lapses the user
+ * drops back to the kits they bought, never below.
  *
  * Callers must have already run connectToDatabase().
  */
@@ -90,23 +95,38 @@ export async function resolveKitAccess(params: {
 
     let purchasedKits: string[] = [];
     let userExists = true;
+    let isMember = false;
     if (userId) {
-        const user = (await CompanyKitUser.findById(userId).select('purchasedKits').lean()) as {
+        const user = (await CompanyKitUser.findById(userId)
+            .select('purchasedKits membershipExpiresAt')
+            .lean()) as {
             purchasedKits?: string[];
+            membershipExpiresAt?: Date;
         } | null;
         if (!user) {
             return { hasFullAccess: false, kit: null, previewChapterId: null, userExists: false };
         }
         purchasedKits = user.purchasedKits || [];
+        isMember = isMembershipActive(user.membershipExpiresAt);
     }
 
     // NOTE: substring match, not equality — an allowed slug is a FRAGMENT
     // ("complete" grants "complete-frontend-kit"). Preserved from the original
     // learn route; changing it would silently revoke access.
     const allowedSlugs = getAllowedSlugs(purchasedKits);
-    const hasFullAccess = Array.from(allowedSlugs).some((s) =>
-        kitSlug.toLowerCase().includes(s.toLowerCase())
-    );
+    /**
+     * An active membership unlocks every kit, for as long as it lasts.
+     *
+     * Deliberately OR'd with the purchase check rather than replacing it: the
+     * two are independent grants and a lapsed member must fall back to exactly
+     * the kits they bought outright, not to nothing. Putting membership here —
+     * inside the one resolver every topic/quiz/roadmap surface already calls —
+     * is what makes "membership grants the whole platform" true everywhere at
+     * once, instead of true on each surface someone remembered to update.
+     */
+    const hasFullAccess =
+        isMember ||
+        Array.from(allowedSlugs).some((s) => kitSlug.toLowerCase().includes(s.toLowerCase()));
 
     const kit = (await Kit.findOne({ slug: kitSlug }).select('_id slug').lean()) as {
         _id: unknown;
@@ -134,6 +154,49 @@ export async function resolveKitAccess(params: {
         userExists,
     };
 }
+
+/**
+ * "Does this user have full access to <kitSlug>?" as a reusable predicate.
+ *
+ * WHY THIS EXISTS, and it is the same story as the file header.
+ *
+ * `resolveKitAccess` above is the resolver for ONE kit, and it does its own
+ * database read. Several routes need the answer for MANY kits at once from a
+ * user row they have already loaded — the kit list, the roadmap — so they were
+ * each calling getAllowedSlugs() and re-implementing the substring match
+ * inline. That was survivable while purchase was the only grant. The moment
+ * membership was added, every one of those routes silently kept answering the
+ * old question: a paying member saw "Preview" and "Buy" on kits they had full
+ * access to, because four separate copies of the rule never learned about
+ * expiry. Exactly the bug this file's header warns about, in the same file.
+ *
+ * So: build the checker ONCE from a user row, then call it per kit. No route
+ * should ever call getAllowedSlugs() directly again.
+ *
+ * `user` may be null — a logged-out visitor simply has access to nothing.
+ */
+export function buildKitAccessChecker(
+    user: { purchasedKits?: string[]; membershipExpiresAt?: Date } | null | undefined
+): (kitSlug: string) => boolean {
+    // An active membership unlocks every kit for as long as it lasts. OR'd with
+    // the purchase check, never replacing it: a lapsed member must fall back to
+    // exactly the kits they bought outright, not to nothing.
+    const isMember = isMembershipActive(user?.membershipExpiresAt);
+    const allowed = Array.from(getAllowedSlugs(user?.purchasedKits || [])).map((s) =>
+        s.toLowerCase()
+    );
+
+    return (kitSlug: string) => {
+        if (isMember) return true;
+        const slug = (kitSlug || '').toLowerCase();
+        // Substring match, not equality — an allowed slug is a FRAGMENT.
+        return allowed.some((s) => slug.includes(s));
+    };
+}
+
+/** The fields `buildKitAccessChecker` needs. Use in `.select()` so a route
+ *  cannot forget `membershipExpiresAt` and quietly lock members out again. */
+export const KIT_ACCESS_FIELDS = 'purchasedKits membershipExpiresAt';
 
 /** Topic-level half of THE RULE. Pure — no I/O, so both resolvers can share it. */
 function canReadTopic(access: KitAccess, chapterId: unknown): boolean {

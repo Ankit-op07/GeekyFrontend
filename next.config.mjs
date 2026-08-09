@@ -24,6 +24,24 @@ const nextConfig = {
        * ─────────────────────────────────────────────────────────────────── */
       { source: '/checkout/placement', destination: '/#pricing', permanent: true },
       { source: '/checkout/placement-kit', destination: '/#pricing', permanent: true },
+
+      /* ── /dsa → the tracker ─────────────────────────────────────────────
+       *  There is no public sheet index: the sheet a learner reads IS the
+       *  dashboard tab. This exists because /dsa is a path people trim to
+       *  from an approach page URL (/dsa/<section>/<problem>), type from
+       *  memory, or reach from an old link.
+       *
+       *  It lives HERE rather than as an app/dsa/page.tsx calling redirect().
+       *  That page was statically prerendered into a META-REFRESH document —
+       *  HTTP 200, a full HTML payload, and a one-second pause before the
+       *  browser moved. A config redirect is a real 307 with no body.
+       *
+       *  permanent: false (307), NOT 308 — a permanent redirect is cached by
+       *  the browser indefinitely and cannot be recalled, so restoring a
+       *  public index at /dsa later would still bounce everyone who had ever
+       *  hit it once. 307 costs one hop per visit and stays reversible.
+       * ─────────────────────────────────────────────────────────────────── */
+      { source: '/dsa', destination: '/dashboard?tab=dsa', permanent: false },
     ]
   },
 }

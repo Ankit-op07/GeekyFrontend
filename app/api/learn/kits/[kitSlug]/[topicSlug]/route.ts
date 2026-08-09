@@ -5,7 +5,7 @@ import Chapter from '@/lib/models/Chapter';
 import Topic from '@/lib/models/Topic';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import { extractSessionFromRequest } from '@/lib/session';
-import { getAllowedSlugs } from '@/lib/appConstants';
+import { buildKitAccessChecker, KIT_ACCESS_FIELDS } from '@/lib/learn-access';
 
 /**
  * GET /api/learn/kits/[kitSlug]/[topicSlug]
@@ -31,17 +31,17 @@ export async function GET(
 
         // Access check
         const user = await CompanyKitUser.findById(session.id)
-            .select('purchasedKits')
+            .select(KIT_ACCESS_FIELDS)
             .lean() as any;
 
         if (!user) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
-        const allowedSlugs = getAllowedSlugs(user.purchasedKits || []);
-        const hasAccess = Array.from(allowedSlugs).some(s =>
-            kitSlug.toLowerCase().includes(s.toLowerCase())
-        );
+        // Single implementation — includes membership. This used to inline
+        // getAllowedSlugs() + a substring match, which meant members were shown
+        // locked content they had paid for. See buildKitAccessChecker.
+        const hasAccess = buildKitAccessChecker(user)(kitSlug);
 
         const kit = await Kit.findOne({ slug: kitSlug }).lean();
         if (!kit) {

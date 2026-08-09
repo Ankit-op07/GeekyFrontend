@@ -9,10 +9,10 @@ import {
     LogOut, X, Menu, User, Mail, Calendar, CheckCircle2,
     Target, Clock, Star, ChevronRight, Package, Lock,
     BarChart2, Flame, RefreshCw, ShoppingBag, Building2, ArrowRight,
-    Trophy, Medal, Bot, Mic, MicOff, PlayCircle, RotateCcw,
+    Trophy, Bot, Mic, MicOff, PlayCircle, RotateCcw,
     MessageSquare, Brain, Timer, Send, Sparkles, Video,
     ClipboardCheck, FileText, Eye, ShoppingCart, Shield, Bookmark,
-    Map as MapIcon, Briefcase
+    Map as MapIcon, Briefcase, Binary, CalendarClock
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -24,6 +24,12 @@ import { RoadmapTab } from "@/components/dashboard/roadmap-tab"
 import { KitGridSkeleton, RowListSkeleton, StatTilesSkeleton } from "@/components/dashboard/skeletons"
 import { Skeleton } from "@/components/ui/skeleton"
 import { JobsTab } from "@/components/dashboard/jobs-tab"
+import { DsaTab } from "@/components/dashboard/dsa-tab"
+import { ContestsTab } from "@/components/dashboard/contests-tab"
+import { LeaderboardTab } from "@/components/dashboard/leaderboard-tab"
+import { MembershipGate } from "@/components/dashboard/membership-gate"
+import { MembershipBanner } from "@/components/membership/membership-banner"
+import { MemberBadge, PremiumMark } from "@/components/membership/membership-card"
 import { KitLogo, getKitLogo } from "@/components/kit-logo"
 import { getCheckoutPathForKit } from "@/lib/checkout-paths"
 
@@ -37,7 +43,6 @@ interface SessionUser {
 }
 
 /** DB Kit shape from /api/learn/kits */
-import { BundleUpsell } from "@/components/bundle-upsell"
 import { NewKitsBanner } from "@/components/dashboard/new-kits-banner"
 import { OfferBanner } from "@/components/offer-banner"
 
@@ -51,6 +56,9 @@ interface DbKit {
     chaptersCount: number;
     topicsCount: number;
     hasAccess: boolean;
+    /** True when the kit was BOUGHT, false when only a membership unlocks it.
+     *  Optional because older callers/fixtures predate the field. */
+    ownedOutright?: boolean;
 }
 
 /**
@@ -82,11 +90,19 @@ const NAV = [
     { id: "kits", label: "My Kits", icon: Package },
     { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
     { id: "roadmap", label: "Roadmaps", icon: MapIcon },
-    { id: "jobs", label: "Jobs", icon: Briefcase },
+    /* `premium: true` marks the three membership-gated features. It drives ONLY
+     * the sidebar marker — enforcement is in the API routes (resolveFeatureAccess).
+     * Adding a flag here does not gate anything; forgetting it does not open
+     * anything. */
+    { id: "dsa", label: "DSA Sheet", icon: Binary, premium: true },
+    { id: "contests", label: "Contests", icon: CalendarClock, premium: true },
+    { id: "jobs", label: "Jobs", icon: Briefcase, premium: true },
+    // "Quiz", not just "Leaderboard": it sits directly under "DSA Sheet" in this
+    // list and ranks kit quiz answers, not DSA problems.
+    { id: "leaderboard", label: "Quiz Leaderboard", icon: Trophy },
     // Hidden for now — feature kept in code, just not surfaced on the dashboard yet.
     // { id: "ai-interview", label: "AI Interview", icon: Bot },
     // { id: "team-interview", label: "Team Interview", icon: Video },
-    // { id: "leaderboard", label: "Leaderboard", icon: Trophy },
     { id: "profile", label: "Profile", icon: User },
 ]
 
@@ -120,6 +136,33 @@ export default function DashboardPage() {
     const [streak, setStreak] = useState(0)
     const [topicsStudied, setTopicsStudied] = useState(0)
     const [hoursSpent, setHoursSpent] = useState(0)
+
+    /* ── Membership ───────────────────────────────────────────────────────
+     * Resolved once for the whole dashboard rather than per tab: DSA, Contests
+     * and Jobs all ask the same question, and three components each fetching it
+     * on mount would re-ask on every tab switch.
+     *
+     * `null` means "not known yet" and is deliberately distinct from `false`.
+     * Defaulting to false would flash the upsell screen at a paying member for
+     * the length of one request, every single page load — the worst possible
+     * first impression for the person who has actually paid. */
+    const [isMemberState, setIsMemberState] = useState<boolean | null>(null)
+
+    const refreshMembership = useCallback(async () => {
+        try {
+            const res = await fetch("/api/membership/status")
+            if (res.ok) {
+                const data = await res.json()
+                setIsMemberState(Boolean(data.active))
+            } else {
+                setIsMemberState(false)
+            }
+        } catch {
+            setIsMemberState(false)
+        }
+    }, [])
+
+    useEffect(() => { refreshMembership() }, [refreshMembership])
 
     // Company questions state (API-driven, persisted in DB)
     const [completedQuestions, setCompletedQuestions] = useState<Set<string>>(new Set())
@@ -279,13 +322,35 @@ export default function DashboardPage() {
 
     // ── Tab content ──────────────────────────────────────────
 
+    /**
+     * Render a membership-gated tab, or the upsell in its place.
+     *
+     * THREE states, not two. While membership is still being resolved
+     * (`null`), neither branch is safe to show: the real tab would fire
+     * requests that 403 and fill the screen with errors, and the upsell would
+     * flash "members only" at someone who has paid. A skeleton for the length
+     * of one request is the only honest answer.
+     *
+     * Presentation only. Every one of these features is gated again in its API
+     * routes, which is where enforcement actually happens — hiding a tab hides
+     * a link, not an endpoint.
+     */
+    const gated = (feature: "dsa" | "contests" | "jobs", node: React.ReactNode) => {
+        if (isMemberState === null) return <RowListSkeleton count={5} />
+        if (!isMemberState) return <MembershipGate feature={feature} onUnlocked={refreshMembership} />
+        return node
+    }
+
     const renderContent = () => {
         switch (activeTab) {
             case "overview": return <OverviewTab user={user} purchasedKits={purchasedKits} streak={streak} topicsStudied={topicsStudied} />
             case "kits": return <KitsTab purchasedKits={purchasedKits} />
             case "bookmarks": return <BookmarksTab />
             case "roadmap": return <RoadmapTab selectedId={roadmapParam} onSelect={selectRoadmap} />
-            case "jobs": return <JobsTab />
+            /* Membership-gated — see `gated()` below. */
+            case "dsa": return gated("dsa", <DsaTab />)
+            case "contests": return gated("contests", <ContestsTab />)
+            case "jobs": return gated("jobs", <JobsTab />)
             case "team-interview": return <TeamInterviewTab />
             case "ai-interview": return <AiInterviewTab user={user} />
             case "leaderboard": return <LeaderboardTab />
@@ -335,7 +400,13 @@ export default function DashboardPage() {
                             </div>
                         )}
                         <div className="flex-1 min-w-0">
-                            <p className="text-foreground text-sm font-medium truncate">{user.name}</p>
+                            <div className="flex items-center gap-1.5">
+                                <p className="text-foreground text-sm font-medium truncate">{user.name}</p>
+                                {/* Status where identity already is. A membership
+                                    that only appears on one screen doesn't feel
+                                    like one — this is the persistent acknowledgement. */}
+                                {isMemberState === true && <MemberBadge />}
+                            </div>
                             <p className="text-muted-foreground text-xs truncate">{user.email}</p>
                         </div>
                     </div>
@@ -357,7 +428,25 @@ export default function DashboardPage() {
                             >
                                 <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-violet-700 dark:text-violet-400" : ""}`} />
                                 {item.label}
-                                {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-400" />}
+                                {/* Right-side cluster: one `ml-auto` for both, or
+                                    the marker and the active dot fight over it
+                                    and end up at opposite ends of the row. */}
+                                <span className="ml-auto flex items-center gap-2">
+                                    {/* Premium marker on the three gated
+                                        features. Gold for a member (this is
+                                        yours), a lock for everyone else (this is
+                                        what you'd get) — same amber accent as the
+                                        membership card, so the two read as one
+                                        system. Rendered only once membership is
+                                        KNOWN, so it never flashes a lock at
+                                        someone who has paid. */}
+                                    {item.premium && isMemberState !== null && (
+                                        <PremiumMark unlocked={isMemberState} />
+                                    )}
+                                    {isActive && (
+                                        <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
+                                    )}
+                                </span>
                             </button>
                         )
                     })}
@@ -486,6 +575,13 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
             {/* Live public offer, if one is running. Renders nothing otherwise. */}
             <OfferBanner />
 
+            {/* Membership — the pitch for non-members, the expiry status for
+                members. It sits at the top of the page everyone lands on rather
+                than behind a nav tab, because nobody clicks "Membership" in a
+                sidebar to find out what a membership is. Renders nothing while
+                status is in flight. */}
+            <MembershipBanner />
+
             {/* While the kit list is in flight, stand in for it — otherwise the
                 page renders as though the user owns nothing. */}
             {kitsLoading && <KitGridSkeleton count={2} />}
@@ -541,8 +637,15 @@ function OverviewTab({ user, purchasedKits, streak, topicsStudied }: {
             {/* ── Bookmarked topics (compact preview) ── */}
             <BookmarksPreview kits={dbKits} />
 
-            {/* Cross-sell sits after the user's own kits — it's an offer, not the page. */}
-            <BundleUpsell tone="dark" />
+            {/* The ₹499 three-kit bundle promo used to sit here. Removed: it
+              * competed directly with the membership banner at the top of this
+              * same page, and two "get everything" offers on one screen means
+              * neither converts — the reader stops to work out which is better
+              * instead of buying. Membership is the one we push now.
+              *
+              * The bundle SKU still exists and /checkout/all-access still sells
+              * it; it is simply no longer promoted here. PLAN_TO_SLUGS keeps its
+              * key forever either way — past buyers depend on it. */}
 
             {/* ── Explore / Preview Kits ── */}
             {previewKits.length > 0 && (
@@ -972,238 +1075,11 @@ function formatInterviewDate(value: string) {
 }
 
 
-// ─── Leaderboard Tab ──────────────────────────────────────────
-interface LeaderboardRow {
-    userId: string;
-    name: string;
-    initials: string;
-    profilePicture?: string | null;
-    completedCount: number;
-    totalTopics: number;
-    progressPercent: number;
-    currentStreak: number;
-    longestStreak: number;
-    lastActiveAt?: string | null;
-    isCurrentUser: boolean;
-    rank: number;
-}
-
-function LeaderboardTab() {
-    const [rows, setRows] = useState<LeaderboardRow[]>([]);
-    const [currentUser, setCurrentUser] = useState<LeaderboardRow | null>(null);
-    const [participantsCount, setParticipantsCount] = useState(0);
-    const [totalTopics, setTotalTopics] = useState(0);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetch("/api/leaderboard/react")
-            .then(r => r.json())
-            .then(data => {
-                setRows(data.leaderboard || []);
-                setCurrentUser(data.currentUser || null);
-                setParticipantsCount(data.participantsCount || 0);
-                setTotalTopics(data.kit?.totalTopics || 0);
-            })
-            .catch(() => { })
-            .finally(() => setLoading(false));
-    }, []);
-
-    const topThree = rows.slice(0, 3);
-
-    if (loading) {
-        return (
-            <div className="space-y-6 max-w-5xl">
-                <StatTilesSkeleton count={3} />
-                <RowListSkeleton count={6} />
-            </div>
-        );
-    }
-
-    return (
-        <div className="space-y-6 max-w-5xl">
-            <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-cyan-50 via-card to-violet-50 dark:from-cyan-900/40 dark:via-slate-900/80 dark:to-violet-900/40 border border-cyan-500/20">
-                <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-5">
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-700 dark:text-cyan-300 text-xs font-semibold mb-3">
-                            <Trophy className="w-3.5 h-3.5" />
-                            React Kit Leaderboard
-                        </div>
-                        <h2 className="text-2xl font-bold text-foreground">Climb with consistent progress</h2>
-                        <p className="text-muted-foreground text-sm mt-2 max-w-2xl">
-                            Rankings are based on React kit topics completed, with streaks used to break close ties.
-                        </p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 min-w-[220px]">
-                        <div className="rounded-xl bg-overlay border border-hairline p-4">
-                            <p className="text-2xl font-bold text-foreground">{participantsCount}</p>
-                            <p className="text-muted-foreground text-xs mt-1">Students ranked</p>
-                        </div>
-                        <div className="rounded-xl bg-overlay border border-hairline p-4">
-                            <p className="text-2xl font-bold text-foreground">{totalTopics}</p>
-                            <p className="text-muted-foreground text-xs mt-1">React topics</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {currentUser && (
-                <div className="bg-card border border-violet-500/20 rounded-2xl p-5">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                                #{currentUser.rank}
-                            </div>
-                            <div>
-                                <p className="text-foreground font-semibold">Your React rank</p>
-                                <p className="text-muted-foreground text-sm">
-                                    {currentUser.completedCount}/{currentUser.totalTopics} topics completed · {currentUser.currentStreak} day streak
-                                </p>
-                            </div>
-                        </div>
-                        <div className="sm:w-56">
-                            <div className="flex items-center justify-between text-xs mb-1">
-                                <span className="text-muted-foreground">Progress</span>
-                                <span className="text-cyan-700 dark:text-cyan-300 font-semibold">{currentUser.progressPercent}%</span>
-                            </div>
-                            <div className="h-2 rounded-full bg-muted overflow-hidden">
-                                <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${currentUser.progressPercent}%` }} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {topThree.length > 0 && (
-                <div className="grid md:grid-cols-3 gap-4">
-                    {topThree.map(row => (
-                        <LeaderboardCard key={row.userId} row={row} />
-                    ))}
-                </div>
-            )}
-
-            <div className="bg-card border border-hairline rounded-2xl overflow-hidden">
-                <div className="px-5 py-4 border-b border-hairline flex items-center justify-between">
-                    <h3 className="text-foreground font-semibold flex items-center gap-2">
-                        <Medal className="w-4 h-4 text-amber-700 dark:text-amber-400" />
-                        React Rankings
-                    </h3>
-                    <span className="text-xs text-muted-foreground">Top 25 students</span>
-                </div>
-
-                {rows.length === 0 ? (
-                    <div className="text-center py-14 px-6">
-                        <Trophy className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                        <p className="text-foreground font-semibold mb-1">No React progress yet</p>
-                        <p className="text-muted-foreground text-sm mb-5">Complete your first React topic to appear on the leaderboard.</p>
-                        <Button className="bg-cyan-600 hover:bg-cyan-500 text-white" asChild>
-                            <Link href="/learn/react-interview-kit">Start React Kit</Link>
-                        </Button>
-                    </div>
-                ) : (
-                    <div className="divide-y divide-hairline">
-                        {rows.map(row => (
-                            <LeaderboardListRow key={row.userId} row={row} />
-                        ))}
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-}
-
-function LeaderboardCard({ row }: { row: LeaderboardRow }) {
-    const medalClass = row.rank === 1
-        ? "from-amber-400 to-yellow-600"
-        : row.rank === 2
-            ? "from-slate-300 to-slate-500"
-            : "from-orange-400 to-amber-700";
-
-    return (
-        <div className={`bg-card border rounded-2xl p-5 ${row.isCurrentUser ? "border-violet-500/30" : "border-hairline"}`}>
-            <div className="flex items-start justify-between mb-4">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${medalClass} flex items-center justify-center text-white font-bold shadow-lg`}>
-                    #{row.rank}
-                </div>
-                {row.isCurrentUser && <Badge className="bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20">You</Badge>}
-            </div>
-            <div className="flex items-center gap-3 mb-4">
-                <AvatarBubble row={row} />
-                <div className="min-w-0">
-                    <p className="text-foreground font-semibold truncate">{row.name}</p>
-                    <p className="text-muted-foreground text-xs">{row.currentStreak} day streak</p>
-                </div>
-            </div>
-            <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-muted-foreground">{row.completedCount}/{row.totalTopics} topics</span>
-                    <span className="text-cyan-700 dark:text-cyan-300 font-semibold">{row.progressPercent}%</span>
-                </div>
-                <div className="h-2 rounded-full bg-muted overflow-hidden">
-                    <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${row.progressPercent}%` }} />
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function LeaderboardListRow({ row }: { row: LeaderboardRow }) {
-    return (
-        <div className={`px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4 ${row.isCurrentUser ? "bg-violet-500/10" : "hover:bg-overlay"}`}>
-            <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="w-9 h-9 rounded-lg bg-overlay border border-hairline flex items-center justify-center text-foreground text-sm font-bold flex-shrink-0">
-                    {row.rank}
-                </div>
-                <AvatarBubble row={row} />
-                <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                        <p className="text-foreground font-medium truncate">{row.name}</p>
-                        {row.isCurrentUser && <Badge className="bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20 text-[10px] px-1.5 py-0 h-4">You</Badge>}
-                    </div>
-                    <p className="text-muted-foreground text-xs">{row.completedCount}/{row.totalTopics} React topics completed</p>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[160px_90px_90px] items-center gap-3 sm:gap-4">
-                <div>
-                    <div className="h-2 rounded-full bg-muted overflow-hidden">
-                        <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${row.progressPercent}%` }} />
-                    </div>
-                </div>
-                <div className="text-right">
-                    <p className="text-foreground text-sm font-semibold">{row.progressPercent}%</p>
-                    <p className="text-muted-foreground text-[10px]">Progress</p>
-                </div>
-                <div className="text-right hidden sm:block">
-                    <p className="text-orange-700 dark:text-orange-400 text-sm font-semibold">{row.currentStreak}d</p>
-                    <p className="text-muted-foreground text-[10px]">Streak</p>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function AvatarBubble({ row }: { row: LeaderboardRow }) {
-    if (row.profilePicture) {
-        return (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={row.profilePicture} alt={row.name} className="w-10 h-10 rounded-full object-cover border border-hairline flex-shrink-0" />
-        );
-    }
-
-    return (
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-            {row.initials}
-        </div>
-    );
-}
 
 // ─── Kits Tab (DB-driven) ────────────────────────────────────
 function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
     const [allKits, setAllKits] = useState<DbKit[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    // Name of a kit the user has finished, if any — drives the upsell eyebrow.
-    // Finishing a kit is the single highest-intent moment we have. PRD-001 §3.3.
-    const [finishedKitName, setFinishedKitName] = useState<string | null>(null);
 
     useEffect(() => {
         fetch("/api/learn/kits")
@@ -1213,27 +1089,12 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
             .finally(() => setIsLoading(false));
     }, []);
 
-    // Check the owned kits for a 100% completion.
-    useEffect(() => {
-        const owned = allKits.filter(k => k.hasAccess);
-        if (owned.length === 0) return;
-        let cancelled = false;
-
-        Promise.all(
-            owned.map(k =>
-                fetch(`/api/user/kit-progress?kitSlug=${encodeURIComponent(k.slug)}`)
-                    .then(r => (r.ok ? r.json() : null))
-                    .then(p => (p && p.progressPercent >= 100 ? k.name : null))
-                    .catch(() => null)
-            )
-        ).then(results => {
-            if (cancelled) return;
-            const done = results.find(Boolean);
-            if (done) setFinishedKitName(done as string);
-        });
-
-        return () => { cancelled = true; };
-    }, [allKits]);
+    /* A "you finished <kit>" scan used to live here, feeding the eyebrow on the
+     * bundle upsell that this tab no longer shows. It fired one request PER
+     * OWNED KIT on every visit — seven for a member — to compute a string
+     * nothing read any more, so it went with the upsell. If a
+     * finished-a-kit moment is wanted again, it should be one endpoint, not a
+     * fan-out. */
 
     if (isLoading) {
         return (
@@ -1251,17 +1112,16 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
 
     return (
         <div className="space-y-8 max-w-6xl">
-            {/* Cross-sell at peak intent: renders nothing if they already own the bundle. */}
-            <BundleUpsell
-                tone="dark"
-                eyebrow={
-                    finishedKitName
-                        ? `You finished ${finishedKitName}. Here's the natural next step.`
-                        : lockedKits.length > 0
-                            ? "You're missing some kits."
-                            : undefined
-                }
-            />
+            {/* Membership, offered right where the alternative purchase is being
+                weighed. Someone comparing seven kit prices is exactly the person
+                for whom one membership is the better answer, and this is the
+                only screen where that comparison actually happens.
+                Becomes a status line, not a pitch, once they are a member. */}
+            <MembershipBanner variant="compact" />
+
+            {/* The ₹499 bundle promo used to sit here too, immediately under the
+              * membership line above — the same two-competing-offers problem,
+              * only worse for being adjacent. See the note in OverviewTab. */}
 
             <section className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-50 via-card to-background dark:from-violet-950/60 dark:via-slate-900 dark:to-slate-950 p-6">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.22),transparent_36%)]" />
@@ -1333,8 +1193,13 @@ function KitsTab({ purchasedKits }: { purchasedKits: string[] }) {
                                             <Badge className="bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/20 text-[10px] px-2 py-0.5">
                                                 Owned
                                             </Badge>
+                                            {/* "Lifetime access" is true of a
+                                                PURCHASE and false of a
+                                                membership, which ends with the
+                                                term. Never claim the former for
+                                                the latter. */}
                                             <Badge variant="outline" className="border-hairline text-muted-foreground text-[10px] px-2 py-0.5">
-                                                Lifetime access
+                                                {kit.ownedOutright === false ? "Via membership" : "Lifetime access"}
                                             </Badge>
                                         </div>
                                         <p className="text-foreground font-semibold group-hover:text-violet-700 dark:group-hover:text-violet-200 transition-colors">

@@ -5,14 +5,7 @@ import Chapter from '@/lib/models/Chapter';
 import Topic from '@/lib/models/Topic';
 import CompanyKitUser from '@/lib/models/CompanyKitUser';
 import { extractSessionFromRequest } from '@/lib/session';
-import { getAllowedSlugs } from '@/lib/appConstants';
-
-function kitMatchesSlugs(kitSlug: string, allowedSlugs: Set<string>): boolean {
-    for (const pattern of allowedSlugs) {
-        if (kitSlug.toLowerCase().includes(pattern)) return true;
-    }
-    return false;
-}
+import { buildKitAccessChecker, KIT_ACCESS_FIELDS } from '@/lib/learn-access';
 
 type KitWithCounts = Record<string, any> & {
     chaptersCount: number;
@@ -74,20 +67,34 @@ export async function GET(request: NextRequest) {
 
         // Get logged-in user
         const session = extractSessionFromRequest(request);
-        let purchasedKits: string[] = [];
-        if (session) {
-            const user = await CompanyKitUser.findById(session.id).select('purchasedKits').lean();
-            purchasedKits = (user as any)?.purchasedKits ?? [];
-        }
+        const user = session
+            ? await CompanyKitUser.findById(session.id).select(KIT_ACCESS_FIELDS).lean()
+            : null;
 
-        const allowedSlugs = purchasedKits.length > 0
-            ? getAllowedSlugs(purchasedKits)
-            : new Set<string>();
+        /* ONE checker, built from the user row, then asked per kit.
+         *
+         * This route used to call getAllowedSlugs() and match slugs itself. When
+         * membership shipped, that inline copy of the rule never learned about
+         * it, so a paying member saw "Preview" and "Buy" on every kit they
+         * already had full access to. buildKitAccessChecker is the single
+         * implementation — do not re-derive this here again. */
+        const hasAccess = buildKitAccessChecker(user as any);
+        /* The SAME checker with membership deliberately stripped out, so the UI
+         * can tell "you bought this" from "your membership unlocks this".
+         *
+         * That distinction is not cosmetic: the kit card says "Lifetime access",
+         * which is TRUE of a purchase and FALSE of a membership — that access
+         * ends with the term. Showing it on a membership-unlocked kit is the
+         * kind of claim that becomes a refund dispute. */
+        const ownsOutright = buildKitAccessChecker({
+            purchasedKits: (user as any)?.purchasedKits ?? [],
+        });
 
         const kits = await getKitsWithCounts();
         const result = kits.map((kit: any) => ({
             ...kit,
-            hasAccess: kitMatchesSlugs(kit.slug, allowedSlugs),
+            hasAccess: hasAccess(kit.slug),
+            ownedOutright: ownsOutright(kit.slug),
         }));
 
         return NextResponse.json({ kits: result });

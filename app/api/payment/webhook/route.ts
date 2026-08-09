@@ -8,6 +8,10 @@ import Order from '@/lib/models/Order';
 import { recordPurchase } from '@/lib/purchase';
 import { recordRedemption } from '@/lib/coupons';
 import { getPlanDisplayName } from '@/lib/appConstants';
+import CompanyKitUser from '@/lib/models/CompanyKitUser';
+import { getMembershipPlan, getMembershipPlanByName } from '@/lib/membership';
+import { grantMembership } from '@/lib/membership-access';
+import { buildMembershipEmail } from '@/lib/email/membership-emails';
 
 // ============================================================
 // CONFIGURATION
@@ -284,6 +288,105 @@ export async function POST(request: NextRequest) {
         // it as delivered — a transient DB outage must not permanently drop
         // the purchase/email for a user who already closed their browser.
         return NextResponse.json({ message: 'Database unavailable' }, { status: 500 });
+      }
+
+      /* ── MEMBERSHIP BRANCH — must come BEFORE recordPurchase ─────────────
+       *
+       * A membership is time-limited; a kit purchase is permanent. Falling
+       * through to recordPurchase() would append the membership plan name to
+       * purchasedKits, and nothing in getAllowedSlugs() understands expiry —
+       * the member would keep full access forever and no later fix could
+       * distinguish them from a genuine lifetime buyer. So this branch returns;
+       * it never runs alongside the kit path.
+       *
+       * TWO conditions, and the second is the one that matters. The notes are
+       * fetched above with a `catch {}`, so `membershipPlanId` can legitimately
+       * be missing if Razorpay's order fetch fails at exactly the wrong moment.
+       * isMembershipPlanName() re-derives the answer from the plan NAME, which
+       * arrives on payment.notes as well, so both would have to be lost before
+       * a membership could be mistaken for a kit.
+       * ──────────────────────────────────────────────────────────────────── */
+      const membershipPlan =
+        getMembershipPlan(String(orderNotes.membershipPlanId || '')) ||
+        getMembershipPlanByName(planName);
+
+      if (membershipPlan) {
+        /* ⚠️ RESOLVE THE MEMBER BY `notes.userId`, NOT BY EMAIL.
+         *
+         * `userEmail` above is `payment.email || notes.userEmail`, and
+         * payment.email — whatever the payer typed into Razorpay's own contact
+         * field — WINS. For a kit that is harmless: the kit is delivered to
+         * whatever address they gave. For a membership it is not, because a
+         * membership attaches to an ACCOUNT:
+         *   • type a stranger's address and this grants THEM the membership;
+         *   • type any address with no account and the lookup fails, which
+         *     returns 500 below and has Razorpay retry the same doomed webhook
+         *     for hours.
+         * /api/membership/create-order pins the session-verified `userId` into
+         * the order notes precisely so this path does not have to trust an
+         * email. Email is kept only as a fallback for orders created before
+         * that field existed. */
+        const memberId = typeof orderNotes.userId === 'string' ? orderNotes.userId.trim() : '';
+        const member = memberId
+          ? await CompanyKitUser.findById(memberId).catch(() => null)
+          : await CompanyKitUser.findOne({ email: userEmail.toLowerCase() });
+
+        if (!member) {
+          // Membership checkout requires a session, so the account must exist.
+          // If it somehow does not, fail loudly rather than silently creating
+          // one — a 500 makes Razorpay retry, and money has already changed
+          // hands.
+          console.error(
+            `❌ Membership payment for unknown account (userId=${memberId || 'none'}, email=${userEmail})`
+          );
+          await updateOrderStatus(orderId, 'failed', dbConnected, 'Account not found');
+          return NextResponse.json({ message: 'Account not found' }, { status: 500 });
+        }
+
+        const result = await grantMembership({
+          userId: member._id,
+          // The ACCOUNT's email — the ledger must record who actually holds the
+          // membership, not whatever was typed at the payment gateway.
+          email: member.email,
+          plan: membershipPlan,
+          orderId,
+          paymentId,
+          amount: Math.round((Number(payment.amount) || 0) / 100), // paise → ₹
+        });
+
+        if (result.alreadyGranted) {
+          console.log(`⏭️ Membership already granted for order ${orderId}`);
+        } else {
+          console.log(
+            `✅ Membership granted for ${userEmail}: ${membershipPlan.name} → ${result.expiresAt?.toISOString()}`
+          );
+        }
+
+        const memberBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const emailSent = await sendEmailWithRetry(
+          userEmail,
+          `🎉 Your Geeky Frontend Membership is active — ${membershipPlan.label}`,
+          buildMembershipEmail({
+            userName: userName || member.name || 'there',
+            planLabel: membershipPlan.label,
+            expiresAt: result.expiresAt ?? member.membershipExpiresAt ?? new Date(),
+            dashboardUrl: `${memberBaseUrl}/dashboard`,
+          }),
+          `Your membership is active. Start here: ${memberBaseUrl}/dashboard`
+        );
+
+        if (emailSent) {
+          await updateOrderStatus(orderId, 'email_sent', dbConnected);
+        } else {
+          await updateOrderStatus(orderId, 'failed', dbConnected, 'Email sending failed');
+          /* Non-2xx so Razorpay retries. Safe: grantMembership is idempotent on
+           * orderId, so the retry re-sends the email without granting a second
+           * term. Access is already live either way — the retry is only chasing
+           * the email. */
+          return NextResponse.json({ message: 'Email sending failed' }, { status: 500 });
+        }
+
+        return NextResponse.json({ message: 'Membership processed' });
       }
 
       // Create/update the user record and assign the purchased kit

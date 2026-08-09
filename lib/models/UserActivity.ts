@@ -42,6 +42,9 @@ const UserActivitySchema = new Schema<IUserActivity>({
 
 // Per-user timeline query (newest first) for the behaviour drawer.
 UserActivitySchema.index({ userId: 1, createdAt: -1 });
+// Page-analytics rollup (/api/admin/page-analytics): scan one event type over a
+// date window without reading quiz_attempt / purchase rows.
+UserActivitySchema.index({ event: 1, createdAt: -1 });
 // TTL: expire rows 30 days after they are written.
 UserActivitySchema.index({ createdAt: -1 }, { expireAfterSeconds: 60 * 60 * 24 * 30 });
 

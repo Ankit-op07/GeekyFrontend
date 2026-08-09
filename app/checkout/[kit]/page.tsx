@@ -71,6 +71,11 @@ interface KitDetails {
   }[]
 }
 
+import {
+  CheckoutMembershipOffer,
+  PermanentAccessNote,
+} from "@/components/membership/checkout-membership-offer"
+
 const { react_kit_price, react_kit_original_price, js_kit_price, js_kit_original_price, complete_kit_price, complete_kit_original_price, all_access_price, all_access_original_price, angular_kit_price, angular_kit_original_price, nodejs_kit_price, nodejs_kit_original_price, java_kit_price, java_kit_original_price } = appConstants()
 
 /* ---------- Java mark (inline) ----------
@@ -1741,6 +1746,21 @@ export default function CheckoutPage() {
                 </div>
               </Card>
             )}
+
+            {/* ── Membership alternative ───────────────────────────────────
+              *
+              * LAST in the left column, on purpose. Someone here has already
+              * chosen this kit; the membership is a considered second option,
+              * not a competing hero, and it must never outrank the thing they
+              * came for. Placed after the FAQ so it reads as "and here is the
+              * other way to do this" once every objection about the kit has
+              * been answered.
+              *
+              * Renders nothing for an existing member, or if prices cannot be
+              * fetched. Not shown on the bundle's own page — see below. */}
+            {kit.id !== "all-access" && (
+              <CheckoutMembershipOffer kitName={kit.name} kitPrice={kit.price} />
+            )}
           </div>
 
           {/* Right Column - Sticky Checkout Card (desktop) */}
@@ -1760,6 +1780,10 @@ export default function CheckoutPage() {
                   <p className="text-sm text-green-600 font-medium mt-2">
                     You save ₹{kit.originalPrice - kit.price} today!
                   </p>
+                  {/* Permanence, stated where the price is. Reassures the kit
+                    * buyer AND makes the membership section's "time-limited"
+                    * admission below read as candour, not fine print. */}
+                  <PermanentAccessNote className="mt-3 justify-center text-left" />
                 </div>
 
                 <Separator className="my-4" />
@@ -1940,6 +1964,7 @@ export default function CheckoutPage() {
               <p className="text-sm text-green-600 font-medium mt-2">
                 You save ₹{(kit.originalPrice - kit.price).toLocaleString()} today!
               </p>
+              <PermanentAccessNote className="mt-3" />
             </div>
 
             <Separator className="my-4" />

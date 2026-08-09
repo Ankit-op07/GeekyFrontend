@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, ArrowRight, Check } from "lucide-react"
 import { BUNDLE_KIT_ID, getKitById } from "@/lib/appConstants"
+import { useMembershipStatus } from "@/components/membership/membership-plans"
 
 interface PriceQuote {
   listPrice: number
@@ -40,6 +41,7 @@ interface BundleUpsellProps {
 
 export function BundleUpsell({ eyebrow, tone = "light", className }: BundleUpsellProps) {
   const [quote, setQuote] = useState<PriceQuote | null>(null)
+  const { status: membership } = useMembershipStatus()
 
   useEffect(() => {
     fetch(`/api/payment/quote?kit=${BUNDLE_KIT_ID}`)
@@ -50,6 +52,15 @@ export function BundleUpsell({ eyebrow, tone = "light", className }: BundleUpsel
 
   // Nothing to sell, or we couldn't price it → render nothing.
   if (!quote || quote.alreadyOwned) return null
+
+  /* An active member already reads every kit in this bundle, so pitching it to
+   * them is nonsense — "Upgrade for ₹499" next to seven kits marked Owned.
+   *
+   * Note this is deliberately a DISPLAY rule, not a pricing one: `alreadyOwned`
+   * stays false for a member on purpose, because buying a kit outright is still
+   * a real thing a member might want — it is how they keep it permanently after
+   * the membership ends. The offer stays purchasable; we just stop pushing it. */
+  if (membership?.active) return null
 
   const hasCredit = quote.credit > 0
   // Honest anchor: the real sum of the three kits (₹647), from the catalog.

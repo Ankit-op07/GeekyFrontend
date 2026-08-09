@@ -413,6 +413,18 @@ export function ProductsShowcase() {
               <span className="font-medium">Lifetime Support</span>
             </div>
           </div>
+
+          {/* The distinction, on the surface where kits are sold.
+            *
+            * A kit is a ONE-TIME purchase that never expires; the membership
+            * above this grid is time-limited. Someone comparing the two needs
+            * both facts in the same visit, or "permanent" and "everything" read
+            * as the same offer at different prices. */}
+          <p className="mt-6 text-center text-xs leading-relaxed text-gray-500">
+            Every kit is a <span className="font-semibold text-gray-700">one-time purchase with
+            permanent access</span> — no renewal, ever. A membership unlocks all of them at once
+            but runs for a fixed term.
+          </p>
         </div>
       </div>
 
