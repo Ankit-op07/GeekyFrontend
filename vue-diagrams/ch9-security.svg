@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 450" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="450" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Where Vue’s safe defaults end</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">Every hole is somewhere you deliberately stepped outside them</text>
+  <g>
+    <rect x="30" y="96" width="253" height="132" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="156.5" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46">{{ }} — safe</text>
+    <text x="156.5" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">HTML-escaped</text>
+    <text x="156.5" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Attribute bindings escaped too</text>
+    <text x="156.5" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Safe with any input</text>
+    <rect x="303" y="96" width="253" height="132" rx="12" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="429.5" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#9f1239">v-html — XSS</text>
+    <text x="429.5" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Sets innerHTML</text>
+    <text x="429.5" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Sanitise with DOMPurify</text>
+    <text x="429.5" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Allow-list, at RENDER time</text>
+    <rect x="576" y="96" width="253" height="132" rx="12" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="702.5" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#9f1239">:href / :src</text>
+    <text x="702.5" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">javascript: executes on click</text>
+    <text x="702.5" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Vue does NOT filter schemes</text>
+    <text x="702.5" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Validate the protocol</text>
+    <rect x="30" y="248" width="253" height="132" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="156.5" y="274" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Token storage</text>
+    <text x="156.5" y="294" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">localStorage is script-readable</text>
+    <text x="156.5" y="310" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">httpOnly + Secure + SameSite</text>
+    <text x="156.5" y="326" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Then add CSRF tokens</text>
+    <rect x="303" y="248" width="253" height="132" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="429.5" y="274" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Route guards</text>
+    <text x="429.5" y="294" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Control RENDERING only</text>
+    <text x="429.5" y="310" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">The user controls the browser</text>
+    <text x="429.5" y="326" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Authorise on the server</text>
+    <rect x="576" y="248" width="253" height="132" rx="12" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="702.5" y="274" text-anchor="middle" font-size="14" font-weight="700" fill="#9f1239">VITE_ vars</text>
+    <text x="702.5" y="294" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Inlined into the bundle</text>
+    <text x="702.5" y="310" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Completely public</text>
+    <text x="702.5" y="326" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Publishable keys only</text>
+    <rect x="30" y="394" width="800" height="40" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="419" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">Do not send data the user may not see and then hide it in the UI — it is in the network tab either way.</text>
+  </g>
+</svg>

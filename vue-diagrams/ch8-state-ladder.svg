@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 606" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="606" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Climb only as far as the scope requires</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">Most state stops well below the top rung</text>
+  <g>
+    <rect x="60" y="96" width="740" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+    <text x="430" y="122" text-anchor="middle" font-size="14.5" font-weight="700" fill="#065f46">ref / reactive in setup</text>
+    <text x="430" y="141" text-anchor="middle" font-size="11.5" font-weight="400" fill="#64748b">One component — is this dropdown open?</text>
+    <text x="786" y="122" text-anchor="end" font-size="11" font-weight="700" fill="#065f46">local</text>
+    <rect x="60" y="170" width="740" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+    <text x="430" y="196" text-anchor="middle" font-size="14.5" font-weight="700" fill="#065f46">props / emits</text>
+    <text x="430" y="215" text-anchor="middle" font-size="11.5" font-weight="400" fill="#64748b">Parent → child — the item a row renders</text>
+    <text x="786" y="196" text-anchor="end" font-size="11" font-weight="700" fill="#065f46">adjacent</text>
+    <rect x="60" y="244" width="740" height="62" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="430" y="270" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1e3a8a">provide / inject</text>
+    <text x="430" y="289" text-anchor="middle" font-size="11.5" font-weight="400" fill="#64748b">A subtree — compound components, theme, form context</text>
+    <text x="786" y="270" text-anchor="end" font-size="11" font-weight="700" fill="#1e3a8a">subtree</text>
+    <rect x="60" y="318" width="740" height="62" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="430" y="344" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1e3a8a">composables</text>
+    <text x="430" y="363" text-anchor="middle" font-size="11.5" font-weight="400" fill="#64748b">Reused logic with ISOLATED state per call</text>
+    <text x="786" y="344" text-anchor="end" font-size="11" font-weight="700" fill="#1e3a8a">reuse</text>
+    <rect x="60" y="392" width="740" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="430" y="418" text-anchor="middle" font-size="14.5" font-weight="700" fill="#5b21b6">Pinia</text>
+    <text x="430" y="437" text-anchor="middle" font-size="11.5" font-weight="400" fill="#64748b">The whole app — auth, cart, notifications</text>
+    <text x="786" y="418" text-anchor="end" font-size="11" font-weight="700" fill="#5b21b6">global</text>
+    <rect x="60" y="466" width="740" height="62" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+    <text x="430" y="492" text-anchor="middle" font-size="14.5" font-weight="700" fill="#92400e">Query library / the URL</text>
+    <text x="430" y="511" text-anchor="middle" font-size="11.5" font-weight="400" fill="#64748b">Server data is a cache; filters and pagination belong in the query string</text>
+    <text x="786" y="492" text-anchor="end" font-size="11" font-weight="700" fill="#92400e">outside</text>
+    <rect x="30" y="550" width="800" height="40" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="430" y="575" text-anchor="middle" font-size="12.5" font-weight="600" fill="#065f46">A store is needed when state is shared NON-HIERARCHICALLY or must outlive a route.</text>
+  </g>
+</svg>

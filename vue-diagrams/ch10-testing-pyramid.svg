@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 384" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="384" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">What to test, and how much</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">Test behaviour, not implementation</text>
+  <g>
+    <rect x="60" y="96" width="740" height="62" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+    <text x="430" y="122" text-anchor="middle" font-size="14.5" font-weight="700" fill="#065f46">Unit — composables, stores, pure functions</text>
+    <text x="430" y="141" text-anchor="middle" font-size="11.5" font-weight="400" fill="#64748b">Fast, many, run on every save</text>
+    
+    <rect x="122" y="170" width="616" height="62" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="430" y="196" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1e3a8a">Component — rendered output and interactions</text>
+    <text x="430" y="215" text-anchor="middle" font-size="11.5" font-weight="400" fill="#64748b">Vue Test Utils / Testing Library · await every interaction</text>
+    
+    <rect x="184" y="244" width="492" height="62" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="430" y="270" text-anchor="middle" font-size="14.5" font-weight="700" fill="#5b21b6">End-to-end — critical journeys only</text>
+    <text x="430" y="289" text-anchor="middle" font-size="11.5" font-weight="400" fill="#64748b">Playwright · signup, login, checkout</text>
+    
+    <rect x="30" y="328" width="800" height="40" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="430" y="353" text-anchor="middle" font-size="12.5" font-weight="600" fill="#065f46">Never assert on wrapper.vm — internal state couples the test to implementation and breaks on refactors.</text>
+  </g>
+</svg>

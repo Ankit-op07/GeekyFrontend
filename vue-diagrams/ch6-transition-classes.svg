@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 398" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="398" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">The six transition classes</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">Vue delays the DOM removal until the leave transition finishes</text>
+  <g>
+    <rect x="30" y="100" width="249" height="92" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="154.5" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46">v-enter-from</text>
+    <text x="154.5" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Applied before insert</text>
+    <text x="154.5" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Removed after ONE frame</text>
+    <text x="154.5" y="178" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">The starting style</text>
+    <path d="M 283 146 L 301 146" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="255" y="128" width="74" height="17" rx="8" fill="#f8fafc"/>
+    <text x="292" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">next frame</text>
+    <rect x="305" y="100" width="249" height="92" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="429.5" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46">v-enter-active</text>
+    <text x="429.5" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Whole entering phase</text>
+    <text x="429.5" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Holds the transition property</text>
+    <path d="M 558 146 L 576 146" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="548.6" y="128" width="36.8" height="17" rx="8" fill="#f8fafc"/>
+    <text x="567" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">swap</text>
+    <rect x="580" y="100" width="249" height="92" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="704.5" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46">v-enter-to</text>
+    <text x="704.5" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">The ending style</text>
+    <text x="704.5" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Removed on transitionend</text>
+    <path d="M 704.5 196 Q 429.5 244 154.5 232" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="30" y="236" width="249" height="92" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="154.5" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">v-leave-from</text>
+    <text x="154.5" y="282" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Applied immediately</text>
+    <text x="154.5" y="298" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">The starting style</text>
+    <path d="M 283 282 L 301 282" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="255" y="264" width="74" height="17" rx="8" fill="#f8fafc"/>
+    <text x="292" y="276" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">next frame</text>
+    <rect x="305" y="236" width="249" height="92" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="429.5" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">v-leave-active</text>
+    <text x="429.5" y="282" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Whole leaving phase</text>
+    <text x="429.5" y="298" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">ELEMENT STILL IN THE DOM</text>
+    <path d="M 558 282 L 576 282" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="548.6" y="264" width="36.8" height="17" rx="8" fill="#f8fafc"/>
+    <text x="567" y="276" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">swap</text>
+    <rect x="580" y="236" width="249" height="92" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="704.5" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">v-leave-to</text>
+    <text x="704.5" y="282" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">The ending style</text>
+    <text x="704.5" y="298" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">THEN the node is removed</text>
+    <rect x="30" y="342" width="800" height="40" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="367" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">Animate transform and opacity only — they are composited. height/top/margin reflow on every frame.</text>
+  </g>
+</svg>

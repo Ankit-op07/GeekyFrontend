@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 262" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="262" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">createApp → configure → mount</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">Configuration after mount() is silently ignored</text>
+  <g>
+    <rect x="30" y="100" width="249" height="92" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="154.5" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">createApp(App)</text>
+    <text x="154.5" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Isolated instance</text>
+    <text x="154.5" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Nothing rendered yet</text>
+    <path d="M 283 146 L 301 146" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="251.9" y="128" width="80.2" height="17" rx="8" fill="#f8fafc"/>
+    <text x="292" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">returns app</text>
+    <rect x="305" y="100" width="249" height="92" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="429.5" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">Configure</text>
+    <text x="429.5" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">use() · component()</text>
+    <text x="429.5" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">directive() · provide()</text>
+    <text x="429.5" y="178" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">config.errorHandler</text>
+    <path d="M 558 146 L 576 146" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="548.6" y="128" width="36.8" height="17" rx="8" fill="#f8fafc"/>
+    <text x="567" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">then</text>
+    <rect x="580" y="100" width="249" height="92" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="704.5" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">mount("#app")</text>
+    <text x="704.5" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Renders into the DOM</text>
+    <text x="704.5" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Returns the ROOT COMPONENT</text>
+    <rect x="30" y="206" width="800" height="40" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="231" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">mount() returns the root component instance, not the app — never chain .use() after it.</text>
+  </g>
+</svg>

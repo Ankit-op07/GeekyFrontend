@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 448" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="448" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Nested routes mirror the component tree</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">&lt;RouterView&gt; is recursive</text>
+  <g>
+    <rect x="280" y="98" width="300" height="64" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="430" y="124" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">App.vue → &lt;RouterView&gt;</text>
+    <text x="430" y="144" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">The top-level outlet</text>
+    <path d="M 430 166 L 157 212" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="265.8" y="171" width="55.4" height="17" rx="8" fill="#f8fafc"/>
+    <text x="293.5" y="183" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">renders</text>
+    <rect x="30" y="218" width="254" height="92" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="157" y="244" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46">DashboardLayout</text>
+    <text x="157" y="264" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Sidebar + header</text>
+    <text x="157" y="280" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Its OWN &lt;RouterView&gt;</text>
+    <text x="157" y="296" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Mounted once</text>
+    <rect x="220.4" y="226" width="53.599999999999994" height="18" rx="9" fill="#10b981" opacity="0.15"/>
+    <text x="247.2" y="239" text-anchor="middle" font-size="10" font-weight="700" fill="#065f46">parent</text>
+    <path d="M 430 166 L 429 212" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="408" y="171" width="43" height="17" rx="8" fill="#f8fafc"/>
+    <text x="429.5" y="183" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">child</text>
+    <rect x="302" y="218" width="254" height="92" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="429" y="244" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">path: '' → Overview</text>
+    <text x="429" y="264" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Default child</text>
+    <text x="429" y="280" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Renders when parent matches</text>
+    <path d="M 430 166 L 701 212" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="544" y="171" width="43" height="17" rx="8" fill="#f8fafc"/>
+    <text x="565.5" y="183" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">child</text>
+    <rect x="574" y="218" width="254" height="92" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="701" y="244" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">'analytics' → Analytics</text>
+    <text x="701" y="264" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Relative — appended</text>
+    <text x="701" y="280" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">/dashboard/analytics</text>
+    <rect x="30" y="334" width="800" height="44" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="430" y="362" text-anchor="middle" font-size="12.5" font-weight="600" fill="#065f46">route.matched is the array of records, outermost first — the basis for auth checks and breadcrumbs.</text>
+    <rect x="30" y="390" width="800" height="40" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="415" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">A LEADING SLASH on a child path makes it absolute and ignores the parent entirely.</text>
+  </g>
+</svg>

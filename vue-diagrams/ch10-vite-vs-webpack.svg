@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 418" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="418" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Why the Vite dev server starts instantly</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">An architectural difference, not an optimisation</text>
+  <g>
+    <rect x="30" y="96" width="388" height="248" rx="16" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="224" y="126" text-anchor="middle" font-size="16" font-weight="700" fill="#1e3a8a">Bundler-first (Webpack)</text>
+    <text x="224" y="148" text-anchor="middle" font-size="12" font-weight="400" fill="#64748b">Build, then serve</text>
+    <rect x="46" y="164" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="182" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Crawl the whole dependency graph</text>
+    <rect x="46" y="198" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="216" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Bundle everything</text>
+    <rect x="46" y="232" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="250" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">THEN serve the first byte</text>
+    <rect x="46" y="266" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="284" text-anchor="middle" font-size="11.5" font-weight="600" fill="#9f1239">✕  Startup scales with project size</text>
+    <rect x="46" y="300" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="318" text-anchor="middle" font-size="11.5" font-weight="600" fill="#9f1239">✕  HMR rebuilds part of the bundle</text>
+    <rect x="442" y="96" width="388" height="248" rx="16" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+    <text x="636" y="126" text-anchor="middle" font-size="16" font-weight="700" fill="#065f46">Vite</text>
+    <text x="636" y="148" text-anchor="middle" font-size="12" font-weight="400" fill="#64748b">Serve, then transform on demand</text>
+    <rect x="458" y="164" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="182" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Serve index.html immediately</text>
+    <rect x="458" y="198" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="216" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Browser requests each module</text>
+    <rect x="458" y="232" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="250" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Transform only what is opened</text>
+    <rect x="458" y="266" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="284" text-anchor="middle" font-size="11.5" font-weight="600" fill="#065f46">✓  Startup is near-constant</text>
+    <rect x="458" y="300" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="318" text-anchor="middle" font-size="11.5" font-weight="600" fill="#065f46">✓  HMR invalidates ONE module</text>
+    <rect x="30" y="360" width="800" height="42" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="380" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">Production still uses a Rollup bundle. Dependencies are pre-bundled once with esbuild (CJS→ESM, fewer</text>
+    <text x="430" y="395" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">requests).</text>
+  </g>
+</svg>

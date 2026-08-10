@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 430" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="430" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Reactivity utilities, by the problem they solve</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">Reach for these when the defaults are not what you want</text>
+  <g>
+    <rect x="30" y="96" width="390" height="122" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="225" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46">Keep the connection</text>
+    <text x="225" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">toRef(obj, "key") · toRefs(obj)</text>
+    <text x="225" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">toValue(x) · unref(x)</text>
+    <text x="225" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Destructure without losing reactivity</text>
+    <rect x="440" y="96" width="390" height="122" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="635" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">Control the depth</text>
+    <text x="635" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">shallowRef · shallowReactive</text>
+    <text x="635" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">triggerRef() to notify manually</text>
+    <text x="635" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">For large payloads replaced wholesale</text>
+    <rect x="30" y="238" width="390" height="122" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="225" y="264" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Escape entirely</text>
+    <text x="225" y="284" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">markRaw(o) — never proxied</text>
+    <text x="225" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">toRaw(p) — the original object</text>
+    <text x="225" y="316" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Library instances, component defs</text>
+    <rect x="440" y="238" width="390" height="122" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="635" y="264" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">Restrict writes</text>
+    <text x="635" y="284" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">readonly(o) · shallowReadonly(o)</text>
+    <text x="635" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Deep, live, DEV-ONLY guard</text>
+    <text x="635" y="316" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Pair with explicit mutators</text>
+    <rect x="30" y="374" width="800" height="40" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="399" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">readonly() is not security — the warning is stripped in production and toRaw() bypasses it.</text>
+  </g>
+</svg>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 382" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="382" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Anatomy of a directive usage</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">Every part maps onto the binding object your hooks receive</text>
+  <g>
+    <rect x="60" y="100" width="740" height="64" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <text x="430" y="140" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">v-tooltip:top.fast="message"</text>
+    <path d="M 146.5 170 L 146.5 210" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="60" y="216" width="173" height="96" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="146.5" y="242" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">name</text>
+    <text x="146.5" y="262" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">v-tooltip</text>
+    <text x="146.5" y="278" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">const vTooltip = {…}</text>
+    <text x="146.5" y="306" text-anchor="middle" font-size="10.5" font-weight="600" fill="#065f46">local, or app.directive()</text>
+    <path d="M 335.5 170 L 335.5 210" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="249" y="216" width="173" height="96" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="335.5" y="242" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">arg</text>
+    <text x="335.5" y="262" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">:top</text>
+    <text x="335.5" y="278" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">binding.arg</text>
+    <text x="335.5" y="306" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1e3a8a">"top"</text>
+    <path d="M 524.5 170 L 524.5 210" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="438" y="216" width="173" height="96" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="524.5" y="242" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">modifiers</text>
+    <text x="524.5" y="262" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">.fast</text>
+    <text x="524.5" y="278" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">binding.modifiers</text>
+    <text x="524.5" y="306" text-anchor="middle" font-size="10.5" font-weight="600" fill="#5b21b6">{ fast: true }</text>
+    <path d="M 713.5 170 L 713.5 210" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="627" y="216" width="173" height="96" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="713.5" y="242" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">value</text>
+    <text x="713.5" y="262" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">="message"</text>
+    <text x="713.5" y="278" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">binding.value</text>
+    <text x="713.5" y="306" text-anchor="middle" font-size="10.5" font-weight="600" fill="#92400e">and binding.oldValue</text>
+    <rect x="30" y="326" width="800" height="40" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="351" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">Always pair mounted with unmounted — an unremoved listener leaks for every element the directive touched.</text>
+  </g>
+</svg>

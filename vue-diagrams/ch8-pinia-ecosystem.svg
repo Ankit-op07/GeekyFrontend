@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 430" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="430" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">What surrounds a store in production</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">Plugins · persistence · tests · SSR</text>
+  <g>
+    <rect x="30" y="96" width="390" height="122" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="225" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46">Plugins</text>
+    <text x="225" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">pinia.use(({ store, options }) =&gt; …)</text>
+    <text x="225" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Runs for every store on creation</text>
+    <text x="225" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Returned object merges onto it</text>
+    <rect x="440" y="96" width="390" height="122" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="635" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">Persistence</text>
+    <text x="635" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">$patch on restore · $subscribe to write</text>
+    <text x="635" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Debounce; whitelist paths; version it</text>
+    <text x="635" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">NEVER persist tokens</text>
+    <rect x="30" y="238" width="390" height="122" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="225" y="264" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">Testing</text>
+    <text x="225" y="284" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">createTestingPinia({ initialState })</text>
+    <text x="225" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Actions are STUBBED by default</text>
+    <text x="225" y="316" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">setActivePinia() in beforeEach</text>
+    <rect x="440" y="238" width="390" height="122" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="635" y="264" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">SSR</text>
+    <text x="635" y="284" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Fresh Pinia PER REQUEST</text>
+    <text x="635" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Serialise with devalue, not JSON</text>
+    <text x="635" y="316" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Assign state BEFORE mount()</text>
+    <rect x="30" y="374" width="800" height="40" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="399" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">Module-scope state on the server is shared across every request — a genuine cross-user data leak.</text>
+  </g>
+</svg>

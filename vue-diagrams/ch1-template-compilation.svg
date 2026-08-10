@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 262" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="262" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Templates are compiled, not interpreted</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">The browser never sees your template</text>
+  <g>
+    <rect x="30" y="100" width="180" height="92" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="120" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Template</text>
+    <text x="120" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Valid HTML +</text>
+    <text x="120" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">directives</text>
+    <path d="M 214 146 L 232 146" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="201.5" y="128" width="43" height="17" rx="8" fill="#f8fafc"/>
+    <text x="223" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">parse</text>
+    <rect x="236" y="100" width="180" height="92" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="326" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">AST</text>
+    <text x="326" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Tree of nodes,</text>
+    <text x="326" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">statically analysable</text>
+    <path d="M 420 146 L 438 146" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="395.1" y="128" width="67.80000000000001" height="17" rx="8" fill="#f8fafc"/>
+    <text x="429" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">transform</text>
+    <rect x="442" y="100" width="180" height="92" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="532" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46">Optimise</text>
+    <text x="532" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Static hoisting</text>
+    <text x="532" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Patch flags</text>
+    <text x="532" y="178" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Block trees</text>
+    <path d="M 626 146 L 644 146" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="604.2" y="128" width="61.6" height="17" rx="8" fill="#f8fafc"/>
+    <text x="635" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">generate</text>
+    <rect x="648" y="100" width="180" height="92" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="738" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">Render function</text>
+    <text x="738" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Returns a vnode tree</text>
+    <text x="738" y="162" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Runs in an effect</text>
+    <rect x="30" y="206" width="800" height="40" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="231" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">This is why {{ }} works in text but not in attributes — they are different node structures in the AST.</text>
+  </g>
+</svg>

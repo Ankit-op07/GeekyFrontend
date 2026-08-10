@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 418" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="418" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Three routes to the same vnode tree</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">They differ in what the compiler can prove</text>
+  <g>
+    <rect x="30" y="96" width="250" height="248" rx="16" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+    <text x="155" y="126" text-anchor="middle" font-size="16" font-weight="700" fill="#065f46">Template</text>
+    <text x="155" y="148" text-anchor="middle" font-size="12" font-weight="400" fill="#64748b">The default</text>
+    <rect x="46" y="164" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="155" y="182" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Statically analysable</text>
+    <rect x="46" y="198" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="155" y="216" text-anchor="middle" font-size="11.5" font-weight="600" fill="#065f46">✓  Static hoisting</text>
+    <rect x="46" y="232" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="155" y="250" text-anchor="middle" font-size="11.5" font-weight="600" fill="#065f46">✓  Patch flags</text>
+    <rect x="46" y="266" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="155" y="284" text-anchor="middle" font-size="11.5" font-weight="600" fill="#065f46">✓  Block trees</text>
+    <rect x="46" y="300" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="155" y="318" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Usually the FASTEST</text>
+    <rect x="304" y="96" width="250" height="248" rx="16" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="429" y="126" text-anchor="middle" font-size="16" font-weight="700" fill="#1e3a8a">Render function</text>
+    <text x="429" y="148" text-anchor="middle" font-size="12" font-weight="400" fill="#64748b">h(type, props, children)</text>
+    <rect x="320" y="164" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="429" y="182" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Full power of JavaScript</text>
+    <rect x="320" y="198" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="429" y="216" text-anchor="middle" font-size="11.5" font-weight="600" fill="#9f1239">✕  No compiler optimisations</text>
+    <rect x="320" y="232" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="429" y="250" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Diffed in full</text>
+    <rect x="320" y="266" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="429" y="284" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Dynamic tags, slot transforms</text>
+    <rect x="320" y="300" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="429" y="318" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">setup() must return a FUNCTION</text>
+    <rect x="578" y="96" width="250" height="248" rx="16" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="703" y="126" text-anchor="middle" font-size="16" font-weight="700" fill="#5b21b6">JSX</text>
+    <text x="703" y="148" text-anchor="middle" font-size="12" font-weight="400" fill="#64748b">@vitejs/plugin-vue-jsx</text>
+    <rect x="594" y="164" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="703" y="182" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Compiles to the same h() calls</text>
+    <rect x="594" y="198" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="703" y="216" text-anchor="middle" font-size="11.5" font-weight="600" fill="#9f1239">✕  No compiler optimisations</text>
+    <rect x="594" y="232" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="703" y="250" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">More readable than raw h()</text>
+    <rect x="594" y="266" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="703" y="284" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">class stays class, not className</text>
+    <rect x="594" y="300" width="218" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="703" y="318" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">Not the Vue idiom</text>
+    <rect x="30" y="360" width="800" height="42" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="380" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">People assume render functions are the faster low-level option. It is the other way round.</text>
+  </g>
+</svg>

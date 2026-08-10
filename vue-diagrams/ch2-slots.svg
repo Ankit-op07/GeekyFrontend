@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 294" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="294" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Slots project markup into a child</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">Props configure with data; slots supply structure</text>
+  <g>
+    <rect x="30" y="96" width="253" height="128" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="156.5" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#065f46">Default slot</text>
+    <text x="156.5" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">&lt;slot /&gt;</text>
+    <text x="156.5" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Everything between the tags</text>
+    <text x="156.5" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Fallback if unfilled</text>
+    <rect x="303" y="96" width="253" height="128" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="429.5" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">Named slots</text>
+    <text x="429.5" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">&lt;slot name="header" /&gt;</text>
+    <text x="429.5" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Parent: #header</text>
+    <text x="429.5" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Guard with v-if="$slots.x"</text>
+    <rect x="576" y="96" width="253" height="128" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="702.5" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">Scoped slots</text>
+    <text x="702.5" y="142" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">&lt;slot :row="row" /&gt;</text>
+    <text x="702.5" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Parent: #default="{ row }"</text>
+    <text x="702.5" y="174" text-anchor="middle" font-size="12" font-weight="400" fill="#334155">Child data → parent markup</text>
+    <rect x="30" y="238" width="800" height="40" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="263" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">Slot content compiles in the PARENT’s scope — a scoped slot is that function being called with arguments.</text>
+  </g>
+</svg>

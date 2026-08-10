@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 418" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="418" rx="20" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="430" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Route-level code splitting</text>
+  <text x="430" y="66" text-anchor="middle" font-size="13" font-weight="400" fill="#64748b">The highest-value performance change in most apps</text>
+  <g>
+    <rect x="30" y="96" width="388" height="248" rx="16" fill="#fff1f2" stroke="#f43f5e" stroke-width="2"/>
+    <text x="224" y="126" text-anchor="middle" font-size="16" font-weight="700" fill="#9f1239">Static imports</text>
+    <text x="224" y="148" text-anchor="middle" font-size="12" font-weight="400" fill="#64748b">One bundle</text>
+    <rect x="46" y="164" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="182" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">main.js — 780 kB</text>
+    <rect x="46" y="198" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="216" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">  includes Login</text>
+    <rect x="46" y="232" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="250" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">  includes Dashboard</text>
+    <rect x="46" y="266" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="284" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">  includes Admin + charts + editor</text>
+    <rect x="46" y="300" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="224" y="318" text-anchor="middle" font-size="11.5" font-weight="600" fill="#9f1239">✕  Login page downloads all of it</text>
+    <rect x="442" y="96" width="388" height="248" rx="16" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+    <text x="636" y="126" text-anchor="middle" font-size="16" font-weight="700" fill="#065f46">Dynamic imports</text>
+    <text x="636" y="148" text-anchor="middle" font-size="12" font-weight="400" fill="#64748b">Chunk per feature</text>
+    <rect x="458" y="164" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="182" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">index.js — 90 kB (+ vendor)</text>
+    <rect x="458" y="198" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="216" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">login.js — 12 kB   ← fetched now</text>
+    <rect x="458" y="232" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="250" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">dashboard.js — 140 kB  ← on visit</text>
+    <rect x="458" y="266" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="284" text-anchor="middle" font-size="11.5" font-weight="400" fill="#334155">admin.js — 320 kB  ← maybe never</text>
+    <rect x="458" y="300" width="356" height="27" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="636" y="318" text-anchor="middle" font-size="11.5" font-weight="600" fill="#065f46">✓  Prefetch on hover to hide the latency</text>
+    <rect x="30" y="360" width="800" height="42" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="430" y="380" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">Never split the first route. After a deploy, old hashed chunks 404 — handle router.onError with one guarded</text>
+    <text x="430" y="395" text-anchor="middle" font-size="12.5" font-weight="600" fill="#92400e">reload.</text>
+  </g>
+</svg>
